@@ -54,6 +54,31 @@ Owns external exchange integration. Each adapter independently owns authenticati
 
 No generic adapter may erase meaningful exchange differences.
 
+## Cross-layer responsibility map
+
+The Futures responsibility map is not limited to domain/futures files. The following responsibilities are mandatory before implementation:
+
+| Responsibility | Primary owner | Boundary rule |
+|---|---|---|
+| Canonical Futures vocabulary/contracts | contracts/futures + domain/futures | No hidden defaults; units, precision, UTC and validation explicit |
+| Market/data acquisition | market/data boundary + infrastructure ports | External data is untrusted until validated; no order authority |
+| Strategy/analysis | analysis/application boundary | Produces analytical facts/decisions; cannot submit orders |
+| Futures risk policy | risk | Owns acceptance/rejection and sizing policy; cannot place orders |
+| Execution intent/gate | execution | Only validated intent may proceed |
+| Order lifecycle | execution | Submission, acknowledgement, state transitions and errors are explicit |
+| Exchange transport | infrastructure/exchanges/<exchange> | Transport/mapping only; no domain financial formulas |
+| Position/order reconciliation | execution + exchange evidence ports | Unknown/divergent state is surfaced, never guessed successful |
+| Audit | execution/audit boundary | Immutable evidence sufficient to reconstruct critical lifecycle |
+| Configuration/secrets/security | configuration/security boundary | Fail closed; no credential leakage or authority drift |
+| Observability/failure classification | observability boundary | Health/risk/execution/exchange/reconciliation failures remain distinguishable |
+| Telegram/email delivery | notification boundary | Delivery only; never trading authority or execution truth |
+| Architecture enforcement | architecture tests + CI | Enforces ownership/dependency rules |
+| Release verification | release/CI governance | Same-SHA evidence for all required gates |
+
+Every primary owner must define inputs, outputs, units, precision, timestamps, validation state, failure behavior, allowed/forbidden dependencies, Linear/Inverse applicability, market applicability, tests, and downstream consumers.
+
+If a requirement has no primary owner, it is an unresolved architecture gap.
+
 ## Futures file responsibility matrix
 
 | Module | Sole responsibility | Explicitly forbidden |
