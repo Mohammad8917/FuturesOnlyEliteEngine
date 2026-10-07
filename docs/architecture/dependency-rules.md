@@ -138,3 +138,7 @@ Forbidden:
 - implicit margin, leverage, settlement, or precision policy.
 
 Infrastructure maps exchange metadata into the canonical specification. It must reject incomplete or contradictory metadata rather than redefine the multiplier semantics.
+
+## Phase 1 cursor after multiplier closure
+
+Multiplier/contract specification is a closed domain contract with verified implementation and CI evidence. The next dependency-boundary unit is settlement asset and settlement semantics. Settlement logic must consume the explicit multiplier contract and may not redefine it.
