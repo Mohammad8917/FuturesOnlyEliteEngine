@@ -96,9 +96,9 @@ Phase 0 is not considered complete merely because the initial documents exist. T
 - persistent project state and handoff rules;
 - no unresolved architectural contradiction, undefined critical owner, or ungoverned critical behavior.
 
-**Phase 0 status:** OPEN — FINAL AUDIT REQUIRED.
+**Phase 0 status:** CLOSED — Phase 1 Domain Contracts authorized.
 
-Phase 1 and all production implementation remain blocked until this baseline has a recorded exit decision in `project-state.md`.
+Phase 1 Domain Contracts is authorized. Phase 2+ remains blocked until each preceding phase exit criteria is evidenced.
 
 
 
@@ -141,7 +141,7 @@ The target of Phase 0 is **sufficient architectural completeness to implement wi
 The project proceeds through these phases in order.
 
 ### Phase 0 — Architecture baseline / governance finalization
-Status: OPEN — final audit in progress.
+Status: CLOSED — Phase 1 Domain Contracts authorized.
 
 Deliverables:
 - architecture invariants;
