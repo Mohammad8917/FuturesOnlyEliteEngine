@@ -20,12 +20,12 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current phase: Phase 0 — Architecture Baseline / Governance Final Audit
 - Current gate: Architecture baseline governance
 - Implementation phase authorized: NO — until the final governance audit is complete
-- Current HEAD at last verification: 754307b53785f6dc2b62445360daca0cbdcc16f9
-- Last verified SHA: 754307b53785f6dc2b62445360daca0cbdcc16f9
+- Current HEAD at last verification: 3efc4b90f49790db65e07387d37fa7ed52a11f9a
+- Last verified SHA: 3efc4b90f49790db65e07387d37fa7ed52a11f9a
 - Completed phases: None — Phase 0 remains open until its exit evidence is recorded
-- Active work: Preserve the completed governance baseline and begin only the first authorized Phase 1 action after the Phase 0 exit decision is explicitly recorded
+- Active work: Complete the bounded Phase 0 final audit; classify every finding as FIX NOW, DEFER TO PHASE N, or NOT AN ARCHITECTURE GAP, then record one exit decision
 - Blocked work: Production implementation, Phase 1 domain-contract implementation, and all downstream phases
-- Next authorized action: Record the Phase 0 exit decision after this evidence snapshot; if and only if all exit criteria remain satisfied, authorize Phase 1 — Domain Contracts
+- Next authorized action: Finish the bounded final audit and record the Phase 0 exit decision; if and only if all exit criteria are satisfied on the current HEAD, authorize Phase 1 — Domain Contracts
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -41,7 +41,7 @@ Whenever this file is updated, record:
 - next authorized action
 - forbidden actions
 - open architecture questions
-- evidence references: governance audit verified on 754307b53785f6dc2b62445360daca0cbdcc16f9; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
+- evidence references: bounded Phase 0 closure control applied on 3efc4b90f49790db65e07387d37fa7ed52a11f9a; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
 ## Phase 0 exit criteria
@@ -84,3 +84,8 @@ Do not guess.
 Any proposed architecture change must be represented through the ADR process before project state can authorize implementation.
 
 Owner requests that conflict with an invariant must trigger the critical architecture warning defined in architecture-invariants.md.
+
+
+## Phase 0 closure control
+
+The final audit is explicitly bounded. Findings must be classified as FIX NOW, DEFER TO PHASE N, or NOT AN ARCHITECTURE GAP. Once exit criteria are evidenced and the exit decision is recorded, Phase 0 is closed and must not be reopened for documentation completeness alone. A later phase may stop only for a genuine architecture gap; implementation details and optimizations stay in their owning phase.
