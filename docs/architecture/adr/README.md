@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+**Navigation:** Start with `docs/architecture/ARCHITECTURE-MASTER-INDEX.md`. This file governs ADR process only and does not create an alternative project path.
+
 ## Purpose
 
 This directory contains the formal record of approved, rejected, and superseded architectural decisions.
