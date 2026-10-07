@@ -90,13 +90,16 @@ For Phase 0 governance-only work, implementation/test/CI stages may be future-ph
 ## 10. Missing-requirement firewall
 Before implementation of any new capability, explicitly check for ownership and contracts for:
 - data provenance, freshness, ordering, contradiction handling;
+- authoritative exchange-state semantics versus local intent/cache state;
+- idempotency identity, duplicate suppression, concurrency/versioning, restart/failover recovery, and scoped/global execution halt;
+- trusted clock source, monotonic timing, freshness, timeout, and clock-skew policy;
 - units, denominations, precision, UTC and numeric representation;
 - Linear/Inverse formulas and applicability;
 - market applicability;
 - risk/account/exposure/margin/liquidation/funding/PnL;
 - execution intent, idempotency, unknown order state;
 - position/order reconciliation;
-- audit immutability;
+- append-only/tamper-evident audit evidence, stable event identity, causal correlation, and release artifact/source/dependency provenance;
 - configuration, credentials, secrets, signing, permissions;
 - security and supply-chain;
 - retries, timeouts, partial failure, circuit breaking;
