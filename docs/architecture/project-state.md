@@ -23,9 +23,9 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
 - Last verified SHA: 8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf; verified by current GitHub Actions same-SHA evidence.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — instrument identity and canonical Futures symbol semantics and multiplier/contract specification are implemented and evidenced; settlement asset and settlement semantics are now the first incomplete contract.
+- Active work: Phase 1 Domain Contracts — instrument identity, multiplier/contract specification, and settlement asset/settlement semantics are implemented and evidenced; margin asset and margin semantics are now the first incomplete contract.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: define and implement settlement asset and settlement semantics from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
+- Next authorized action: define and implement margin asset and margin semantics from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -147,3 +147,23 @@ CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
 - Active work: Phase 1 Domain Contracts — margin asset and margin semantics.
 - Next authorized action: define and implement margin asset/margin semantics.
 - Forbidden action: bypass margin semantics, redefine settlement/multiplier meaning, weaken tests/gates, lower G05/G08, or skip the first incomplete Phase 1 contract.
+
+
+## Phase 1 margin implementation contract
+
+The active cursor is margin asset and margin semantics.
+
+The implementation contract is frozen:
+- authoritative margin asset = FuturesInstrumentIdentity.margin_asset;
+- margin unit = ASSET;
+- source asset is explicit;
+- same-asset margin has no conversion rate;
+- cross-asset margin requires an explicit positive finite Decimal conversion rate;
+- rate direction = margin-asset units per source-asset unit;
+- margin asset is independent from settlement asset and is never inferred from it;
+- leverage, initial margin, maintenance margin, liquidation, and exchange-specific collateral policy are not inferred by this unit;
+- invalid, zero, negative, non-finite, contradictory, or ambiguous terms fail closed.
+
+Production boundary: contracts/futures/margin.py.
+Test boundary: tests/contracts/test_margin.py.
+CI boundary: .github/workflows/phase1-domain-contracts.yml.
