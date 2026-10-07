@@ -469,7 +469,7 @@ No later Phase 1 contract may advance ahead of this gate.
 
 Settlement semantics have exited their gate with production implementation, meaningful tests, CI enforcement, and same-SHA evidence on main SHA `164dcb97c38271ab29f79f8e9b8068bcc8a55234`.
 
-The next authorized Phase 1 unit is **margin asset and margin semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
+Historical Phase 1 margin unit: closed with same-SHA evidence. The current next authorized Phase 1 unit is **leverage vocabulary and contract-level constraints**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
 
 
 ## Phase 1 margin gate
