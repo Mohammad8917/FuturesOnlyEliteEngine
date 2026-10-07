@@ -32,5 +32,5 @@ jobs:
       - name: Install test dependency
         run: python -m pip install --disable-pip-version-check --no-input pytest
 
-      - name: Run dependency architecture regression test
-        run: python -m pytest -q tests/architecture/test_dependency_direction.py
+      - name: Run dependency architecture regression tests
+        run: python -m pytest -q tests/architecture/test_dependency_direction.py tests/architecture/test_forbidden_imports.py
