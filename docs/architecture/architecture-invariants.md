@@ -148,6 +148,7 @@ The following are architectural safety requirements and must have an explicit ow
 - Stale, missing, malformed, contradictory, or out-of-order critical data must fail closed.
 - Monetary and contract calculations must use an explicitly governed exact numeric representation; binary floating-point must not silently determine financial outcomes where exact precision is required.
 - Boundary timestamps must be UTC-aware and their ordering semantics explicit.
+- Time access must have an explicit clock boundary separating UTC wall-clock timestamps from monotonic elapsed-time measurement. Safety-critical freshness, timeout, signing-window, and clock-skew policies must be validated configuration; unknown or excessive skew must fail closed where it can affect financial correctness or authorization.
 - Units, quote/base denomination, settlement denomination, quantity, price, multiplier, and precision must be explicit at financial boundaries.
 
 ### Configuration and secrets
@@ -159,7 +160,16 @@ The following are architectural safety requirements and must have an explicit ow
 - Tests and fixtures must use non-sensitive synthetic values and must never embed real credentials or production secrets.
 - Credentials, API keys, signing material, and secrets must not be hard-coded, committed, logged, or exposed through normal diagnostics.
 - Configuration must fail closed when a required safety-critical value is missing, malformed, or contradictory.
+- Every safety-critical configuration value must have explicit provenance/source, schema/version semantics, validation status, and effective lifecycle; untracked or ambiguously sourced configuration must not silently authorize execution.
 - Configuration must not silently change Futures/Spot scope, risk policy, exchange identity, or execution authority.
+
+### Order lifecycle, concurrency, recovery, and reconciliation
+- Every executable intent must carry an immutable, unique idempotency identity with an explicitly defined uniqueness scope and replay/duplicate semantics. Exchange-native client-order identifiers must be used where supported, while internal deduplication remains mandatory regardless of exchange capability.
+- Live exchange-confirmed order and position state is the authoritative source for actual external account state. Local intent/state is evidence and working state until externally confirmed; local state must never be promoted to financial truth merely because an exchange response is missing or ambiguous.
+- Unknown order, fill, position, balance, or account state must block new execution for the affected scope until authoritative reconciliation resolves the uncertainty.
+- Concurrent order/position transitions must be serialized or protected by an explicit version/concurrency invariant so stale local state cannot create duplicate, conflicting, or out-of-order financial mutations.
+- After process restart, failover, reconnect, or loss of local state, execution authority must remain disabled until required account/order/position reconciliation completes successfully.
+- A scoped/global trading halt (kill switch/circuit breaker) must exist at the execution-authority boundary. When active, no new executable order may be submitted; activation and release must be auditable and fail closed when the halt state is unknown.
 
 ### Order lifecycle and reconciliation
 - Every executable order must have a traceable validated execution intent and risk decision.
@@ -167,6 +177,7 @@ The following are architectural safety requirements and must have an explicit ow
 - Unknown order/position state must never be converted into a guessed success state.
 - Reconciliation must detect and surface divergence between local and exchange state; it must not silently overwrite contradictory financial facts.
 - Audit records must preserve enough immutable evidence to reconstruct the decision, risk validation, execution intent, order result, and reconciliation outcome.
+- Audit evidence must be append-only/tamper-evident at the architecture boundary, with stable event identity and causal correlation sufficient to reconstruct the lifecycle without relying on mutable operational logs.
 
 ### Observability and failure reporting
 - Critical decisions and failures must be observable without leaking secrets or sensitive credentials.
@@ -177,6 +188,7 @@ The following are architectural safety requirements and must have an explicit ow
 - External input and exchange responses are untrusted until validated at the appropriate boundary.
 - Retries/timeouts/circuit-breaking may not convert an unknown financial state into success.
 - Security controls, dependency integrity, and supply-chain verification are release requirements, not optional hardening.
+- Release artifacts must be traceable to an immutable source revision and verified dependency/build provenance; release verification must account for dependency integrity, artifact identity, and the applicable configuration schema/version.
 
 ## 9. Quality invariants
 
