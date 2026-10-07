@@ -71,3 +71,6 @@ If a future change proposes different Linear/Inverse multiplier meaning, differe
 ## Phase 1 multiplier closure
 
 The multiplier/contract-specification implementation is a closed implementation of the approved architecture baseline and is evidenced by same-SHA CI. The Phase 1 cursor now advances to settlement asset and settlement semantics. Any future semantic change to multiplier meaning remains subject to the ADR process.
+\n## Phase 1 settlement closure rule
+
+Settlement asset and settlement semantics are an approved implementation of the existing Phase 1 contract baseline, not an architecture change. Any proposal to redefine settlement denomination, conversion direction, ownership, dependency direction, or fail-closed semantics must use the ADR process before implementation.
