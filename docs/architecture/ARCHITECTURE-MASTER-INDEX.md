@@ -111,6 +111,31 @@ Before implementation of any new capability, explicitly check for ownership and 
 - phase/gate evidence and same-SHA verification.
 Anything critical that lacks an owner, contract, enforcement path, or failure semantics is an architecture gap and blocks the affected phase.
 
+## 10.1 Phase 1 — Domain Contract Baseline
+
+Phase 1 is the first authorized implementation phase. Its contract set is the canonical foundation for every later layer and must be completed before Phase 2 begins.
+
+The minimum Futures domain contract set is:
+
+- instrument identity and canonical Futures symbol semantics;
+- contract family and explicit Linear/Inverse applicability;
+- multiplier and contract specification;
+- settlement asset and settlement semantics;
+- margin asset and margin semantics;
+- leverage vocabulary and contract-level constraints;
+- position side and position mode;
+- price, quantity, monetary units, denomination, precision, and rounding semantics;
+- funding-rate value, interval, and funding calculation semantics;
+- realized PnL and unrealized PnL;
+- exposure and position valuation semantics;
+- liquidation price and liquidation constraints;
+- Futures accounting and settlement accounting;
+- validation status, provenance/freshness where applicable, and explicit failure semantics.
+
+For every contract, the implementation unit protocol is mandatory: Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers.
+
+Phase 1 is complete only when every required contract has a production implementation boundary, meaningful contract tests, and current same-SHA evidence. No Phase 2+ implementation may be used to conceal an incomplete Phase 1 contract.
+
 ## 11. Current project control
 The current project state is Phase 1 — Domain Contracts. Phase 0 — Architecture Baseline / Governance Final Audit is CLOSED, and Phase 1 is authorized. Phase 2+ remains blocked until each preceding phase exit criteria is evidenced.
 The next action is always the first incomplete authorized item — never a redesign and never a downstream implementation.
