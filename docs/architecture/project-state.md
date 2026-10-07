@@ -20,8 +20,8 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current phase: Phase 1 — Domain Contracts
 - Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
-- Current HEAD: bd7f1e4b1e42d81fb594cfe456fffe02be75f559
-- Last verified SHA: 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca (current HEAD changes remain unverified)
+- Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
+- Last verified SHA: must be established from current GitHub Actions same-SHA evidence; this document is not the evidence source.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
 - Active work: Phase 1 Domain Contracts
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
@@ -42,7 +42,7 @@ Whenever this file is updated, record:
 - forbidden actions
 - open architecture questions
 - open architecture questions: None identified in the bounded Phase 0 deep audit.
-- evidence references: bounded Phase 0 closure control applied on 3efc4b90f49790db65e07387d37fa7ed52a11f9a; deep-audit baseline verified through 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
+- evidence references: bounded Phase 0 closure control applied on 3efc4b90f49790db65e07387d37fa7ed52a11f9a; deep-audit baseline verified through 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca; current CI evidence must be resolved from the current main SHA; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
 ## Phase 0 exit criteria
