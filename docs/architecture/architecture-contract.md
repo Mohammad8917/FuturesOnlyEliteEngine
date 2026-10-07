@@ -53,6 +53,9 @@ Before production implementation of any capability, the architecture must explic
 - idempotency and unknown-state handling where external state changes are involved;
 - observability, operational error classification, and notification semantics;
 - resilience rules for timeout, retry, partial failure, duplicate delivery, and contradictory external state;
+- authoritative external-state semantics, idempotency identity, concurrency/versioning, restart/recovery reconciliation, and scoped/global execution-halt behavior;
+- trusted clock/freshness/skew semantics and safety-critical configuration provenance/versioning;
+- append-only/tamper-evident audit evidence and release artifact/source/dependency provenance;
 - architecture-test and CI-enforcement expectations;
 - phase/gate entry and exit evidence requirements;
 - migration, rollback, and compatibility impact for approved architecture changes.
