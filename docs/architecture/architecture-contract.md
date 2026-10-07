@@ -1,5 +1,7 @@
 # Elite Architecture Contract
 
+**Navigation:** Start with `docs/architecture/ARCHITECTURE-MASTER-INDEX.md` for the single project path. This contract remains authoritative for contract and quality requirements within the source-of-truth hierarchy.
+
 ## Product identity
 
 FuturesOnlyEliteEngine is a production-grade, Futures-only professional trading engine for CRYPTO Futures, FOREX Futures, GOLD Futures, Linear Futures, Inverse Futures, and 15 independent exchange adapters.
@@ -91,6 +93,10 @@ The required proof chain is:
 ARCHITECTURE RULE → CONTRACT → PRODUCTION IMPLEMENTATION → TEST → CI ENFORCEMENT → SAME-SHA EVIDENCE
 
 For architecture-only governance work, production implementation may legitimately remain pending; in that case the missing enforcement stage must be explicitly recorded as a future phase rather than implied to be complete.
+
+## Build-order versus runtime-order rule
+
+The phase/build order and the runtime pipeline are intentionally different concepts. The build order controls dependency-safe implementation; the runtime pipeline controls production execution flow. No document may infer that Phase order changes runtime ownership or that runtime ordering permits skipping a build phase.
 
 ## Implementation sequence
 
