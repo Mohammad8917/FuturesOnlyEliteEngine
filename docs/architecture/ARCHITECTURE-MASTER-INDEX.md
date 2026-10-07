@@ -179,7 +179,7 @@ Implementation boundary: `contracts/futures/contract_specification.py`. The cont
 
 ## 10.4 Phase 1 execution cursor — settlement
 
-The multiplier and contract-specification unit is now evidenced complete on main. The first incomplete authorized Phase 1 unit is **settlement asset and settlement semantics**.
+Historical closure: the multiplier and contract-specification unit and the settlement asset/settlement semantics unit are evidenced complete on main. The current first incomplete authorized Phase 1 unit is **margin asset and margin semantics**.
 
 Required path remains:
 Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
