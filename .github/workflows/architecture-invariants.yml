@@ -13,6 +13,7 @@ on:
       - "tests/architecture/test_architecture_contract.py"
       - "tests/architecture/test_dependency_rules_contract.py"
       - "tests/architecture/test_futures_responsibility_map_contract.py"
+      - "tests/architecture/test_phase_control_consistency.py"
       - ".github/workflows/architecture-invariants.yml"
   pull_request:
     paths:
@@ -48,4 +49,4 @@ jobs:
         run: python -m pip install --disable-pip-version-check --no-input pytest
 
       - name: Run authoritative architecture contract tests
-        run: python -m pytest -q tests/architecture/test_architecture_invariants_contract.py tests/architecture/test_architecture_contract.py tests/architecture/test_dependency_rules_contract.py tests/architecture/test_futures_responsibility_map_contract.py
+        run: python -m pytest -q tests/architecture/test_architecture_invariants_contract.py tests/architecture/test_architecture_contract.py tests/architecture/test_dependency_rules_contract.py tests/architecture/test_futures_responsibility_map_contract.py tests/architecture/test_phase_control_consistency.py
