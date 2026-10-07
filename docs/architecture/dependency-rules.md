@@ -55,6 +55,22 @@ Notification code must not authorize, retry into, or represent execution success
 
 Configuration code must not silently change Futures/Spot scope, risk policy, exchange identity, or execution authority.
 
+## Configuration, hardcoding, and secret boundary
+
+Configuration/security is the sole owner of loading, validating, and providing operational configuration and secret material.
+
+Forbidden:
+- hard-coded credentials, API keys, tokens, passwords, private/signing keys, secret connection strings, or real account identifiers;
+- hard-coded environment/deployment/account-specific operational settings inside domain, application, risk, execution, exchange adapters, tests, or documentation;
+- source-code defaults that silently substitute for missing safety-critical configuration;
+- tests or fixtures containing production secrets or realistic credential material.
+
+Allowed only when genuinely immutable:
+- canonical domain vocabulary;
+- true protocol/contract invariants whose value cannot vary by environment, account, deployment, or exchange configuration.
+
+Architecture/security tests and CI must enforce this boundary. Configuration may provide values to authorized consumers, but it must not grant execution authority merely by being present.
+
 ## Exchange isolation
 
 Exchange-specific identifiers and semantics stop at the infrastructure boundary.
