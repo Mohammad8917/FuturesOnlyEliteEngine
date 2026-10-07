@@ -292,9 +292,10 @@ A new AI/session must:
 4. read futures-responsibility-map.md
 5. read dependency-rules.md
 6. read master-roadmap-and-governance.md
-7. inspect current HEAD
-8. identify the current authorized phase/gate
-9. continue the first authorized incomplete action
+7. read docs/architecture/adr/README.md
+8. inspect current HEAD
+9. identify the current authorized phase/gate
+10. continue the first authorized incomplete action
 
 A new AI must:
 
