@@ -10,6 +10,8 @@ on:
     paths:
       - "docs/architecture/architecture-invariants.md"
       - "tests/architecture/test_architecture_invariants_contract.py"
+      - "docs/architecture/dependency-rules.md"
+      - "tests/architecture/test_dependency_rules_contract.py"
       - ".github/workflows/architecture-invariants.yml"
   workflow_dispatch:
 
