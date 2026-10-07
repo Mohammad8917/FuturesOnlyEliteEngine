@@ -165,7 +165,7 @@ The price quote asset must equal the canonical Futures symbol quote asset. Margi
 
 ## Phase 1 cursor — settlement
 
-The multiplier/contract-specification contract is complete and evidenced on main. The next incomplete Phase 1 contract is margin asset and margin semantics. It must explicitly define denomination, settlement authority, timing, conversion, Linear/Inverse applicability, market applicability, precision/UTC requirements where applicable, and fail-closed behavior before production implementation.
+The multiplier/contract-specification contract is complete and evidenced on main. The next incomplete Phase 1 contract is margin asset and margin semantics. It must explicitly define margin denomination, margin-asset ownership, source denomination, conversion semantics, Linear/Inverse applicability, market applicability, precision/UTC requirements where applicable, and fail-closed behavior before production implementation.
 \n## Phase 1 settlement asset / settlement semantics
 
 Settlement is an explicit domain contract, not an exchange-side guess.
