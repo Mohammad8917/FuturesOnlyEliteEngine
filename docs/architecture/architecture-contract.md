@@ -146,3 +146,19 @@ The phase/build order and the runtime pipeline are intentionally different conce
 12. Release verification
 
 No production implementation should precede a clearly owned contract.
+
+## Multiplier / contract-specification contract
+
+The canonical Phase 1 multiplier contract uses `CONTRACTS` as the quantity unit and exact finite positive Decimal arithmetic.
+
+Linear Futures:
+- multiplier = base-asset units per contract;
+- base exposure = quantity × multiplier;
+- quote notional = quantity × multiplier × price.
+
+Inverse Futures:
+- multiplier = quote-price-denomination units per contract;
+- quote notional = quantity × multiplier;
+- base exposure = (quantity × multiplier) ÷ price.
+
+The price quote asset must equal the canonical Futures symbol quote asset. Margin and settlement semantics are separate contracts and must not be inferred from multiplier data. Invalid, zero, negative, non-finite, contradictory, ambiguous, or unsupported specifications fail closed. Exchange-specific lot/tick/precision metadata is mapped later and cannot redefine this domain meaning.
