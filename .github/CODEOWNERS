@@ -1,0 +1,5 @@
+* @Mohammad8917
+
+# Architecture and governance require explicit owner review.
+docs/architecture/** @Mohammad8917
+.github/CODEOWNERS @Mohammad8917
