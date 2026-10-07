@@ -182,6 +182,28 @@ Required coverage includes:
 Exit condition:
 - every contract has owner, inputs, outputs, units, invariants, failure behavior, and applicability.
 
+### Phase 1.1 — Canonical domain contract baseline
+
+The Phase 1 contract baseline is explicit and must not be inferred from implementation:
+
+- instrument identity;
+- canonical Futures symbol semantics;
+- contract family/type, including explicit Linear/Inverse applicability;
+- multiplier and contract specification;
+- settlement asset and settlement semantics;
+- margin asset and margin semantics;
+- leverage vocabulary and contract-level constraints;
+- position side and position mode;
+- price, quantity, monetary units, denomination, precision, and rounding;
+- funding-rate value, interval, and funding calculation;
+- realized PnL and unrealized PnL;
+- exposure and position valuation;
+- liquidation price and liquidation constraints;
+- Futures accounting and settlement accounting;
+- validation status, provenance/freshness where applicable, and explicit failure semantics.
+
+Each contract must satisfy the mandatory implementation unit protocol and remain free of network, transport, persistence, or exchange-specific behavior.
+
 ### Phase 2 — Application contracts and ports
 Define use-case orchestration and stable ports without embedding exchange transport.
 
