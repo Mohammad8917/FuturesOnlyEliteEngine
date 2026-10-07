@@ -441,3 +441,10 @@ The margin contract is now frozen for this implementation unit:
 Production boundary: contracts/futures/margin.py.
 Test boundary: tests/contracts/test_margin.py.
 CI boundary: .github/workflows/phase1-domain-contracts.yml.
+
+
+## 8.1.6 Phase 1 leverage vocabulary / contract-level constraints cursor
+
+The first incomplete leverage unit is now authorized. It must explicitly define leverage representation, admissible bounds, ownership, Linear/Inverse applicability, CRYPTO/FOREX/GOLD applicability, configuration provenance, validation, and fail-closed behavior.
+
+Leverage must never be silently inferred from exchange defaults, margin amount, notional, or account state. This unit does not calculate initial margin, maintenance margin, liquidation, or risk decisions; those remain separately owned contracts.
