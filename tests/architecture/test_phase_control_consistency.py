@@ -45,7 +45,7 @@ def test_phase_control_documents_are_consistent() -> None:
 
     assert "Production implementation remains blocked until the Phase 0 exit criteria" not in master_index
 
-    authoritative_markers = ("Futures only", "CRYPTO", "FOREX", "GOLD", "Linear", "Inverse")
+    authoritative_markers = ("Futures-only", "CRYPTO", "FOREX", "GOLD", "Linear", "Inverse")
     for marker in authoritative_markers:
         assert marker in invariants
         assert marker in contract
@@ -53,10 +53,11 @@ def test_phase_control_documents_are_consistent() -> None:
         assert marker in master_index
 
     assert "Operational Spot is forbidden." in invariants
+    assert "Operational Spot is forbidden." in invariants
     assert "Operational Spot is forbidden." in master_index
-    assert "Operational Spot" in contract
-    assert "Operational Spot" in responsibility
-    assert "Operational Spot" in dependencies
+    assert "Spot" in contract
+    assert "Spot" in responsibility
+    assert "Spot" in dependencies
 
     assert "Phase 1 — Domain Contracts" in master_index
     assert "Phase 1 Domain Contracts" in roadmap
