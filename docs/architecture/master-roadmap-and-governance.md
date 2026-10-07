@@ -326,6 +326,10 @@ Especially prohibited:
 
 Prefer explicit semantic boundaries over premature abstraction.
 
+### Security/hardcoding enforcement
+
+The security baseline explicitly forbids hard-coded sensitive information and environment/deployment/account/exchange-specific operational configuration. Safety-critical configuration must be validated and fail closed. G06 and the architecture/security test suite must enforce this boundary without relying on manual review alone.
+
 ## 10. Testing strategy
 
 Tests are part of the architecture, not a final cosmetic layer.
