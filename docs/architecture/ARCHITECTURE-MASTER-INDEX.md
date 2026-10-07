@@ -203,7 +203,7 @@ The production boundary is `contracts/futures/settlement.py`. Closure requires m
 
 Settlement asset and settlement semantics are now evidenced complete on main SHA `164dcb97c38271ab29f79f8e9b8068bcc8a55234`.
 
-**Current cursor:** margin asset and margin semantics.
+Historical cursor: margin asset and margin semantics (closed).
 
 Required path remains:
 Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
