@@ -190,6 +190,15 @@ The following are architectural safety requirements and must have an explicit ow
 - Security controls, dependency integrity, and supply-chain verification are release requirements, not optional hardening.
 - Release artifacts must be traceable to an immutable source revision and verified dependency/build provenance; release verification must account for dependency integrity, artifact identity, and the applicable configuration schema/version.
 
+## 8.1 Phase 1 domain-contract enforcement invariant
+
+The first incomplete Phase 1 production contract is **instrument identity and canonical Futures symbol semantics**. It is owned by the Futures domain/contracts boundary and must be implemented before multiplier, settlement, margin, leverage, PnL, liquidation, accounting, or downstream execution contracts are treated as complete.
+
+The instrument-identity contract must make the following explicit and validated: stable instrument identity; market family applicability (CRYPTO Futures, FOREX Futures, GOLD Futures); Futures-only scope; contract family (Linear or Inverse); canonical symbol representation; base/quote/settlement/margin asset semantics where applicable; exchange-independent identity versus exchange-specific symbol mapping; validity/lifecycle state; and failure semantics for unknown, ambiguous, stale, contradictory, unsupported, or Spot identifiers.
+
+No exchange adapter, application service, strategy, risk component, or execution component may redefine canonical instrument identity. Exchange-specific symbols remain infrastructure mappings to the canonical domain contract.
+
+The implementation must remain domain-safe, deterministic, explicit about Linear/Inverse applicability, and fail closed on ambiguity. Tests must prove canonicalization and rejection of Spot, ambiguous, malformed, unsupported, or contradictory identities.
 ## 9. Quality invariants
 
 The official quality floor is immutable by default:
