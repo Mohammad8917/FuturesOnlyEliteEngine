@@ -138,7 +138,7 @@ Phase 1 is complete only when every required contract has a production implement
 
 ## 10.2 Phase 1 execution cursor
 
-**Current cursor:** margin asset and margin semantics.
+**Current cursor:** leverage vocabulary and contract-level constraints.
 
 The instrument identity and canonical Futures symbol unit is evidenced complete on the current main lineage. The next incomplete authorized Phase 1 unit must be completed through the full implementation-unit path:
 
@@ -179,7 +179,7 @@ Implementation boundary: `contracts/futures/contract_specification.py`. The cont
 
 ## 10.4 Phase 1 execution cursor — settlement
 
-Historical closure: the multiplier and contract-specification unit and the settlement asset/settlement semantics unit are evidenced complete on main. The current first incomplete authorized Phase 1 unit is **margin asset and margin semantics**.
+Historical closure: the multiplier, settlement, and margin units are evidenced complete on main. The current first incomplete authorized Phase 1 unit is **leverage vocabulary and contract-level constraints**.
 
 Required path remains:
 Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
