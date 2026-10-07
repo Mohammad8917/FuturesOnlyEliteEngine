@@ -199,6 +199,8 @@ Implement and validate:
 - position sizing;
 - account limits;
 - fail-closed decisions.
+- execution-halt requests/circuit-breaker conditions and explicit handoff to the execution authority boundary;
+- validated time/freshness/skew inputs and safety-critical configuration provenance.
 
 Exit condition:
 - invalid/unknown/stale/contradictory critical state cannot produce an executable decision.
@@ -211,6 +213,11 @@ Define and implement:
 - order model;
 - reconciliation;
 - audit.
+- idempotency identity and duplicate-submission protection;
+- concurrency/versioning for order and position transitions;
+- restart/failover recovery with mandatory reconciliation before execution resumes;
+- scoped/global execution halt semantics;
+- append-only/tamper-evident audit evidence and release provenance requirements.
 
 Exit condition:
 - no unvalidated intent can become an order.
