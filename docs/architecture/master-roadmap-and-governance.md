@@ -445,3 +445,9 @@ The multiplier unit is governed by the following fixed contract before downstrea
 9. exchange-specific lot/tick/precision metadata cannot redefine domain semantics.
 
 Gate exit requires production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence. No Phase 1 cursor advance occurs before all four are present.
+
+## Phase 1 cursor transition
+
+Multiplier and contract specification has exited its gate with production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence on main SHA `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`.
+
+The next authorized Phase 1 unit is **settlement asset and settlement semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
