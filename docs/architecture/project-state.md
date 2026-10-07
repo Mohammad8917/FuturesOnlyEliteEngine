@@ -11,6 +11,10 @@ This is project state, not the architectural contract. Architectural rules remai
 - Repository: Mohammad8917/FuturesOnlyEliteEngine
 - Default branch: main
 - Product: Elite Futures-Only Professional Trading Engine
+- Python runtime: 3.13
+- Supported deployment: Windows Server, Linux Server, Windows Home/Desktop
+- Supported markets: CRYPTO Futures, FOREX Futures, GOLD Futures — 100% Futures
+- Operational capabilities: automated Futures trading + Telegram/email signal and operational notifications
 - Architecture status: FROZEN BY DEFAULT
 - Operational Spot: FORBIDDEN
 - Current phase: Phase 0 — Architecture Baseline / Governance Completion
