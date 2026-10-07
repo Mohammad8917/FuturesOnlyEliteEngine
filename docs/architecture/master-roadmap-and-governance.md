@@ -100,6 +100,42 @@ Phase 0 is not considered complete merely because the initial documents exist. T
 
 Phase 1 and all production implementation remain blocked until this baseline has a recorded exit decision in `project-state.md`.
 
+
+
+## 5.1 Phase 0 closure rule — prevent governance cycles
+
+Phase 0 has a finite closure point. The purpose of the final audit is to establish an implementation-safe architecture, not to make governance documents indefinitely more complete.
+
+The final audit is limited to these findings:
+
+1. architecture contradiction;
+2. unclear critical owner;
+3. unclear or contradictory dependency direction;
+4. missing critical contract;
+5. dangerous or unowned failure/fallback behavior;
+6. phase/gate without a usable entry or exit criterion;
+7. critical requirement without an enforcement path;
+8. inconsistent terminology that can change implementation meaning;
+9. contradictory upgrade/runtime path;
+10. critical missing requirement that would force architectural redesign later.
+
+Every finding must be classified before action:
+
+- **FIX NOW** — a genuine Phase 0 architecture gap that must be closed before Phase 1;
+- **DEFER TO PHASE N** — a valid requirement owned by a later implementation phase; record it and do not reopen Phase 0 for it;
+- **NOT AN ARCHITECTURE GAP** — implementation detail, local preference, optimization, or normal later-phase engineering; do not reopen governance.
+
+Once the Phase 0 exit criteria are satisfied and the exit decision is recorded in project-state.md, Phase 0 is CLOSED. No new governance document, wording refinement, or completeness exercise may reopen Phase 0 by itself.
+
+If a later phase discovers a concern, classify it first:
+- architecture gap → stop the affected work and perform controlled architecture correction;
+- implementation detail → continue the current phase;
+- optimization/preference → do not reopen governance.
+
+This rule prevents an Audit → documentation change → re-audit loop from becoming an infinite project cycle.
+
+The target of Phase 0 is **sufficient architectural completeness to implement without fundamental redesign**, not exhaustive pre-definition of every future implementation detail.
+
 ## 6. Permanent execution order
 
 The project proceeds through these phases in order.
