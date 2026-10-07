@@ -23,9 +23,9 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
 - Last verified SHA: must be established from current GitHub Actions same-SHA evidence; this document is not the evidence source.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — the canonical contract baseline is now explicitly aligned across the master index, architecture contract, roadmap, and responsibility map; production domain contracts remain incomplete.
+- Active work: Phase 1 Domain Contracts — instrument identity and canonical Futures symbol semantics are implemented and evidenced; the multiplier and contract-specification unit is now the first incomplete contract.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: Implement the first incomplete Phase 1 contract unit from the canonical baseline, beginning with instrument identity/contract specification; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
+- Next authorized action: Implement the multiplier and contract-specification unit from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -42,7 +42,7 @@ Whenever this file is updated, record:
 - forbidden actions
 - open architecture questions
 - open architecture questions: None identified in the bounded Phase 0 deep audit.
-- evidence references: bounded Phase 0 closure control applied on 3efc4b90f49790db65e07387d37fa7ed52a11f9a; deep-audit baseline verified through 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca; current CI evidence must be resolved from the current main SHA; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
+- evidence references: Phase 0 closure control applied on 3efc4b90f49790db65e07387d37fa7ed52a11f9a; deep-audit baseline verified through 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca; instrument identity implementation and contract CI evidenced on main SHA 53bf816e49d5025f0ca6df2a671d590fb3770e6a; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
 ## Phase 0 exit criteria
