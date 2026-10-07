@@ -5,6 +5,7 @@ from .instrument import (
     ContractFamily,
     FuturesInstrumentIdentity,
     InstrumentStatus,
+    InstrumentValidationError,
     Market,
 )
 
@@ -13,5 +14,6 @@ __all__ = [
     "ContractFamily",
     "FuturesInstrumentIdentity",
     "InstrumentStatus",
+    "InstrumentValidationError",
     "Market",
 ]
