@@ -170,3 +170,21 @@ Any formula involving multiplier, settlement asset, quote/base denomination, mar
 ## Review gate
 
 No Futures implementation is accepted until its owner, inputs, outputs, forbidden dependencies, Linear/Inverse applicability, market applicability, failure behavior, and test boundary are explicit.
+
+## Multiplier / contract-specification ownership
+
+**Primary owner:** Futures domain/contract boundary.
+
+**Inputs:** canonical Futures instrument identity, market, contract family, explicit quantity unit, exact multiplier, and explicit price quote denomination.
+
+**Outputs:** immutable contract specification plus deterministic quote-notional and base-exposure calculations.
+
+**Units:** quantity in CONTRACTS; Linear multiplier in base units/contract; Inverse multiplier in quote-price-denomination units/contract; price in canonical quote denomination; exact Decimal arithmetic with no rounding at this boundary.
+
+**Allowed dependencies:** domain-safe Futures vocabulary and deterministic standard-library numeric facilities.
+
+**Forbidden dependencies:** exchange SDKs, network, persistence, runtime configuration, clocks, notifications, hidden defaults, and implicit margin/settlement policy.
+
+**Failure semantics:** zero, negative, non-finite, contradictory, ambiguous, unsupported, or invalid inputs fail closed.
+
+**Downstream consumers:** later settlement, margin, leverage, exposure, PnL, risk, and execution contracts consume the explicit specification; none may reinterpret its multiplier meaning.

@@ -119,3 +119,22 @@ Linear/Inverse applicability and market applicability must be explicit. Unknown,
 - notification/observability cannot authorize execution;
 - configuration cannot silently alter execution authority;
 - critical dependencies respect the single-owner responsibility map.
+
+## Multiplier / contract-specification dependency boundary
+
+The multiplier and contract-specification contract is owned by the Futures domain/contract boundary. It may depend only on domain-safe vocabulary and deterministic standard-library numeric facilities.
+
+Allowed:
+- canonical Futures instrument identity;
+- explicit market and Linear/Inverse vocabulary;
+- exact Decimal arithmetic;
+- immutable value objects.
+
+Forbidden:
+- exchange SDKs or transports;
+- network, persistence, runtime configuration, clocks, or notifications;
+- exchange-specific defaults;
+- binary-float financial calculations;
+- implicit margin, leverage, settlement, or precision policy.
+
+Infrastructure maps exchange metadata into the canonical specification. It must reject incomplete or contradictory metadata rather than redefine the multiplier semantics.

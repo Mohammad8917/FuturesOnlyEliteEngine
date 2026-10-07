@@ -376,3 +376,24 @@ Root Cause > Symptom Patch
 Real Implementation > Placeholder
 Real Evidence > Claim
 Fail Closed > Unsafe Continuation
+
+## 8.1.1 Multiplier / contract-specification semantic lock
+
+The Phase 1 multiplier contract is now frozen as the canonical domain boundary for this unit:
+
+- quantity unit at this boundary is explicit `CONTRACTS`;
+- multiplier/contract size is an exact positive finite `Decimal`;
+- Linear multiplier means base-asset units per contract;
+- Inverse multiplier means quote-price-denomination units per contract;
+- Linear quote notional = quantity × multiplier × price;
+- Inverse quote notional = quantity × multiplier;
+- Linear base exposure = quantity × multiplier;
+- Inverse base exposure = (quantity × multiplier) ÷ price;
+- price is explicitly denominated in the canonical symbol quote asset;
+- multiplier, quantity, and price must be positive and finite;
+- zero, negative, non-finite, contradictory, or unsupported specifications fail closed;
+- no binary floating-point representation may determine this contract's financial result;
+- this contract does not infer margin or settlement semantics; those remain explicit downstream Phase 1 contracts;
+- exchange lot size, tick size, and exchange-specific precision are not silently inferred here.
+
+The canonical production contract is `contracts/futures/contract_specification.py`. Exchange adapters may map source metadata into this contract but may not redefine its financial meaning.

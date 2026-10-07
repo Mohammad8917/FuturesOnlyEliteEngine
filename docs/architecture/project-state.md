@@ -99,3 +99,19 @@ The final audit is explicitly bounded. Findings must be classified as FIX NOW, D
 ## Security requirement added during Phase 0 final audit
 
 The final audit identified and closed two classes of genuine Phase 0 gaps: (1) explicit anti-hardcoding/configuration-security governance; and (2) explicit financial-state authority, idempotency, concurrency, restart/recovery, execution-halt, trusted-clock/skew, audit-integrity, configuration-provenance, and release-provenance requirements. These are now represented in the authoritative architecture path. Production enforcement, implementation, tests, and security scanning remain future-phase/G06 work and are not claimed complete by these documentation changes.
+
+## Phase 1 multiplier / contract-specification evidence
+
+The active cursor remains **multiplier and contract specification** until same-SHA CI evidence is established on the final merge SHA.
+
+The canonical semantic lock is:
+- quantity unit = CONTRACTS;
+- exact finite positive Decimal multiplier/contract size;
+- Linear = base units per contract, quote notional = quantity × multiplier × price;
+- Inverse = quote-price-denomination units per contract, quote notional = quantity × multiplier;
+- base exposure is explicit and family-specific;
+- quote denomination is bound to the canonical symbol;
+- invalid, zero, negative, non-finite, contradictory, ambiguous, or unsupported specifications fail closed;
+- margin/settlement are not inferred by this unit.
+
+No downstream Phase 1 cursor advance is authorized until production implementation, contract tests, CI, and same-SHA evidence are green.

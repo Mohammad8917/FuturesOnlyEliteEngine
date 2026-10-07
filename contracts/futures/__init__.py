@@ -1,5 +1,10 @@
 """Canonical Futures domain boundary contracts."""
 
+from .contract_specification import (
+    ContractSpecificationValidationError,
+    FuturesContractSpecification,
+    QuantityUnit,
+)
 from .instrument import (
     CanonicalFuturesSymbol,
     ContractFamily,
@@ -12,8 +17,11 @@ from .instrument import (
 __all__ = [
     "CanonicalFuturesSymbol",
     "ContractFamily",
+    "ContractSpecificationValidationError",
+    "FuturesContractSpecification",
     "FuturesInstrumentIdentity",
     "InstrumentStatus",
     "InstrumentValidationError",
     "Market",
+    "QuantityUnit",
 ]

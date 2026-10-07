@@ -429,3 +429,19 @@ No silent architecture drift is permitted.
 The target is not merely a green repository.
 
 The target is an evidence-backed, production-grade, Futures-only professional trading engine whose architecture remains understandable, enforceable, testable, auditable, and maintainable even when the implementing AI or engineering team changes.
+
+## Phase 1 multiplier / contract-specification gate
+
+The multiplier unit is governed by the following fixed contract before downstream Phase 1 work:
+
+1. quantity is explicitly CONTRACTS;
+2. multiplier/contract size is an exact finite positive Decimal;
+3. Linear multiplier is base units per contract and notional uses quantity × multiplier × price;
+4. Inverse multiplier is quote-price-denomination units per contract and notional uses quantity × multiplier;
+5. base exposure is explicitly family-specific;
+6. price denomination is bound to the canonical quote asset;
+7. invalid/zero/negative/non-finite/contradictory/ambiguous/unsupported specifications fail closed;
+8. margin and settlement are separate contracts;
+9. exchange-specific lot/tick/precision metadata cannot redefine domain semantics.
+
+Gate exit requires production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence. No Phase 1 cursor advance occurs before all four are present.

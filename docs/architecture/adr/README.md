@@ -61,3 +61,9 @@ No AI, agent, engineer, CI job, or implementation pressure may convert a propose
 Required path:
 
 PROPOSAL → WARNING → IMPACT ANALYSIS → ADR → EXPLICIT RECONFIRMATION → DOCUMENT UPDATE → IMPLEMENTATION → TEST → CI → SAME-SHA VERIFICATION
+
+## Phase 1 implementation note — multiplier contract
+
+The multiplier/contract-specification implementation does not change an architectural invariant or ownership boundary; it implements the already-approved Phase 1 contract. Its fixed semantic baseline is documented in the authoritative architecture documents and enforced by production contract tests and CI.
+
+If a future change proposes different Linear/Inverse multiplier meaning, different financial formulas, different ownership, or different dependency direction, it becomes an Architecture Change Candidate and must use the ADR process above.

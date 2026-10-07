@@ -160,3 +160,19 @@ Audit findings are classified as **FIX NOW**, **DEFER TO PHASE N**, or **NOT AN 
 After all Phase 0 exit criteria are evidenced on the current HEAD and the exit decision is recorded in `project-state.md`, Phase 0 is **CLOSED**. Do not reopen it merely for additional documentation completeness. A later-phase concern reopens architecture only when it is a genuine architecture gap that would invalidate the current contract; otherwise the current phase continues.
 
 This is the control against an infinite audit → document → re-audit cycle.
+
+## 10.3 Phase 1 multiplier / contract-specification lock
+
+The first Phase 1 implementation unit after instrument identity is now contractually fixed:
+
+- quantity unit: `CONTRACTS`;
+- multiplier/contract size: exact positive finite Decimal;
+- Linear: multiplier = base units per contract; notional = quantity × multiplier × price;
+- Inverse: multiplier = quote-price-denomination units per contract; notional = quantity × multiplier;
+- base exposure is explicit and family-specific;
+- price denomination must equal the canonical symbol quote asset;
+- zero, negative, non-finite, contradictory, ambiguous, or unsupported values fail closed;
+- margin and settlement are not inferred by this contract;
+- exchange-specific lot/tick/precision rules remain outside this domain contract.
+
+Implementation boundary: `contracts/futures/contract_specification.py`. The contract closes only after production implementation, meaningful tests, CI enforcement, and same-SHA evidence.
