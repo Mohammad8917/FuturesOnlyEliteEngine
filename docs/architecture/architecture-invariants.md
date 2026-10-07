@@ -397,3 +397,9 @@ The Phase 1 multiplier contract is now frozen as the canonical domain boundary f
 - exchange lot size, tick size, and exchange-specific precision are not silently inferred here.
 
 The canonical production contract is `contracts/futures/contract_specification.py`. Exchange adapters may map source metadata into this contract but may not redefine its financial meaning.
+
+## 8.1.2 Phase 1 cursor after multiplier closure
+
+The multiplier and contract-specification unit is **complete** on the verified main lineage: production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence all passed.
+
+The next incomplete Phase 1 production contract is **settlement asset and settlement semantics**. It must preserve the explicit multiplier boundary and independently define settlement denomination, settlement authority, settlement timing, conversion semantics, and fail-closed behavior before implementation.
