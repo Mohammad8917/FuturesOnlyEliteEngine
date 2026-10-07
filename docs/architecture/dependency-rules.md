@@ -159,3 +159,6 @@ Forbidden:
 - guessed settlement denomination.
 
 Infrastructure may supply a validated source asset and externally obtained conversion rate through a later port, but the domain contract must reject missing or contradictory values.
+\n## Phase 1 cursor after settlement closure
+
+Settlement semantics are closed with same-SHA evidence on main. The next dependency-boundary unit is margin asset and margin semantics. Margin must consume explicit instrument and settlement contracts without redefining their meaning.
