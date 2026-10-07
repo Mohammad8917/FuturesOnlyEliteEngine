@@ -87,7 +87,7 @@ def test_margin_contract_applies_to_all_supported_markets_and_families(
         source_asset=margin,
     )
 
-    assert spec.margin_asset == margin
+    assert spec.margin_asset == margin.upper()
     assert spec.symbol == symbol
 
 
