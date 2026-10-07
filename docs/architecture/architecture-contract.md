@@ -165,7 +165,7 @@ The price quote asset must equal the canonical Futures symbol quote asset. Margi
 
 ## Phase 1 cursor — settlement
 
-The multiplier/contract-specification contract is complete and evidenced on main. The next incomplete Phase 1 contract is margin asset and margin semantics. It must explicitly define margin denomination, margin-asset ownership, source denomination, conversion semantics, Linear/Inverse applicability, market applicability, precision/UTC requirements where applicable, and fail-closed behavior before production implementation.
+The multiplier/contract-specification and settlement contracts are complete and evidenced on main. The next incomplete Phase 1 contract is leverage vocabulary and contract-level constraints. It must explicitly define leverage representation, bounds, ownership, Linear/Inverse applicability, market applicability, precision/UTC requirements where applicable, and fail-closed behavior before production implementation.
 \n## Phase 1 settlement asset / settlement semantics
 
 Settlement is an explicit domain contract, not an exchange-side guess.
@@ -175,7 +175,7 @@ The canonical settlement asset comes from the Futures instrument identity and mu
 The settlement contract performs no network access, rate discovery, exchange selection, scheduling, persistence, account mutation, or margin inference. Those concerns belong to later application/infrastructure contracts. Missing or contradictory settlement terms fail closed.
 \n## Phase 1 cursor — margin
 
-The settlement asset/settlement semantics contract is complete and evidenced on main. The next incomplete Phase 1 contract is margin asset and margin semantics. It must explicitly define margin denomination, collateral identity, valuation units, Linear/Inverse applicability, market applicability, validation, and fail-closed behavior before production implementation.
+The margin asset/margin semantics contract is complete and evidenced on main. The next incomplete Phase 1 contract is leverage vocabulary and contract-level constraints. It must explicitly define leverage representation, contract-level constraints, ownership, Linear/Inverse applicability, market applicability, validation, and fail-closed behavior before production implementation.
 
 
 ## Phase 1 margin asset / margin semantics contract

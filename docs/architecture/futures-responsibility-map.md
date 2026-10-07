@@ -191,7 +191,7 @@ No Futures implementation is accepted until its owner, inputs, outputs, forbidde
 
 ## Phase 1 cursor — settlement ownership
 
-The multiplier/contract-specification responsibility is closed with verified production and CI evidence. The next incomplete responsibility is margin asset and margin semantics, which must receive one explicit primary owner before implementation.
+The multiplier, settlement, and margin responsibilities are closed with verified production and CI evidence. The next incomplete responsibility is leverage vocabulary and contract-level constraints, which must receive one explicit primary owner before implementation.
 \n## Settlement asset / settlement semantics ownership
 
 **Primary owner:** Futures domain/contract boundary.
@@ -215,7 +215,7 @@ The multiplier/contract-specification responsibility is closed with verified pro
 **Downstream consumers:** settlement accounting, PnL, margin, reconciliation, and execution may consume the validated settlement specification; none may redefine its denomination semantics.
 \n## Phase 1 cursor — margin ownership
 
-Settlement asset and settlement semantics are closed with verified implementation and CI evidence. The next incomplete responsibility is margin asset and margin semantics, which must receive one explicit primary owner and may consume closed settlement facts without redefining them.
+Settlement asset and margin asset/margin semantics are closed with verified implementation and CI evidence. The next incomplete responsibility is leverage vocabulary and contract-level constraints, which must receive one explicit primary owner without redefining margin or settlement semantics.
 
 
 ## Phase 1 margin asset / margin semantics ownership

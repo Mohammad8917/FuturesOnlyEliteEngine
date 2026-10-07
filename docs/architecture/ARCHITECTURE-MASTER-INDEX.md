@@ -138,7 +138,7 @@ Phase 1 is complete only when every required contract has a production implement
 
 ## 10.2 Phase 1 execution cursor
 
-**Current cursor:** margin asset and margin semantics.
+**Current cursor:** leverage vocabulary and contract-level constraints.
 
 The instrument identity and canonical Futures symbol unit is evidenced complete on the current main lineage. The next incomplete authorized Phase 1 unit must be completed through the full implementation-unit path:
 
@@ -179,7 +179,7 @@ Implementation boundary: `contracts/futures/contract_specification.py`. The cont
 
 ## 10.4 Phase 1 execution cursor — settlement
 
-Historical closure: the multiplier and contract-specification unit and the settlement asset/settlement semantics unit are evidenced complete on main. The current first incomplete authorized Phase 1 unit is **margin asset and margin semantics**.
+Historical closure: the multiplier, settlement, and margin units are evidenced complete on main. The current first incomplete authorized Phase 1 unit is **leverage vocabulary and contract-level constraints**.
 
 Required path remains:
 Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
@@ -203,7 +203,7 @@ The production boundary is `contracts/futures/settlement.py`. Closure requires m
 
 Settlement asset and settlement semantics are now evidenced complete on main SHA `164dcb97c38271ab29f79f8e9b8068bcc8a55234`.
 
-**Current cursor:** margin asset and margin semantics.
+Historical cursor: margin asset and margin semantics (closed).
 
 Required path remains:
 Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
@@ -227,3 +227,21 @@ The margin unit is explicitly defined:
 Production boundary: contracts/futures/margin.py.
 Test boundary: tests/contracts/test_margin.py.
 CI boundary: .github/workflows/phase1-domain-contracts.yml.
+
+
+## 10.8 Phase 1 leverage implementation contract
+
+The margin asset/margin semantics unit is evidenced complete on main merge SHA f2c30bf3da77f56b2dd2d9350af7bb1376f47797.
+
+Current cursor: leverage vocabulary and contract-level constraints.
+
+The leverage unit must explicitly define:
+- leverage representation and exact numeric semantics;
+- admissible bounds and invalid-value behavior;
+- ownership and configuration provenance;
+- Linear/Inverse applicability;
+- CRYPTO/FOREX/GOLD applicability;
+- interaction boundaries with margin, risk, and execution;
+- fail-closed behavior for missing, invalid, contradictory, stale, or unsupported leverage;
+- no exchange-default inference or hidden leverage;
+- production implementation, meaningful tests, CI enforcement, and same-SHA evidence before cursor advance.
