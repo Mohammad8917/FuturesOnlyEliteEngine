@@ -6,7 +6,7 @@
 
 This document defines the permanent execution order, architecture freeze rules, runtime/deployment requirements, operational capabilities, phase gates, and handoff protocol for FuturesOnlyEliteEngine.
 
-A future AI, engineer, or session must treat this document together with the three authoritative architecture documents as the current source of truth.
+A future AI, engineer, or session must treat this document together with the constitutional invariants, architecture contract, responsibility map, dependency rules, project state, and ADR governance as the current source of truth.
 
 ## 1. Source-of-truth hierarchy
 
@@ -77,21 +77,51 @@ The three supported markets are **100% Futures**:
 
 Operational Spot is permanently forbidden.
 
-## 5. Permanent execution order
+## 5. Governance baseline completeness
+
+Phase 0 is not considered complete merely because the initial documents exist. The baseline is complete only when the following are explicit, internally consistent, and evidenced on the current HEAD:
+
+- product identity, exact market scope, Futures-only boundary, and prohibited operational Spot behavior;
+- Linear/Inverse semantic ownership and required financial/accounting vocabulary;
+- layer ownership and dependency direction;
+- exchange-adapter isolation and the exact adapter-count requirement;
+- canonical terminology, contract naming, units, precision, UTC/time semantics, and validation expectations;
+- risk, execution, order lifecycle, reconciliation, and audit ownership;
+- data-quality, stale/contradictory-state, idempotency, and fail-closed behavior;
+- configuration, secrets, credentials, security, and supply-chain ownership;
+- observability, notifications, operational errors, and the rule that delivery failure never equals execution success;
+- phase entry/exit criteria, gate entry/exit criteria, evidence requirements, and same-SHA verification;
+- architecture-test and CI-enforcement expectations;
+- ADR/change-control, owner-change protection, rollback, and migration expectations;
+- persistent project state and handoff rules;
+- no unresolved architectural contradiction, undefined critical owner, or ungoverned critical behavior.
+
+**Phase 0 status:** OPEN — FINAL AUDIT REQUIRED.
+
+Phase 1 and all production implementation remain blocked until this baseline has a recorded exit decision in `project-state.md`.
+
+## 6. Permanent execution order
 
 The project proceeds through these phases in order.
 
-### Phase 0 — Architecture baseline
-Status: established.
+### Phase 0 — Architecture baseline / governance finalization
+Status: OPEN — final audit in progress.
 
 Deliverables:
+- architecture invariants;
+- project state;
+- ADR governance;
 - architecture contract;
 - Futures responsibility map;
 - dependency rules;
-- project roadmap/governance.
+- master roadmap/governance;
+- README product boundary reference.
 
 Exit condition:
-- ownership and dependency direction are unambiguous.
+- all governance baseline completeness criteria are verified on the current HEAD;
+- all critical requirements have an explicit owner and enforcement path;
+- no unresolved architecture contradiction remains;
+- project-state records the evidence and authorizes Phase 1 explicitly.
 
 ### Phase 1 — Domain contracts
 Define stable, implementation-independent Futures contracts.
@@ -211,7 +241,7 @@ Release is permitted only when the same final commit/HEAD has complete evidence 
 
 No historical green run may be used as proof for a different SHA.
 
-## 6. Gate discipline
+## 7. Gate discipline
 
 For every failure:
 
@@ -226,7 +256,7 @@ Rules:
 - never lower a threshold;
 - never delete or disable a test to make CI green.
 
-## 7. Implementation unit protocol
+## 8. Implementation unit protocol
 
 Before creating or changing a production module, record:
 
@@ -246,7 +276,7 @@ Before creating or changing a production module, record:
 
 If ownership is ambiguous, stop and resolve ownership before implementation.
 
-## 8. Reuse policy
+## 9. Reuse policy
 
 Reuse is allowed only when semantics are genuinely identical.
 
@@ -260,7 +290,7 @@ Especially prohibited:
 
 Prefer explicit semantic boundaries over premature abstraction.
 
-## 9. Testing strategy
+## 10. Testing strategy
 
 Tests are part of the architecture, not a final cosmetic layer.
 
@@ -277,7 +307,7 @@ Required categories:
 
 Coverage must represent meaningful behavior. Artificial tests, unreachable branches, exclusions, weakened assertions, and threshold manipulation are not acceptable substitutes.
 
-## 10. Definition of done
+## 11. Definition of done
 
 A feature is not done because:
 - the code imports;
@@ -295,7 +325,7 @@ A feature is done only when:
 6. relevant quality gates pass;
 7. the final same-SHA evidence is recorded.
 
-## 11. AI handoff protocol
+## 12. AI handoff protocol
 
 When a new AI/session starts work:
 
@@ -311,7 +341,7 @@ When a new AI/session starts work:
 
 A new AI must **continue the map, not reinvent the map**.
 
-## 12. Change-control rule
+## 13. Change-control rule
 
 If implementation pressure appears to require an architectural change:
 
@@ -325,7 +355,7 @@ If implementation pressure appears to require an architectural change:
 
 No silent architecture drift is permitted.
 
-## 13. Final target
+## 14. Final target
 
 The target is not merely a green repository.
 
