@@ -450,7 +450,7 @@ Gate exit requires production implementation, meaningful contract tests, CI enfo
 
 Multiplier and contract specification has exited its gate with production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence on main SHA `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`.
 
-The next authorized Phase 1 unit is **settlement asset and settlement semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
+The next authorized Phase 1 unit is **margin asset and margin semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
 \n## Phase 1 settlement gate
 
 The settlement unit must close with:
@@ -470,3 +470,22 @@ No later Phase 1 contract may advance ahead of this gate.
 Settlement semantics have exited their gate with production implementation, meaningful tests, CI enforcement, and same-SHA evidence on main SHA `164dcb97c38271ab29f79f8e9b8068bcc8a55234`.
 
 The next authorized Phase 1 unit is **margin asset and margin semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
+
+
+## Phase 1 margin gate
+
+The margin unit must close with:
+1. margin asset explicitly owned by canonical instrument identity;
+2. explicit ASSET denomination;
+3. explicit source denomination for upstream margin amounts;
+4. deterministic same-asset/no-conversion semantics;
+5. deterministic cross-asset conversion with an explicit positive finite Decimal rate;
+6. explicit separation of margin asset from settlement asset;
+7. no leverage, initial-margin, maintenance-margin, liquidation, or exchange-specific collateral inference;
+8. no domain dependency on network, exchange SDK, persistence, runtime configuration, or hidden defaults;
+9. fail-closed validation for invalid or ambiguous terms;
+10. meaningful contract tests;
+11. CI enforcement;
+12. same-SHA evidence.
+
+No later Phase 1 contract may advance ahead of this gate.
