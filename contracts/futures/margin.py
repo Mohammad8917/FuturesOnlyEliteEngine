@@ -11,7 +11,11 @@ from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from .instrument import CanonicalFuturesSymbol, InstrumentValidationError, Market
+from .instrument import (
+    FuturesInstrumentIdentity,
+    InstrumentValidationError,
+    Market,
+)
 
 
 class MarginValidationError(InstrumentValidationError):
@@ -49,7 +53,7 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
 class FuturesMarginSpecification:
     """Immutable margin denomination and conversion contract.
 
-    margin_asset is the explicit margin denomination.
+    The canonical instrument identity is authoritative for margin_asset.
     source_asset is the explicit denomination of an upstream margin amount.
     Same-asset amounts require no conversion. Cross-asset amounts require an
     explicit positive finite rate expressed as margin-asset units per one
@@ -60,7 +64,7 @@ class FuturesMarginSpecification:
     """
 
     market: Market
-    symbol: CanonicalFuturesSymbol
+    instrument: FuturesInstrumentIdentity
     margin_unit: MarginUnit
     margin_asset: str
     source_asset: str
@@ -69,17 +73,21 @@ class FuturesMarginSpecification:
     def __post_init__(self) -> None:
         if not isinstance(self.market, Market):
             raise MarginValidationError("market must be a supported Futures market")
-        if not isinstance(self.symbol, CanonicalFuturesSymbol):
-            raise MarginValidationError("symbol must be CanonicalFuturesSymbol")
+        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+            raise MarginValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
+        if self.instrument.market is not self.market:
+            raise MarginValidationError("market must match the instrument identity")
         if not isinstance(self.margin_unit, MarginUnit):
             raise MarginValidationError("margin_unit must be ASSET")
 
         margin_asset = _asset(self.margin_asset, "margin_asset")
         source_asset = _asset(self.source_asset, "source_asset")
 
-        if margin_asset != self.symbol.settlement_asset:
+        if margin_asset != self.instrument.margin_asset:
             raise MarginValidationError(
-                "margin_asset must equal the canonical Futures settlement asset"
+                "margin_asset must equal the canonical instrument margin asset"
             )
 
         if margin_asset == source_asset:
@@ -97,6 +105,10 @@ class FuturesMarginSpecification:
 
         object.__setattr__(self, "margin_asset", margin_asset)
         object.__setattr__(self, "source_asset", source_asset)
+
+    @property
+    def symbol(self):
+        return self.instrument.symbol
 
     @property
     def conversion_required(self) -> bool:
