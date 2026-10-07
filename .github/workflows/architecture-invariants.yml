@@ -4,15 +4,27 @@ on:
   push:
     paths:
       - "docs/architecture/architecture-invariants.md"
+      - "docs/architecture/architecture-contract.md"
+      - "docs/architecture/dependency-rules.md"
+      - "docs/architecture/futures-responsibility-map.md"
+      - "docs/architecture/project-state.md"
+      - "docs/architecture/master-roadmap-and-governance.md"
       - "tests/architecture/test_architecture_invariants_contract.py"
+      - "tests/architecture/test_architecture_contract.py"
+      - "tests/architecture/test_dependency_rules_contract.py"
+      - "tests/architecture/test_futures_responsibility_map_contract.py"
       - ".github/workflows/architecture-invariants.yml"
   pull_request:
     paths:
       - "docs/architecture/architecture-invariants.md"
-      - "tests/architecture/test_architecture_invariants_contract.py"
+      - "docs/architecture/architecture-contract.md"
       - "docs/architecture/dependency-rules.md"
-      - "tests/architecture/test_dependency_rules_contract.py"
       - "docs/architecture/futures-responsibility-map.md"
+      - "docs/architecture/project-state.md"
+      - "docs/architecture/master-roadmap-and-governance.md"
+      - "tests/architecture/test_architecture_invariants_contract.py"
+      - "tests/architecture/test_architecture_contract.py"
+      - "tests/architecture/test_dependency_rules_contract.py"
       - "tests/architecture/test_futures_responsibility_map_contract.py"
       - ".github/workflows/architecture-invariants.yml"
   workflow_dispatch:
