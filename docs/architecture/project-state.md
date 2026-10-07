@@ -23,9 +23,9 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
 - Last verified SHA: must be established from current GitHub Actions same-SHA evidence; this document is not the evidence source.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts
+- Active work: Phase 1 Domain Contracts — the canonical contract baseline is now explicitly aligned across the master index, architecture contract, roadmap, and responsibility map; production domain contracts remain incomplete.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: Continue Phase 1 Domain Contracts from the mandatory implementation unit protocol; do not redesign the architecture or reopen Phase 0 for documentation completeness.
+- Next authorized action: Implement the first incomplete Phase 1 contract unit from the canonical baseline, beginning with instrument identity/contract specification; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
