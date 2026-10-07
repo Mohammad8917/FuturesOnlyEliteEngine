@@ -17,8 +17,8 @@ This is project state, not the architectural contract. Architectural rules remai
 - Operational capabilities: automated Futures trading + Telegram/email signal and operational notifications
 - Architecture status: FROZEN BY DEFAULT
 - Operational Spot: FORBIDDEN
-- Current phase: Phase 0 — Architecture Baseline / Governance Final Audit — CLOSED
-- Current gate: Architecture baseline governance
+- Current phase: Phase 1 — Domain Contracts
+- Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: e35ecabbc2834dd45c5803ed2b17d737dc68c2d8
 - Last verified SHA: 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca (current HEAD changes remain unverified)
