@@ -6,6 +6,10 @@ Elite Futures-Only Professional Trading Engine — production-grade architecture
 
 ## Architecture
 
+**Single navigation path:** `docs/architecture/ARCHITECTURE-MASTER-INDEX.md`
+
+Start there. It defines the unified reading order, upgrade path, dependency path, responsibility path, and architecture-change path; it does not override the constitutional source-of-truth hierarchy.
+
 Governance and constitutional controls:
 - `docs/architecture/architecture-invariants.md`
 - `docs/architecture/project-state.md`
