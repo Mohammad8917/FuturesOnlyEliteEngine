@@ -34,3 +34,48 @@ def test_architecture_dependency_validator_passes_current_tree() -> None:
         text=True,
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_validator_rejects_domain_infrastructure_import(tmp_path: Path) -> None:
+    (tmp_path / "domain").mkdir()
+    (tmp_path / "infrastructure").mkdir()
+    (tmp_path / "domain" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "infrastructure" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "domain" / "model.py").write_text(
+        "from infrastructure.client import Client\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "infrastructure" / "client.py").write_text("", encoding="utf-8")
+
+    from validation.architecture_dependency_validator import validate
+
+    errors = validate(tmp_path)
+    assert any("domain -> infrastructure" in error for error in errors)
+
+
+def test_validator_rejects_futures_false_switch(tmp_path: Path) -> None:
+    (tmp_path / "application").mkdir()
+    (tmp_path / "application" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "application" / "provider.py").write_text(
+        "def route(provider, futures=False):\n    return provider\n",
+        encoding="utf-8",
+    )
+
+    from validation.architecture_dependency_validator import validate
+
+    errors = validate(tmp_path)
+    assert any("futures=False" in error for error in errors)
+
+
+def test_validator_rejects_spot_symbol_in_domain(tmp_path: Path) -> None:
+    (tmp_path / "domain").mkdir()
+    (tmp_path / "domain" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "domain" / "instrument.py").write_text(
+        "SpotInstrument = object\n",
+        encoding="utf-8",
+    )
+
+    from validation.architecture_dependency_validator import validate
+
+    errors = validate(tmp_path)
+    assert any("Spot symbol/reference" in error for error in errors)
