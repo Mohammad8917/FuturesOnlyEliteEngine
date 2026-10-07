@@ -93,7 +93,7 @@ Order and position reconciliation must detect divergence and unknown state; no d
 
 ## Phase 1 domain-contract dependency boundary
 
-The instrument identity and canonical Futures symbol unit is complete on the current main lineage. The next Phase 1 implementation unit is **multiplier and contract specification**.
+The instrument identity and canonical Futures symbol unit and multiplier/contract-specification unit are complete on the current main lineage. The next Phase 1 implementation unit is **settlement asset and settlement semantics**.
 
 Ownership:
 - domain/futures owns the pure financial meaning of multiplier and contract-size semantics.
@@ -142,3 +142,20 @@ Infrastructure maps exchange metadata into the canonical specification. It must 
 ## Phase 1 cursor after multiplier closure
 
 Multiplier/contract specification is a closed domain contract with verified implementation and CI evidence. The next dependency-boundary unit is settlement asset and settlement semantics. Settlement logic must consume the explicit multiplier contract and may not redefine it.
+\n## Settlement asset / settlement semantics dependency boundary
+
+Settlement semantics are owned by the Futures domain/contract boundary. The contract may consume only canonical instrument identity, explicit market vocabulary, immutable value objects, and exact Decimal arithmetic.
+
+Allowed:
+- canonical Futures symbol settlement asset;
+- explicit source asset;
+- exact positive finite Decimal conversion rate;
+- deterministic conversion.
+
+Forbidden:
+- exchange SDKs, HTTP/network, persistence, clocks, scheduling, runtime configuration, account mutation, or notifications;
+- exchange-specific defaults;
+- implicit conversion rates;
+- guessed settlement denomination.
+
+Infrastructure may supply a validated source asset and externally obtained conversion rate through a later port, but the domain contract must reject missing or contradictory values.

@@ -192,3 +192,24 @@ No Futures implementation is accepted until its owner, inputs, outputs, forbidde
 ## Phase 1 cursor — settlement ownership
 
 The multiplier/contract-specification responsibility is closed with verified production and CI evidence. The next incomplete responsibility is settlement asset and settlement semantics, which must receive one explicit primary owner before implementation.
+\n## Settlement asset / settlement semantics ownership
+
+**Primary owner:** Futures domain/contract boundary.
+
+**Inputs:** canonical Futures instrument identity, market, explicit settlement asset, explicit source asset, and—only when assets differ—an exact positive finite Decimal conversion rate.
+
+**Outputs:** immutable settlement specification and deterministic settlement-asset amount.
+
+**Units:** settlement quantity in ASSET units; conversion rate in settlement-asset units per source-asset unit; exact Decimal arithmetic.
+
+**Allowed dependencies:** canonical Futures contracts and deterministic standard-library numeric facilities.
+
+**Forbidden dependencies:** exchange SDKs, network, persistence, clocks, schedulers, account mutation, notifications, hidden defaults, and implicit rates.
+
+**Linear/Inverse:** applicable to both; settlement denomination remains explicit and is not inferred from contract family.
+
+**Markets:** CRYPTO Futures, FOREX Futures, and GOLD Futures.
+
+**Failure semantics:** fail closed on mismatch, missing conversion, non-positive/non-finite rate, invalid asset, or contradictory terms.
+
+**Downstream consumers:** settlement accounting, PnL, margin, reconciliation, and execution may consume the validated settlement specification; none may redefine its denomination semantics.

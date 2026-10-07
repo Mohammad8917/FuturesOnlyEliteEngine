@@ -102,7 +102,7 @@ The final audit identified and closed two classes of genuine Phase 0 gaps: (1) e
 
 ## Phase 1 multiplier / contract-specification evidence
 
-The active cursor remains **multiplier and contract specification** until same-SHA CI evidence is established on the final merge SHA.
+The multiplier/contract-specification cursor is closed with same-SHA CI evidence. The active cursor is now **settlement asset and settlement semantics**.
 
 The canonical semantic lock is:
 - quantity unit = CONTRACTS;
@@ -118,9 +118,26 @@ No downstream Phase 1 cursor advance is authorized until production implementati
 
 ## Phase 1 cursor transition — multiplier closed
 
-- Current HEAD: `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`
-- Last verified SHA: `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`
+- Verified implementation SHA: `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`
+- Current documentation cursor snapshot is maintained on the current main HEAD and must be re-verified after every state change.
 - Multiplier / contract specification: COMPLETE — production implementation, contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on the same merge SHA.
 - Active work: Phase 1 Domain Contracts — settlement asset and settlement semantics.
 - Next authorized action: define and implement the settlement asset/settlement semantics contract.
 - Forbidden action: do not bypass settlement semantics, reinterpret multiplier meaning, weaken tests/gates, lower G05/G08, or skip the first incomplete Phase 1 contract.
+\n## Phase 1 settlement implementation evidence
+
+The active cursor is **settlement asset and settlement semantics**.
+
+The implementation contract is frozen:
+- settlement unit = ASSET;
+- settlement asset must equal the canonical instrument settlement asset;
+- source asset is explicit;
+- same-asset settlement has no conversion rate;
+- cross-asset settlement requires an explicit positive finite Decimal conversion rate;
+- conversion rate is settlement-asset units per source-asset unit;
+- no exchange/network/scheduling/persistence/account mutation is permitted in the domain contract;
+- invalid, zero, negative, non-finite, contradictory, or ambiguous settlement terms fail closed.
+
+Production boundary: `contracts/futures/settlement.py`.
+Test boundary: `tests/contracts/test_settlement.py`.
+CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
