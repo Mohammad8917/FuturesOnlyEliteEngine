@@ -1,6 +1,8 @@
 # FuturesOnlyEliteEngine
 
-Elite Futures-Only Professional Trading Engine — production-grade architecture for CRYPTO, FOREX, and GOLD futures across Linear and Inverse contracts, with strict risk, execution, validation, and quality gates.
+Elite Futures-Only Professional Trading Engine — production-grade architecture for **100% Futures** across CRYPTO, FOREX, and GOLD, with Linear and Inverse contracts, automated trading, Telegram/email signal delivery, strict risk, execution, validation, and quality gates.
+
+**Runtime:** Python 3.13.  **Deployment targets:** Windows Server, Linux Server, and Windows Home/Desktop.
 
 ## Architecture
 
@@ -22,8 +24,12 @@ The project is being built from architecture-first principles. Production implem
 
 ### Non-negotiable scope
 
-- Futures-only; no operational Spot path.
-- CRYPTO, FOREX, and GOLD.
+- **100% Futures-only; no operational Spot path.**
+- **CRYPTO Futures, FOREX Futures, and GOLD Futures — all three are Futures.**
+- Automated Futures trading through the governed risk → execution pipeline.
+- Telegram and email signal/operational notifications.
+- Python 3.13.
+- Windows Server, Linux Server, and Windows Home/Desktop support.
 - Linear and Inverse Futures with explicit semantic separation.
 - 15 independent exchange adapters.
 - Fail-closed risk and execution boundaries.
