@@ -6,7 +6,7 @@
 
 This document defines the permanent execution order, architecture freeze rules, runtime/deployment requirements, operational capabilities, phase gates, and handoff protocol for FuturesOnlyEliteEngine.
 
-A future AI, engineer, or session must treat this document together with the constitutional invariants, architecture contract, responsibility map, dependency rules, project state, and ADR governance as the current source of truth.
+A future AI, engineer, or session must start at `docs/architecture/ARCHITECTURE-MASTER-INDEX.md`, then follow the unified reading path defined there. This document remains authoritative for project-control execution order and governance; it does not replace the constitutional source-of-truth hierarchy.
 
 ## 1. Source-of-truth hierarchy
 
@@ -329,8 +329,8 @@ A feature is done only when:
 
 When a new AI/session starts work:
 
-1. Read this roadmap first.
-2. Read the three authoritative architecture documents.
+1. Start with `docs/architecture/ARCHITECTURE-MASTER-INDEX.md`.
+2. Follow its mandatory reading order; do not invent a competing document path.
 3. Inspect the current repository HEAD and branch.
 4. Identify the current phase and current failing/active gate.
 5. Inspect current code before relying on historical assumptions.
