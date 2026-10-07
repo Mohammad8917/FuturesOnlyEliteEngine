@@ -12,13 +12,15 @@ A future AI, engineer, or session must treat this document together with the thr
 
 When documents or assumptions conflict, use this order:
 
-1. Explicit user-approved architectural decision.
-2. `docs/architecture/architecture-contract.md`
-3. `docs/architecture/futures-responsibility-map.md`
-4. `docs/architecture/dependency-rules.md`
-5. This roadmap for execution order and governance.
-6. Current production code, tests, CI, and repository state as implementation evidence.
-7. Historical project material is reference only and cannot override the current architecture.
+1. `docs/architecture/architecture-invariants.md` — constitutional constraints.
+2. Explicitly approved architectural decision recorded through the ADR process.
+3. `docs/architecture/architecture-contract.md`
+4. `docs/architecture/futures-responsibility-map.md`
+5. `docs/architecture/dependency-rules.md`
+6. `docs/architecture/master-roadmap-and-governance.md` for execution order and governance.
+7. `docs/architecture/project-state.md` for current authorized work state.
+8. Current production code, tests, CI, and repository state as implementation evidence.
+9. Historical project material is reference only and cannot override the current architecture.
 
 Historical Spot architecture, old repository decisions, old PRs, and old CI failures must not silently redefine this project.
 
@@ -41,11 +43,17 @@ No AI or engineer may:
 - lower G08 below 90%;
 - weaken, delete, skip, exclude, xfail, or bypass tests/gates to obtain green CI.
 
-An architectural change is allowed only through an explicit, reviewed Architecture Decision Record (ADR) and explicit project-owner approval.
+An architectural change is allowed only through the controlled ADR process. The project owner may propose a change, but owner intent does not bypass architectural governance. If an owner request conflicts with an invariant, implementation must stop and issue a **CRITICAL ARCHITECTURE WARNING**, followed by impact analysis, alternatives, risk analysis, ADR, explicit reconfirmation, document update, implementation, tests, CI enforcement, and same-SHA verification.
 
 A code change is not an architecture change merely because it implements an already-approved contract.
 
-## 3. Permanent execution order
+## 3. Architecture-change firewall
+
+Any change touching the Futures-only boundary, Spot boundary, market scope, Linear/Inverse semantics, financial accounting ownership, layer ownership, dependency direction, risk/execution boundary, exchange isolation, pipeline ordering, fail-closed behavior, quality thresholds, architecture enforcement, or release criteria is an Architecture Change Candidate and must stop for governance review before implementation.
+
+There is no emergency bypass for architectural safety.
+
+## 4. Permanent execution order
 
 The project proceeds through these phases in order.
 
@@ -179,7 +187,7 @@ Release is permitted only when the same final commit/HEAD has complete evidence 
 
 No historical green run may be used as proof for a different SHA.
 
-## 4. Gate discipline
+## 5. Gate discipline
 
 For every failure:
 
@@ -194,7 +202,7 @@ Rules:
 - never lower a threshold;
 - never delete or disable a test to make CI green.
 
-## 5. Implementation unit protocol
+## 6. Implementation unit protocol
 
 Before creating or changing a production module, record:
 
@@ -214,7 +222,7 @@ Before creating or changing a production module, record:
 
 If ownership is ambiguous, stop and resolve ownership before implementation.
 
-## 6. Reuse policy
+## 7. Reuse policy
 
 Reuse is allowed only when semantics are genuinely identical.
 
@@ -228,7 +236,7 @@ Especially prohibited:
 
 Prefer explicit semantic boundaries over premature abstraction.
 
-## 7. Testing strategy
+## 8. Testing strategy
 
 Tests are part of the architecture, not a final cosmetic layer.
 
@@ -245,7 +253,7 @@ Required categories:
 
 Coverage must represent meaningful behavior. Artificial tests, unreachable branches, exclusions, weakened assertions, and threshold manipulation are not acceptable substitutes.
 
-## 8. Definition of done
+## 9. Definition of done
 
 A feature is not done because:
 - the code imports;
@@ -263,7 +271,7 @@ A feature is done only when:
 6. relevant quality gates pass;
 7. the final same-SHA evidence is recorded.
 
-## 9. AI handoff protocol
+## 10. AI handoff protocol
 
 When a new AI/session starts work:
 
@@ -279,7 +287,7 @@ When a new AI/session starts work:
 
 A new AI must **continue the map, not reinvent the map**.
 
-## 10. Change-control rule
+## 11. Change-control rule
 
 If implementation pressure appears to require an architectural change:
 
@@ -293,7 +301,7 @@ If implementation pressure appears to require an architectural change:
 
 No silent architecture drift is permitted.
 
-## 11. Final target
+## 12. Final target
 
 The target is not merely a green repository.
 
