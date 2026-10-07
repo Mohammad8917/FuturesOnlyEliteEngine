@@ -18,7 +18,24 @@ The project owner may propose an architectural change, but the proposal must pas
 
 **Mandatory principle:** No person, AI, agent, engineer, CI job, or implementation pressure may silently override an architectural invariant.
 
-## 2. Product identity invariants
+## 2. Runtime and deployment invariants
+
+The supported runtime is **Python 3.13**. The project must not silently target another Python major/minor version as a substitute for the declared runtime.
+
+The production system must support all three deployment environments:
+- Windows Server
+- Linux Server
+- Windows Home/Desktop environments
+
+The engine must be deployable and operational on all three environments without weakening Futures-only, risk, execution, security, or observability requirements.
+
+The system has two first-class operational outputs:
+- **Automated Futures trading**, subject to the full risk and execution gates.
+- **Signal and operational notification delivery** through Telegram and email.
+
+Telegram/email delivery must never bypass risk or execution controls, and notification failure must not be treated as successful trade execution.
+
+## 3. Product identity invariants
 
 Product: FuturesOnlyEliteEngine — Elite Futures-Only Professional Trading Engine.
 
@@ -35,7 +52,7 @@ Operational Spot is forbidden.
 
 Historical Spot code, repositories, decisions, or compatibility requirements are reference material only and cannot restore an operational Spot path.
 
-## 3. Futures semantic invariants
+## 4. Futures semantic invariants
 
 Linear and Inverse Futures are first-class contract families and must not be collapsed merely for code reuse.
 
@@ -62,7 +79,7 @@ Applicable Futures semantics must remain explicit for:
 
 No implicit financial default may be introduced when it can alter financial meaning.
 
-## 4. Layer ownership invariants
+## 5. Layer ownership invariants
 
 Approved dependency direction:
 
@@ -77,7 +94,7 @@ Mandatory boundaries:
 - Infrastructure must not redefine domain financial semantics.
 - No layer may silently take ownership of another layer's responsibility.
 
-## 5. Exchange isolation invariants
+## 6. Exchange isolation invariants
 
 The 15 exchange adapters remain independently owned infrastructure boundaries.
 
@@ -97,7 +114,7 @@ Exchange-specific behavior must remain independently representable and testable,
 - position mode
 - reconciliation
 
-## 6. Fail-closed invariants
+## 7. Fail-closed invariants
 
 Unknown, invalid, stale, contradictory, incomplete, or untrusted critical Futures state must not produce:
 - an executable order
@@ -112,7 +129,7 @@ Required behavior is fail-closed.
 
 Convenient defaults are forbidden when they can change financial meaning.
 
-## 7. Quality invariants
+## 8. Quality invariants
 
 The official quality floor is immutable by default:
 - G01: zero unexplained format/lint violations
@@ -126,7 +143,7 @@ The official quality floor is immutable by default:
 
 No actor may lower, bypass, weaken, exclude, skip, xfail, or otherwise manipulate these requirements to obtain green status.
 
-## 8. Testing invariants
+## 9. Testing invariants
 
 Tests are architectural enforcement, not cosmetic evidence.
 
@@ -143,7 +160,7 @@ Forbidden:
 
 A green result obtained by weakening the test system is not valid green evidence.
 
-## 9. Architecture-change firewall
+## 10. Architecture-change firewall
 
 Any proposed change touching one or more of the following is automatically an Architecture Change Candidate:
 - Futures-only boundary
@@ -163,7 +180,7 @@ Any proposed change touching one or more of the following is automatically an Ar
 
 The actor must stop at the architectural boundary and perform impact analysis before implementation.
 
-## 10. Owner-change protection
+## 11. Owner-change protection
 
 The project owner has authority to propose architectural changes.
 
@@ -184,7 +201,7 @@ The warning must identify:
 
 Owner intent alone is not evidence that an architectural change is safe.
 
-## 11. Architecture-change procedure
+## 12. Architecture-change procedure
 
 A proposed architectural change must follow:
 
@@ -203,7 +220,7 @@ PROPOSAL
 
 No step may be silently omitted.
 
-## 12. ADR requirements
+## 13. ADR requirements
 
 Every approved architecture change must have an ADR under docs/architecture/adr/.
 
@@ -233,7 +250,7 @@ Valid states:
 
 PROPOSED must never be treated as APPROVED.
 
-## 13. AI immutability rule
+## 14. AI immutability rule
 
 A new AI/session must:
 1. read project-state.md
@@ -250,7 +267,7 @@ A new AI must:
 
 **Continue the map, not reinvent the map.**
 
-## 14. Architecture completion proof
+## 15. Architecture completion proof
 
 An architecture rule is not considered enforced until:
 
@@ -263,7 +280,7 @@ ARCHITECTURE RULE
 
 Documentation alone is insufficient.
 
-## 15. Emergency rule
+## 16. Emergency rule
 
 There is no emergency bypass for architectural safety.
 
@@ -275,7 +292,7 @@ Never:
 
 PRESSURE → BYPASS
 
-## 16. Final constitutional statement
+## 17. Final constitutional statement
 
 The project is designed to survive AI replacement, engineer replacement, implementation refactoring, exchange API changes, CI changes, dependency changes, and operational pressure.
 
