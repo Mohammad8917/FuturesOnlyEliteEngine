@@ -188,3 +188,7 @@ No Futures implementation is accepted until its owner, inputs, outputs, forbidde
 **Failure semantics:** zero, negative, non-finite, contradictory, ambiguous, unsupported, or invalid inputs fail closed.
 
 **Downstream consumers:** later settlement, margin, leverage, exposure, PnL, risk, and execution contracts consume the explicit specification; none may reinterpret its multiplier meaning.
+
+## Phase 1 cursor — settlement ownership
+
+The multiplier/contract-specification responsibility is closed with verified production and CI evidence. The next incomplete responsibility is settlement asset and settlement semantics, which must receive one explicit primary owner before implementation.
