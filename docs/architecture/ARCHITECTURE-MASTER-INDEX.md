@@ -185,3 +185,17 @@ Required path remains:
 Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
 
 No downstream Phase 1 unit may be declared complete ahead of this cursor.
+\n## 10.5 Phase 1 settlement implementation contract
+
+The settlement unit is now explicitly defined:
+- owner: Futures domain/contract boundary;
+- settlement unit: ASSET;
+- settlement asset: must equal canonical instrument settlement asset;
+- source asset: explicit upstream denomination;
+- same-asset settlement: conversion prohibited and unnecessary;
+- cross-asset settlement: explicit positive finite Decimal rate required;
+- rate direction: settlement-asset units per source-asset unit;
+- no network, exchange selection, scheduling, persistence, account mutation, or margin inference;
+- fail closed on missing, invalid, zero, negative, non-finite, contradictory, or ambiguous settlement terms.
+
+The production boundary is `contracts/futures/settlement.py`. Closure requires meaningful tests, Phase 1 CI, and same-SHA evidence.
