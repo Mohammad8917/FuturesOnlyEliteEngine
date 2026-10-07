@@ -102,7 +102,7 @@ The final audit identified and closed two classes of genuine Phase 0 gaps: (1) e
 
 ## Phase 1 multiplier / contract-specification evidence
 
-The active cursor remains **multiplier and contract specification** until same-SHA CI evidence is established on the final merge SHA.
+The multiplier/contract-specification cursor is closed with same-SHA CI evidence. The active cursor is now **settlement asset and settlement semantics**.
 
 The canonical semantic lock is:
 - quantity unit = CONTRACTS;
@@ -118,8 +118,8 @@ No downstream Phase 1 cursor advance is authorized until production implementati
 
 ## Phase 1 cursor transition — multiplier closed
 
-- Current HEAD: `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`
-- Last verified SHA: `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`
+- Verified implementation SHA: `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`
+- Current documentation cursor snapshot is maintained on the current main HEAD and must be re-verified after every state change.
 - Multiplier / contract specification: COMPLETE — production implementation, contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on the same merge SHA.
 - Active work: Phase 1 Domain Contracts — settlement asset and settlement semantics.
 - Next authorized action: define and implement the settlement asset/settlement semantics contract.
