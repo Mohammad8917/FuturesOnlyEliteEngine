@@ -93,7 +93,7 @@ Order and position reconciliation must detect divergence and unknown state; no d
 
 ## Phase 1 domain-contract dependency boundary
 
-The instrument identity and canonical Futures symbol unit and multiplier/contract-specification unit are complete on the current main lineage. The next Phase 1 implementation unit is **margin asset and margin semantics**.
+The instrument identity and canonical Futures symbol unit and multiplier/contract-specification unit are complete on the current main lineage. The next Phase 1 implementation unit is **leverage vocabulary and contract-level constraints**.
 
 Ownership:
 - domain/futures owns the pure financial meaning of multiplier and contract-size semantics.
