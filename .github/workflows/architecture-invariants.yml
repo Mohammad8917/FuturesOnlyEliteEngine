@@ -17,11 +17,13 @@ on:
       - "tests/architecture/test_dependency_rules_contract.py"
       - "tests/architecture/test_futures_responsibility_map_contract.py"
       - "tests/architecture/test_phase_control_consistency.py"
+      - "tests/architecture/test_dependency_direction.py"
+      - "tests/architecture/test_forbidden_imports.py"
       - ".github/workflows/architecture-invariants.yml"
   pull_request:
     paths:
       - "docs/architecture/architecture-invariants.md"
-      - "docs/architecture/architecture-contract.md"
+      - "docs/architecture/architecture-contract.py"
       - "docs/architecture/dependency-rules.md"
       - "docs/architecture/futures-responsibility-map.md"
       - "docs/architecture/project-state.md"
@@ -33,6 +35,8 @@ on:
       - "tests/architecture/test_dependency_rules_contract.py"
       - "tests/architecture/test_futures_responsibility_map_contract.py"
       - "tests/architecture/test_phase_control_consistency.py"
+      - "tests/architecture/test_dependency_direction.py"
+      - "tests/architecture/test_forbidden_imports.py"
       - ".github/workflows/architecture-invariants.yml"
   workflow_dispatch:
 
@@ -55,4 +59,4 @@ jobs:
         run: python -m pip install --disable-pip-version-check --no-input pytest
 
       - name: Run authoritative architecture contract tests
-        run: python -m pytest -q tests/architecture/test_architecture_invariants_contract.py tests/architecture/test_architecture_contract.py tests/architecture/test_dependency_rules_contract.py tests/architecture/test_futures_responsibility_map_contract.py tests/architecture/test_phase_control_consistency.py
+        run: python -m pytest -q tests/architecture/test_architecture_invariants_contract.py tests/architecture/test_architecture_contract.py tests/architecture/test_dependency_rules_contract.py tests/architecture/test_futures_responsibility_map_contract.py tests/architecture/test_phase_control_consistency.py tests/architecture/test_dependency_direction.py tests/architecture/test_forbidden_imports.py
