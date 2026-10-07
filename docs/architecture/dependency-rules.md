@@ -91,6 +91,21 @@ Stale, malformed, contradictory, incomplete, or out-of-order critical data must 
 
 Order and position reconciliation must detect divergence and unknown state; no dependency may convert uncertainty into success.
 
+## Phase 1 domain-contract dependency boundary
+
+The first Phase 1 implementation unit is **instrument identity and canonical Futures symbol semantics**.
+
+Ownership:
+- `domain/futures` owns the pure financial meaning and canonical identity model.
+- `contracts/futures` owns stable boundary vocabulary and validation semantics.
+- `infrastructure/exchanges/<exchange>` may map exchange-specific symbols and instrument metadata into the canonical contract, but may not redefine canonical identity or introduce Spot semantics.
+- application, strategy, risk, and execution may consume the validated contract but may not create competing instrument-identity rules.
+
+Allowed dependencies for this unit are deterministic standard-library/domain-safe facilities and domain-safe contracts only. It must not depend on exchange SDKs, HTTP clients, persistence, runtime configuration loaders, clocks, environment-specific values, or notification systems.
+
+The contract must distinguish exchange-independent identity from exchange-specific representation and must fail closed for unknown, ambiguous, malformed, contradictory, unsupported, or Spot identifiers. Linear/Inverse applicability must remain explicit rather than inferred from an exchange-specific symbol.
+
+The downstream dependency boundary is intentionally closed until this unit has production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence.
 ## Architecture tests must prove
 
 - domain does not import infrastructure;
