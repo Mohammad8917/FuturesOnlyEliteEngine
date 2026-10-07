@@ -60,6 +60,33 @@ def test_phase_control_documents_are_consistent() -> None:
     assert "Spot" in dependencies
 
     assert "Phase 1 — Domain Contracts" in master_index
+    phase1_contract_requirements = (
+        "instrument identity",
+        "contract family",
+        "Linear/Inverse",
+        "multiplier",
+        "settlement asset",
+        "margin asset",
+        "leverage",
+        "position side",
+        "position mode",
+        "precision",
+        "funding",
+        "realized PnL",
+        "unrealized PnL",
+        "exposure",
+        "liquidation",
+        "Futures accounting",
+        "failure semantics",
+    )
+    for requirement in phase1_contract_requirements:
+        assert requirement in master_index
+        assert requirement in roadmap
+        assert requirement in responsibility
+        assert requirement in contract
+
+    assert "No Phase 2+ implementation may be used to conceal an incomplete Phase 1 contract." in master_index
+    assert "No production implementation should precede a clearly owned contract." in contract
     assert "Phase 1 Domain Contracts" in roadmap
     assert "Phase 1 — Domain Contracts" in state
 
