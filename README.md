@@ -6,8 +6,9 @@ Elite Futures-Only Professional Trading Engine — production-grade architecture
 
 The project is being built from architecture-first principles. Production implementation does not begin until ownership and dependency boundaries are explicit.
 
-### Authoritative architecture documents
+### Authoritative architecture and project-control documents
 
+- [Master Roadmap & Architecture Governance](docs/architecture/master-roadmap-and-governance.md)
 - [Architecture Contract](docs/architecture/architecture-contract.md)
 - [Futures Responsibility Map](docs/architecture/futures-responsibility-map.md)
 - [Dependency Rules](docs/architecture/dependency-rules.md)
