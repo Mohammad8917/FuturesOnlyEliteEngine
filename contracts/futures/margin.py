@@ -12,6 +12,7 @@ from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
 from .instrument import (
+    CanonicalFuturesSymbol,
     FuturesInstrumentIdentity,
     InstrumentValidationError,
     Market,
@@ -107,7 +108,7 @@ class FuturesMarginSpecification:
         object.__setattr__(self, "source_asset", source_asset)
 
     @property
-    def symbol(self):
+    def symbol(self) -> CanonicalFuturesSymbol:
         return self.instrument.symbol
 
     @property
