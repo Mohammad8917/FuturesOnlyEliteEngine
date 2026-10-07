@@ -166,3 +166,10 @@ The price quote asset must equal the canonical Futures symbol quote asset. Margi
 ## Phase 1 cursor — settlement
 
 The multiplier/contract-specification contract is complete and evidenced on main. The next incomplete Phase 1 contract is settlement asset and settlement semantics. It must explicitly define denomination, settlement authority, timing, conversion, Linear/Inverse applicability, market applicability, precision/UTC requirements where applicable, and fail-closed behavior before production implementation.
+\n## Phase 1 settlement asset / settlement semantics
+
+Settlement is an explicit domain contract, not an exchange-side guess.
+
+The canonical settlement asset comes from the Futures instrument identity and must match the settlement specification. Every settlement amount declares its source asset. If source and settlement assets match, conversion is forbidden. If they differ, a positive finite Decimal conversion rate is mandatory; the rate is defined as settlement-asset units per source-asset unit.
+
+The settlement contract performs no network access, rate discovery, exchange selection, scheduling, persistence, account mutation, or margin inference. Those concerns belong to later application/infrastructure contracts. Missing or contradictory settlement terms fail closed.
