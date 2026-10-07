@@ -6,7 +6,7 @@ from datetime import date
 
 import pytest
 
-from contracts.futures.instrument import (
+from contracts.futures import (
     CanonicalFuturesSymbol,
     ContractFamily,
     FuturesInstrumentIdentity,
