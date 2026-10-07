@@ -20,12 +20,12 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current phase: Phase 0 — Architecture Baseline / Governance Final Audit
 - Current gate: Architecture baseline governance
 - Implementation phase authorized: NO — until the final governance audit is complete
-- Current HEAD at last verification: c24e603b3eb84b0dec58c564a525a950a3a45c24
-- Last verified SHA: c24e603b3eb84b0dec58c564a525a950a3a45c24
+- Current HEAD at last verification: 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca
+- Last verified SHA: 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca
 - Completed phases: None — Phase 0 remains open until its exit evidence is recorded
-- Active work: Complete the bounded Phase 0 final audit; security hardcoding/secret boundary is now explicitly governed across invariants, contract, dependency rules, responsibility map, master index, and roadmap.
+- Active work: Complete the bounded Phase 0 final audit; the audit has now locked explicit state-authority, idempotency, concurrency, restart/recovery, execution-halt, clock/skew, audit-integrity, configuration-provenance, and release-provenance requirements in the authoritative path.
 - Blocked work: Production implementation, Phase 1 domain-contract implementation, and all downstream phases
-- Next authorized action: Finish the bounded final audit and classify remaining findings; do not reopen governance for documentation completeness.
+- Next authorized action: Perform one final cross-document consistency/closure verification on the current repository HEAD, classify any remaining findings, and record the Phase 0 exit decision only if all exit criteria are evidenced.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -41,7 +41,8 @@ Whenever this file is updated, record:
 - next authorized action
 - forbidden actions
 - open architecture questions
-- evidence references: bounded Phase 0 closure control applied on 3efc4b90f49790db65e07387d37fa7ed52a11f9a; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
+- open architecture questions: None identified after the current deep-audit pass; Phase 0 closure evidence still requires final verification.
+- evidence references: bounded Phase 0 closure control applied on 3efc4b90f49790db65e07387d37fa7ed52a11f9a; deep-audit baseline verified through 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
 ## Phase 0 exit criteria
@@ -93,4 +94,4 @@ The final audit is explicitly bounded. Findings must be classified as FIX NOW, D
 
 ## Security requirement added during Phase 0 final audit
 
-The final audit identified a genuine security/operational governance gap: explicit anti-hardcoding rules were not consistently represented across the authoritative architecture path. This is now aligned across the constitutional invariants, architecture contract, dependency rules, Futures responsibility map, master index, and roadmap. Production enforcement and security scanning remain implementation/G06 work and are not claimed complete by this documentation change.
+The final audit identified and closed two classes of genuine Phase 0 gaps: (1) explicit anti-hardcoding/configuration-security governance; and (2) explicit financial-state authority, idempotency, concurrency, restart/recovery, execution-halt, trusted-clock/skew, audit-integrity, configuration-provenance, and release-provenance requirements. These are now represented in the authoritative architecture path. Production enforcement, implementation, tests, and security scanning remain future-phase/G06 work and are not claimed complete by these documentation changes.
