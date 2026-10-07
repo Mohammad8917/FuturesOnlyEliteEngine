@@ -285,17 +285,20 @@ PROPOSED must never be treated as APPROVED.
 
 ## 15. AI immutability rule
 
-A new AI/session must:
-1. read project-state.md
-2. read this document
-3. read architecture-contract.md
-4. read futures-responsibility-map.md
-5. read dependency-rules.md
-6. read master-roadmap-and-governance.md
-7. read docs/architecture/adr/README.md
-8. inspect current HEAD
-9. identify the current authorized phase/gate
-10. continue the first authorized incomplete action
+A new AI/session must start at `docs/architecture/ARCHITECTURE-MASTER-INDEX.md` and follow its single mandatory navigation path:
+1. read the master index;
+2. read project-state.md;
+3. read this document;
+4. read architecture-contract.md;
+5. read futures-responsibility-map.md;
+6. read dependency-rules.md;
+7. read master-roadmap-and-governance.md;
+8. read docs/architecture/adr/README.md;
+9. inspect current HEAD;
+10. identify the current authorized phase/gate;
+11. continue the first authorized incomplete action.
+
+The index is a navigation control only; it cannot override the constitutional hierarchy.
 
 A new AI must:
 
