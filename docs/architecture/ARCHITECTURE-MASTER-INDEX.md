@@ -138,7 +138,7 @@ Phase 1 is complete only when every required contract has a production implement
 
 ## 10.2 Phase 1 execution cursor
 
-**Current cursor:** multiplier and contract specification.
+**Current cursor:** settlement asset and settlement semantics.
 
 The instrument identity and canonical Futures symbol unit is evidenced complete on the current main lineage. The next incomplete authorized Phase 1 unit must be completed through the full implementation-unit path:
 
@@ -176,3 +176,12 @@ The first Phase 1 implementation unit after instrument identity is now contractu
 - exchange-specific lot/tick/precision rules remain outside this domain contract.
 
 Implementation boundary: `contracts/futures/contract_specification.py`. The contract closes only after production implementation, meaningful tests, CI enforcement, and same-SHA evidence.
+
+## 10.4 Phase 1 execution cursor — settlement
+
+The multiplier and contract-specification unit is now evidenced complete on main. The first incomplete authorized Phase 1 unit is **settlement asset and settlement semantics**.
+
+Required path remains:
+Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
+
+No downstream Phase 1 unit may be declared complete ahead of this cursor.
