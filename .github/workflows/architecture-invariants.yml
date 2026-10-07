@@ -9,6 +9,8 @@ on:
       - "docs/architecture/futures-responsibility-map.md"
       - "docs/architecture/project-state.md"
       - "docs/architecture/master-roadmap-and-governance.md"
+      - "docs/architecture/CHANGE-GUARD.md"
+      - "docs/architecture/ARCHITECTURE-MASTER-INDEX.md"
       - "tests/architecture/test_architecture_invariants_contract.py"
       - "tests/architecture/test_architecture_contract.py"
       - "tests/architecture/test_dependency_rules_contract.py"
