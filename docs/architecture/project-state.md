@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This file is the persistent handoff state. It prevents a new AI, engineer, or session from guessing where the project is or choosing an unauthorized next step.
+Start from `docs/architecture/ARCHITECTURE-MASTER-INDEX.md`; this file is the persistent handoff state and controls only the currently authorized work. It prevents a new AI, engineer, or session from guessing where the project is or choosing an unauthorized next step.
 
 This is project state, not the architectural contract. Architectural rules remain governed by the architecture documents, especially architecture-invariants.md.
 
@@ -42,6 +42,7 @@ Whenever this file is updated, record:
 - forbidden actions
 - open architecture questions
 - evidence references
+- master-index navigation reference
 
 ## Phase 0 exit criteria
 
