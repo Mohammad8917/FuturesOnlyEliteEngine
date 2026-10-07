@@ -77,3 +77,10 @@ Settlement asset and settlement semantics are an approved implementation of the 
 \n## Phase 1 settlement closure
 
 Settlement asset and settlement semantics are a closed implementation of the approved Phase 1 baseline and are evidenced by same-SHA CI. The Phase 1 cursor now advances to margin asset and margin semantics. Any future semantic change to settlement denomination or conversion meaning remains subject to the ADR process.
+
+
+## Phase 1 margin closure rule
+
+Margin asset and margin semantics are an approved implementation of the existing Phase 1 contract baseline, not an architecture change. The canonical instrument identity already owns an explicit margin asset; this unit closes its denomination and conversion semantics without redefining leverage, initial/maintenance margin, liquidation, or exchange-specific collateral policy.
+
+Any future proposal to redefine margin-asset ownership, equate margin with settlement, change conversion direction, introduce hidden defaults, alter dependency direction, or change fail-closed behavior is an Architecture Change Candidate and must use the ADR process before implementation.

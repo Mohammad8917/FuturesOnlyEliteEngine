@@ -165,7 +165,7 @@ The price quote asset must equal the canonical Futures symbol quote asset. Margi
 
 ## Phase 1 cursor — settlement
 
-The multiplier/contract-specification contract is complete and evidenced on main. The next incomplete Phase 1 contract is settlement asset and settlement semantics. It must explicitly define denomination, settlement authority, timing, conversion, Linear/Inverse applicability, market applicability, precision/UTC requirements where applicable, and fail-closed behavior before production implementation.
+The multiplier/contract-specification contract is complete and evidenced on main. The next incomplete Phase 1 contract is margin asset and margin semantics. It must explicitly define margin denomination, margin-asset ownership, source denomination, conversion semantics, Linear/Inverse applicability, market applicability, precision/UTC requirements where applicable, and fail-closed behavior before production implementation.
 \n## Phase 1 settlement asset / settlement semantics
 
 Settlement is an explicit domain contract, not an exchange-side guess.
@@ -176,3 +176,14 @@ The settlement contract performs no network access, rate discovery, exchange sel
 \n## Phase 1 cursor — margin
 
 The settlement asset/settlement semantics contract is complete and evidenced on main. The next incomplete Phase 1 contract is margin asset and margin semantics. It must explicitly define margin denomination, collateral identity, valuation units, Linear/Inverse applicability, market applicability, validation, and fail-closed behavior before production implementation.
+
+
+## Phase 1 margin asset / margin semantics contract
+
+Margin is an explicit Futures domain contract. The canonical instrument identity is authoritative for the margin asset; margin asset and settlement asset are independent explicit denominations and must not be silently equated.
+
+Every upstream margin amount declares its source asset. Same-asset amounts require no conversion and reject a supplied conversion rate. Cross-asset amounts require an explicit positive finite Decimal conversion rate defined as margin-asset units per source-asset unit.
+
+This contract applies to CRYPTO/FOREX/GOLD and Linear/Inverse Futures. It performs no leverage, initial-margin, maintenance-margin, liquidation, risk-limit, or exchange-specific collateral inference. Network access, rate discovery, exchange selection, persistence, account mutation, runtime configuration, and hidden defaults are forbidden. Invalid or ambiguous terms fail closed.
+
+The production boundary is contracts/futures/margin.py; meaningful contract tests are in tests/contracts/test_margin.py; CI enforcement is through .github/workflows/phase1-domain-contracts.yml.

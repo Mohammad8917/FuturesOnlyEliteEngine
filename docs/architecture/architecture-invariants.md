@@ -192,7 +192,7 @@ The following are architectural safety requirements and must have an explicit ow
 
 ## 8.1 Phase 1 domain-contract enforcement invariant
 
-The instrument identity and canonical Futures symbol unit, and the multiplier/contract-specification unit, are complete on the verified main lineage. The first incomplete Phase 1 production contract is now **settlement asset and settlement semantics**.
+The instrument identity and canonical Futures symbol unit, and the multiplier/contract-specification unit, are complete on the verified main lineage. The first incomplete Phase 1 production contract is now **margin asset and margin semantics**.
 
 The multiplier/contract-specification contract must make the following explicit and validated: contract quantity/unit, multiplier meaning, contract-size semantics, quote/settlement denomination, Linear/Inverse applicability, market applicability (CRYPTO Futures, FOREX Futures, GOLD Futures), precision/representation requirements, valid ranges, and failure semantics for unknown, zero, negative, contradictory, stale, unsupported, or ambiguous specifications.
 
@@ -402,7 +402,7 @@ The canonical production contract is `contracts/futures/contract_specification.p
 
 The multiplier and contract-specification unit is **complete** on the verified main lineage: production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence all passed.
 
-The next incomplete Phase 1 production contract is **settlement asset and settlement semantics**. It must preserve the explicit multiplier boundary and independently define settlement denomination, settlement authority, settlement timing, conversion semantics, and fail-closed behavior before implementation.
+The current incomplete Phase 1 production contract is **margin asset and margin semantics**. It must preserve the explicit multiplier and settlement boundaries and independently define margin denomination, ownership, conversion semantics, and fail-closed behavior before implementation.
 \n## 8.1.3 Settlement asset / settlement semantics lock
 
 The settlement contract is now frozen for this implementation unit:
@@ -421,3 +421,23 @@ The settlement contract is now frozen for this implementation unit:
 Settlement asset and settlement semantics are complete on verified main SHA `164dcb97c38271ab29f79f8e9b8068bcc8a55234`: production implementation, meaningful contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on the same SHA.
 
 The next incomplete Phase 1 production contract is **margin asset and margin semantics**. It must define denomination, ownership, Linear/Inverse applicability, market applicability, exact numeric semantics, validation, and fail-closed behavior before implementation.
+
+
+## 8.1.5 Phase 1 margin asset / margin semantics lock
+
+The margin contract is now frozen for this implementation unit:
+- the canonical instrument identity is authoritative for margin_asset;
+- margin denomination is explicit ASSET;
+- an upstream margin amount must declare its source_asset;
+- same-asset margin requires no conversion rate and rejects a supplied rate;
+- cross-asset margin requires an explicit positive finite Decimal conversion rate;
+- the conversion rate means margin-asset units per one source-asset unit;
+- the contract applies independently to CRYPTO Futures, FOREX Futures, GOLD Futures, Linear Futures, and Inverse Futures;
+- margin asset is not implicitly required to equal settlement asset; both are independently explicit financial semantics;
+- this contract does not infer leverage, initial margin, maintenance margin, liquidation, risk limits, or exchange-specific collateral policy;
+- no network, exchange selection, scheduling, persistence, account mutation, or runtime configuration is permitted in the domain contract;
+- invalid, missing, zero, negative, non-finite, contradictory, or ambiguous margin terms fail closed.
+
+Production boundary: contracts/futures/margin.py.
+Test boundary: tests/contracts/test_margin.py.
+CI boundary: .github/workflows/phase1-domain-contracts.yml.

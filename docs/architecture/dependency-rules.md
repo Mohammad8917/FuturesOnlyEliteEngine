@@ -93,7 +93,7 @@ Order and position reconciliation must detect divergence and unknown state; no d
 
 ## Phase 1 domain-contract dependency boundary
 
-The instrument identity and canonical Futures symbol unit and multiplier/contract-specification unit are complete on the current main lineage. The next Phase 1 implementation unit is **settlement asset and settlement semantics**.
+The instrument identity and canonical Futures symbol unit and multiplier/contract-specification unit are complete on the current main lineage. The next Phase 1 implementation unit is **margin asset and margin semantics**.
 
 Ownership:
 - domain/futures owns the pure financial meaning of multiplier and contract-size semantics.
@@ -162,3 +162,15 @@ Infrastructure may supply a validated source asset and externally obtained conve
 \n## Phase 1 cursor after settlement closure
 
 Settlement semantics are closed with same-SHA evidence on main. The next dependency-boundary unit is margin asset and margin semantics. Margin must consume explicit instrument and settlement contracts without redefining their meaning.
+
+
+## Phase 1 margin asset / margin semantics dependency boundary
+
+Margin semantics are owned by the Futures domain/contract boundary. The margin contract may consume only the canonical Futures instrument identity, explicit market vocabulary, immutable value objects, and exact Decimal arithmetic. It may use already-closed settlement facts only as domain facts; it must not redefine settlement semantics.
+
+Required margin inputs are explicit:
+- canonical instrument identity, including its authoritative margin asset;
+- source asset for any upstream margin amount;
+- exact positive finite Decimal conversion rate only when source and margin assets differ.
+
+Forbidden dependencies remain exchange SDKs, network I/O, persistence, clocks, runtime configuration, notifications, hidden defaults, leverage inference, and exchange-specific collateral policy. A margin contract must never silently substitute settlement asset for margin asset.

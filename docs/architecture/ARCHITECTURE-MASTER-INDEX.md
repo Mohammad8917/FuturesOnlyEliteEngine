@@ -138,7 +138,7 @@ Phase 1 is complete only when every required contract has a production implement
 
 ## 10.2 Phase 1 execution cursor
 
-**Current cursor:** settlement asset and settlement semantics.
+**Current cursor:** margin asset and margin semantics.
 
 The instrument identity and canonical Futures symbol unit is evidenced complete on the current main lineage. The next incomplete authorized Phase 1 unit must be completed through the full implementation-unit path:
 
@@ -179,7 +179,7 @@ Implementation boundary: `contracts/futures/contract_specification.py`. The cont
 
 ## 10.4 Phase 1 execution cursor — settlement
 
-The multiplier and contract-specification unit is now evidenced complete on main. The first incomplete authorized Phase 1 unit is **settlement asset and settlement semantics**.
+Historical closure: the multiplier and contract-specification unit and the settlement asset/settlement semantics unit are evidenced complete on main. The current first incomplete authorized Phase 1 unit is **margin asset and margin semantics**.
 
 Required path remains:
 Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
@@ -207,3 +207,23 @@ Settlement asset and settlement semantics are now evidenced complete on main SHA
 
 Required path remains:
 Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
+
+
+## 10.7 Phase 1 margin implementation contract
+
+The margin unit is explicitly defined:
+- owner: Futures domain/contract boundary;
+- authoritative margin asset: FuturesInstrumentIdentity.margin_asset;
+- margin unit: ASSET;
+- source asset: explicit upstream denomination;
+- same-asset margin: conversion prohibited and unnecessary;
+- cross-asset margin: explicit positive finite Decimal conversion rate required;
+- rate direction: margin-asset units per source-asset unit;
+- margin asset and settlement asset remain separate explicit semantics and may differ;
+- no leverage, initial-margin, maintenance-margin, liquidation, or exchange-specific collateral formula is inferred by this unit;
+- no network, exchange selection, scheduling, persistence, account mutation, or runtime configuration;
+- invalid, missing, zero, negative, non-finite, contradictory, or ambiguous terms fail closed.
+
+Production boundary: contracts/futures/margin.py.
+Test boundary: tests/contracts/test_margin.py.
+CI boundary: .github/workflows/phase1-domain-contracts.yml.
