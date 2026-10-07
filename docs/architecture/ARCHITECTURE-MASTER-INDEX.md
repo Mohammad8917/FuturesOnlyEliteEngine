@@ -136,6 +136,15 @@ For every contract, the implementation unit protocol is mandatory: Responsibilit
 
 Phase 1 is complete only when every required contract has a production implementation boundary, meaningful contract tests, and current same-SHA evidence. No Phase 2+ implementation may be used to conceal an incomplete Phase 1 contract.
 
+## 10.2 Phase 1 execution cursor
+
+**Current cursor:** instrument identity and canonical Futures symbol semantics.
+
+This cursor is the first incomplete authorized Phase 1 unit. It must be completed through the full implementation-unit path before moving to the next contract:
+
+Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
+
+The cursor is not satisfied by documentation alone. Until its production boundary, contract tests, CI enforcement, and same-SHA evidence exist, Phase 1 remains incomplete and all later Phase 1 units remain downstream.
 ## 11. Current project control
 The current project state is Phase 1 — Domain Contracts. Phase 0 — Architecture Baseline / Governance Final Audit is CLOSED, and Phase 1 is authorized. Phase 2+ remains blocked until each preceding phase exit criteria is evidenced.
 The next action is always the first incomplete authorized item — never a redesign and never a downstream implementation.
