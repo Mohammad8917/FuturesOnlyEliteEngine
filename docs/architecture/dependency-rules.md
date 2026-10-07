@@ -174,3 +174,10 @@ Required margin inputs are explicit:
 - exact positive finite Decimal conversion rate only when source and margin assets differ.
 
 Forbidden dependencies remain exchange SDKs, network I/O, persistence, clocks, runtime configuration, notifications, hidden defaults, leverage inference, and exchange-specific collateral policy. A margin contract must never silently substitute settlement asset for margin asset.
+
+
+## Phase 1 leverage dependency boundary
+
+Leverage vocabulary and contract-level constraints are owned by the Futures domain/contract boundary. The contract may consume canonical instrument identity and explicit margin facts as domain inputs but may not redefine their semantics.
+
+Leverage configuration must be explicit, validated, provenance-aware, and fail closed. Exchange SDKs, network I/O, persistence, runtime configuration access, hidden defaults, risk policy, and execution mutation are forbidden dependencies of the canonical leverage contract.
