@@ -403,3 +403,16 @@ The canonical production contract is `contracts/futures/contract_specification.p
 The multiplier and contract-specification unit is **complete** on the verified main lineage: production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence all passed.
 
 The next incomplete Phase 1 production contract is **settlement asset and settlement semantics**. It must preserve the explicit multiplier boundary and independently define settlement denomination, settlement authority, settlement timing, conversion semantics, and fail-closed behavior before implementation.
+\n## 8.1.3 Settlement asset / settlement semantics lock
+
+The settlement contract is now frozen for this implementation unit:
+- settlement denomination is an explicit asset unit;
+- the settlement asset must equal the canonical Futures instrument settlement asset;
+- an upstream settlement amount must declare its source asset;
+- same-asset settlement requires no conversion rate and rejects a supplied rate;
+- cross-asset settlement requires an explicit positive finite Decimal conversion rate;
+- the conversion rate means settlement-asset units per one source-asset unit;
+- conversion is deterministic Decimal multiplication only;
+- the contract never fetches rates, selects an exchange, schedules settlement, mutates account state, or infers margin;
+- invalid, missing, zero, negative, non-finite, contradictory, or ambiguous settlement terms fail closed;
+- exchange-specific settlement transport and timing remain infrastructure/application responsibilities and cannot redefine denomination semantics.
