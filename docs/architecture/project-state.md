@@ -21,11 +21,11 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: must be established from current GitHub Actions same-SHA evidence; this document is not the evidence source.
+- Last verified SHA: 8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf; verified by current GitHub Actions same-SHA evidence.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — instrument identity and canonical Futures symbol semantics are implemented and evidenced; the multiplier and contract-specification unit is now the first incomplete contract.
+- Active work: Phase 1 Domain Contracts — instrument identity and canonical Futures symbol semantics and multiplier/contract specification are implemented and evidenced; settlement asset and settlement semantics are now the first incomplete contract.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: Implement the multiplier and contract-specification unit from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
+- Next authorized action: define and implement settlement asset and settlement semantics from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -115,3 +115,12 @@ The canonical semantic lock is:
 - margin/settlement are not inferred by this unit.
 
 No downstream Phase 1 cursor advance is authorized until production implementation, contract tests, CI, and same-SHA evidence are green.
+
+## Phase 1 cursor transition — multiplier closed
+
+- Current HEAD: `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`
+- Last verified SHA: `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`
+- Multiplier / contract specification: COMPLETE — production implementation, contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on the same merge SHA.
+- Active work: Phase 1 Domain Contracts — settlement asset and settlement semantics.
+- Next authorized action: define and implement the settlement asset/settlement semantics contract.
+- Forbidden action: do not bypass settlement semantics, reinterpret multiplier meaning, weaken tests/gates, lower G05/G08, or skip the first incomplete Phase 1 contract.
