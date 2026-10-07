@@ -199,3 +199,11 @@ The settlement unit is now explicitly defined:
 - fail closed on missing, invalid, zero, negative, non-finite, contradictory, or ambiguous settlement terms.
 
 The production boundary is `contracts/futures/settlement.py`. Closure requires meaningful tests, Phase 1 CI, and same-SHA evidence.
+\n## 10.6 Phase 1 execution cursor — margin
+
+Settlement asset and settlement semantics are now evidenced complete on main SHA `164dcb97c38271ab29f79f8e9b8068bcc8a55234`.
+
+**Current cursor:** margin asset and margin semantics.
+
+Required path remains:
+Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.

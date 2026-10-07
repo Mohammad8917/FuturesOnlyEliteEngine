@@ -416,3 +416,8 @@ The settlement contract is now frozen for this implementation unit:
 - the contract never fetches rates, selects an exchange, schedules settlement, mutates account state, or infers margin;
 - invalid, missing, zero, negative, non-finite, contradictory, or ambiguous settlement terms fail closed;
 - exchange-specific settlement transport and timing remain infrastructure/application responsibilities and cannot redefine denomination semantics.
+\n## 8.1.4 Phase 1 cursor after settlement closure
+
+Settlement asset and settlement semantics are complete on verified main SHA `164dcb97c38271ab29f79f8e9b8068bcc8a55234`: production implementation, meaningful contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on the same SHA.
+
+The next incomplete Phase 1 production contract is **margin asset and margin semantics**. It must define denomination, ownership, Linear/Inverse applicability, market applicability, exact numeric semantics, validation, and fail-closed behavior before implementation.

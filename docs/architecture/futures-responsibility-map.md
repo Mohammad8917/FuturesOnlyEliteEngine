@@ -213,3 +213,6 @@ The multiplier/contract-specification responsibility is closed with verified pro
 **Failure semantics:** fail closed on mismatch, missing conversion, non-positive/non-finite rate, invalid asset, or contradictory terms.
 
 **Downstream consumers:** settlement accounting, PnL, margin, reconciliation, and execution may consume the validated settlement specification; none may redefine its denomination semantics.
+\n## Phase 1 cursor — margin ownership
+
+Settlement asset and settlement semantics are closed with verified implementation and CI evidence. The next incomplete responsibility is margin asset and margin semantics, which must receive one explicit primary owner and must consume, not reinterpret, the closed settlement contract.

@@ -74,3 +74,6 @@ The multiplier/contract-specification implementation is a closed implementation 
 \n## Phase 1 settlement closure rule
 
 Settlement asset and settlement semantics are an approved implementation of the existing Phase 1 contract baseline, not an architecture change. Any proposal to redefine settlement denomination, conversion direction, ownership, dependency direction, or fail-closed semantics must use the ADR process before implementation.
+\n## Phase 1 settlement closure
+
+Settlement asset and settlement semantics are a closed implementation of the approved Phase 1 baseline and are evidenced by same-SHA CI. The Phase 1 cursor now advances to margin asset and margin semantics. Any future semantic change to settlement denomination or conversion meaning remains subject to the ADR process.

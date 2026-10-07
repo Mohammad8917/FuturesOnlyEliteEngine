@@ -141,3 +141,9 @@ The implementation contract is frozen:
 Production boundary: `contracts/futures/settlement.py`.
 Test boundary: `tests/contracts/test_settlement.py`.
 CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
+\n## Phase 1 cursor transition — settlement closed
+
+- Settlement asset and settlement semantics: COMPLETE — production implementation, contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on same SHA `164dcb97c38271ab29f79f8e9b8068bcc8a55234`.
+- Active work: Phase 1 Domain Contracts — margin asset and margin semantics.
+- Next authorized action: define and implement margin asset/margin semantics.
+- Forbidden action: bypass margin semantics, redefine settlement/multiplier meaning, weaken tests/gates, lower G05/G08, or skip the first incomplete Phase 1 contract.
