@@ -1,14 +1,4 @@
-"""FuturesOnlyEliteEngine architecture dependency validator.
-
-This validator enforces the authoritative dependency direction defined by:
-- docs/architecture/dependency-rules.md
-- docs/architecture/futures-responsibility-map.md
-- docs/architecture/ARCHITECTURE-MASTER-INDEX.md
-
-It intentionally validates only architecture that actually exists in the target
-repository. Absence of a future production layer is not converted into a
-synthetic violation; Phase/implementation completeness is governed separately.
-"""
+"""Strict FuturesOnlyEliteEngine architecture dependency validator."""
 
 from __future__ import annotations
 
@@ -18,224 +8,214 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PYTHON_ROOT = ROOT
 
-# Canonical architectural layers. Multiple filesystem spellings are accepted
-# only as aliases for the same authoritative responsibility.
-LAYER_ALIASES: dict[str, tuple[str, ...]] = {
-    "domain": ("domain", "domain/futures"),
-    "contracts": ("contracts", "contracts/futures"),
-    "application": ("application", "application/futures"),
-    "risk": ("risk",),
-    "execution": ("execution",),
-    "infrastructure": ("infrastructure",),
-    "market_data": ("market", "market_data", "data"),
-    "analysis": ("analysis", "strategy"),
-    "configuration": ("configuration", "config", "security"),
-    "observability": ("observability", "notification", "notifications"),
+LAYER_ALIASES = {
+    "domain": {"domain"},
+    "contracts": {"contracts"},
+    "application": {"application"},
+    "risk": {"risk"},
+    "execution": {"execution"},
+    "infrastructure": {"infrastructure"},
+    "market_data": {"market", "market_data", "data"},
+    "analysis": {"analysis", "strategy"},
+    "configuration": {"configuration", "config", "security"},
+    "observability": {"observability", "notification", "notifications"},
 }
 
-# Dependency policy from dependency-rules.md. A layer may depend on itself,
-# standard-library modules, and the explicitly listed architectural layers.
-ALLOWED: dict[str, set[str]] = {
+ALLOWED = {
     "domain": {"contracts"},
-    "contracts": {"domain"},
-    "application": {"domain", "contracts", "market_data", "risk", "execution"},
-    "risk": {"domain", "contracts", "configuration"},
-    "execution": {"contracts", "domain", "risk", "infrastructure", "configuration"},
+    "contracts": set(),
+    "application": {"domain", "contracts"},
+    "risk": {"domain", "contracts"},
+    "execution": {"contracts", "domain", "risk", "infrastructure"},
     "infrastructure": {
-        "application",
-        "contracts",
-        "domain",
-        "market_data",
-        "execution",
-        "configuration",
-        "observability",
+        "application", "contracts", "domain", "market_data", "execution",
+        "configuration", "observability",
     },
-    "market_data": {"contracts", "domain", "infrastructure", "configuration"},
+    "market_data": {"contracts", "domain", "infrastructure"},
     "analysis": {"domain", "contracts", "market_data", "application"},
     "configuration": set(),
-    "observability": {"contracts", "execution"},
+    "observability": {"contracts"},
 }
 
-FORBIDDEN_IMPORT_PREFIXES: dict[str, tuple[str, ...]] = {
-    "domain": (
-        "requests",
-        "httpx",
-        "aiohttp",
-        "sqlalchemy",
-        "psycopg",
-        "redis",
-        "boto3",
-        "kafka",
-        "pika",
-        "dotenv",
-        "fastapi",
-        "flask",
-    ),
-    "risk": ("requests", "httpx", "aiohttp", "ccxt", "binance"),
-    "analysis": ("requests", "httpx", "aiohttp", "ccxt", "binance"),
-    "observability": ("ccxt", "binance"),
+FORBIDDEN_IMPORTS = {
+    "domain": {
+        "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
+        "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
+    },
+    "contracts": {
+        "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
+        "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
+    },
+    "risk": {"requests", "httpx", "aiohttp", "ccxt", "binance"},
+    "analysis": {"requests", "httpx", "aiohttp", "ccxt", "binance"},
+    "observability": {"ccxt", "binance"},
 }
 
-TEST_DIR = ROOT / "tests"
+SPOT_TOKENS = {"spot", "spotmarket", "spotorder", "spotprovider"}
+ORDER_CALLS = {
+    "create_order", "submit_order", "place_order", "send_order",
+    "cancel_order", "replace_order",
+}
+HTTP_CALLS = {"request", "get", "post", "put", "patch", "delete"}
+EXCLUDED = {".git", ".venv", "venv", "__pycache__"}
 
 
-def _module_name(path: Path) -> str:
-    relative = path.relative_to(ROOT).with_suffix("")
-    return ".".join(relative.parts)
-
-
-def _layer_for(path: Path) -> str | None:
+def _layer_for(path: Path, root: Path) -> str | None:
     try:
-        relative = path.relative_to(ROOT)
-    except ValueError:
+        first = path.relative_to(root).parts[0]
+    except (ValueError, IndexError):
         return None
-
-    parts = relative.parts
-    if not parts:
-        return None
-    first = parts[0]
-
     for layer, aliases in LAYER_ALIASES.items():
-        if first in {alias.split("/")[0] for alias in aliases}:
+        if first in aliases:
             return layer
     return None
 
 
-def _iter_python_files() -> list[Path]:
-    files: list[Path] = []
-    for path in ROOT.rglob("*.py"):
-        if any(part in {".git", ".venv", "venv", "__pycache__"} for part in path.parts):
-            continue
-        files.append(path)
-    return sorted(files)
+def _files(root: Path) -> list[Path]:
+    return sorted(
+        p for p in root.rglob("*.py")
+        if not any(part in EXCLUDED for part in p.parts)
+    )
 
 
-def _import_root(name: str) -> str:
-    return name.split(".", 1)[0]
+def _module(path: Path, root: Path) -> str:
+    return ".".join(path.relative_to(root).with_suffix("").parts)
 
 
-def _layer_from_import(import_name: str) -> str | None:
-    root = _import_root(import_name)
+def _resolve_relative(path: Path, root: Path, level: int, module: str) -> Path | None:
+    base = path.relative_to(root).parent
+    if level:
+        for _ in range(level - 1):
+            base = base.parent
+    target = root / base / Path(*module.split(".")) if module else root / base
+    candidate = target.with_suffix(".py")
+    if candidate.is_file():
+        return candidate
+    init = target / "__init__.py"
+    return init if init.is_file() else None
+
+
+def _import_layer(path: Path, root: Path, module: str, level: int) -> str | None:
+    if level:
+        target = _resolve_relative(path, root, level, module)
+        return _layer_for(target, root) if target else None
+    root_name = module.split(".", 1)[0]
     for layer, aliases in LAYER_ALIASES.items():
-        if root in {alias.split("/")[0] for alias in aliases}:
+        if root_name in aliases:
             return layer
     return None
 
 
-def _imports(path: Path) -> list[str]:
-    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-    found: list[str] = []
+def _imports(tree: ast.AST) -> list[tuple[str, int]]:
+    result = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
-            found.extend(alias.name for alias in node.names)
+            result.extend((a.name, 0) for a in node.names)
         elif isinstance(node, ast.ImportFrom):
-            if node.module:
-                found.append(node.module)
-    return found
+            result.append((node.module or "", node.level))
+    return result
 
 
-def validate() -> list[str]:
-    errors: list[str] = []
+def _forbidden_root(module: str, roots: set[str]) -> bool:
+    root = module.split(".", 1)[0].lower()
+    return root in roots
+
+
+def _spot(value: str) -> bool:
+    normalized = value.lower().replace("_", "").replace("-", "")
+    return normalized in SPOT_TOKENS or normalized.startswith("spot")
+
+
+def validate(root: Path = ROOT) -> list[str]:
+    errors: set[str] = set()
     graph: dict[str, set[str]] = defaultdict(set)
-    python_files = _iter_python_files()
 
-    for path in python_files:
-        layer = _layer_for(path)
+    for path in _files(root):
+        layer = _layer_for(path, root)
         if layer is None:
             continue
-
-        module = _module_name(path)
+        module_name = _module(path, root)
         try:
-            imported = _imports(path)
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         except (OSError, SyntaxError) as exc:
-            errors.append(f"{module}: cannot parse source: {exc}")
+            errors.add(f"{module_name}: cannot parse source: {exc}")
             continue
 
-        for import_name in imported:
-            imported_layer = _layer_from_import(import_name)
-            if imported_layer is not None and imported_layer != layer:
-                graph[layer].add(imported_layer)
-                if imported_layer not in ALLOWED.get(layer, set()):
-                    errors.append(
-                        f"{module}: forbidden architectural dependency "
-                        f"{layer} -> {imported_layer} via {import_name}"
+        for imported, level in _imports(tree):
+            target_layer = _import_layer(path, root, imported, level)
+            if target_layer is not None and target_layer != layer:
+                graph[layer].add(target_layer)
+                if target_layer not in ALLOWED[layer]:
+                    errors.add(
+                        f"{module_name}: forbidden dependency "
+                        f"{layer} -> {target_layer} via {imported or 'relative import'}"
                     )
 
-            if any(
-                import_name == prefix or import_name.startswith(prefix + ".")
-                for prefix in FORBIDDEN_IMPORT_PREFIXES.get(layer, ())
+            if level == 0 and _forbidden_root(imported, FORBIDDEN_IMPORTS.get(layer, set())):
+                errors.add(f"{module_name}: forbidden external dependency: {imported}")
+
+            if layer in {"domain", "contracts"} and _spot(imported):
+                errors.add(f"{module_name}: forbidden Spot dependency: {imported}")
+
+            if layer == "domain" and imported.lower().startswith(
+                ("infrastructure.", "exchange.", "exchanges.")
             ):
-                errors.append(
-                    f"{module}: forbidden infrastructure/transport import "
-                    f"{import_name} in {layer}"
-                )
+                errors.add(f"{module_name}: domain imports exchange infrastructure: {imported}")
 
-            # Domain must never depend on infrastructure by package path,
-            # regardless of how infrastructure is named below it.
-            if layer == "domain" and (
-                import_name.startswith("infrastructure.")
-                or import_name.startswith("exchange.")
-                or import_name.startswith("exchanges.")
+            if layer == "risk" and any(
+                token in imported.lower() for token in ("execution", "exchange", "order", "ccxt", "binance")
             ):
-                errors.append(
-                    f"{module}: domain imports infrastructure/exchange module "
-                    f"{import_name}"
-                )
+                errors.add(f"{module_name}: risk imports execution/order authority: {imported}")
 
-        if layer == "risk":
-            for import_name in imported:
-                if any(
-                    token in import_name.lower()
-                    for token in ("order", "exchange", "execution")
-                ) and _layer_from_import(import_name) in {"execution", "infrastructure"}:
-                    errors.append(
-                        f"{module}: risk must not depend on order/exchange execution "
-                        f"authority: {import_name}"
-                    )
+            if layer == "analysis" and target_layer == "execution":
+                errors.add(f"{module_name}: analysis imports execution: {imported}")
 
-        if layer == "analysis":
-            for import_name in imported:
-                if _layer_from_import(import_name) == "execution":
-                    errors.append(
-                        f"{module}: analysis/strategy must not depend on execution: "
-                        f"{import_name}"
-                    )
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Attribute):
+                    if node.func.attr in ORDER_CALLS and layer in {"domain", "risk", "analysis", "market_data"}:
+                        errors.add(f"{module_name}: forbidden order call in {layer}: {node.func.attr}")
+                    if node.func.attr in HTTP_CALLS and layer in {"domain", "risk", "analysis"}:
+                        errors.add(f"{module_name}: forbidden HTTP call in {layer}: {node.func.attr}")
+                for keyword in node.keywords:
+                    if keyword.arg == "futures" and isinstance(keyword.value, ast.Constant):
+                        if keyword.value.value is False:
+                            errors.add(f"{module_name}: forbidden futures=False switch")
 
-    # Detect architectural cycles among discovered layers.
+            if isinstance(node, ast.Name) and _spot(node.id):
+                errors.add(f"{module_name}: forbidden Spot symbol/reference: {node.id}")
+            if isinstance(node, ast.Attribute) and _spot(node.attr):
+                errors.add(f"{module_name}: forbidden Spot symbol/reference: {node.attr}")
+
     visiting: set[str] = set()
     visited: set[str] = set()
 
-    def visit(node: str, stack: list[str]) -> None:
-        if node in visiting:
-            cycle = " -> ".join(stack + [node])
-            errors.append(f"architectural dependency cycle: {cycle}")
+    def visit(layer: str, stack: list[str]) -> None:
+        if layer in visiting:
+            errors.add(f"architectural dependency cycle: {' -> '.join(stack + [layer])}")
             return
-        if node in visited:
+        if layer in visited:
             return
-        visiting.add(node)
-        for child in sorted(graph.get(node, ())):
-            visit(child, stack + [node])
-        visiting.remove(node)
-        visited.add(node)
+        visiting.add(layer)
+        for child in sorted(graph[layer]):
+            visit(child, stack + [layer])
+        visiting.remove(layer)
+        visited.add(layer)
 
     for layer in sorted(graph):
         visit(layer, [])
 
-    return errors
+    return sorted(errors)
 
 
 def main() -> int:
     errors = validate()
     if errors:
         print("ARCHITECTURE DEPENDENCY: FAIL")
-        for error in errors:
-            print(f"- {error}")
+        print("\n".join(f"- {error}" for error in errors))
         return 1
-
     print("ARCHITECTURE DEPENDENCY: PASS")
-    print("Validated all discovered architectural Python dependencies.")
     return 0
 
 
