@@ -1,0 +1,286 @@
+# Architecture Invariants — Constitution of FuturesOnlyEliteEngine
+
+## Status
+
+**AUTHORITATIVE / IMMUTABLE BY DEFAULT**
+
+This document defines the constitutional architectural invariants. It governs what no person, AI, agent, engineer, CI job, or implementation pressure may silently override.
+
+A proposal to change an invariant is not an approved change.
+
+## 1. Constitutional rule
+
+The architecture is frozen by default.
+
+No actor may directly modify an invariant because implementation is difficult, another design is shorter, a library prefers another design, a test is difficult, CI is failing, coverage is low, mutation score is low, an exchange has an unusual API, a deadline is approaching, or a new AI prefers another architecture.
+
+The project owner may propose an architectural change, but the proposal must pass the same architecture-change governance process as every other architectural change.
+
+**Mandatory principle:** No person, AI, agent, engineer, CI job, or implementation pressure may silently override an architectural invariant.
+
+## 2. Product identity invariants
+
+Product: FuturesOnlyEliteEngine — Elite Futures-Only Professional Trading Engine.
+
+Operational scope:
+- Futures only
+- CRYPTO
+- FOREX
+- GOLD
+- Linear Futures
+- Inverse Futures
+- 15 independent exchange adapters
+
+Operational Spot is forbidden.
+
+Historical Spot code, repositories, decisions, or compatibility requirements are reference material only and cannot restore an operational Spot path.
+
+## 3. Futures semantic invariants
+
+Linear and Inverse Futures are first-class contract families and must not be collapsed merely for code reuse.
+
+Applicable Futures semantics must remain explicit for:
+- contract family
+- Linear/Inverse
+- multiplier
+- settlement asset
+- margin asset
+- price and quantity units
+- leverage
+- initial margin
+- maintenance margin
+- funding
+- realized PnL
+- unrealized PnL
+- exposure
+- liquidation
+- position side
+- position mode
+- precision
+- exchange limits
+- reconciliation
+
+No implicit financial default may be introduced when it can alter financial meaning.
+
+## 4. Layer ownership invariants
+
+Approved dependency direction:
+
+DOMAIN → APPLICATION → RISK → EXECUTION → INFRASTRUCTURE
+
+Mandatory boundaries:
+- Domain remains infrastructure-independent.
+- Strategy/analysis must not submit orders.
+- Risk must not place orders.
+- Execution must not bypass risk validation.
+- Exchange-specific transport/SDK semantics remain outside the domain.
+- Infrastructure must not redefine domain financial semantics.
+- No layer may silently take ownership of another layer's responsibility.
+
+## 5. Exchange isolation invariants
+
+The 15 exchange adapters remain independently owned infrastructure boundaries.
+
+Shared contracts/interfaces are allowed. A generic implementation that erases meaningful exchange differences is forbidden.
+
+Exchange-specific behavior must remain independently representable and testable, including where applicable:
+- authentication
+- endpoints
+- request/response mapping
+- instrument specification
+- multiplier/settlement
+- margin/leverage
+- funding
+- PnL/liquidation information
+- order semantics
+- precision/limits
+- position mode
+- reconciliation
+
+## 6. Fail-closed invariants
+
+Unknown, invalid, stale, contradictory, incomplete, or untrusted critical Futures state must not produce:
+- an executable order
+- an accepted executable signal
+- a guessed contract specification
+- false reconciliation success
+- a Spot fallback
+- a guessed risk value
+- a guessed leverage/margin/liquidation value
+
+Required behavior is fail-closed.
+
+Convenient defaults are forbidden when they can change financial meaning.
+
+## 7. Quality invariants
+
+The official quality floor is immutable by default:
+- G01: zero unexplained format/lint violations
+- G02: zero unexplained type errors
+- G03: complete required unit/contract suite
+- G04: enforced architecture/dependency boundaries
+- G05: >= 98% coverage
+- G06: required security/supply-chain checks pass
+- G07: required integration/resilience and failure-path evidence
+- G08: >= 90% mutation score
+
+No actor may lower, bypass, weaken, exclude, skip, xfail, or otherwise manipulate these requirements to obtain green status.
+
+## 8. Testing invariants
+
+Tests are architectural enforcement, not cosmetic evidence.
+
+Forbidden:
+- deleting tests to improve results
+- skipping tests
+- weakening assertions
+- excluding healthy production code
+- artificial coverage
+- mutation suppression intended to improve score
+- fake success paths
+- placeholder tests
+- tests that merely reproduce implementation without verifying behavior
+
+A green result obtained by weakening the test system is not valid green evidence.
+
+## 9. Architecture-change firewall
+
+Any proposed change touching one or more of the following is automatically an Architecture Change Candidate:
+- Futures-only boundary
+- Spot boundary
+- market scope
+- Linear/Inverse semantics
+- financial formulas or accounting ownership
+- layer ownership
+- dependency direction
+- risk/execution boundary
+- exchange isolation
+- pipeline ordering
+- fail-closed behavior
+- quality thresholds
+- architecture enforcement
+- release criteria
+
+The actor must stop at the architectural boundary and perform impact analysis before implementation.
+
+## 10. Owner-change protection
+
+The project owner has authority to propose architectural changes.
+
+The owner does not have permission to silently bypass governance.
+
+If an owner request conflicts with an invariant, the AI/engineer MUST issue a serious warning before making any change:
+
+> CRITICAL ARCHITECTURE WARNING: This request conflicts with an architectural invariant. Direct implementation would create architecture drift. Implementation is blocked pending impact analysis and architecture-change review.
+
+The warning must identify:
+- violated invariant
+- affected contracts
+- affected dependencies
+- affected tests
+- affected gates
+- financial/operational risk
+- safer alternatives where available
+
+Owner intent alone is not evidence that an architectural change is safe.
+
+## 11. Architecture-change procedure
+
+A proposed architectural change must follow:
+
+PROPOSAL
+→ CRITICAL WARNING
+→ IMPACT ANALYSIS
+→ ALTERNATIVES
+→ RISK ANALYSIS
+→ ADR
+→ EXPLICIT RECONFIRMATION
+→ ARCHITECTURE DOCUMENT UPDATE
+→ IMPLEMENTATION
+→ ARCHITECTURE TESTS
+→ CI ENFORCEMENT
+→ SAME-SHA VERIFICATION
+
+No step may be silently omitted.
+
+## 12. ADR requirements
+
+Every approved architecture change must have an ADR under docs/architecture/adr/.
+
+Minimum ADR content:
+- status
+- date
+- owner/proposer
+- problem
+- current architecture
+- proposed change
+- reason current architecture is insufficient
+- alternatives considered
+- affected invariants
+- affected contracts
+- affected dependencies
+- affected tests
+- risk analysis
+- migration plan
+- rollback plan
+- explicit approval/reconfirmation
+
+Valid states:
+- PROPOSED
+- APPROVED
+- REJECTED
+- SUPERSEDED
+
+PROPOSED must never be treated as APPROVED.
+
+## 13. AI immutability rule
+
+A new AI/session must:
+1. read project-state.md
+2. read this document
+3. read architecture-contract.md
+4. read futures-responsibility-map.md
+5. read dependency-rules.md
+6. read master-roadmap-and-governance.md
+7. inspect current HEAD
+8. identify the current authorized phase/gate
+9. continue the first authorized incomplete action
+
+A new AI must:
+
+**Continue the map, not reinvent the map.**
+
+## 14. Architecture completion proof
+
+An architecture rule is not considered enforced until:
+
+ARCHITECTURE RULE
+→ CONTRACT
+→ PRODUCTION IMPLEMENTATION
+→ ARCHITECTURE TEST
+→ CI ENFORCEMENT
+→ EVIDENCE
+
+Documentation alone is insufficient.
+
+## 15. Emergency rule
+
+There is no emergency bypass for architectural safety.
+
+If production pressure, CI failure, exchange behavior, or implementation difficulty conflicts with an invariant:
+
+STOP → WARN → ANALYZE → GOVERN → THEN CHANGE
+
+Never:
+
+PRESSURE → BYPASS
+
+## 16. Final constitutional statement
+
+The project is designed to survive AI replacement, engineer replacement, implementation refactoring, exchange API changes, CI changes, dependency changes, and operational pressure.
+
+Architecture Integrity > Green CI
+Root Cause > Symptom Patch
+Real Implementation > Placeholder
+Real Evidence > Claim
+Fail Closed > Unsafe Continuation
