@@ -79,3 +79,51 @@ def test_validator_rejects_spot_symbol_in_domain(tmp_path: Path) -> None:
 
     errors = validate(tmp_path)
     assert any("Spot symbol/reference" in error for error in errors)
+
+
+def test_validator_rejects_risk_order_dependency(tmp_path: Path) -> None:
+    (tmp_path / "risk").mkdir()
+    (tmp_path / "risk" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "risk" / "policy.py").write_text(
+        "from execution.order import Order\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "execution").mkdir()
+    (tmp_path / "execution" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "execution" / "order.py").write_text("", encoding="utf-8")
+
+    from validation.architecture_dependency_validator import validate
+
+    errors = validate(tmp_path)
+    assert any("risk imports execution/order authority" in error for error in errors)
+
+
+def test_validator_rejects_analysis_execution_dependency(tmp_path: Path) -> None:
+    (tmp_path / "analysis").mkdir()
+    (tmp_path / "analysis" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "analysis" / "signal.py").write_text(
+        "from execution.intent import Intent\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "execution").mkdir()
+    (tmp_path / "execution" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "execution" / "intent.py").write_text("", encoding="utf-8")
+
+    from validation.architecture_dependency_validator import validate
+
+    errors = validate(tmp_path)
+    assert any("analysis imports execution" in error for error in errors)
+
+
+def test_validator_rejects_domain_http_call(tmp_path: Path) -> None:
+    (tmp_path / "domain").mkdir()
+    (tmp_path / "domain" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "domain" / "pricing.py").write_text(
+        "def load(client):\n    return client.get('/price')\n",
+        encoding="utf-8",
+    )
+
+    from validation.architecture_dependency_validator import validate
+
+    errors = validate(tmp_path)
+    assert any("forbidden HTTP call in domain" in error for error in errors)
