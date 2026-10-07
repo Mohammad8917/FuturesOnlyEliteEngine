@@ -451,3 +451,17 @@ Gate exit requires production implementation, meaningful contract tests, CI enfo
 Multiplier and contract specification has exited its gate with production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence on main SHA `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`.
 
 The next authorized Phase 1 unit is **settlement asset and settlement semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
+\n## Phase 1 settlement gate
+
+The settlement unit must close with:
+1. explicit settlement asset bound to canonical instrument identity;
+2. explicit source denomination;
+3. deterministic same-asset/no-conversion semantics;
+4. deterministic cross-asset conversion semantics with explicit positive finite Decimal rate;
+5. no domain dependency on exchange/network/scheduling/persistence/account mutation;
+6. fail-closed validation for all invalid or ambiguous terms;
+7. meaningful contract tests;
+8. CI enforcement;
+9. same-SHA evidence.
+
+No later Phase 1 contract may advance ahead of this gate.
