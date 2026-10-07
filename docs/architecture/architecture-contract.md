@@ -85,6 +85,27 @@ Coverage may not be raised by deleting tests, excluding production code, lowerin
 
 MARKET -> FUTURES INSTRUMENT -> MARKET ADAPTER -> MARKET DATA -> DATA VALIDATION -> REGIME PROBABILITY -> MTF STRUCTURE -> SETUP -> TREND/MOMENTUM -> CONFIRMATION -> COST/LIQUIDITY -> FUTURES RISK -> POSITION SIZING -> OPPORTUNITY RANKING -> DECISION -> SIGNAL CONTRACT -> EXECUTION RISK GATE -> EXECUTION CONTRACT -> EXCHANGE ADAPTER -> ORDER -> POSITION/ORDER RECONCILIATION -> AUDIT
 
+## Phase 1 domain contract baseline
+
+The authorized Phase 1 Domain Contracts foundation must explicitly define, with production ownership and failure semantics:
+
+- instrument identity and canonical Futures symbol semantics;
+- contract family and explicit Linear/Inverse applicability;
+- multiplier and contract specification;
+- settlement asset and settlement semantics;
+- margin asset and margin semantics;
+- leverage vocabulary and contract-level constraints;
+- position side and position mode;
+- price, quantity, monetary units, denomination, precision, and rounding semantics;
+- funding-rate value, interval, and funding calculation semantics;
+- realized PnL and unrealized PnL;
+- exposure and position valuation semantics;
+- liquidation price and liquidation constraints;
+- Futures accounting and settlement accounting;
+- validation status, provenance/freshness where applicable, and explicit failure semantics.
+
+Every Phase 1 contract follows the implementation unit protocol: Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers.
+
 ## Futures semantic requirements
 
 Every applicable production Futures path must explicitly model contract family, Linear/Inverse, multiplier, settlement asset, margin asset, leverage, initial margin, maintenance margin, funding, realized PnL, unrealized PnL, exposure, liquidation, position side, position mode, precision, exchange limits, and reconciliation semantics.
