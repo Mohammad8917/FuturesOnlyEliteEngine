@@ -17,15 +17,15 @@ This is project state, not the architectural contract. Architectural rules remai
 - Operational capabilities: automated Futures trading + Telegram/email signal and operational notifications
 - Architecture status: FROZEN BY DEFAULT
 - Operational Spot: FORBIDDEN
-- Current phase: Phase 0 — Architecture Baseline / Governance Final Audit
+- Current phase: Phase 0 — Architecture Baseline / Governance Final Audit — CLOSED
 - Current gate: Architecture baseline governance
-- Implementation phase authorized: NO — until the final governance audit is complete
+- Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD at last verification: 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca
 - Last verified SHA: 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca
 - Completed phases: None — Phase 0 remains open until its exit evidence is recorded
-- Active work: Complete the bounded Phase 0 final audit; the audit has now locked explicit state-authority, idempotency, concurrency, restart/recovery, execution-halt, clock/skew, audit-integrity, configuration-provenance, and release-provenance requirements in the authoritative path.
-- Blocked work: Production implementation, Phase 1 domain-contract implementation, and all downstream phases
-- Next authorized action: Perform one final cross-document consistency/closure verification on the current repository HEAD, classify any remaining findings, and record the Phase 0 exit decision only if all exit criteria are evidenced.
+- Active work: Phase 0 closure recorded after the bounded deep audit; Phase 1 Domain Contracts is now authorized.
+- Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
+- Next authorized action: Begin Phase 1 Domain Contracts from the mandatory implementation unit protocol; do not redesign the architecture or reopen Phase 0 for documentation completeness.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -41,7 +41,7 @@ Whenever this file is updated, record:
 - next authorized action
 - forbidden actions
 - open architecture questions
-- open architecture questions: None identified after the current deep-audit pass; Phase 0 closure evidence still requires final verification.
+- open architecture questions: None identified in the bounded Phase 0 deep audit.
 - evidence references: bounded Phase 0 closure control applied on 3efc4b90f49790db65e07387d37fa7ed52a11f9a; deep-audit baseline verified through 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
@@ -91,6 +91,10 @@ Owner requests that conflict with an invariant must trigger the critical archite
 
 The final audit is explicitly bounded. Findings must be classified as FIX NOW, DEFER TO PHASE N, or NOT AN ARCHITECTURE GAP. Once exit criteria are evidenced and the exit decision is recorded, Phase 0 is closed and must not be reopened for documentation completeness alone. A later phase may stop only for a genuine architecture gap; implementation details and optimizations stay in their owning phase.
 
+
+## Phase 0 exit decision
+
+**CLOSED — authorized to proceed to Phase 1 Domain Contracts.** The bounded deep audit found and closed the identified Phase 0 architecture gaps. Cross-document ownership, dependency direction, Futures-only scope, Linear/Inverse semantics, fail-closed behavior, configuration/security boundary, state authority, idempotency, concurrency/recovery, execution halt, trusted time, audit integrity, release provenance, phase/gate evidence, and anti-cycle controls are aligned on the verified pre-snapshot SHA. This state snapshot records the closure decision; the snapshot commit itself becomes the new repository HEAD and must be treated as the next current HEAD for subsequent work.
 
 ## Security requirement added during Phase 0 final audit
 
