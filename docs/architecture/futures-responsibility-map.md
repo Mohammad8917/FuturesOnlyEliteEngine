@@ -54,6 +54,15 @@ Owns external exchange integration. Each adapter independently owns authenticati
 
 No generic adapter may erase meaningful exchange differences.
 
+### Financial state authority and recovery rule
+
+- execution owns the lifecycle state machine and execution authority, while infrastructure/exchanges/<exchange> supplies externally observed order, fill, position, and account evidence.
+- Exchange-confirmed live account/order/position state is authoritative for external financial state. Local intent and cached state are not authoritative when evidence is missing, stale, contradictory, or unconfirmed.
+- execution owns idempotency identity, duplicate suppression, concurrency/version checks, restart/failover recovery, and the rule that execution remains halted until required reconciliation succeeds.
+- execution also owns the scoped/global trading halt boundary; risk may request a halt, but notification/delivery components can never grant or revoke trading authority.
+- A dedicated time/clock boundary supplies UTC timestamps and monotonic elapsed-time measurement; safety-critical freshness, timeout, and clock-skew policy is configuration-owned and fail-closed.
+- Audit evidence is owned by the execution/audit boundary and must be append-only/tamper-evident with stable event identity and causal correlation.
+
 ### Configuration/secrets/security hardcoding rule
 
 The configuration/security boundary owns all operational configuration and secret material. It must prevent hard-coded credentials, tokens, keys, passwords, secret-bearing connection strings, real account identifiers, and environment-specific operational settings from entering source, tests, fixtures, documentation, or logs. Safety-critical configuration is validated and fail-closed. Only genuinely immutable domain vocabulary/invariants may remain as source constants.
