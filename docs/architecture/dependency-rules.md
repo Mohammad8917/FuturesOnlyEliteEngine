@@ -93,19 +93,18 @@ Order and position reconciliation must detect divergence and unknown state; no d
 
 ## Phase 1 domain-contract dependency boundary
 
-The first Phase 1 implementation unit is **instrument identity and canonical Futures symbol semantics**.
+The instrument identity and canonical Futures symbol unit is complete on the current main lineage. The next Phase 1 implementation unit is **multiplier and contract specification**.
 
 Ownership:
-- `domain/futures` owns the pure financial meaning and canonical identity model.
-- `contracts/futures` owns stable boundary vocabulary and validation semantics.
-- `infrastructure/exchanges/<exchange>` may map exchange-specific symbols and instrument metadata into the canonical contract, but may not redefine canonical identity or introduce Spot semantics.
-- application, strategy, risk, and execution may consume the validated contract but may not create competing instrument-identity rules.
+- domain/futures owns the pure financial meaning of multiplier and contract-size semantics.
+- contracts/futures owns stable boundary vocabulary and validation semantics.
+- infrastructure/exchanges/<exchange> may map exchange-specific contract metadata into the canonical contract, but may not redefine multiplier meaning or introduce Spot semantics.
+- application, strategy, risk, and execution may consume the validated contract but may not create competing multiplier or contract-size rules.
 
-Allowed dependencies for this unit are deterministic standard-library/domain-safe facilities and domain-safe contracts only. It must not depend on exchange SDKs, HTTP clients, persistence, runtime configuration loaders, clocks, environment-specific values, or notification systems.
+Allowed dependencies remain deterministic standard-library/domain-safe facilities and domain-safe contracts only. The unit must not depend on exchange SDKs, HTTP clients, persistence, runtime configuration loaders, clocks, environment-specific values, or notification systems.
 
-The contract must distinguish exchange-independent identity from exchange-specific representation and must fail closed for unknown, ambiguous, malformed, contradictory, unsupported, or Spot identifiers. Linear/Inverse applicability must remain explicit rather than inferred from an exchange-specific symbol.
+Linear/Inverse applicability and market applicability must be explicit. Unknown, zero, negative, contradictory, stale, unsupported, or ambiguous specifications must fail closed. The downstream contract cursor advances only after production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence.
 
-The downstream dependency boundary is intentionally closed until this unit has production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence.
 ## Architecture tests must prove
 
 - domain does not import infrastructure;
