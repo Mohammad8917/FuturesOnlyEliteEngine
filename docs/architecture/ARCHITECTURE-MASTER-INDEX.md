@@ -112,7 +112,7 @@ Before implementation of any new capability, explicitly check for ownership and 
 Anything critical that lacks an owner, contract, enforcement path, or failure semantics is an architecture gap and blocks the affected phase.
 
 ## 11. Current project control
-The current project state is Phase 0 — Architecture Baseline / Governance Final Audit. Production implementation remains blocked until the Phase 0 exit criteria are evidenced on the current HEAD.
+The current project state is Phase 1 — Domain Contracts. Phase 0 — Architecture Baseline / Governance Final Audit is CLOSED, and Phase 1 is authorized. Phase 2+ remains blocked until each preceding phase exit criteria is evidenced.
 The next action is always the first incomplete authorized item — never a redesign and never a downstream implementation.
 
 Continue the map, not reinvent the map.
