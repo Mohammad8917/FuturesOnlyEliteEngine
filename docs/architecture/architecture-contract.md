@@ -173,3 +173,6 @@ Settlement is an explicit domain contract, not an exchange-side guess.
 The canonical settlement asset comes from the Futures instrument identity and must match the settlement specification. Every settlement amount declares its source asset. If source and settlement assets match, conversion is forbidden. If they differ, a positive finite Decimal conversion rate is mandatory; the rate is defined as settlement-asset units per source-asset unit.
 
 The settlement contract performs no network access, rate discovery, exchange selection, scheduling, persistence, account mutation, or margin inference. Those concerns belong to later application/infrastructure contracts. Missing or contradictory settlement terms fail closed.
+\n## Phase 1 cursor — margin
+
+The settlement asset/settlement semantics contract is complete and evidenced on main. The next incomplete Phase 1 contract is margin asset and margin semantics. It must explicitly define margin denomination, collateral identity, valuation units, Linear/Inverse applicability, market applicability, validation, and fail-closed behavior before production implementation.
