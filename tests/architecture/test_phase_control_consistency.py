@@ -13,6 +13,11 @@ def test_phase_control_documents_are_consistent() -> None:
     master_index = _read("ARCHITECTURE-MASTER-INDEX.md")
     roadmap = _read("master-roadmap-and-governance.md")
     state = _read("project-state.md")
+    invariants = _read("architecture-invariants.md")
+    contract = _read("architecture-contract.md")
+    responsibility = _read("futures-responsibility-map.md")
+    dependencies = _read("dependency-rules.md")
+    change_guard = _read("CHANGE-GUARD.md")
 
     assert (
         "The current project state is Phase 1 — Domain Contracts."
@@ -39,3 +44,36 @@ def test_phase_control_documents_are_consistent() -> None:
     assert "- Active work: Phase 1 Domain Contracts" in state
 
     assert "Production implementation remains blocked until the Phase 0 exit criteria" not in master_index
+
+    authoritative_markers = ("Futures only", "CRYPTO", "FOREX", "GOLD", "Linear", "Inverse")
+    for marker in authoritative_markers:
+        assert marker in invariants
+        assert marker in contract
+        assert marker in responsibility
+        assert marker in master_index
+
+    assert "Operational Spot is forbidden." in invariants
+    assert "Operational Spot is forbidden." in master_index
+    assert "Operational Spot" in contract
+    assert "Operational Spot" in responsibility
+    assert "Operational Spot" in dependencies
+
+    assert "Phase 1 — Domain Contracts" in master_index
+    assert "Phase 1 Domain Contracts" in roadmap
+    assert "Phase 1 — Domain Contracts" in state
+
+    assert "architecture-change governance process" in invariants
+    assert "ADR" in master_index
+    assert "ADR" in change_guard
+
+    assert "G01" in invariants
+    assert "G05" in invariants
+    assert "G08" in invariants
+    assert "G01" in contract
+    assert "G05" in contract
+    assert "G08" in contract
+    assert "G01–G08" in roadmap
+    assert "G01–G08" in change_guard
+
+    assert "not technically locked" in change_guard
+    assert "not the architectural contract" in state
