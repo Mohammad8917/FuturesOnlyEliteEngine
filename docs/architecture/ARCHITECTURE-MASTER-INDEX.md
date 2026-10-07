@@ -227,3 +227,21 @@ The margin unit is explicitly defined:
 Production boundary: contracts/futures/margin.py.
 Test boundary: tests/contracts/test_margin.py.
 CI boundary: .github/workflows/phase1-domain-contracts.yml.
+
+
+## 10.8 Phase 1 leverage implementation contract
+
+The margin asset/margin semantics unit is evidenced complete on main merge SHA f2c30bf3da77f56b2dd2d9350af7bb1376f47797.
+
+Current cursor: leverage vocabulary and contract-level constraints.
+
+The leverage unit must explicitly define:
+- leverage representation and exact numeric semantics;
+- admissible bounds and invalid-value behavior;
+- ownership and configuration provenance;
+- Linear/Inverse applicability;
+- CRYPTO/FOREX/GOLD applicability;
+- interaction boundaries with margin, risk, and execution;
+- fail-closed behavior for missing, invalid, contradictory, stale, or unsupported leverage;
+- no exchange-default inference or hidden leverage;
+- production implementation, meaningful tests, CI enforcement, and same-SHA evidence before cursor advance.
