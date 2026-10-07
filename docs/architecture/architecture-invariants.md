@@ -402,7 +402,7 @@ The canonical production contract is `contracts/futures/contract_specification.p
 
 The multiplier and contract-specification unit is **complete** on the verified main lineage: production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence all passed.
 
-The next incomplete Phase 1 production contract is **margin asset and margin semantics**. It must preserve the explicit multiplier boundary and independently define settlement denomination, settlement authority, settlement timing, conversion semantics, and fail-closed behavior before implementation.
+The current incomplete Phase 1 production contract is **margin asset and margin semantics**. It must preserve the explicit multiplier and settlement boundaries and independently define margin denomination, ownership, conversion semantics, and fail-closed behavior before implementation.
 \n## 8.1.3 Settlement asset / settlement semantics lock
 
 The settlement contract is now frozen for this implementation unit:
