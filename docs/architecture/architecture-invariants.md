@@ -81,9 +81,19 @@ No implicit financial default may be introduced when it can alter financial mean
 
 ## 5. Layer ownership invariants
 
-Approved dependency direction:
+Responsibility flow and source-code dependency direction are distinct concepts and must not be conflated.
 
-DOMAIN → APPLICATION → RISK → EXECUTION → INFRASTRUCTURE
+Responsibility flow:
+
+MARKET/DATA → ANALYSIS/DECISION → RISK → EXECUTION → EXCHANGE INFRASTRUCTURE → RECONCILIATION → AUDIT/OBSERVABILITY
+
+Source-code dependency direction is governed by dependency-rules.md:
+
+DOMAIN → DOMAIN-SAFE CONTRACTS
+APPLICATION → DOMAIN + CONTRACTS
+RISK → DOMAIN + CONTRACTS
+EXECUTION → CONTRACTS + DOMAIN FACTS + RISK DECISIONS
+INFRASTRUCTURE → APPLICATION/CONTRACTS/DOMAIN PORTS
 
 Mandatory boundaries:
 - Domain remains infrastructure-independent.
