@@ -20,12 +20,12 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current phase: Phase 0 — Architecture Baseline / Governance Final Audit — CLOSED
 - Current gate: Architecture baseline governance
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
-- Current HEAD at last verification: 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca
-- Last verified SHA: 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca
-- Completed phases: None — Phase 0 remains open until its exit evidence is recorded
-- Active work: Phase 0 closure recorded after the bounded deep audit; Phase 1 Domain Contracts is now authorized.
+- Current HEAD: e35ecabbc2834dd45c5803ed2b17d737dc68c2d8
+- Last verified SHA: 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca (current HEAD changes remain unverified)
+- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
+- Active work: Phase 1 Domain Contracts
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: Begin Phase 1 Domain Contracts from the mandatory implementation unit protocol; do not redesign the architecture or reopen Phase 0 for documentation completeness.
+- Next authorized action: Continue Phase 1 Domain Contracts from the mandatory implementation unit protocol; do not redesign the architecture or reopen Phase 0 for documentation completeness.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
