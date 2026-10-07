@@ -54,6 +54,10 @@ Owns external exchange integration. Each adapter independently owns authenticati
 
 No generic adapter may erase meaningful exchange differences.
 
+### Configuration/secrets/security hardcoding rule
+
+The configuration/security boundary owns all operational configuration and secret material. It must prevent hard-coded credentials, tokens, keys, passwords, secret-bearing connection strings, real account identifiers, and environment-specific operational settings from entering source, tests, fixtures, documentation, or logs. Safety-critical configuration is validated and fail-closed. Only genuinely immutable domain vocabulary/invariants may remain as source constants.
+
 ## Cross-layer responsibility map
 
 The Futures responsibility map is not limited to domain/futures files. The following responsibilities are mandatory before implementation:
