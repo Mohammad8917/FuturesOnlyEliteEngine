@@ -80,6 +80,13 @@ A critical requirement is complete only when its path is closed:
 RULE → CONTRACT → OWNER → PRODUCTION IMPLEMENTATION → TEST → CI ENFORCEMENT → CURRENT-HEAD EVIDENCE
 For Phase 0 governance-only work, implementation/test/CI stages may be future-phase work, but that must be explicitly recorded rather than implied complete.
 
+### Security/hardcoding firewall
+- no hard-coded secrets, credentials, tokens, signing keys, passwords, secret-bearing connection strings, or real account identifiers;
+- no hard-coded environment/deployment/account/exchange-specific operational configuration;
+- no silent source-code defaults for safety-critical configuration;
+- only genuinely immutable domain vocabulary/invariants may remain as source constants;
+- architecture/security tests and CI must enforce these rules.
+
 ## 10. Missing-requirement firewall
 Before implementation of any new capability, explicitly check for ownership and contracts for:
 - data provenance, freshness, ordering, contradiction handling;
