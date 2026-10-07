@@ -10,9 +10,9 @@ PYTHON: 3.13
 
 from __future__ import annotations
 
-from validation.architecture_dependency_validator import ALLOWED, FORBIDDEN
+from validation.architecture_dependency_validator import ALLOWED, FORBIDDEN_IMPORTS
 
 
 def test_allowed_and_forbidden_edges_are_disjoint() -> None:
-    for layer, forbidden in FORBIDDEN.items():
+    for layer, forbidden in FORBIDDEN_IMPORTS.items():
         assert forbidden.isdisjoint(ALLOWED.get(layer, set())), layer
