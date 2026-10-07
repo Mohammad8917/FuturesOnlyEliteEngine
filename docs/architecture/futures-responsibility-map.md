@@ -191,7 +191,7 @@ No Futures implementation is accepted until its owner, inputs, outputs, forbidde
 
 ## Phase 1 cursor — settlement ownership
 
-The multiplier/contract-specification responsibility is closed with verified production and CI evidence. The next incomplete responsibility is settlement asset and settlement semantics, which must receive one explicit primary owner before implementation.
+The multiplier/contract-specification responsibility is closed with verified production and CI evidence. The next incomplete responsibility is margin asset and margin semantics, which must receive one explicit primary owner before implementation.
 \n## Settlement asset / settlement semantics ownership
 
 **Primary owner:** Futures domain/contract boundary.
@@ -216,3 +216,24 @@ The multiplier/contract-specification responsibility is closed with verified pro
 \n## Phase 1 cursor — margin ownership
 
 Settlement asset and settlement semantics are closed with verified implementation and CI evidence. The next incomplete responsibility is margin asset and margin semantics, which must receive one explicit primary owner and must consume, not reinterpret, the closed settlement contract.
+
+
+## Phase 1 margin asset / margin semantics ownership
+
+Primary owner: Futures domain/contract boundary.
+
+Inputs: canonical Futures instrument identity, market, explicit source asset, and—only when source and margin assets differ—an exact positive finite Decimal conversion rate.
+
+Outputs: immutable margin specification and deterministic margin-asset amount.
+
+Units: margin quantity in ASSET units; conversion rate in margin-asset units per source-asset unit; exact Decimal arithmetic.
+
+Linear/Inverse: applicable to both; margin denomination is explicit and never inferred from contract family.
+
+Markets: applicable to CRYPTO Futures, FOREX Futures, and GOLD Futures.
+
+Dependencies allowed: canonical instrument identity, explicit market vocabulary, immutable value objects, exact Decimal arithmetic.
+
+Dependencies forbidden: exchange SDKs, network I/O, persistence, runtime configuration, clocks, notifications, hidden defaults, leverage inference, liquidation policy, and exchange-specific collateral policy.
+
+Downstream consumers: leverage, risk, position sizing, liquidation, PnL, reconciliation, and execution may consume the validated margin specification; none may redefine the margin asset or conversion semantics.
