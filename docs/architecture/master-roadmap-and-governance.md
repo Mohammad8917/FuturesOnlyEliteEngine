@@ -4,7 +4,7 @@
 
 **Authoritative project-control document.**
 
-This document defines the permanent execution order, architecture freeze rules, phase gates, and handoff protocol for FuturesOnlyEliteEngine.
+This document defines the permanent execution order, architecture freeze rules, runtime/deployment requirements, operational capabilities, phase gates, and handoff protocol for FuturesOnlyEliteEngine.
 
 A future AI, engineer, or session must treat this document together with the three authoritative architecture documents as the current source of truth.
 
@@ -53,7 +53,31 @@ Any change touching the Futures-only boundary, Spot boundary, market scope, Line
 
 There is no emergency bypass for architectural safety.
 
-## 4. Permanent execution order
+## 4. Runtime, deployment, and operational capability baseline
+
+The permanent runtime baseline is **Python 3.13**.
+
+Supported deployment environments are:
+- Windows Server
+- Linux Server
+- Windows Home/Desktop
+
+All three are first-class supported targets. Platform-specific code must remain isolated behind infrastructure boundaries and must not alter financial semantics or weaken safety controls.
+
+The finished system must provide both:
+- automated Futures trading through the complete risk-gated execution pipeline;
+- signal and operational notifications through Telegram and email.
+
+Telegram and email are delivery/observability channels. They cannot authorize execution, bypass risk, or convert notification failure into execution success.
+
+The three supported markets are **100% Futures**:
+- CRYPTO Futures
+- FOREX Futures
+- GOLD Futures
+
+Operational Spot is permanently forbidden.
+
+## 5. Permanent execution order
 
 The project proceeds through these phases in order.
 
@@ -187,7 +211,7 @@ Release is permitted only when the same final commit/HEAD has complete evidence 
 
 No historical green run may be used as proof for a different SHA.
 
-## 5. Gate discipline
+## 6. Gate discipline
 
 For every failure:
 
@@ -202,7 +226,7 @@ Rules:
 - never lower a threshold;
 - never delete or disable a test to make CI green.
 
-## 6. Implementation unit protocol
+## 7. Implementation unit protocol
 
 Before creating or changing a production module, record:
 
@@ -222,7 +246,7 @@ Before creating or changing a production module, record:
 
 If ownership is ambiguous, stop and resolve ownership before implementation.
 
-## 7. Reuse policy
+## 8. Reuse policy
 
 Reuse is allowed only when semantics are genuinely identical.
 
@@ -236,7 +260,7 @@ Especially prohibited:
 
 Prefer explicit semantic boundaries over premature abstraction.
 
-## 8. Testing strategy
+## 9. Testing strategy
 
 Tests are part of the architecture, not a final cosmetic layer.
 
@@ -253,7 +277,7 @@ Required categories:
 
 Coverage must represent meaningful behavior. Artificial tests, unreachable branches, exclusions, weakened assertions, and threshold manipulation are not acceptable substitutes.
 
-## 9. Definition of done
+## 10. Definition of done
 
 A feature is not done because:
 - the code imports;
@@ -271,7 +295,7 @@ A feature is done only when:
 6. relevant quality gates pass;
 7. the final same-SHA evidence is recorded.
 
-## 10. AI handoff protocol
+## 11. AI handoff protocol
 
 When a new AI/session starts work:
 
@@ -287,7 +311,7 @@ When a new AI/session starts work:
 
 A new AI must **continue the map, not reinvent the map**.
 
-## 11. Change-control rule
+## 12. Change-control rule
 
 If implementation pressure appears to require an architectural change:
 
@@ -301,7 +325,7 @@ If implementation pressure appears to require an architectural change:
 
 No silent architecture drift is permitted.
 
-## 12. Final target
+## 13. Final target
 
 The target is not merely a green repository.
 
