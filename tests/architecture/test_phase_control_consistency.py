@@ -73,7 +73,7 @@ def test_phase_control_documents_are_consistent() -> None:
     assert "G01" in contract
     assert "G05" in contract
     assert "G08" in contract
-    assert "G01 -> G08" in roadmap
+    assert "G01 -> G02 -> G03 -> G04 -> G05 -> G06 -> G07 -> G08" in roadmap
     assert "G01–G08" in change_guard
 
     assert "not technically locked" in change_guard
