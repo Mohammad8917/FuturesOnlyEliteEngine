@@ -106,3 +106,12 @@ The current project state is Phase 0 — Architecture Baseline / Governance Fina
 The next action is always the first incomplete authorized item — never a redesign and never a downstream implementation.
 
 Continue the map, not reinvent the map.
+
+## 12. Phase 0 closure / anti-cycle control
+Phase 0 has a finite closure point. Its final audit exists to remove architecture blockers, not to continuously expand governance documentation.
+
+Audit findings are classified as **FIX NOW**, **DEFER TO PHASE N**, or **NOT AN ARCHITECTURE GAP**. Only genuine Phase 0 architecture gaps are fixed before exit. Later implementation details, optimizations, and preferences must remain in their owning phase.
+
+After all Phase 0 exit criteria are evidenced on the current HEAD and the exit decision is recorded in `project-state.md`, Phase 0 is **CLOSED**. Do not reopen it merely for additional documentation completeness. A later-phase concern reopens architecture only when it is a genuine architecture gap that would invalidate the current contract; otherwise the current phase continues.
+
+This is the control against an infinite audit → document → re-audit cycle.
