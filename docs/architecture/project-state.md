@@ -124,3 +124,20 @@ No downstream Phase 1 cursor advance is authorized until production implementati
 - Active work: Phase 1 Domain Contracts — settlement asset and settlement semantics.
 - Next authorized action: define and implement the settlement asset/settlement semantics contract.
 - Forbidden action: do not bypass settlement semantics, reinterpret multiplier meaning, weaken tests/gates, lower G05/G08, or skip the first incomplete Phase 1 contract.
+\n## Phase 1 settlement implementation evidence
+
+The active cursor is **settlement asset and settlement semantics**.
+
+The implementation contract is frozen:
+- settlement unit = ASSET;
+- settlement asset must equal the canonical instrument settlement asset;
+- source asset is explicit;
+- same-asset settlement has no conversion rate;
+- cross-asset settlement requires an explicit positive finite Decimal conversion rate;
+- conversion rate is settlement-asset units per source-asset unit;
+- no exchange/network/scheduling/persistence/account mutation is permitted in the domain contract;
+- invalid, zero, negative, non-finite, contradictory, or ambiguous settlement terms fail closed.
+
+Production boundary: `contracts/futures/settlement.py`.
+Test boundary: `tests/contracts/test_settlement.py`.
+CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
