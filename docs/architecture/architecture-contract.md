@@ -31,6 +31,14 @@ The system is required to support both:
 
 Notifications are observability/delivery outputs, not execution authority. Telegram or email failures must never be interpreted as successful order execution, and notification channels must not bypass risk/execution gates.
 
+
+## Configuration, hardcoding, and sensitive information
+
+- Secrets and sensitive values must never be embedded in production code, tests, fixtures, examples, documentation, logs, or committed configuration.
+- Environment/deployment/account/exchange-specific operational values must be supplied through the explicit configuration/security boundary rather than hard-coded in business or infrastructure logic.
+- Safety-critical configurable values must have typed validation, provenance, and fail-closed behavior; missing or malformed values cannot silently fall back to source-code defaults.
+- Hard-coded constants are acceptable only for immutable domain vocabulary or true invariants whose semantics cannot vary by environment, account, deployment, or exchange configuration.
+- Security scanning and architecture tests must enforce the boundary and detect accidental credential/token/key material and forbidden operational hardcoding.
 ## Architectural completeness requirements
 
 Before production implementation of any capability, the architecture must explicitly define:
