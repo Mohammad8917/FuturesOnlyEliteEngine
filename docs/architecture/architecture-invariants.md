@@ -192,7 +192,7 @@ The following are architectural safety requirements and must have an explicit ow
 
 ## 8.1 Phase 1 domain-contract enforcement invariant
 
-The first incomplete Phase 1 production contract is now **multiplier and contract specification**. The instrument identity and canonical Futures symbol unit has a production boundary, meaningful contract tests, CI enforcement, and same-SHA evidence on the current main lineage.
+The instrument identity and canonical Futures symbol unit, and the multiplier/contract-specification unit, are complete on the verified main lineage. The first incomplete Phase 1 production contract is now **settlement asset and settlement semantics**.
 
 The multiplier/contract-specification contract must make the following explicit and validated: contract quantity/unit, multiplier meaning, contract-size semantics, quote/settlement denomination, Linear/Inverse applicability, market applicability (CRYPTO Futures, FOREX Futures, GOLD Futures), precision/representation requirements, valid ranges, and failure semantics for unknown, zero, negative, contradictory, stale, unsupported, or ambiguous specifications.
 
