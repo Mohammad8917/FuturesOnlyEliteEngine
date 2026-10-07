@@ -4,6 +4,31 @@
 
 FuturesOnlyEliteEngine is a production-grade, Futures-only professional trading engine for CRYPTO Futures, FOREX Futures, GOLD Futures, Linear Futures, Inverse Futures, and 15 independent exchange adapters.
 
+## Runtime and deployment contract
+
+### Python runtime
+
+- **Required Python version: 3.13**.
+- Python 3.13 is the declared production and CI runtime baseline unless changed through the architecture-change process.
+
+### Deployment targets
+
+The production engine must support:
+- Windows Server
+- Linux Server
+- Windows Home/Desktop
+
+Platform-specific behavior must remain behind explicit infrastructure boundaries. Cross-platform support must not weaken security, risk controls, execution validation, reconciliation, observability, or fail-closed behavior.
+
+### Operational capabilities
+
+The system is required to support both:
+
+1. **Automated Futures trading** through the governed execution pipeline.
+2. **Signal/operational notification delivery** through Telegram and email.
+
+Notifications are observability/delivery outputs, not execution authority. Telegram or email failures must never be interpreted as successful order execution, and notification channels must not bypass risk/execution gates.
+
 ## Quality bar
 
 Acceptance requires evidence. No marketing claim of world-class quality substitutes for deterministic tests, architecture enforcement, mutation evidence, security evidence, integration/resilience evidence, and release verification.
