@@ -29,6 +29,26 @@ The system is required to support both:
 
 Notifications are observability/delivery outputs, not execution authority. Telegram or email failures must never be interpreted as successful order execution, and notification channels must not bypass risk/execution gates.
 
+## Architectural completeness requirements
+
+Before production implementation of any capability, the architecture must explicitly define:
+
+- canonical vocabulary and stable contract ownership;
+- exact inputs, outputs, units, precision, timestamps, validation status, and failure semantics at critical boundaries;
+- Linear/Inverse applicability and financial meaning;
+- CRYPTO/FOREX/GOLD applicability;
+- risk, execution, order lifecycle, reconciliation, and audit ownership;
+- configuration/secrets and security ownership;
+- data freshness/provenance and fail-closed behavior;
+- idempotency and unknown-state handling where external state changes are involved;
+- observability, operational error classification, and notification semantics;
+- resilience rules for timeout, retry, partial failure, duplicate delivery, and contradictory external state;
+- architecture-test and CI-enforcement expectations;
+- phase/gate entry and exit evidence requirements;
+- migration, rollback, and compatibility impact for approved architecture changes.
+
+No critical behavior may remain governed only by convention, an implementation detail, or an undocumented assumption.
+
 ## Quality bar
 
 Acceptance requires evidence. No marketing claim of world-class quality substitutes for deterministic tests, architecture enforcement, mutation evidence, security evidence, integration/resilience evidence, and release verification.
@@ -61,6 +81,16 @@ Implicit defaults are prohibited when they can change financial meaning.
 ## Fail-closed requirements
 
 Unknown, invalid, stale, contradictory, or incomplete critical Futures state must stop the relevant operation. Failure must never silently produce an order, accepted signal, valid-looking position, false reconciliation success, Spot fallback, or guessed contract specification.
+
+## Phase/gate evidence rule
+
+A phase or gate is complete only when its required evidence is tied to the current repository HEAD. Historical runs, stale branches, local-only results, or claims without reproducible evidence do not establish completion.
+
+The required proof chain is:
+
+ARCHITECTURE RULE → CONTRACT → PRODUCTION IMPLEMENTATION → TEST → CI ENFORCEMENT → SAME-SHA EVIDENCE
+
+For architecture-only governance work, production implementation may legitimately remain pending; in that case the missing enforcement stage must be explicitly recorded as a future phase rather than implied to be complete.
 
 ## Implementation sequence
 
