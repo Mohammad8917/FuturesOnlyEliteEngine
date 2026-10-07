@@ -67,6 +67,27 @@ No generic adapter may erase meaningful exchange differences.
 
 The configuration/security boundary owns all operational configuration and secret material. It must prevent hard-coded credentials, tokens, keys, passwords, secret-bearing connection strings, real account identifiers, and environment-specific operational settings from entering source, tests, fixtures, documentation, or logs. Safety-critical configuration is validated and fail-closed. Only genuinely immutable domain vocabulary/invariants may remain as source constants.
 
+## Phase 1 domain contract ownership baseline
+
+The domain/futures and contracts/futures boundaries jointly define the Phase 1 contract foundation. The owned contract vocabulary explicitly includes:
+
+- instrument identity and canonical Futures symbol semantics;
+- contract family and Linear/Inverse applicability;
+- multiplier and contract specification;
+- settlement asset and settlement semantics;
+- margin asset and margin semantics;
+- leverage and contract-level leverage constraints;
+- position side and position mode;
+- price, quantity, monetary units, denomination, precision, and rounding;
+- funding-rate value, funding interval, and funding calculation;
+- realized PnL and unrealized PnL;
+- exposure and position valuation;
+- liquidation price and liquidation constraints;
+- Futures accounting and settlement accounting;
+- validation status, provenance/freshness where applicable, and explicit failure semantics.
+
+The primary owner must be explicit for every contract. These contracts remain pure/domain-safe and do not contain transport, persistence, network, or exchange-specific behavior.
+
 ## Cross-layer responsibility map
 
 The Futures responsibility map is not limited to domain/futures files. The following responsibilities are mandatory before implementation:
