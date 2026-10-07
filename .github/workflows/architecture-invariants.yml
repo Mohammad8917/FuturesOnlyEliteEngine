@@ -23,7 +23,7 @@ on:
   pull_request:
     paths:
       - "docs/architecture/architecture-invariants.md"
-      - "docs/architecture/architecture-contract.py"
+      - "docs/architecture/architecture-contract.md"
       - "docs/architecture/dependency-rules.md"
       - "docs/architecture/futures-responsibility-map.md"
       - "docs/architecture/project-state.md"
