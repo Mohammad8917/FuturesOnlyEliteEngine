@@ -21,7 +21,7 @@ REQUIRED_MARKERS = (
     "execution also owns the scoped/global trading halt boundary",
     "A dedicated time/clock boundary supplies UTC timestamps",
     "Audit evidence is owned by the execution/audit boundary and must be append-only/tamper-evident",
-    "Configuration/security boundary owns all operational configuration and secret material.",
+    "The configuration/security boundary owns all operational configuration and secret material.",
     "Telegram/email delivery",
     "Every primary owner must define inputs, outputs, units, precision, timestamps, validation state, failure behavior",
 )
