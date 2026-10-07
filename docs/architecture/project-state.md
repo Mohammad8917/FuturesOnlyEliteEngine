@@ -17,12 +17,15 @@ This is project state, not the architectural contract. Architectural rules remai
 - Operational capabilities: automated Futures trading + Telegram/email signal and operational notifications
 - Architecture status: FROZEN BY DEFAULT
 - Operational Spot: FORBIDDEN
-- Current phase: Phase 0 — Architecture Baseline / Governance Completion
+- Current phase: Phase 0 — Architecture Baseline / Governance Final Audit
 - Current gate: Architecture baseline governance
-- Implementation phase authorized: NO — until governance baseline is finalized
-- Active work: Establish immutable architecture invariants, persistent project state, and controlled ADR process
-- Blocked work: Production implementation until the architecture governance baseline is complete
-- Next authorized action: Verify governance documents, then begin Phase 1 — Domain Contracts
+- Implementation phase authorized: NO — until the final governance audit is complete
+- Current HEAD: 570ea7a9a52d1543fe32fb40e6552eb05dbc7f33
+- Last verified SHA: 570ea7a9a52d1543fe32fb40e6552eb05dbc7f33
+- Completed phases: None — Phase 0 remains open until its exit evidence is recorded
+- Active work: Finalize and audit the complete architecture governance baseline, including invariants, state, ADR governance, contract, responsibility ownership, dependency rules, roadmap, evidence rules, and architecture enforcement requirements
+- Blocked work: Production implementation, Phase 1 domain-contract implementation, and all downstream phases
+- Next authorized action: Complete the Phase 0 final audit; if and only if the exit criteria are satisfied, authorize Phase 1 — Domain Contracts
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -39,6 +42,23 @@ Whenever this file is updated, record:
 - forbidden actions
 - open architecture questions
 - evidence references
+
+## Phase 0 exit criteria
+
+Phase 0 is complete only when all of the following are explicitly verified on the current repository HEAD:
+
+- architecture invariants are complete and internally consistent;
+- project-state fields are complete and consistent with repository evidence;
+- ADR governance is defined and unambiguous;
+- architecture contract, responsibility map, dependency rules, and roadmap agree on product scope and ownership;
+- canonical terminology and boundary vocabulary are consistent;
+- runtime, deployment, operational capability, security, observability, audit, reconciliation, and fail-closed requirements are explicitly owned;
+- phase/gate entry and exit criteria are explicit;
+- evidence requirements and same-SHA verification rules are explicit;
+- architecture enforcement is defined as rule → contract → implementation → test → CI → evidence;
+- no unresolved architecture contradiction or unowned critical requirement remains.
+
+Only after these conditions are evidenced may `Implementation phase authorized` change to `YES — Phase 1 Domain Contracts`.
 
 ## State transition rule
 
