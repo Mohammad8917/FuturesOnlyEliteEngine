@@ -7,6 +7,7 @@ import pytest
 from contracts.futures import (
     CanonicalFuturesSymbol,
     ContractFamily,
+    FuturesInstrumentIdentity,
     FuturesMarginSpecification,
     MarginUnit,
     MarginValidationError,
@@ -14,19 +15,24 @@ from contracts.futures import (
 )
 
 
-def _symbol(margin_asset: str = "usdt") -> CanonicalFuturesSymbol:
-    return CanonicalFuturesSymbol(
+def _instrument(margin_asset: str = "usdt") -> FuturesInstrumentIdentity:
+    symbol = CanonicalFuturesSymbol(
         base_asset="btc",
         quote_asset="usdt",
         contract_family=ContractFamily.LINEAR,
-        settlement_asset=margin_asset,
+        settlement_asset="usdt",
+    )
+    return FuturesInstrumentIdentity.create(
+        market=Market.CRYPTO,
+        symbol=symbol,
+        margin_asset=margin_asset,
     )
 
 
 def test_same_asset_margin_requires_no_conversion() -> None:
     spec = FuturesMarginSpecification(
         market=Market.CRYPTO,
-        symbol=_symbol(),
+        instrument=_instrument("usdt"),
         margin_unit=MarginUnit.ASSET,
         margin_asset="usdt",
         source_asset="usdt",
@@ -39,7 +45,7 @@ def test_same_asset_margin_requires_no_conversion() -> None:
 def test_cross_asset_margin_requires_explicit_rate() -> None:
     spec = FuturesMarginSpecification(
         market=Market.CRYPTO,
-        symbol=_symbol(),
+        instrument=_instrument("usdt"),
         margin_unit=MarginUnit.ASSET,
         margin_asset="usdt",
         source_asset="usd",
@@ -56,37 +62,54 @@ def test_margin_contract_applies_to_all_supported_markets_and_families(
     market: Market, family: ContractFamily
 ) -> None:
     if market is Market.CRYPTO:
-        base, quote, margin = "btc", "usdt", "usdt"
+        base, quote, settlement, margin = "btc", "usdt", "usdt", "btc"
     elif market is Market.FOREX:
-        base, quote, margin = "eur", "usd", "usd"
+        base, quote, settlement, margin = "eur", "usd", "usd", "eur"
     else:
-        base, quote, margin = "xau", "usd", "usd"
+        base, quote, settlement, margin = "xau", "usd", "usd", "usd"
 
     symbol = CanonicalFuturesSymbol(
         base_asset=base,
         quote_asset=quote,
         contract_family=family,
-        settlement_asset=margin,
+        settlement_asset=settlement,
+    )
+    instrument = FuturesInstrumentIdentity.create(
+        market=market,
+        symbol=symbol,
+        margin_asset=margin,
     )
     spec = FuturesMarginSpecification(
         market=market,
-        symbol=symbol,
+        instrument=instrument,
         margin_unit=MarginUnit.ASSET,
         margin_asset=margin,
         source_asset=margin,
     )
 
     assert spec.margin_asset == margin
+    assert spec.symbol == symbol
 
 
 def test_margin_asset_mismatch_fails_closed() -> None:
     with pytest.raises(MarginValidationError):
         FuturesMarginSpecification(
             market=Market.CRYPTO,
-            symbol=_symbol(),
+            instrument=_instrument("btc"),
             margin_unit=MarginUnit.ASSET,
-            margin_asset="btc",
-            source_asset="btc",
+            margin_asset="usdt",
+            source_asset="usdt",
+        )
+
+
+def test_market_mismatch_fails_closed() -> None:
+    with pytest.raises(MarginValidationError):
+        FuturesMarginSpecification(
+            market=Market.FOREX,
+            instrument=_instrument("usdt"),
+            margin_unit=MarginUnit.ASSET,
+            margin_asset="usdt",
+            source_asset="usdt",
         )
 
 
@@ -95,7 +118,7 @@ def test_invalid_conversion_rate_fails_closed(rate: Decimal) -> None:
     with pytest.raises(MarginValidationError):
         FuturesMarginSpecification(
             market=Market.CRYPTO,
-            symbol=_symbol(),
+            instrument=_instrument("usdt"),
             margin_unit=MarginUnit.ASSET,
             margin_asset="usdt",
             source_asset="usd",
@@ -107,7 +130,7 @@ def test_missing_cross_asset_rate_fails_closed() -> None:
     with pytest.raises(MarginValidationError):
         FuturesMarginSpecification(
             market=Market.CRYPTO,
-            symbol=_symbol(),
+            instrument=_instrument("usdt"),
             margin_unit=MarginUnit.ASSET,
             margin_asset="usdt",
             source_asset="usd",
@@ -118,7 +141,7 @@ def test_unexpected_same_asset_rate_fails_closed() -> None:
     with pytest.raises(MarginValidationError):
         FuturesMarginSpecification(
             market=Market.CRYPTO,
-            symbol=_symbol(),
+            instrument=_instrument("usdt"),
             margin_unit=MarginUnit.ASSET,
             margin_asset="usdt",
             source_asset="usdt",
@@ -129,7 +152,7 @@ def test_unexpected_same_asset_rate_fails_closed() -> None:
 def test_non_positive_amount_fails_closed() -> None:
     spec = FuturesMarginSpecification(
         market=Market.CRYPTO,
-        symbol=_symbol(),
+        instrument=_instrument("usdt"),
         margin_unit=MarginUnit.ASSET,
         margin_asset="usdt",
         source_asset="usdt",
