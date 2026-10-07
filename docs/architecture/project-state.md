@@ -20,12 +20,12 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current phase: Phase 0 — Architecture Baseline / Governance Final Audit
 - Current gate: Architecture baseline governance
 - Implementation phase authorized: NO — until the final governance audit is complete
-- Current HEAD at last verification: 30491a058877692490b0c037138d0f5ecc2ea653
-- Last verified SHA: 30491a058877692490b0c037138d0f5ecc2ea653
+- Current HEAD at last verification: 754307b53785f6dc2b62445360daca0cbdcc16f9
+- Last verified SHA: 754307b53785f6dc2b62445360daca0cbdcc16f9
 - Completed phases: None — Phase 0 remains open until its exit evidence is recorded
-- Active work: Finalize and audit the complete architecture governance baseline, including invariants, state, ADR governance, contract, responsibility ownership, dependency rules, roadmap, evidence rules, and architecture enforcement requirements
+- Active work: Preserve the completed governance baseline and begin only the first authorized Phase 1 action after the Phase 0 exit decision is explicitly recorded
 - Blocked work: Production implementation, Phase 1 domain-contract implementation, and all downstream phases
-- Next authorized action: Complete the Phase 0 final audit; if and only if the exit criteria are satisfied, authorize Phase 1 — Domain Contracts
+- Next authorized action: Record the Phase 0 exit decision after this evidence snapshot; if and only if all exit criteria remain satisfied, authorize Phase 1 — Domain Contracts
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -41,8 +41,8 @@ Whenever this file is updated, record:
 - next authorized action
 - forbidden actions
 - open architecture questions
-- evidence references
-- master-index navigation reference
+- evidence references: governance audit verified on 754307b53785f6dc2b62445360daca0cbdcc16f9; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
+- master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
 ## Phase 0 exit criteria
 
