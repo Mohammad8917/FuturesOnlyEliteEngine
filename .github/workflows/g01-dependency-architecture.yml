@@ -4,7 +4,10 @@ on:
   push:
     paths:
       - "validation/**"
+      - "contracts/**"
+      - "contracts/**"
       - "tests/architecture/**"
+      - "tests/contracts/**"
       - "docs/architecture/**"
       - ".github/workflows/g01-dependency-architecture.yml"
   pull_request:
