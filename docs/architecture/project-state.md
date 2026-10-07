@@ -167,3 +167,20 @@ The implementation contract is frozen:
 Production boundary: contracts/futures/margin.py.
 Test boundary: tests/contracts/test_margin.py.
 CI boundary: .github/workflows/phase1-domain-contracts.yml.
+
+
+## Phase 1 margin closure evidence
+
+Margin asset and margin semantics are COMPLETE on main merge SHA f2c30bf3da77f56b2dd2d9350af7bb1376f47797:
+- production boundary: contracts/futures/margin.py
+- test boundary: tests/contracts/test_margin.py
+- CI enforcement: .github/workflows/phase1-domain-contracts.yml
+- Architecture Invariants CI: green on the same SHA
+- G01 CI: green on the same SHA
+- Phase 1 contract CI: green on the same SHA
+
+## Phase 1 current cursor — leverage
+
+Current cursor: leverage vocabulary and contract-level constraints.
+
+Next authorized action: define and implement leverage vocabulary and contract-level constraints. No Phase 2+ work is authorized, and no threshold/test/gate weakening is permitted.
