@@ -151,6 +151,12 @@ The following are architectural safety requirements and must have an explicit ow
 - Units, quote/base denomination, settlement denomination, quantity, price, multiplier, and precision must be explicit at financial boundaries.
 
 ### Configuration and secrets
+
+- Credentials, API keys, signing material, passwords, tokens, private keys, connection strings containing secrets, and other sensitive information must never be hard-coded in source code, tests, fixtures, documentation, logs, examples, or committed configuration.
+- Operational configuration must not be hard-coded when it is environment-, deployment-, account-, exchange-, credential-, or runtime-specific; it must enter through an explicitly owned configuration/security boundary and be validated before use.
+- Risk limits, leverage limits, execution authority, exchange credentials, endpoints, account identifiers, and other safety-critical operational values must not be silently embedded as source-code constants when they are intended to be configurable.
+- Hard-coded values are permitted only when they are genuine immutable domain vocabulary or compile-time invariants whose meaning cannot vary by environment/account/deployment; such values must remain owned by the appropriate domain/contract boundary.
+- Tests and fixtures must use non-sensitive synthetic values and must never embed real credentials or production secrets.
 - Credentials, API keys, signing material, and secrets must not be hard-coded, committed, logged, or exposed through normal diagnostics.
 - Configuration must fail closed when a required safety-critical value is missing, malformed, or contradictory.
 - Configuration must not silently change Futures/Spot scope, risk policy, exchange identity, or execution authority.
