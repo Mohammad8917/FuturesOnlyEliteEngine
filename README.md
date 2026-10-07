@@ -2,6 +2,13 @@
 
 Elite Futures-Only Professional Trading Engine — production-grade architecture for CRYPTO, FOREX, and GOLD futures across Linear and Inverse contracts, with strict risk, execution, validation, and quality gates.
 
+## Architecture
+
+Governance and constitutional controls:
+- `docs/architecture/architecture-invariants.md`
+- `docs/architecture/project-state.md`
+- `docs/architecture/adr/README.md`
+
 ## Architecture baseline
 
 The project is being built from architecture-first principles. Production implementation does not begin until ownership and dependency boundaries are explicit.
