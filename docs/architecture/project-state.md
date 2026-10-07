@@ -20,8 +20,8 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current phase: Phase 0 — Architecture Baseline / Governance Final Audit
 - Current gate: Architecture baseline governance
 - Implementation phase authorized: NO — until the final governance audit is complete
-- Current HEAD: 570ea7a9a52d1543fe32fb40e6552eb05dbc7f33
-- Last verified SHA: 570ea7a9a52d1543fe32fb40e6552eb05dbc7f33
+- Current HEAD at last verification: 30491a058877692490b0c037138d0f5ecc2ea653
+- Last verified SHA: 30491a058877692490b0c037138d0f5ecc2ea653
 - Completed phases: None — Phase 0 remains open until its exit evidence is recorded
 - Active work: Finalize and audit the complete architecture governance baseline, including invariants, state, ADR governance, contract, responsibility ownership, dependency rules, roadmap, evidence rules, and architecture enforcement requirements
 - Blocked work: Production implementation, Phase 1 domain-contract implementation, and all downstream phases
@@ -66,7 +66,7 @@ A phase or gate may be marked complete only with evidence.
 
 A new AI/session must not infer completion from old conversation messages, old CI runs, old commits, assumptions, or partially implemented code.
 
-Current repository evidence and same-SHA verification control.
+Current repository evidence and same-SHA verification control. Because updating this state file itself creates a new commit, the recorded HEAD is the exact SHA verified immediately before this state snapshot commit; the next session must refresh it before relying on state.
 
 ## Handoff rule
 
