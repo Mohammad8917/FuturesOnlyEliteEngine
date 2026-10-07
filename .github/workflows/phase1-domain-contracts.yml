@@ -1,0 +1,35 @@
+name: Phase 1 Domain Contracts
+
+on:
+  push:
+    paths:
+      - "contracts/**"
+      - "tests/contracts/**"
+      - ".github/workflows/phase1-domain-contracts.yml"
+  pull_request:
+    paths:
+      - "contracts/**"
+      - "tests/contracts/**"
+      - ".github/workflows/phase1-domain-contracts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  phase1-domain-contracts:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.13"
+
+      - name: Install test dependency
+        run: python -m pip install --disable-pip-version-check --no-input pytest
+
+      - name: Run Phase 1 contract tests
+        run: python -m pytest -q tests/contracts/test_instrument_identity.py
