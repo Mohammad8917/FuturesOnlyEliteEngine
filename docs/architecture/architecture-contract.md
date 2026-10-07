@@ -162,3 +162,7 @@ Inverse Futures:
 - base exposure = (quantity × multiplier) ÷ price.
 
 The price quote asset must equal the canonical Futures symbol quote asset. Margin and settlement semantics are separate contracts and must not be inferred from multiplier data. Invalid, zero, negative, non-finite, contradictory, ambiguous, or unsupported specifications fail closed. Exchange-specific lot/tick/precision metadata is mapped later and cannot redefine this domain meaning.
+
+## Phase 1 cursor — settlement
+
+The multiplier/contract-specification contract is complete and evidenced on main. The next incomplete Phase 1 contract is settlement asset and settlement semantics. It must explicitly define denomination, settlement authority, timing, conversion, Linear/Inverse applicability, market applicability, precision/UTC requirements where applicable, and fail-closed behavior before production implementation.
