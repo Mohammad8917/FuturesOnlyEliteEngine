@@ -129,7 +129,40 @@ Required behavior is fail-closed.
 
 Convenient defaults are forbidden when they can change financial meaning.
 
-## 8. Quality invariants
+## 8. Operational integrity invariants
+
+The following are architectural safety requirements and must have an explicit owner, contract, implementation, test, and CI enforcement path before the affected capability is considered complete.
+
+### Data, time, and numeric integrity
+- Critical market and account data must have explicit validation status and provenance.
+- Stale, missing, malformed, contradictory, or out-of-order critical data must fail closed.
+- Monetary and contract calculations must use an explicitly governed exact numeric representation; binary floating-point must not silently determine financial outcomes where exact precision is required.
+- Boundary timestamps must be UTC-aware and their ordering semantics explicit.
+- Units, quote/base denomination, settlement denomination, quantity, price, multiplier, and precision must be explicit at financial boundaries.
+
+### Configuration and secrets
+- Credentials, API keys, signing material, and secrets must not be hard-coded, committed, logged, or exposed through normal diagnostics.
+- Configuration must fail closed when a required safety-critical value is missing, malformed, or contradictory.
+- Configuration must not silently change Futures/Spot scope, risk policy, exchange identity, or execution authority.
+
+### Order lifecycle and reconciliation
+- Every executable order must have a traceable validated execution intent and risk decision.
+- Order submission must be idempotency-aware where the external exchange supports or requires it.
+- Unknown order/position state must never be converted into a guessed success state.
+- Reconciliation must detect and surface divergence between local and exchange state; it must not silently overwrite contradictory financial facts.
+- Audit records must preserve enough immutable evidence to reconstruct the decision, risk validation, execution intent, order result, and reconciliation outcome.
+
+### Observability and failure reporting
+- Critical decisions and failures must be observable without leaking secrets or sensitive credentials.
+- Notification delivery is non-authoritative: Telegram/email failure, delay, duplication, or outage must not alter trading authorization or execution truth.
+- Operational health, risk rejection, execution rejection, exchange failure, and reconciliation divergence must remain distinguishable failure classes.
+
+### Security and resilience
+- External input and exchange responses are untrusted until validated at the appropriate boundary.
+- Retries/timeouts/circuit-breaking may not convert an unknown financial state into success.
+- Security controls, dependency integrity, and supply-chain verification are release requirements, not optional hardening.
+
+## 9. Quality invariants
 
 The official quality floor is immutable by default:
 - G01: zero unexplained format/lint violations
@@ -143,7 +176,7 @@ The official quality floor is immutable by default:
 
 No actor may lower, bypass, weaken, exclude, skip, xfail, or otherwise manipulate these requirements to obtain green status.
 
-## 9. Testing invariants
+## 10. Testing invariants
 
 Tests are architectural enforcement, not cosmetic evidence.
 
@@ -160,7 +193,7 @@ Forbidden:
 
 A green result obtained by weakening the test system is not valid green evidence.
 
-## 10. Architecture-change firewall
+## 11. Architecture-change firewall
 
 Any proposed change touching one or more of the following is automatically an Architecture Change Candidate:
 - Futures-only boundary
@@ -180,7 +213,7 @@ Any proposed change touching one or more of the following is automatically an Ar
 
 The actor must stop at the architectural boundary and perform impact analysis before implementation.
 
-## 11. Owner-change protection
+## 12. Owner-change protection
 
 The project owner has authority to propose architectural changes.
 
@@ -201,7 +234,7 @@ The warning must identify:
 
 Owner intent alone is not evidence that an architectural change is safe.
 
-## 12. Architecture-change procedure
+## 13. Architecture-change procedure
 
 A proposed architectural change must follow:
 
@@ -220,7 +253,7 @@ PROPOSAL
 
 No step may be silently omitted.
 
-## 13. ADR requirements
+## 14. ADR requirements
 
 Every approved architecture change must have an ADR under docs/architecture/adr/.
 
@@ -250,7 +283,7 @@ Valid states:
 
 PROPOSED must never be treated as APPROVED.
 
-## 14. AI immutability rule
+## 15. AI immutability rule
 
 A new AI/session must:
 1. read project-state.md
@@ -267,7 +300,7 @@ A new AI must:
 
 **Continue the map, not reinvent the map.**
 
-## 15. Architecture completion proof
+## 16. Architecture completion proof
 
 An architecture rule is not considered enforced until:
 
@@ -280,7 +313,7 @@ ARCHITECTURE RULE
 
 Documentation alone is insufficient.
 
-## 16. Emergency rule
+## 17. Emergency rule
 
 There is no emergency bypass for architectural safety.
 
@@ -292,7 +325,7 @@ Never:
 
 PRESSURE → BYPASS
 
-## 17. Final constitutional statement
+## 18. Final constitutional statement
 
 The project is designed to survive AI replacement, engineer replacement, implementation refactoring, exchange API changes, CI changes, dependency changes, and operational pressure.
 
