@@ -172,6 +172,24 @@ def validate(root: Path = ROOT) -> list[str]:
                 errors.add(f"{module_name}: analysis imports execution: {imported}")
 
         for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                positional = list(node.args.posonlyargs) + list(node.args.args)
+                defaults = [None] * (len(positional) - len(node.args.defaults)) + list(node.args.defaults)
+                for argument, default in zip(positional, defaults):
+                    if (
+                        argument.arg == "futures"
+                        and isinstance(default, ast.Constant)
+                        and default.value is False
+                    ):
+                        errors.add(f"{module_name}: forbidden futures=False switch")
+                for keyword_arg, default in zip(node.args.kwonlyargs, node.args.kw_defaults):
+                    if (
+                        keyword_arg.arg == "futures"
+                        and isinstance(default, ast.Constant)
+                        and default.value is False
+                    ):
+                        errors.add(f"{module_name}: forbidden futures=False switch")
+
             if isinstance(node, ast.Call):
                 if isinstance(node.func, ast.Attribute):
                     if node.func.attr in ORDER_CALLS and layer in {"domain", "risk", "analysis", "market_data"}:
