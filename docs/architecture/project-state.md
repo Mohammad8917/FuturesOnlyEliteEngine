@@ -122,7 +122,7 @@ No downstream Phase 1 cursor advance is authorized until production implementati
 - Current documentation cursor snapshot is maintained on the current main HEAD and must be re-verified after every state change.
 - Multiplier / contract specification: COMPLETE — production implementation, contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on the same merge SHA.
 - Active work: Phase 1 Domain Contracts — margin asset and margin semantics.
-- Next authorized action: define and implement the settlement asset/settlement semantics contract.
+- Next authorized action: define and implement the margin asset/margin semantics contract.
 - Forbidden action: do not bypass settlement semantics, reinterpret multiplier meaning, weaken tests/gates, lower G05/G08, or skip the first incomplete Phase 1 contract.
 \n## Phase 1 settlement implementation evidence
 
