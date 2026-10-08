@@ -8,7 +8,7 @@ network I/O, or scheduling.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 from enum import StrEnum
 
 from .instrument import CanonicalFuturesSymbol, InstrumentValidationError, Market
