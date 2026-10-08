@@ -35,13 +35,13 @@ def test_every_futures_contract_has_explicit_test_ownership():
         for path in PRODUCTION.glob("*.py")
         if path.name != "__init__.py"
     }
-    missing_mapping = sorted(production - TEST_OWNERS.keys())
+    missing_mapping: list[str] = sorted(production - TEST_OWNERS.keys())
     assert not missing_mapping, (
         "G03 production contract lacks explicit test ownership: "
         f"{missing_mapping}"
     )
 
-    missing_files = sorted(
+    missing_files: list[str] = sorted(
         {
             test_name
             for names in TEST_OWNERS.values()
