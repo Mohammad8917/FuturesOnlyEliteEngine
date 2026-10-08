@@ -66,7 +66,7 @@ def evaluate(
     **overrides: object,
 ) -> FuturesLiquidationTriggerEvaluation:
     spec = FuturesLiquidationTriggerSpecification(market, make_symbol(market, family))
-    values = dict(
+    values: dict[str, object] = dict(
         account_id="account-1",
         position_id="position-1",
         event_id="liq-event-1",
@@ -165,7 +165,7 @@ def test_short_trigger_is_upward_and_not_triggered_below_liquidation() -> None:
 )
 def test_missing_provenance_or_identity_fails_closed(field: str) -> None:
     with pytest.raises(LiquidationEventValidationError):
-        evaluate(**{field: ""})
+        evaluate(**cast(EvaluationArgs, {field: ""}))
 
 
 @pytest.mark.parametrize(
@@ -183,7 +183,7 @@ def test_missing_provenance_or_identity_fails_closed(field: str) -> None:
 )
 def test_numeric_boundaries_reject_bool_float_and_invalid_values(field: str, value: object) -> None:
     with pytest.raises(LiquidationEventValidationError):
-        evaluate(**{field: value})
+        evaluate(**cast(EvaluationArgs, {field: value}))
 
 
 def test_freshness_and_utc_are_fail_closed() -> None:
