@@ -130,6 +130,27 @@ class LiquidationEventArgs(TypedDict):
     event_sequence: int
 
 
+class LedgerEntryArgs(TypedDict):
+    entry_id: str
+    causation_id: str
+    state_version: int
+    sequence: int
+    account_id: str
+    instrument: FuturesInstrumentIdentity
+    ledger_account: str
+    asset: str
+    direction: AccountingDirection
+    amount: Decimal
+
+
+class ContractSpecificationArgs(TypedDict):
+    market: Market
+    symbol: CanonicalFuturesSymbol
+    quantity_unit: QuantityUnit
+    contract_multiplier: Decimal
+    price_quote_asset: str
+
+
 UTC = timezone.utc
 
 
@@ -178,11 +199,11 @@ def test_accounting_success_and_entry_type_branches():
         asset="USD", direction=AccountingDirection.DEBIT, amount=Decimal("2"),
     )
     with pytest.raises(AccountingValidationError):
-        FuturesLedgerEntry(**{**base, "instrument": "bad"})
+        FuturesLedgerEntry(**cast(LedgerEntryArgs, {**base, "instrument": "bad"}))
     with pytest.raises(AccountingValidationError):
-        FuturesLedgerEntry(**{**base, "amount": True})
+        FuturesLedgerEntry(**cast(LedgerEntryArgs, {**base, "amount": True}))
     with pytest.raises(AccountingValidationError):
-        FuturesAccountingJournal("j", (base,))
+        FuturesAccountingJournal("j", (cast(FuturesLedgerEntry, base),))
     spec = FuturesAccountingSpecification(Market.CRYPTO, instrument())
     profit = spec.realized_pnl(
         journal_id="jp", causation_id="c", state_version=1, sequence=1,
@@ -207,7 +228,7 @@ def test_contract_validation_and_inverse_calculation_branches():
         ("quantity_unit", "CONTRACTS"),
     ]:
         with pytest.raises(ContractSpecificationValidationError):
-            FuturesContractSpecification(**{**base, field: value})
+            FuturesContractSpecification(**cast(ContractSpecificationArgs, {**base, field: value}))
     inverse = FuturesContractSpecification(
         market=Market.CRYPTO, symbol=symbol(ContractFamily.INVERSE),
         quantity_unit=QuantityUnit.CONTRACTS,
@@ -216,9 +237,9 @@ def test_contract_validation_and_inverse_calculation_branches():
     assert inverse.notional(quantity=3, price=10) == Decimal("6")
     assert inverse.base_exposure(quantity=3, price=10) == Decimal("0.6")
     with pytest.raises(ContractSpecificationValidationError):
-        FuturesContractSpecification(**{**base, "contract_multiplier": Decimal("0")})
+        FuturesContractSpecification(**cast(ContractSpecificationArgs, {**base, "contract_multiplier": Decimal("0")}))
     with pytest.raises(ContractSpecificationValidationError):
-        FuturesContractSpecification(**{**base, "price_quote_asset": "EUR"})
+        FuturesContractSpecification(**cast(ContractSpecificationArgs, {**base, "price_quote_asset": "EUR"}))
 
 
 def test_instrument_asset_and_identity_validation_branches():
