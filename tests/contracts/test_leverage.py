@@ -1,6 +1,7 @@
 """Contract tests for canonical Futures leverage semantics."""
 
 from decimal import Decimal
+from typing import cast
 
 import pytest
 
@@ -149,7 +150,7 @@ def test_non_ratio_unit_fails_closed() -> None:
         FuturesLeverageSpecification(
             market=Market.CRYPTO,
             instrument=_instrument(),
-            leverage_unit="RATIO",
+            leverage_unit=cast(LeverageUnit, "RATIO"),
             leverage=Decimal("2"),
             minimum_leverage=Decimal("1"),
             maximum_leverage=Decimal("20"),
@@ -161,9 +162,9 @@ def test_decimal_conversion_is_exact_and_immutable() -> None:
         market=Market.CRYPTO,
         instrument=_instrument(),
         leverage_unit=LeverageUnit.RATIO,
-        leverage="12.500",
-        minimum_leverage="1",
-        maximum_leverage="20",
+        leverage=cast(Decimal, "12.500"),
+        minimum_leverage=cast(Decimal, "1"),
+        maximum_leverage=cast(Decimal, "20"),
     )
     assert spec.leverage == Decimal("12.500")
     with pytest.raises((AttributeError, TypeError)):
