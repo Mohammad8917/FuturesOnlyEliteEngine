@@ -604,7 +604,7 @@ def test_g05_remaining_validation_and_boundary_branches():
     with pytest.raises(MarginValidationError):
         FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "EUR", "bad")
     with pytest.raises(MarginValidationError):
-        FuturesMarginSpecification(Market.CRYPTO, instrument(ContractFamily.INVERSE), MarginUnit.ASSET, "USD", "USD")
+        FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, 1, "USD")
 
     pnl = FuturesPnLSpecification(Market.CRYPTO, symbol(), PnLUnit.REALIZED_OR_UNREALIZED)
     with pytest.raises(PnLValidationError):
