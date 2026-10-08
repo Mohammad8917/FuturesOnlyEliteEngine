@@ -94,7 +94,7 @@ class FuturesAccountingJournal:
         _text(self.journal_id, "journal_id")
         if not self.entries:
             raise AccountingValidationError("journal must contain entries")
-        if any(not isinstance(entry, FuturesLedgerEntry) for entry in self.entries):
+        if any(not isinstance(cast(object, entry), FuturesLedgerEntry) for entry in self.entries):
             raise AccountingValidationError("all entries must be FuturesLedgerEntry")
 
         seen: set[str] = set()
@@ -123,34 +123,15 @@ class FuturesAccountingJournal:
 
     @property
     def asset_balances(self) -> dict[str, Decimal]:
-        return {
-            asset: debit - credit
-            for asset in set(
-                entry.asset for entry in self.entries
+        balances: dict[str, Decimal] = {}
+        for entry in self.entries:
+            delta = (
+                entry.amount
+                if entry.direction is AccountingDirection.DEBIT
+                else -entry.amount
             )
-            for debit, credit in [
-                (
-                    sum(
-                        (
-                            entry.amount
-                            for entry in self.entries
-                            if entry.asset == asset
-                            and entry.direction is AccountingDirection.DEBIT
-                        ),
-                        Decimal("0"),
-                    ),
-                    sum(
-                        (
-                            entry.amount
-                            for entry in self.entries
-                            if entry.asset == asset
-                            and entry.direction is AccountingDirection.CREDIT
-                        ),
-                        Decimal("0"),
-                    ),
-                )
-            ]
-        }
+            balances[entry.asset] = balances.get(entry.asset, Decimal("0")) + delta
+        return balances
 
 
 @dataclass(frozen=True, slots=True)
