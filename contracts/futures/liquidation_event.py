@@ -39,7 +39,7 @@ def _positive_decimal(value: object, field: str) -> Decimal:
     return result
 
 
-def _utc(value: datetime, field: str) -> datetime:
+def _utc(value: object, field: str) -> datetime:
     if (
         not isinstance(value, datetime)
         or value.tzinfo is None
@@ -51,7 +51,7 @@ def _utc(value: datetime, field: str) -> datetime:
     return value
 
 
-def _identifier(value: str, field: str) -> str:
+def _identifier(value: object, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise LiquidationEventValidationError(
             f"{field} must be a non-empty identifier"
