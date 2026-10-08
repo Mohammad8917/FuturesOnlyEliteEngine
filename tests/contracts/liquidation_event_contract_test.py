@@ -2,6 +2,7 @@
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from typing import TypedDict, cast
 
 import pytest
 
@@ -9,12 +10,37 @@ from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily,
 from contracts.futures.liquidation import LiquidationDenomination
 from contracts.futures.liquidation_event import (
     FuturesLiquidationTriggerEvent,
+    FuturesLiquidationTriggerEvaluation,
     FuturesLiquidationTriggerSpecification,
     LiquidationEventValidationError,
     LiquidationTrigger,
 )
 from contracts.futures.position_mode import PositionMode
 from contracts.futures.position_side import PositionSide
+
+
+class LiquidationEventArgs(TypedDict):
+    account_id: str
+    position_id: str
+    event_id: str
+    causation_id: str
+    state_version: int
+    contract_family: ContractFamily
+    position_mode: PositionMode
+    position_side: PositionSide
+    quantity: Decimal
+    entry_price: Decimal
+    margin_amount: Decimal
+    margin_denomination: LiquidationDenomination
+    maintenance_margin_ratio: Decimal
+    liquidation_price: Decimal
+    reference_price: Decimal
+    reference_price_source: str
+    observed_at: datetime
+    as_of: datetime
+    max_age: timedelta
+    previous_event_sequence: int
+    event_sequence: int
 
 
 UTC = timezone.utc
@@ -29,16 +55,16 @@ def make_symbol(market: Market, family: ContractFamily) -> CanonicalFuturesSymbo
 
 def evaluate(
     *,
-    market=Market.CRYPTO,
-    family=ContractFamily.LINEAR,
-    side=PositionSide.LONG,
-    mode=PositionMode.ONE_WAY,
-    reference=Decimal("40"),
-    liquidation=Decimal("42"),
-    previous_sequence=4,
-    event_sequence=5,
-    **overrides,
-):
+    market: Market = Market.CRYPTO,
+    family: ContractFamily = ContractFamily.LINEAR,
+    side: PositionSide = PositionSide.LONG,
+    mode: PositionMode = PositionMode.ONE_WAY,
+    reference: Decimal = Decimal("40"),
+    liquidation: Decimal = Decimal("42"),
+    previous_sequence: int = 4,
+    event_sequence: int = 5,
+    **overrides: object,
+) -> FuturesLiquidationTriggerEvaluation:
     spec = FuturesLiquidationTriggerSpecification(market, make_symbol(market, family))
     values = dict(
         account_id="account-1",
@@ -68,14 +94,14 @@ def evaluate(
         event_sequence=event_sequence,
     )
     values.update(overrides)
-    return spec.evaluate(**values)
+    return spec.evaluate(**cast(LiquidationEventArgs, values))
 
 
 @pytest.mark.parametrize("market", list(Market))
 @pytest.mark.parametrize("family", list(ContractFamily))
 @pytest.mark.parametrize("mode", list(PositionMode))
 @pytest.mark.parametrize("side", list(PositionSide))
-def test_scope_and_side_mode_are_explicit(market, family, mode, side):
+def test_scope_and_side_mode_are_explicit(market: Market, family: ContractFamily, mode: PositionMode, side: PositionSide) -> None:
     liquidation = Decimal("42") if side is PositionSide.LONG else Decimal("58")
     reference = Decimal("40") if side is PositionSide.LONG else Decimal("60")
     result = evaluate(
