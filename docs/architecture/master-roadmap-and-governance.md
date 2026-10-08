@@ -492,18 +492,22 @@ No later Phase 1 contract may advance ahead of this gate.
 
 ## Phase 1 initial margin gate
 
-The leverage unit must close with:
-1. explicit RATIO denomination;
-2. exact finite Decimal semantics;
-3. explicit positive minimum and maximum bounds;
-4. inclusive requested-leverage bound validation;
-5. CRYPTO/FOREX/GOLD coverage;
-6. Linear/Inverse coverage;
-7. no exchange/default/account-state inference;
-8. no margin/risk/liquidation/position-sizing redefinition;
-9. fail-closed invalid and contradictory inputs;
-10. meaningful contract tests;
-11. CI enforcement;
-12. same-SHA evidence.
+The initial-margin unit must close with:
+1. explicit ownership at the Futures domain/contract boundary;
+2. explicit RATIO denomination for the requirement rate;
+3. exact finite Decimal semantics;
+4. explicit positive finite notional input with declared denomination;
+5. explicit positive finite initial-margin ratio;
+6. deterministic formula: initial margin amount = notional × initial_margin_ratio;
+7. output denomination identical to the supplied notional denomination;
+8. no implicit rounding or quantization;
+9. CRYPTO/FOREX/GOLD coverage;
+10. Linear/Inverse coverage while consuming canonical family-specific notional semantics;
+11. no leverage, exchange-default, account-state, maintenance-margin, liquidation, risk, or position-sizing inference;
+12. no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation;
+13. fail-closed validation for invalid or ambiguous inputs;
+14. meaningful contract tests;
+15. CI enforcement;
+16. same-SHA evidence.
 
-No Phase 1 cursor advance is permitted until all twelve conditions are evidenced.
+No Phase 1 cursor advance is permitted until all sixteen conditions are evidenced.

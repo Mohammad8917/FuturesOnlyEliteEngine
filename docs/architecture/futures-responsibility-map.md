@@ -240,16 +240,26 @@ Downstream consumers: leverage, risk, position sizing, liquidation, PnL, reconci
 
 ## Phase 1 initial margin semantics ownership
 
-Primary owner: Futures domain/contract boundary.
+**Primary owner:** Futures domain/contract boundary.
 
-Unit: dimensionless RATIO.
+**Inputs:** canonical Futures instrument identity, matching market, explicit positive finite notional, and explicit positive finite initial-margin ratio.
 
-Inputs: canonical Futures instrument identity, matching market, explicit requested leverage, explicit positive minimum, and explicit positive maximum.
+**Output:** immutable initial-margin specification plus deterministic initial-margin amount.
 
-Validation: exact finite Decimal values; minimum <= maximum; requested leverage inside inclusive bounds.
+**Unit:** initial-margin requirement rate in dimensionless RATIO; calculated initial-margin amount in the same explicit denomination as the supplied notional.
 
-Applicability: CRYPTO/FOREX/GOLD and Linear/Inverse Futures.
+**Formula:** initial margin amount = notional × initial_margin_ratio.
 
-Forbidden dependencies: exchange SDKs, network, persistence, runtime configuration, account state, hidden defaults, margin calculation, liquidation, risk policy, position sizing, and execution mutation.
+**Precision:** exact finite Decimal arithmetic; no implicit rounding or quantization.
 
-Downstream consumers: risk and position-sizing policy may consume validated leverage; none may redefine its unit or contract-level bounds.
+**Linear/Inverse:** applicable to both; the contract consumes canonical family-specific notional semantics and does not redefine them.
+
+**Markets:** applicable to CRYPTO Futures, FOREX Futures, and GOLD Futures.
+
+**Allowed dependencies:** canonical Futures vocabulary, immutable value objects, and deterministic standard-library Decimal arithmetic.
+
+**Dependencies forbidden:** exchange SDKs, network I/O, persistence, runtime configuration, clocks, notifications, account state, leverage inference, maintenance margin, liquidation policy, risk policy, position sizing, and exchange-specific collateral defaults.
+
+**Failure semantics:** missing, invalid, zero, negative, non-finite, contradictory, or ambiguous inputs fail closed.
+
+**Downstream consumers:** risk and position-sizing policy may consume the validated initial-margin result; none may redefine its formula, denomination, or ownership.

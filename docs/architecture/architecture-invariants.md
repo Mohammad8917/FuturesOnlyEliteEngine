@@ -449,16 +449,26 @@ The first incomplete leverage unit is now authorized. It must explicitly define 
 
 Leverage must never be silently inferred from exchange defaults, margin amount, notional, or account state. This unit does not calculate initial margin, maintenance margin, liquidation, or risk decisions; those remain separately owned contracts.
 
-## 8.1.8 Phase 1 initial margin cursor
+## 8.1.8 Phase 1 initial margin semantics lock
 
-Leverage is a dimensionless RATIO and must be represented with exact finite Decimal semantics. The canonical leverage contract requires all three values explicitly: requested leverage, minimum contract-level leverage, and maximum contract-level leverage.
+Initial margin is an explicit requirement on a validated Futures notional. It is owned by the Futures domain/contract boundary and is independent from leverage-bound validation.
 
-The requested leverage is valid only inside the explicit inclusive interval. No bound has a hidden default. Minimum must be positive, maximum must be positive and not below minimum.
+- unit: RATIO for the initial-margin requirement rate;
+- numeric representation: exact finite Decimal;
+- initial_margin_ratio: explicit, strictly positive;
+- formula input: explicit positive finite notional in a declared valuation/margin denomination;
+- formula: initial margin amount = notional × initial_margin_ratio;
+- output denomination: the same denomination as the supplied notional; no implicit asset conversion is performed here;
+- no rounding or quantization is introduced unless a later explicit precision contract authorizes it;
+- applicability: CRYPTO/FOREX/GOLD and Linear/Inverse Futures;
+- the notional input must already use the canonical multiplier/contract-specification semantics; this contract does not redefine Linear/Inverse notional;
+- the ratio is never inferred from leverage, exchange defaults, account state, maintenance margin, liquidation policy, or risk policy;
+- no hidden minimum/maximum ratio is introduced by this contract;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation is permitted;
+- invalid, missing, zero, negative, non-finite, contradictory, or ambiguous inputs fail closed.
 
-This unit applies to CRYPTO/FOREX/GOLD and Linear/Inverse Futures. It consumes canonical instrument identity but does not redefine margin, settlement, multiplier, risk policy, position sizing, liquidation, or exchange transport semantics.
+Production boundary: `contracts/futures/initial_margin.py`.
+Test boundary: `tests/contracts/test_initial_margin.py`.
+CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
 
-Initial margin must not infer leverage, margin asset, settlement asset, multiplier, or exchange-specific collateral policy. Its formula inputs must be explicit and validated; invalid, missing, contradictory, or ambiguous terms fail closed.
-
-Production boundary: contracts/futures/leverage.py.
-Test boundary: tests/contracts/test_leverage.py.
-CI boundary: .github/workflows/phase1-domain-contracts.yml.
+The Phase 1 cursor remains here until production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence are all green.

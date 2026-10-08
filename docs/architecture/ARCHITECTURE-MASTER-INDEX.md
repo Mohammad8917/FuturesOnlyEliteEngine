@@ -248,19 +248,23 @@ The leverage unit must explicitly define:
 
 ## 10.10 Phase 1 initial margin implementation contract
 
-Initial margin is the next authorized Phase 1 unit. It must explicitly define its formula inputs, denomination, exact numeric semantics, applicability, ownership, and fail-closed validation.
-- unit: RATIO;
-- numeric type: exact finite Decimal;
-- requested value: strictly positive;
-- minimum bound: strictly positive and explicit;
-- maximum bound: strictly positive, explicit, and greater than or equal to minimum;
-- requested leverage: valid only within the inclusive explicit bounds;
-- applicability: CRYPTO/FOREX/GOLD and Linear/Inverse;
-- ownership: Futures domain/contract boundary;
-- no hidden defaults or exchange inference;
-- no calculation of margin, liquidation, risk, or position sizing;
-- fail closed on invalid, contradictory, missing, non-finite, zero, negative, or out-of-bounds values.
+Initial margin is the next authorized Phase 1 unit. It must explicitly define formula inputs, denomination, exact numeric semantics, applicability, ownership, validation, and fail-closed behavior.
 
-Production boundary: contracts/futures/leverage.py.
-Test boundary: tests/contracts/test_leverage.py.
-CI boundary: .github/workflows/phase1-domain-contracts.yml.
+- owner: Futures domain/contract boundary;
+- unit: RATIO for the initial-margin requirement rate;
+- numeric type: exact finite Decimal;
+- formula input: explicit positive finite notional in a declared valuation/margin denomination;
+- initial_margin_ratio: explicit positive finite Decimal;
+- formula: initial margin amount = notional × initial_margin_ratio;
+- output denomination: identical to the supplied notional denomination;
+- precision: exact Decimal multiplication; no implicit rounding or quantization;
+- applicability: CRYPTO/FOREX/GOLD and Linear/Inverse;
+- notional semantics are consumed from the canonical multiplier/contract-specification boundary and are not redefined here;
+- initial-margin ratio is never inferred from leverage, exchange defaults, account state, maintenance margin, liquidation, or risk policy;
+- no hidden ratio bounds are introduced;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation;
+- fail closed on missing, invalid, zero, negative, non-finite, contradictory, or ambiguous inputs.
+
+Production boundary: `contracts/futures/initial_margin.py`.
+Test boundary: `tests/contracts/test_initial_margin.py`.
+CI boundary: `.github/workflows/phase1-domain-contracts.yml`.

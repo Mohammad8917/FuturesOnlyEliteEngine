@@ -188,10 +188,23 @@ This contract applies to CRYPTO/FOREX/GOLD and Linear/Inverse Futures. It perfor
 
 The production boundary is contracts/futures/margin.py; meaningful contract tests are in tests/contracts/test_margin.py; CI enforcement is through .github/workflows/phase1-domain-contracts.yml.
 
-## Phase 1 initial margin semantics cursor
+## Phase 1 initial margin semantics contract
 
-The canonical leverage contract is a dimensionless ratio. Requested leverage, minimum leverage, and maximum leverage are explicit exact finite positive Decimal values. The minimum must not exceed the maximum, and the requested leverage must lie within the inclusive explicit interval.
+Initial margin is an explicit deterministic requirement derived from an already-canonicalized Futures notional and an explicit initial-margin ratio.
 
-There are no hidden leverage bounds and no exchange-default inference. The contract is applicable to CRYPTO/FOREX/GOLD and Linear/Inverse Futures and consumes, but does not redefine, canonical instrument, margin, settlement, and multiplier semantics.
+The contract is:
+- unit: RATIO for the initial-margin requirement rate;
+- numeric representation: exact finite Decimal;
+- inputs: canonical Futures instrument identity, matching market, positive finite notional, and positive finite initial-margin ratio;
+- formula: `initial_margin_amount = notional × initial_margin_ratio`;
+- output denomination: the same declared denomination as the notional input;
+- precision: exact Decimal multiplication with no implicit rounding or quantization;
+- applicability: CRYPTO/FOREX/GOLD and Linear/Inverse Futures;
+- ownership: Futures domain/contract boundary;
+- canonical multiplier/contract-specification semantics are consumed and never redefined;
+- initial-margin ratio is not derived from leverage, exchange defaults, account state, maintenance margin, liquidation, risk policy, or position sizing;
+- no hidden ratio bounds or exchange-specific collateral policy;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account-state dependency;
+- invalid or ambiguous inputs fail closed.
 
-This unit does not calculate initial margin, maintenance margin, liquidation, risk limits, exposure, or position sizing. It has no network, exchange SDK, persistence, runtime configuration, or account-state dependency. Invalid or contradictory terms fail closed.
+The production boundary is `contracts/futures/initial_margin.py`; meaningful contract tests are in `tests/contracts/test_initial_margin.py`; CI enforcement is through `.github/workflows/phase1-domain-contracts.yml`.
