@@ -326,7 +326,7 @@ def test_exposure_remaining_semantics():
         )
 
 
-def funding_spec(rate: Decimal = Decimal("0.1")) -> FuturesFundingSpecification -> FuturesFundingSpecification:
+def funding_spec(rate: Decimal = Decimal("0.1")) -> FuturesFundingSpecification:
     return FuturesFundingSpecification(
         market=Market.CRYPTO,
         symbol=symbol(),
