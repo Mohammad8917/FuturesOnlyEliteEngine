@@ -9,6 +9,7 @@ from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily,
 from contracts.futures.liquidation import LiquidationDenomination
 from contracts.futures.liquidation_event import (
     FuturesLiquidationTriggerEvent,
+    FuturesLiquidationTriggerEvaluation,
     FuturesLiquidationTriggerSpecification,
     LiquidationEventValidationError,
     LiquidationTrigger,
@@ -38,7 +39,7 @@ def evaluate(
     previous_sequence=4,
     event_sequence=5,
     **overrides: object,
-) -> object:
+) -> FuturesLiquidationTriggerEvaluation:
     spec = FuturesLiquidationTriggerSpecification(market, make_symbol(market, family))
     values = dict(
         account_id="account-1",
