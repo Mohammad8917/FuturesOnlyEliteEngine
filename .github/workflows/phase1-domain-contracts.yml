@@ -11,6 +11,7 @@ on:
       - "tests/contracts/**"
       - "requirements-ci.txt"
       - ".github/workflows/phase1-domain-contracts.yml"
+      - "requirements-ci.txt"
       - "docs/architecture/**"
   pull_request:
     paths:
