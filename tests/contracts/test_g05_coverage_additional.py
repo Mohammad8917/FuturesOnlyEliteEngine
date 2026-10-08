@@ -650,3 +650,68 @@ def test_g05_remaining_validation_and_boundary_branches():
         funding_spec().validate_freshness(as_of=datetime(2026, 1, 1, tzinfo=UTC), max_age=timedelta(0))
     with pytest.raises(FundingValidationError):
         FuturesFundingSpecification(market=Market.CRYPTO, symbol=symbol(), funding_rate_unit=FundingRateUnit.INTERVAL_RATE, funding_sign_convention=FundingSignConvention.POSITIVE_LONG_PAYS, funding_rate=Decimal("0.1"), interval_start=datetime(2026, 1, 1, tzinfo=UTC), interval_end=datetime(2026, 1, 1, 2, tzinfo=UTC), rate_source="", observed_at=datetime(2026, 1, 1, 1, tzinfo=UTC), notional_denomination="USD")
+
+
+def test_g05_close_remaining_contract_validation_paths():
+    inst = instrument()
+    contract = FuturesContractSpecification(
+        market=Market.CRYPTO, symbol=symbol(), quantity_unit=QuantityUnit.CONTRACTS,
+        contract_multiplier=Decimal("2"), price_quote_asset="USD",
+    )
+    inverse_contract = FuturesContractSpecification(
+        market=Market.CRYPTO, symbol=symbol(ContractFamily.INVERSE), quantity_unit=QuantityUnit.CONTRACTS,
+        contract_multiplier=Decimal("2"), price_quote_asset="USD",
+    )
+    assert contract.notional(quantity=2, price=10) == Decimal("40")
+    assert inverse_contract.notional(quantity=2, price=10) == Decimal("4")
+    assert inverse_contract.base_exposure(quantity=2, price=10) == Decimal("0.4")
+
+    exposure = FuturesExposureSpecification(Market.CRYPTO, symbol())
+    with pytest.raises(ExposureValidationError):
+        FuturesExposureSpecification("bad", symbol())
+    with pytest.raises(ExposureValidationError):
+        exposure.base_exposure(contract=object(), quantity=1, price=10)
+    with pytest.raises(ExposureValidationError):
+        exposure.quote_value(contract=object(), quantity=1, reference_price=10)
+    with pytest.raises(ExposureValidationError):
+        exposure.value(contract=contract, quantity=1, reference_price=10, denomination=ExposureDenomination.QUOTE, valuation_source="", observed_at=datetime(2026,1,1,tzinfo=UTC))
+
+    with pytest.raises(AccountingValidationError):
+        FuturesAccountingSpecification(Market.CRYPTO, inst, journal_id="", entries=())
+
+    liquidation = FuturesLiquidationSpecification(Market.CRYPTO, symbol())
+    with pytest.raises(LiquidationValidationError):
+        liquidation.liquidation_price(**{**liquidation_args(), "contract": object()})
+    with pytest.raises(LiquidationValidationError):
+        liquidation.liquidation_price(**{**liquidation_args(), "position_side": "LONG"})
+    with pytest.raises(LiquidationValidationError):
+        liquidation.liquidation_price(**{**liquidation_args(), "margin_denomination": LiquidationDenomination.BASE})
+
+    with pytest.raises(LiquidationEventValidationError):
+        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**{**event_args(), "margin_denomination": LiquidationDenomination.BASE})
+    with pytest.raises(LiquidationEventValidationError):
+        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**{**event_args(), "maintenance_margin_ratio": Decimal("1")})
+    with pytest.raises(LiquidationEventValidationError):
+        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**{**event_args(), "reference_price_source": ""})
+    with pytest.raises(LiquidationEventValidationError):
+        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**{**event_args(), "max_age": timedelta(0)})
+    with pytest.raises(LiquidationEventValidationError):
+        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**{**event_args(), "as_of": datetime(2025,1,1,tzinfo=UTC)})
+
+    settlement = FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, SettlementUnit.ASSET, "USD", "USD")
+    with pytest.raises(SettlementValidationError):
+        FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, SettlementUnit.ASSET, "SPOTUSD", "USD")
+    with pytest.raises(SettlementValidationError):
+        FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, SettlementUnit.ASSET, "USD", "USD", Decimal("1"))
+    assert settlement.settle_amount(Decimal("2")) == Decimal("2")
+
+    settlement_accounting = FuturesSettlementAccountingSpecification(Market.CRYPTO, inst, settlement)
+    with pytest.raises(AccountingValidationError):
+        settlement_accounting.transfer(journal_id="", causation_id="c", state_version=0, sequence=0, account_id="a", settlement_counterparty_account_id="b", source_amount=Decimal("1"), source_asset="USD")
+    with pytest.raises(AccountingValidationError):
+        settlement_accounting.transfer(journal_id="j", causation_id="c", state_version=-1, sequence=0, account_id="a", settlement_counterparty_account_id="b", source_amount=Decimal("1"), source_asset="USD")
+    with pytest.raises(AccountingValidationError):
+        settlement_accounting.transfer(journal_id="j", causation_id="c", state_version=0, sequence=0, account_id="a", settlement_counterparty_account_id="b", source_amount=Decimal("1"), source_asset="EUR")
+
+    with pytest.raises(FundingValidationError):
+        funding_spec().calculate_payment(notional=Decimal("10"), position_side="LONG")
