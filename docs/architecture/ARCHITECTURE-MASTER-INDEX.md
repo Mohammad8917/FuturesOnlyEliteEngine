@@ -413,3 +413,38 @@ Frozen baseline:
 Production boundary: contracts/futures/price_quantity.py.
 Test boundary: tests/contracts/test_price_quantity.py.
 CI boundary: .github/workflows/phase1-domain-contracts.yml.
+
+
+## Phase 1 price / quantity / monetary-unit closure evidence
+
+Price, quantity, monetary units, denomination, precision, and rounding semantics are COMPLETE on main merge SHA `13c8edef7a0553b1262f2487935e001ef5348aa7`.
+
+Evidence on the exact merge SHA:
+- production boundary: `contracts/futures/price_quantity.py`;
+- test boundary: `tests/contracts/test_price_quantity.py`;
+- Phase 1 Domain Contracts CI: green;
+- Architecture Invariants CI: green;
+- G01 Dependency Architecture CI: green.
+
+The frozen contract is exact QUOTE_PER_BASE pricing, CONTRACTS quantity, explicit quote denomination, exact Decimal precision, and no implicit rounding/quantization. Exchange-specific tick/lot/precision/rounding rules remain outside the canonical contract.
+
+The next authorized Phase 1 unit is **funding-rate value, interval, and funding calculation semantics**. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
+
+
+## Phase 1 next-unit semantic gate — funding rate
+
+The next unit must first freeze one explicit owner and define:
+1. funding-rate unit and sign convention;
+2. funding interval and time semantics, including UTC boundary requirements;
+3. calculation inputs and outputs and their denominations;
+4. exact numeric representation and precision/rounding behavior;
+5. Linear/Inverse applicability;
+6. CRYPTO/FOREX/GOLD applicability;
+7. interaction with multiplier, settlement, margin, leverage, initial/maintenance margin, price/quantity, and position side/mode without redefining them;
+8. provenance/freshness and stale/unknown behavior where applicable;
+9. allowed and forbidden dependencies;
+10. meaningful tests;
+11. CI enforcement;
+12. same-SHA evidence.
+
+No exchange-specific funding interval, rate source, sign convention, or rounding rule may be guessed into the canonical contract.
