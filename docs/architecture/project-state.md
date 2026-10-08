@@ -17,7 +17,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Operational capabilities: automated Futures trading + Telegram/email signal and operational notifications
 - Architecture status: FROZEN BY DEFAULT
 - Operational Spot: FORBIDDEN
-- Current phase: Phase 8 — Quality Verification
+- Current phase: Phase 1 — Domain Contracts
 - Current gate: G05 — Coverage
 - Implementation phase authorized: NO — Phase 2+ production implementation remains blocked by the roadmap until the preceding phase exit and quality evidence requirements are satisfied.
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
