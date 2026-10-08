@@ -54,3 +54,5 @@ jobs:
 # CI hardening pattern aligned with the proven G02 implementation pattern in the historical repository,
 # without importing its domain code, dependencies, Spot architecture, or lower coverage floor.
 # Same-SHA evidence remains mandatory.
+
+# Final hardening-test anchor: CI lock and workflow controls are verified on the same HEAD.
