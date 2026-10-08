@@ -43,7 +43,7 @@ def _positive_decimal(value: object, field: str) -> Decimal:
     return result
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     if not isinstance(value, str):
         raise InitialMarginValidationError(f"{field} must be an asset symbol")
     normalized = value.strip().upper()
