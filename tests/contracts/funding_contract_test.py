@@ -159,7 +159,7 @@ def test_missing_provenance_and_denomination_are_rejected():
 def test_specification_is_immutable():
     spec = funding()
     with pytest.raises((AttributeError, TypeError)):
-        spec.funding_rate = Decimal("1")
+        setattr(spec, "funding_rate", Decimal("1"))
 
 
 def test_rate_vocabulary_is_frozen():
