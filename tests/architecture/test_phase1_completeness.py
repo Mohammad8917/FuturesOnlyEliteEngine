@@ -32,7 +32,7 @@ PHASE1_BOUNDARIES = (
     (("exposure",), "exposure_contract_test.py"),
     (("liquidation",), "liquidation_contract_test.py"),
     (("liquidation_event",), "liquidation_event_contract_test.py"),
-    (("accounting",), "accounting_contract_test.py"),
+    (("accounting", "settlement_accounting"), "accounting_contract_test.py"),
 )
 
 
