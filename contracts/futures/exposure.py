@@ -59,7 +59,7 @@ class FuturesExposureSpecification:
     def _validate_contract(
         self, contract: FuturesContractSpecification
     ) -> FuturesContractSpecification:
-        if not isinstance(contract, FuturesContractSpecification):
+        if not isinstance(cast(object, contract), FuturesContractSpecification):
             raise ExposureValidationError("contract must be FuturesContractSpecification")
         if contract.market is not self.market or contract.symbol != self.symbol:
             raise ExposureValidationError("contract identity does not match exposure specification")
@@ -137,7 +137,7 @@ class FuturesExposureSpecification:
     ) -> Decimal:
         if not isinstance(cast(object, denomination), ExposureDenomination):
             raise ExposureValidationError("denomination must be explicitly BASE or QUOTE")
-        source = valuation_source.strip() if isinstance(valuation_source, str) else ""
+        source = valuation_source.strip() if isinstance(cast(object, valuation_source), str) else ""
         if not source:
             raise ExposureValidationError("valuation_source must be explicit")
         _utc(observed_at, "observed_at")
@@ -159,7 +159,7 @@ class FuturesExposureSpecification:
     ) -> None:
         current = _utc(as_of, "as_of")
         observed = _utc(observed_at, "observed_at")
-        if not isinstance(max_age, timedelta) or max_age <= timedelta(0):
+        if not isinstance(cast(object, max_age), timedelta) or max_age <= timedelta(0):
             raise ExposureValidationError("max_age must be positive")
         if current < observed or current - observed > max_age:
             raise ExposureValidationError(
