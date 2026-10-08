@@ -587,5 +587,5 @@ def test_g05_targeted_validation_and_calculation_branches():
             observed_at=datetime(2026, 1, 1, tzinfo=UTC),
             as_of=datetime(2026, 1, 1, 1, tzinfo=UTC),
             max_age=timedelta(hours=2),
-            previous_event_sequence=1, event_sequence=2,
+            previous_event_sequence=1, event_sequence=1,
         )
