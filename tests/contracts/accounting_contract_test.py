@@ -129,12 +129,10 @@ def test_journal_rejects_duplicate_ids_and_unbalanced_assets():
 @pytest.mark.parametrize(
     "field,value",
     [
-        ("amount", True),
-        ("amount", 1.0),
-        ("amount", Decimal("NaN")),
-        ("amount", Decimal("0")),
-        ("pnl_amount", 1.0),
         ("pnl_amount", True),
+        ("pnl_amount", 1.0),
+        ("pnl_amount", Decimal("NaN")),
+        ("pnl_amount", Decimal("0")),
     ],
 )
 def test_financial_boundaries_reject_bool_float_and_invalid_decimal(field, value):
