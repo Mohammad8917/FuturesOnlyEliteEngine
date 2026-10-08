@@ -192,7 +192,7 @@ The following are architectural safety requirements and must have an explicit ow
 
 ## 8.1 Phase 1 domain-contract enforcement invariant
 
-The instrument identity and canonical Futures symbol unit, and the multiplier/contract-specification unit, are complete on the verified main lineage. The first incomplete Phase 1 production contract is now **maintenance margin semantics**.
+The instrument identity and canonical Futures symbol unit, and the multiplier/contract-specification unit, are complete on the verified main lineage. Historical Phase 1 cursor snapshots in this constitution are retained as evidence history; the authoritative current cursor is maintained by the master index and project-state. The current Phase 1 work has progressed through accounting and settlement-accounting.
 
 The multiplier/contract-specification contract must make the following explicit and validated: contract quantity/unit, multiplier meaning, contract-size semantics, quote/settlement denomination, Linear/Inverse applicability, market applicability (CRYPTO Futures, FOREX Futures, GOLD Futures), precision/representation requirements, valid ranges, and failure semantics for unknown, zero, negative, contradictory, stale, unsupported, or ambiguous specifications.
 
@@ -402,7 +402,7 @@ The canonical production contract is `contracts/futures/contract_specification.p
 
 The multiplier and contract-specification unit is **complete** on the verified main lineage: production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence all passed.
 
-The current incomplete Phase 1 production contract is **maintenance margin semantics**. It must preserve the explicit multiplier, settlement, margin, and leverage boundaries and independently define initial-margin denomination, formula inputs, ownership, applicability, validation, and fail-closed behavior before implementation.
+Historical maintenance-margin cursor state is superseded by the later closure records below. It must preserve the explicit multiplier, settlement, margin, and leverage boundaries and independently define initial-margin denomination, formula inputs, ownership, applicability, validation, and fail-closed behavior before implementation.
 \n## 8.1.3 Settlement asset / settlement semantics lock
 
 The settlement contract is now frozen for this implementation unit:
@@ -834,3 +834,17 @@ Frozen baseline:
 - settlement accounting records denomination-preserving transfers and explicit cross-asset conversions only when an explicit positive conversion rate is supplied by the settlement contract;
 - no exchange-specific fee, tier, balance, settlement timing, wallet, collateral, or ledger policy is guessed into the canonical contract;
 - meaningful contract tests, Phase 1 CI, Architecture Invariants CI, G01 CI, and same-SHA evidence are mandatory before the cursor advances.
+
+## Phase 1 accounting / settlement-accounting closure evidence
+
+Futures accounting and settlement accounting semantics are implemented at the canonical Futures domain/contract boundary. The implementation is immutable and deterministic: it records balanced journal facts, consumes already-validated realized-PnL, funding, and settlement facts, preserves explicit asset denomination, Linear/Inverse identity, CRYPTO/FOREX/GOLD applicability, exact Decimal behavior, and fail-closed validation. No persistence, network, exchange SDK, order submission, account mutation, or exchange-specific accounting policy is introduced.
+
+Evidence boundary:
+- production: `contracts/futures/accounting.py`, `contracts/futures/settlement_accounting.py`;
+- tests: `tests/contracts/accounting_contract_test.py`;
+- CI: Phase 1 Domain Contracts, Architecture Invariants, and G01 Dependency Architecture are required on the same verification SHA;
+- no threshold reduction, test weakening, skip/xfail, assertion removal, or dependency-boundary weakening.
+
+## Phase 1 final completeness/evidence audit
+
+Accounting and settlement-accounting are the final minimum financial contract units in the Phase 1 contract set. The next authorized action is governance/evidence reconciliation across the eight authoritative architecture documents, canonical contracts, tests, dependency boundaries, and same-SHA CI evidence. Phase 2+ production implementation remains blocked until this audit closes.
