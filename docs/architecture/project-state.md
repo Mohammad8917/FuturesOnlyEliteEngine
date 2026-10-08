@@ -21,7 +21,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: G05 — Coverage
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: `5affea424d4ca6907c1ebc9b63797e35b8f535af` — G01 Dependency Architecture (`37839180000`) and G04 Architecture Boundary Enforcement (`37839180011`) are green on this exact main merge SHA.
+- Last verified SHA: `d1529db92f9b4750b9e8f821f3599fb0d6317b25` — G01 (`37839785059`), G03 (`37839785127`), G04 (`37839785087`), Phase 1 (`37839785060`), and Architecture Invariants (`37839785331`) are green on this exact main merge SHA.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 — Domain Contracts.
 - Active work: Phase 1 Domain Contracts — Phase 1 final completeness/evidence audit are CLOSED. G05 — achieve and evidence the immutable `>= 98%` coverage requirement without excluding meaningful production code, weakening tests, or changing thresholds.
 - Blocked work: Phase 2+ production implementation remains blocked until the current gate sequence is resolved according to the roadmap. Any gate skip/weakening remains forbidden.
@@ -42,7 +42,7 @@ Whenever this file is updated, record:
 - forbidden actions
 - open architecture questions
 - open architecture questions: None identified in the bounded Phase 0 deep audit.
-- evidence references: Phase 0 closure control applied on 3efc4b90f49790db65e07387d37fa7ed52a11f9a; deep-audit baseline verified through 497b8b7ac3dabc5d3da9fd35a9a7025d23381fca; instrument identity implementation and contract CI evidenced on main SHA 53bf816e49d5025f0ca6df2a671d590fb3770e6a; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
+- evidence references: current same-SHA main verification `d1529db92f9b4750b9e8f821f3599fb0d6317b25` with G01=`37839785059`, G03=`37839785127`, G04=`37839785087`, Phase 1=`37839785060`, Architecture Invariants=`37839785331`; historical Phase 0/Phase 1 evidence remains below; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
 ## Phase 0 exit criteria
