@@ -1,7 +1,8 @@
 """Canonical Futures position-mode vocabulary and side semantics."""
 
-import typing
 from __future__ import annotations
+
+import typing
 
 from dataclasses import dataclass
 from enum import StrEnum
