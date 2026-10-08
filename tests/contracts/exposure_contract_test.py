@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from typing import cast
 
 import pytest
 
@@ -108,7 +109,7 @@ def test_financial_inputs_fail_closed(value: object) -> None:
 
     with pytest.raises(ExposureValidationError):
         specification.base_exposure(
-            contract=contract, quantity=value, price=Decimal("50")
+            contract=contract, quantity=cast(Decimal, value), price=Decimal("50")
         )
 
 
@@ -164,7 +165,7 @@ def test_mismatched_contract_and_side_fail_closed():
             contract=contract,
             quantity=Decimal("1"),
             price=Decimal("100"),
-            position_side="LONG",
+            position_side=cast(PositionSide, "LONG"),
         )
 
 
@@ -177,7 +178,7 @@ def test_valuation_denomination_and_provenance_are_mandatory():
             contract=contract,
             quantity=Decimal("1"),
             reference_price=Decimal("100"),
-            denomination="QUOTE",
+            denomination=cast(ExposureDenomination, "QUOTE"),
             valuation_source="synthetic",
             observed_at=datetime(2026, 1, 1, 12, tzinfo=UTC),
         )
