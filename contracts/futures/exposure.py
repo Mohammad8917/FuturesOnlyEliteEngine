@@ -52,8 +52,8 @@ class FuturesExposureSpecification:
             raise ExposureValidationError("symbol must be CanonicalFuturesSymbol")
         if self.symbol.contract_family not in (ContractFamily.LINEAR, ContractFamily.INVERSE):
             raise ExposureValidationError("unsupported contract family")
-        object.__setattr__(self, "market", market)
-        object.__setattr__(self, "symbol", symbol)
+        object.__setattr__(self, "market", self.market)
+        object.__setattr__(self, "symbol", self.symbol)
 
     def _validate_contract(
         self, contract: FuturesContractSpecification
