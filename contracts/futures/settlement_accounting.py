@@ -27,7 +27,7 @@ def _text(value: object, field: str) -> str:
     return value.strip()
 
 
-def _decimal(value: Decimal, field: str) -> Decimal:
+def _decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, Decimal):
         raise AccountingValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite() or value <= 0:
