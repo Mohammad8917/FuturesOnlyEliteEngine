@@ -187,3 +187,11 @@ Every upstream margin amount declares its source asset. Same-asset amounts requi
 This contract applies to CRYPTO/FOREX/GOLD and Linear/Inverse Futures. It performs no leverage, initial-margin, maintenance-margin, liquidation, risk-limit, or exchange-specific collateral inference. Network access, rate discovery, exchange selection, persistence, account mutation, runtime configuration, and hidden defaults are forbidden. Invalid or ambiguous terms fail closed.
 
 The production boundary is contracts/futures/margin.py; meaningful contract tests are in tests/contracts/test_margin.py; CI enforcement is through .github/workflows/phase1-domain-contracts.yml.
+
+## Phase 1 leverage vocabulary / contract-level constraints
+
+The canonical leverage contract is a dimensionless ratio. Requested leverage, minimum leverage, and maximum leverage are explicit exact finite positive Decimal values. The minimum must not exceed the maximum, and the requested leverage must lie within the inclusive explicit interval.
+
+There are no hidden leverage bounds and no exchange-default inference. The contract is applicable to CRYPTO/FOREX/GOLD and Linear/Inverse Futures and consumes, but does not redefine, canonical instrument, margin, settlement, and multiplier semantics.
+
+This unit does not calculate initial margin, maintenance margin, liquidation, risk limits, exposure, or position sizing. It has no network, exchange SDK, persistence, runtime configuration, or account-state dependency. Invalid or contradictory terms fail closed.
