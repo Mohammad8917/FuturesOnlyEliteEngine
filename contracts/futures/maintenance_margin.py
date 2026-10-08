@@ -6,8 +6,9 @@ notional. It does not infer leverage, liquidation, risk policy, account
 state, exchange tiers, or exchange-specific defaults.
 """
 
-import typing
 from __future__ import annotations
+
+import typing
 
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
@@ -26,13 +27,13 @@ class MaintenanceMarginUnit(StrEnum):
     RATIO = "RATIO"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
+def _positive_decimal(value: object, field: str) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise MaintenanceMarginValidationError(
             f"{field} must be an exact Decimal value"
         )
     try:
-        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
+        result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise MaintenanceMarginValidationError(
             f"{field} must be an exact Decimal value"
@@ -45,7 +46,7 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
 
 
 def _asset(value: str, field: str) -> str:
-    if not isinstance(typing.cast(object, value), str):
+    if not isinstance(value, str):
         raise MaintenanceMarginValidationError(
             f"{field} must be an asset symbol"
         )
