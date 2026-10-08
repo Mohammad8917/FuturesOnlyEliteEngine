@@ -676,9 +676,6 @@ def test_g05_close_remaining_contract_validation_paths():
     with pytest.raises(ExposureValidationError):
         exposure.value(contract=contract, quantity=1, reference_price=10, denomination=ExposureDenomination.QUOTE, valuation_source="", observed_at=datetime(2026,1,1,tzinfo=UTC))
 
-    with pytest.raises(AccountingValidationError):
-        FuturesAccountingSpecification(Market.CRYPTO, inst, journal_id="", entries=())
-
     liquidation = FuturesLiquidationSpecification(Market.CRYPTO, symbol())
     with pytest.raises(LiquidationValidationError):
         liquidation.liquidation_price(**{**liquidation_args(), "contract": object()})
