@@ -521,3 +521,21 @@ Before implementation, the next unit must freeze one explicit owner and define:
 11. same-SHA evidence before the cursor advances.
 
 No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounting default may be guessed into the canonical contract.
+
+## Phase 1 exposure / position valuation semantic lock
+
+The active Phase 1 unit is exposure and position valuation semantics at the Futures domain/contract boundary. Exposure is distinct from valuation, PnL, margin, liquidation, accounting, execution, and exchange transport.
+
+Frozen baseline:
+- gross base exposure: Linear = quantity × multiplier; Inverse = (quantity × multiplier) ÷ price;
+- gross quote notional/value at an explicit price: Linear = quantity × multiplier × price; Inverse = quantity × multiplier;
+- LONG/SHORT affects signed directional exposure only; gross magnitude remains non-negative;
+- quantity is CONTRACTS; quantity, multiplier, and prices are positive finite exact Decimal values; bool/binary float inputs fail closed;
+- valuation denomination is explicit BASE or QUOTE; no implicit denomination or rounding/quantization;
+- reference price requires explicit provenance and aware UTC observation time; freshness uses explicit UTC as_of and positive max_age only;
+- applies to CRYPTO/FOREX/GOLD and Linear/Inverse; consumes prior contracts without redefining them;
+- PnL/fees/funding/margin/settlement/liquidation/accounting are not silently included;
+- no network, SDK, persistence, runtime configuration, scheduler, or account mutation dependency;
+- invalid, missing, stale, contradictory, unsupported, or ambiguous critical state fails closed;
+- production: contracts/futures/exposure.py; tests: tests/contracts/exposure_contract_test.py; CI: .github/workflows/phase1-domain-contracts.yml;
+- same-SHA evidence is mandatory before cursor advance; no threshold/test/gate/dependency weakening.
