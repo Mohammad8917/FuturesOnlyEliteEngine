@@ -191,7 +191,7 @@ No Futures implementation is accepted until its owner, inputs, outputs, forbidde
 
 ## Phase 1 cursor — settlement ownership
 
-The multiplier, settlement, and margin responsibilities are closed with verified production and CI evidence. The next incomplete responsibility is leverage vocabulary and contract-level constraints, which must receive one explicit primary owner before implementation.
+The multiplier, settlement, margin, and leverage responsibilities are closed with verified production and CI evidence. The next incomplete responsibility is initial margin semantics, which must receive one explicit primary owner before implementation.
 \n## Settlement asset / settlement semantics ownership
 
 **Primary owner:** Futures domain/contract boundary.
@@ -215,7 +215,7 @@ The multiplier, settlement, and margin responsibilities are closed with verified
 **Downstream consumers:** settlement accounting, PnL, margin, reconciliation, and execution may consume the validated settlement specification; none may redefine its denomination semantics.
 \n## Phase 1 cursor — margin ownership
 
-Settlement asset and margin asset/margin semantics are closed with verified implementation and CI evidence. The next incomplete responsibility is leverage vocabulary and contract-level constraints, which must receive one explicit primary owner without redefining margin or settlement semantics.
+Settlement asset, margin asset/margin semantics, and leverage are closed with verified implementation and CI evidence. The next incomplete responsibility is initial margin semantics, which must receive one explicit primary owner without redefining multiplier, settlement, margin, or leverage semantics.
 
 
 ## Phase 1 margin asset / margin semantics ownership
@@ -238,7 +238,7 @@ Dependencies forbidden: exchange SDKs, network I/O, persistence, runtime configu
 
 Downstream consumers: leverage, risk, position sizing, liquidation, PnL, reconciliation, and execution may consume the validated margin specification; none may redefine the margin asset or conversion semantics.
 
-## Phase 1 leverage vocabulary / contract-level constraints ownership
+## Phase 1 initial margin semantics ownership
 
 Primary owner: Futures domain/contract boundary.
 
