@@ -22,7 +22,7 @@ LAYER_ALIASES = {
     "observability": {"observability", "notification", "notifications"},
 }
 
-ALLOWED = {
+ALLOWED: dict[str, set[str]] = {
     "domain": {"contracts"},
     "contracts": set(),
     "application": {"domain", "contracts"},
