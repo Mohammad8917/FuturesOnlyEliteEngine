@@ -674,3 +674,23 @@ Liquidation event and trigger semantics are COMPLETE on evidence SHA `67b3592f7d
 Frozen semantics: the Futures domain/contract boundary owns deterministic trigger evaluation only; liquidation-price calculation is consumed, not redefined; the reference price requires explicit provenance, aware UTC observation time, explicit UTC `as_of`, and positive freshness `max_age`; LONG triggers at reference <= liquidation price and SHORT triggers at reference >= liquidation price; side is LONG/SHORT only and mode is ONE_WAY/HEDGE only; account/position identity, event/causation identity, state version, event sequence, quantity, entry, margin, maintenance ratio, liquidation price, and reference price are explicit; Linear/Inverse and CRYPTO/FOREX/GOLD are explicit; financial inputs are exact finite Decimal with no implicit rounding; stale, contradictory, ambiguous, invalid, or unsupported critical state fails closed; triggered events require monotonic sequence advancement and immutable event identity; execution, forced orders, account mutation, network, persistence, and exchange-specific mark-price/tier/fee/funding policy are forbidden.
 
 Production: `contracts/futures/liquidation_event.py`. Tests: `tests/contracts/liquidation_event_contract_test.py`. CI: Phase 1 Domain Contracts + Architecture Invariants + G01. All three are green on the same evidence SHA.
+
+## Phase 1 accounting / settlement-accounting semantic lock
+
+The next authorized Phase 1 unit is **Futures accounting and settlement accounting semantics**.
+
+Frozen baseline:
+- owner: Futures domain/contract boundary for deterministic accounting facts and settlement-accounting facts; application/infrastructure own persistence, external settlement transport, exchange mapping, and account mutation;
+- accounting is represented as immutable, append-only journal facts; the canonical contract does not write a database, mutate an account, call a network, or submit an order;
+- every journal entry has explicit entry identity, causation identity, state version, sequence, account scope, instrument identity, asset denomination, debit/credit direction, and exact finite Decimal amount;
+- an entry has exactly one positive amount and one explicit debit/credit direction; a journal batch must be balanced per explicit asset denomination;
+- realized PnL is consumed as an already-validated signed fact; the accounting boundary does not recompute PnL, multiplier, price, margin, liquidation, or funding;
+- funding transfers are consumed as explicit payer/receiver facts with explicit denomination; settlement transfers are explicit source/settlement denomination facts and require explicit conversion semantics from the already-closed settlement contract;
+- Linear/Inverse, CRYPTO/FOREX/GOLD, and BASE/QUOTE/settlement denomination remain explicit; no family or denomination is inferred from a generic number;
+- zero transfer is meaningful only where the upstream contract explicitly declares a zero-valued semantic fact; journal entries themselves require strictly positive amounts;
+- exact Decimal arithmetic is mandatory; bool, binary float, non-finite, zero/negative, missing, contradictory, unsupported, or ambiguous critical financial state fails closed; no rounding or quantization;
+- ordering is monotonic within the declared account/instrument scope; duplicate entry identity or reused causation/version combination cannot silently create a second accounting fact;
+- contradictory balances or external settlement outcomes are divergence, not success; reconciliation remains a later boundary and may not silently overwrite canonical facts;
+- settlement accounting records denomination-preserving transfers and explicit cross-asset conversions only when an explicit positive conversion rate is supplied by the settlement contract;
+- no exchange-specific fee, tier, balance, settlement timing, wallet, collateral, or ledger policy is guessed into the canonical contract;
+- meaningful contract tests, Phase 1 CI, Architecture Invariants CI, G01 CI, and same-SHA evidence are mandatory before the cursor advances.

@@ -540,3 +540,23 @@ Liquidation-price constraints are COMPLETE on implementation SHA `b8b65b721fcae5
 ## Phase 1 next-unit dependency gate — liquidation event and trigger semantics
 
 Trigger evaluation may depend only on canonical domain/contract facts and explicit reference-price provenance/freshness. It must not depend on exchange SDKs, network I/O, persistence, runtime configuration, scheduling, forced-order placement, or account mutation. It must not redefine liquidation price, exposure, PnL, margin, maintenance, side/mode, or price/quantity semantics. Idempotency, ordering, concurrency, fail-closed ambiguity handling, meaningful tests, CI, and same-SHA evidence are mandatory. Exchange-specific mark-price/trigger/tier/fee/funding behavior remains at infrastructure boundaries.
+
+## Phase 1 accounting / settlement-accounting semantic lock
+
+The next authorized Phase 1 unit is **Futures accounting and settlement accounting semantics**.
+
+Frozen baseline:
+- owner: Futures domain/contract boundary for deterministic accounting facts and settlement-accounting facts; application/infrastructure own persistence, external settlement transport, exchange mapping, and account mutation;
+- accounting is represented as immutable, append-only journal facts; the canonical contract does not write a database, mutate an account, call a network, or submit an order;
+- every journal entry has explicit entry identity, causation identity, state version, sequence, account scope, instrument identity, asset denomination, debit/credit direction, and exact finite Decimal amount;
+- an entry has exactly one positive amount and one explicit debit/credit direction; a journal batch must be balanced per explicit asset denomination;
+- realized PnL is consumed as an already-validated signed fact; the accounting boundary does not recompute PnL, multiplier, price, margin, liquidation, or funding;
+- funding transfers are consumed as explicit payer/receiver facts with explicit denomination; settlement transfers are explicit source/settlement denomination facts and require explicit conversion semantics from the already-closed settlement contract;
+- Linear/Inverse, CRYPTO/FOREX/GOLD, and BASE/QUOTE/settlement denomination remain explicit; no family or denomination is inferred from a generic number;
+- zero transfer is meaningful only where the upstream contract explicitly declares a zero-valued semantic fact; journal entries themselves require strictly positive amounts;
+- exact Decimal arithmetic is mandatory; bool, binary float, non-finite, zero/negative, missing, contradictory, unsupported, or ambiguous critical financial state fails closed; no rounding or quantization;
+- ordering is monotonic within the declared account/instrument scope; duplicate entry identity or reused causation/version combination cannot silently create a second accounting fact;
+- contradictory balances or external settlement outcomes are divergence, not success; reconciliation remains a later boundary and may not silently overwrite canonical facts;
+- settlement accounting records denomination-preserving transfers and explicit cross-asset conversions only when an explicit positive conversion rate is supplied by the settlement contract;
+- no exchange-specific fee, tier, balance, settlement timing, wallet, collateral, or ledger policy is guessed into the canonical contract;
+- meaningful contract tests, Phase 1 CI, Architecture Invariants CI, G01 CI, and same-SHA evidence are mandatory before the cursor advances.
