@@ -26,7 +26,7 @@ class AccountingDirection(StrEnum):
 
 
 def _decimal(value: object, field: str, *, positive: bool = False) -> Decimal:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), Decimal):
+    if isinstance(value, bool) or not isinstance(value, Decimal):
         raise AccountingValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite():
         raise AccountingValidationError(f"{field} must be finite")
@@ -36,7 +36,7 @@ def _decimal(value: object, field: str, *, positive: bool = False) -> Decimal:
 
 
 def _text(value: object, field: str) -> str:
-    if not isinstance(typing.cast(object, value), str) or not value.strip():
+    if not isinstance(value, str) or not value.strip():
         raise AccountingValidationError(f"{field} must be non-empty")
     return value.strip()
 
@@ -49,7 +49,7 @@ def _asset(value: object, field: str) -> str:
 
 
 def _sequence(value: object, field: str) -> int:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), int) or value < 0:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise AccountingValidationError(f"{field} must be a non-negative integer")
     return value
 
