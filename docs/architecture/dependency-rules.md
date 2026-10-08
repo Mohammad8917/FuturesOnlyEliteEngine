@@ -245,3 +245,28 @@ Test boundary: `tests/contracts/test_maintenance_margin.py`.
 CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
 
 The canonical implementation does not claim exchange-specific tier schedules. Such schedules may be mapped later through explicit exchange/infrastructure contracts only when their provenance, tier selection semantics, denomination, precision, freshness, and failure behavior are explicit.
+
+
+## Phase 1 maintenance margin closure evidence
+
+Maintenance-margin semantics are COMPLETE on main merge SHA `7f647c4105738d7dfe298b283841e3eaec6524a7`.
+
+Evidence on the exact merge SHA:
+- production boundary: `contracts/futures/maintenance_margin.py`;
+- test boundary: `tests/contracts/test_maintenance_margin.py`;
+- Phase 1 Domain Contracts CI: green;
+- Architecture Invariants CI: green;
+- G01 Dependency Architecture CI: green.
+
+The frozen contract remains:
+- explicit RATIO requirement rate;
+- exact finite Decimal arithmetic;
+- explicit positive finite notional and maintenance-margin ratio;
+- deterministic `notional × maintenance_margin_ratio`;
+- unchanged notional denomination;
+- CRYPTO/FOREX/GOLD and Linear/Inverse coverage;
+- no guessed exchange-specific tiers/rates/offsets;
+- fail-closed invalid, ambiguous, stale, contradictory, unsupported, or missing critical terms;
+- no threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening.
+
+The next authorized Phase 1 unit is **position side and position mode semantics**. No Phase 2+ production implementation is authorized before the preceding Phase 1 exit criteria are evidenced.
