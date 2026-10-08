@@ -47,7 +47,7 @@ class InstrumentStatus(StrEnum):
     DELISTED = "DELISTED"
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     if not isinstance(value, str):
         raise InstrumentValidationError(f"{field} must be a string")
     normalized = value.strip().upper()
