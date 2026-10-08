@@ -99,6 +99,15 @@ Any future semantic change to leverage unit or bound semantics remains subject t
 
 ## Phase 1 initial margin cursor rule
 
-Leverage vocabulary and contract-level constraints are a closed implementation only when explicit RATIO semantics, exact Decimal bounds, fail-closed validation, meaningful tests, CI enforcement, and same-SHA evidence are present.
+Initial-margin semantics are a closed implementation of the existing Phase 1 architecture baseline only after the explicit requirement-rate contract, exact Decimal calculation, meaningful tests, CI enforcement, and same-SHA evidence are present.
 
-Any proposal to introduce hidden leverage defaults, infer leverage from margin/notional/account state, redefine the RATIO unit, change bound semantics, or move ownership across dependency boundaries is an Architecture Change Candidate and must use the ADR process before implementation.
+The approved semantic boundary is:
+- initial-margin requirement rate is an explicit dimensionless RATIO;
+- notional is an explicit positive finite Decimal supplied from canonical multiplier/contract-specification semantics;
+- initial-margin ratio is an explicit positive finite Decimal;
+- initial margin amount = notional × initial_margin_ratio;
+- output retains the notional denomination;
+- no implicit rounding, conversion, leverage inference, exchange defaults, account-state inference, or downstream risk/liquidation semantics;
+- applicability is CRYPTO/FOREX/GOLD and Linear/Inverse.
+
+Any future proposal to derive initial margin from leverage, redefine the ratio, change the formula, move ownership across dependency boundaries, introduce hidden defaults, or change fail-closed behavior is an Architecture Change Candidate and must use the ADR process before implementation.
