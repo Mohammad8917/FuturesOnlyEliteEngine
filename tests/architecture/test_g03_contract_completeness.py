@@ -56,7 +56,7 @@ def test_every_futures_contract_has_explicit_test_ownership():
 
 
 def test_contract_test_tree_contains_no_explicit_skip_or_xfail_markers():
-    offenders = []
+    offenders: list[str] = []
     for path in TESTS.glob("*.py"):
         text = path.read_text(encoding="utf-8")
         if (
