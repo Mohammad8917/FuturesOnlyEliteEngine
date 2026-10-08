@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from .instrument import FuturesInstrumentIdentity, Market
+from .instrument import CanonicalFuturesSymbol, FuturesInstrumentIdentity, Market
 
 
 class MaintenanceMarginValidationError(ValueError):
@@ -45,7 +45,7 @@ def _positive_decimal(value: object, field: str) -> Decimal:
     return result
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     if not isinstance(value, str):
         raise MaintenanceMarginValidationError(
             f"{field} must be an asset symbol"
