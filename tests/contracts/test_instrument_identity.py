@@ -99,6 +99,17 @@ def test_invalid_or_spot_symbol_fails_closed(value: str) -> None:
         CanonicalFuturesSymbol.parse(value)
 
 
+@pytest.mark.parametrize("value", ["LINEAR", "INVERSE", "SPOT", None])
+def test_symbol_rejects_non_canonical_contract_family(value: object) -> None:
+    with pytest.raises(InstrumentValidationError):
+        CanonicalFuturesSymbol(
+            base_asset="btc",
+            quote_asset="usd",
+            contract_family=value,  # type: ignore[arg-type]
+            settlement_asset="usd",
+        )
+
+
 def test_linear_identity_does_not_infer_economic_terms_from_symbol() -> None:
     symbol = CanonicalFuturesSymbol(
         base_asset="btc",
