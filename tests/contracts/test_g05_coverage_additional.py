@@ -5,6 +5,7 @@ configuration or production behavior is changed.
 """
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from typing import TypedDict, cast
 
 import pytest
 
@@ -94,6 +95,40 @@ from contracts.futures.settlement import (
 from contracts.futures.settlement_accounting import (
     FuturesSettlementAccountingSpecification,
 )
+
+class LiquidationArgs(TypedDict):
+    contract: FuturesContractSpecification
+    quantity: Decimal
+    entry_price: Decimal
+    margin_amount: Decimal
+    margin_denomination: LiquidationDenomination
+    maintenance_margin_ratio: Decimal
+    position_side: PositionSide
+
+
+class LiquidationEventArgs(TypedDict):
+    account_id: str
+    position_id: str
+    event_id: str
+    causation_id: str
+    state_version: int
+    contract_family: ContractFamily
+    position_mode: PositionMode
+    position_side: PositionSide
+    quantity: Decimal
+    entry_price: Decimal
+    margin_amount: Decimal
+    margin_denomination: LiquidationDenomination
+    maintenance_margin_ratio: Decimal
+    liquidation_price: Decimal
+    reference_price: Decimal
+    reference_price_source: str
+    observed_at: datetime
+    as_of: datetime
+    max_age: timedelta
+    previous_event_sequence: int
+    event_sequence: int
+
 
 UTC = timezone.utc
 
@@ -313,7 +348,7 @@ def test_margin_extra_validation_branches():
         same.to_margin_amount(0)
 
 
-def liquidation_args(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> dict[str, object]:
+def liquidation_args(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> LiquidationArgs:
     return dict(
         contract=contract(family), quantity=Decimal("1"),
         entry_price=Decimal("100"), margin_amount=Decimal("2000"),
@@ -326,7 +361,7 @@ def liquidation_args(family: ContractFamily = ContractFamily.LINEAR, side: Posit
     )
 
 
-def event_args():
+def event_args() -> LiquidationEventArgs:
     return dict(
         account_id="a", position_id="p", event_id="e", causation_id="c",
         state_version=1, contract_family=ContractFamily.LINEAR,
@@ -344,7 +379,7 @@ def event_args():
 def test_liquidation_extra_validation_branches():
     linear = FuturesLiquidationSpecification(Market.CRYPTO, symbol())
     with pytest.raises(LiquidationValidationError):
-        linear.liquidation_price(**{**liquidation_args(), "quantity": True})
+        linear.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "quantity": True}))
     with pytest.raises(LiquidationValidationError):
         linear.liquidation_price(**{**liquidation_args(), "contract": "bad"})
     with pytest.raises(LiquidationValidationError):
