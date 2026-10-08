@@ -33,4 +33,4 @@ def test_utc_source_and_freshness():
     with pytest.raises(PnLValidationError): s.validate_valuation_freshness(as_of=datetime(2026,1,1,14,tzinfo=UTC),observed_at=datetime(2026,1,1,12,tzinfo=UTC),max_age=timedelta(hours=1))
 def test_immutable():
     s=spec(ContractFamily.LINEAR)
-    with pytest.raises(AttributeError): s.pnl_unit=PnLUnit.REALIZED_OR_UNREALIZED
+    with pytest.raises(AttributeError): setattr(s, "pnl_unit", PnLUnit.REALIZED_OR_UNREALIZED)
