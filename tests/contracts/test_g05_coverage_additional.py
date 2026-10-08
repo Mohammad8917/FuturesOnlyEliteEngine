@@ -130,6 +130,32 @@ class LiquidationEventArgs(TypedDict):
     event_sequence: int
 
 
+class LiquidationEventDataArgs(TypedDict):
+    market: Market
+    symbol: CanonicalFuturesSymbol
+    account_id: str
+    position_id: str
+    event_id: str
+    causation_id: str
+    state_version: int
+    contract_family: ContractFamily
+    position_mode: PositionMode
+    position_side: PositionSide
+    quantity: Decimal
+    entry_price: Decimal
+    margin_amount: Decimal
+    margin_denomination: LiquidationDenomination
+    maintenance_margin_ratio: Decimal
+    liquidation_price: Decimal
+    reference_price: Decimal
+    reference_price_source: str
+    observed_at: datetime
+    as_of: datetime
+    max_age: timedelta
+    previous_event_sequence: int
+    event_sequence: int
+
+
 class LedgerEntryArgs(TypedDict):
     entry_id: str
     causation_id: str
@@ -446,7 +472,7 @@ def test_liquidation_event_more_validation_branches():
         spec.evaluate(**cast(LiquidationEventArgs, {**kwargs, "reference_price": Decimal("70"), "event_sequence": 1}))
     with pytest.raises(LiquidationEventValidationError):
         spec.evaluate(**cast(LiquidationEventArgs, {**kwargs, "as_of": datetime(2025, 12, 31, tzinfo=UTC)}))
-    result = spec.evaluate(**kwargs)
+    result = spec.evaluate(**cast(LiquidationEventArgs, kwargs))
     assert result.trigger is LiquidationTrigger.TRIGGERED
     assert result.event is not None
 
@@ -477,9 +503,9 @@ def test_liquidation_event_dataclass_validation_and_evaluation():
         ("max_age", timedelta(0)),
     ]:
         with pytest.raises((LiquidationEventValidationError, ValueError)):
-            FuturesLiquidationTriggerEvent(**cast(dict[str, object], {**data, field: value}))
+            FuturesLiquidationTriggerEvent(**cast(LiquidationEventDataArgs, {**data, field: value}))
     with pytest.raises(LiquidationEventValidationError):
-        FuturesLiquidationTriggerEvaluation("bad", None)
+        FuturesLiquidationTriggerEvaluation(cast(LiquidationTrigger, "bad"), None)
     with pytest.raises(LiquidationEventValidationError):
         FuturesLiquidationTriggerEvaluation(LiquidationTrigger.TRIGGERED, None)
     with pytest.raises(LiquidationEventValidationError):
@@ -511,14 +537,14 @@ def test_price_quantity_and_settlement_branches():
     with pytest.raises(PriceQuantityValidationError):
         FuturesPriceQuantitySpecification(
             Market.CRYPTO, symbol(), PriceUnit.QUOTE_PER_BASE, QuantityUnit.CONTRACTS,
-            "USD", PrecisionPolicy.EXACT, "NONE"
+            "USD", PrecisionPolicy.EXACT, cast(RoundingPolicy, "NONE")
         )
     pq = FuturesPriceQuantitySpecification(
         Market.CRYPTO, symbol(), PriceUnit.QUOTE_PER_BASE, QuantityUnit.CONTRACTS,
         "USD", PrecisionPolicy.EXACT, RoundingPolicy.NONE
     )
     with pytest.raises(PriceQuantityValidationError):
-        pq.validate_quantity(object())
+        pq.validate_quantity(cast(Decimal, object()))
     with pytest.raises(SettlementValidationError):
         FuturesSettlementSpecification(
             Market.CRYPTO, symbol(), SettlementUnit.ASSET, "USD/EUR", "USD"
@@ -573,7 +599,7 @@ def test_g05_targeted_validation_and_calculation_branches():
         FuturesContractSpecification(
             market=Market.CRYPTO, symbol=symbol(),
             quantity_unit=QuantityUnit.CONTRACTS,
-            contract_multiplier="not-a-decimal", price_quote_asset="USD",
+            contract_multiplier=cast(Decimal, "not-a-decimal"), price_quote_asset="USD",
         )
 
     exposure = FuturesExposureSpecification(Market.CRYPTO, symbol())
@@ -590,9 +616,9 @@ def test_g05_targeted_validation_and_calculation_branches():
         observed_at=datetime(2026, 1, 1, tzinfo=UTC),
     ) == Decimal("2000")
     with pytest.raises(ExposureValidationError):
-        FuturesExposureSpecification("bad", symbol())
+        FuturesExposureSpecification(cast(Market, "bad"), symbol())
     with pytest.raises(ExposureValidationError):
-        FuturesExposureSpecification(Market.CRYPTO, "bad")
+        FuturesExposureSpecification(Market.CRYPTO, cast(CanonicalFuturesSymbol, "bad"))
     with pytest.raises(ExposureValidationError):
         exposure.validate_reference_freshness(
             as_of=datetime(2026, 1, 1, 1, tzinfo=UTC),
@@ -620,29 +646,29 @@ def test_g05_targeted_validation_and_calculation_branches():
 
     inverse = FuturesLiquidationSpecification(Market.CRYPTO, symbol(ContractFamily.INVERSE))
     inverse_long = inverse.liquidation_price(
-        **{**liquidation_args(ContractFamily.INVERSE, PositionSide.LONG),
-           "margin_amount": Decimal("0.2")}
+        **cast(LiquidationArgs, {**liquidation_args(ContractFamily.INVERSE, PositionSide.LONG),
+           "margin_amount": Decimal("0.2")})
     )
     assert inverse_long < Decimal("100")
     with pytest.raises(LiquidationValidationError):
         inverse.liquidation_price(
-            **{**liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
-               "margin_amount": Decimal("0.001")}
+            **cast(LiquidationArgs, {**liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
+               "margin_amount": Decimal("0.001")})
         )
     with pytest.raises(LiquidationValidationError):
-        FuturesLiquidationSpecification("bad", symbol())
+        FuturesLiquidationSpecification(cast(Market, "bad"), symbol())
     with pytest.raises(LiquidationValidationError):
-        FuturesLiquidationSpecification(Market.CRYPTO, "bad")
+        FuturesLiquidationSpecification(Market.CRYPTO, cast(CanonicalFuturesSymbol, "bad"))
     with pytest.raises(LiquidationValidationError):
         inverse.liquidation_price(
-            **{
+            **cast(LiquidationArgs, {
                 **liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
                 "margin_denomination": LiquidationDenomination.QUOTE,
-            }
+            })
         )
 
     with pytest.raises(LiquidationEventValidationError):
-        FuturesLiquidationTriggerSpecification("bad", symbol())
+        FuturesLiquidationTriggerSpecification(cast(Market, "bad"), symbol())
     with pytest.raises(LiquidationEventValidationError):
         FuturesLiquidationTriggerSpecification(
             Market.CRYPTO, symbol(ContractFamily.INVERSE)
@@ -667,15 +693,15 @@ def test_g05_remaining_validation_and_boundary_branches():
     """Exercise remaining real validation/boundary semantics without changing production behavior."""
     inst = instrument()
     with pytest.raises(InitialMarginValidationError):
-        FuturesInitialMarginSpecification(Market.CRYPTO, inst, InitialMarginUnit.RATIO, "bad", "USD")
+        FuturesInitialMarginSpecification(Market.CRYPTO, inst, InitialMarginUnit.RATIO, cast(Decimal, "bad"), "USD")
     with pytest.raises(MaintenanceMarginValidationError):
-        FuturesMaintenanceMarginSpecification(Market.CRYPTO, inst, MaintenanceMarginUnit.RATIO, "bad", "USD")
+        FuturesMaintenanceMarginSpecification(Market.CRYPTO, inst, MaintenanceMarginUnit.RATIO, cast(Decimal, "bad"), "USD")
     with pytest.raises(LeverageValidationError):
-        FuturesLeverageSpecification(Market.CRYPTO, inst, LeverageUnit.RATIO, "bad", Decimal("1"), Decimal("5"))
+        FuturesLeverageSpecification(Market.CRYPTO, inst, LeverageUnit.RATIO, cast(Decimal, "bad"), Decimal("1"), Decimal("5"))
     with pytest.raises(MarginValidationError):
-        FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "EUR", "bad")
+        FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "EUR", cast(Decimal, "bad"))
     with pytest.raises(MarginValidationError):
-        FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, 1, "USD")
+        FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, cast(str, 1), "USD")
 
     pnl = FuturesPnLSpecification(Market.CRYPTO, symbol(), PnLUnit.REALIZED_OR_UNREALIZED)
     with pytest.raises(PnLValidationError):
@@ -690,7 +716,7 @@ def test_g05_remaining_validation_and_boundary_branches():
     with pytest.raises(SettlementValidationError):
         FuturesSettlementSpecification(Market.CRYPTO, symbol(), SettlementUnit.ASSET, "bad", "USD")
     with pytest.raises(SettlementValidationError):
-        FuturesSettlementSpecification(Market.CRYPTO, symbol(), SettlementUnit.ASSET, "USD", "EUR", "bad")
+        FuturesSettlementSpecification(Market.CRYPTO, symbol(), SettlementUnit.ASSET, "USD", "EUR", cast(Decimal, "bad"))
     with pytest.raises(SettlementValidationError):
         FuturesSettlementSpecification(Market.CRYPTO, symbol(), SettlementUnit.ASSET, "USD", "EUR", Decimal("NaN"))
 
@@ -739,11 +765,11 @@ def test_g05_close_remaining_contract_validation_paths():
 
     exposure = FuturesExposureSpecification(Market.CRYPTO, symbol())
     with pytest.raises(ExposureValidationError):
-        FuturesExposureSpecification("bad", symbol())
+        FuturesExposureSpecification(cast(Market, "bad"), symbol())
     with pytest.raises(ExposureValidationError):
-        exposure.base_exposure(contract=object(), quantity=1, price=10)
+        exposure.base_exposure(contract=cast(FuturesContractSpecification, object()), quantity=1, price=10)
     with pytest.raises(ExposureValidationError):
-        exposure.quote_value(contract=object(), quantity=1, reference_price=10)
+        exposure.quote_value(contract=cast(FuturesContractSpecification, object()), quantity=1, reference_price=10)
     with pytest.raises(ExposureValidationError):
         exposure.value(contract=contract, quantity=1, reference_price=10, denomination=ExposureDenomination.QUOTE, valuation_source="", observed_at=datetime(2026,1,1,tzinfo=UTC))
 
@@ -796,15 +822,15 @@ def test_g05_close_remaining_contract_validation_paths():
         )
     with pytest.raises(LiquidationValidationError):
         liquidation.liquidation_price(
-            **{**liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT), "margin_amount": Decimal("1")}
+            **cast(LiquidationArgs, {**liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT), "margin_amount": Decimal("1")})
         )
 
     with pytest.raises(SettlementValidationError):
-        FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, SettlementUnit.ASSET, 123, "USD")
+        FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, SettlementUnit.ASSET, cast(str, 123), "USD")
     with pytest.raises(SettlementValidationError):
-        FuturesSettlementSpecification("bad", inst.symbol, SettlementUnit.ASSET, "USD", "USD")
+        FuturesSettlementSpecification(cast(Market, "bad"), inst.symbol, SettlementUnit.ASSET, "USD", "USD")
     with pytest.raises(SettlementValidationError):
-        FuturesSettlementSpecification(Market.CRYPTO, "bad", SettlementUnit.ASSET, "USD", "USD")
+        FuturesSettlementSpecification(Market.CRYPTO, cast(CanonicalFuturesSymbol, "bad"), SettlementUnit.ASSET, "USD", "USD")
 
     with pytest.raises(AccountingValidationError):
         settlement_accounting.transfer(
