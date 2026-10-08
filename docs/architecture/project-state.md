@@ -21,7 +21,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: 2f695795757e89870859e23fa20252fd008baa8d; verified on current main with Architecture Invariants, G01 Dependency Architecture, and Phase 1 Domain Contracts all green on the same SHA.
+- Last verified SHA: `9762a29bcc4ba92166c4ed3a1dff239c5f501636`; verified immediately before this state snapshot with Architecture Invariants, G01 Dependency Architecture, and Phase 1 Domain Contracts all green on that exact SHA. The snapshot commit itself must be re-verified before being recorded as the next last-verified SHA.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
 - Active work: Phase 1 Domain Contracts — instrument, multiplier, settlement, margin, leverage, initial/maintenance margin, position side/mode, price/quantity, funding, PnL, exposure/valuation, and liquidation-price constraints are closed; the current incomplete unit is liquidation event and trigger semantics.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
