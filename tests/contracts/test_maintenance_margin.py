@@ -150,7 +150,7 @@ def test_decimal_inputs_are_exact_and_immutable() -> None:
         market=Market.CRYPTO,
         instrument=_instrument(),
         maintenance_margin_unit=MaintenanceMarginUnit.RATIO,
-        maintenance_margin_ratio="0.06250",
+        maintenance_margin_ratio=cast(Decimal, "0.06250"),
         notional_asset="usdt",
     )
     assert spec.maintenance_margin_ratio == Decimal("0.06250")
