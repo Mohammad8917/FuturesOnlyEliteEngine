@@ -619,3 +619,11 @@ Accounting/settlement-accounting is the last minimum Futures domain contract lis
 ## G01 CI trigger-coverage closure
 
 The shared CI dependency lock `requirements-ci.txt` is an authoritative G01/Phase 1/Architecture Invariants input and is included in all three workflow trigger paths. G01 also reruns when this project-state evidence file changes, so state/evidence reconciliation can produce a same-SHA verification point across the three Phase 1 evidence workflows. No G02 production implementation is entered by this control.
+
+## Historical evidence interpretation
+
+All Phase 1 sections below **Current authoritative state** are immutable historical transition/evidence records. Any historical wording such as “current cursor”, “next authorized unit”, or “active work” in those records describes the state at that recorded transition and is not a live authorization. Only **Current authoritative state** controls the present session. A phase/gate transition is valid only after the current repository evidence and same-SHA CI requirements are re-established.
+
+## Final Phase 1 evidence reconciliation — pending same-SHA verification
+
+The current repository HEAD is being treated as an evidence candidate only. The recorded **Last verified SHA** must not be advanced until G01 Dependency Architecture, Architecture Invariants, and Phase 1 Domain Contracts are all green on the exact same parent SHA. This state update intentionally does not claim that verification yet.
