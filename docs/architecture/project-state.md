@@ -181,24 +181,30 @@ Margin asset and margin semantics are COMPLETE on main merge SHA f2c30bf3da77f56
 
 ## Phase 1 current cursor — initial margin
 
-Current cursor: initial margin semantics.
+Current cursor: **initial margin semantics**.
 
-Next authorized action: define and implement leverage vocabulary and contract-level constraints. No Phase 2+ work is authorized, and no threshold/test/gate weakening is permitted.
+Next authorized action: define and implement the explicit initial-margin requirement contract from the frozen architecture baseline. No Phase 2+ work is authorized, and no threshold/test/gate weakening is permitted.
 
-## Phase 1 leverage implementation contract
+## Phase 1 initial margin implementation contract
 
-The active implementation unit is leverage vocabulary and contract-level constraints.
+The active implementation unit is initial-margin requirement semantics.
 
 Frozen semantics:
-- leverage unit = RATIO;
-- requested/minimum/maximum leverage are explicit finite positive Decimal values;
-- minimum <= maximum;
-- requested leverage must be within inclusive bounds;
-- all supported Futures markets and Linear/Inverse families are covered;
-- no leverage default is inferred from exchange, margin, notional, or account state;
-- leverage does not calculate margin, liquidation, risk, or position sizing;
-- invalid or ambiguous leverage terms fail closed.
+- owner = Futures domain/contract boundary;
+- unit = RATIO for the initial-margin requirement rate;
+- inputs = canonical Futures instrument identity, matching market, explicit positive finite notional, and explicit positive finite initial-margin ratio;
+- formula = initial margin amount = notional × initial_margin_ratio;
+- output denomination = the same denomination as the supplied notional;
+- exact Decimal arithmetic; no implicit rounding or quantization;
+- CRYPTO/FOREX/GOLD and Linear/Inverse applicability;
+- canonical multiplier/contract-specification semantics are consumed, not redefined;
+- initial-margin ratio is not inferred from leverage, exchange defaults, account state, maintenance margin, liquidation, or risk policy;
+- no hidden ratio bounds;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation;
+- invalid, missing, zero, negative, non-finite, contradictory, or ambiguous inputs fail closed.
 
-Production boundary: contracts/futures/leverage.py.
-Test boundary: tests/contracts/test_leverage.py.
-CI boundary: .github/workflows/phase1-domain-contracts.yml.
+Production boundary: `contracts/futures/initial_margin.py`.
+Test boundary: `tests/contracts/test_initial_margin.py`.
+CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
+
+No cursor advance is authorized until production implementation, contract tests, CI enforcement, and same-SHA evidence are green.
