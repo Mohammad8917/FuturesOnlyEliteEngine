@@ -5,8 +5,9 @@ Futures settlement specification into balanced journal facts. It performs no
 rate discovery, persistence, transport, exchange calls, or account mutation.
 """
 
-import typing
 from __future__ import annotations
+
+import typing
 
 from dataclasses import dataclass
 from decimal import Decimal
