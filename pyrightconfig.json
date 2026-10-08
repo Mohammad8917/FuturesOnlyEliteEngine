@@ -1,8 +1,7 @@
 {
   "include": [
     "contracts",
-    "validation",
-    "tests"
+    "validation"
   ],
   "exclude": [
     "**/__pycache__"
