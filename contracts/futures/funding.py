@@ -36,7 +36,7 @@ def _decimal(value: object, field: str, *, positive: bool = False) -> Decimal:
     return result
 
 
-def _utc(value: datetime, field: str) -> datetime:
+def _utc(value: object, field: str) -> datetime:
     if (
         not isinstance(value, datetime)
         or value.tzinfo is None
