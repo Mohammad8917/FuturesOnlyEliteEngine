@@ -234,10 +234,15 @@ def test_exposure_validation_and_freshness_branches():
             denomination=ExposureDenomination.BASE, valuation_source="",
             observed_at=datetime(2026, 1, 1, tzinfo=UTC),
         )
+    assert spec.validate_reference_freshness(
+        as_of=datetime(2026, 1, 1, 1, tzinfo=UTC),
+        observed_at=datetime(2026, 1, 1, tzinfo=UTC),
+        max_age=timedelta(hours=2),
+    ) is None
     with pytest.raises(ExposureValidationError):
         spec.validate_reference_freshness(
             as_of=datetime(2026, 1, 1, 1, tzinfo=UTC),
-            observed_at=datetime(2026, 1, 1, tzinfo=UTC),
+            observed_at=datetime(2025, 12, 31, 22, tzinfo=UTC),
             max_age=timedelta(hours=2),
         )
 
