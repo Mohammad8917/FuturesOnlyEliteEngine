@@ -10,6 +10,7 @@ on:
       - "contracts/**"
       - "tests/contracts/**"
       - ".github/workflows/phase1-domain-contracts.yml"
+      - "docs/architecture/**"
   pull_request:
     paths:
       - "contracts/**"
@@ -47,3 +48,5 @@ jobs:
 # Same-SHA trigger anchor: accounting cursor follows liquidation-trigger closure.
 
 # Final evidence trigger: current-head gate verification after state reconciliation.
+
+# Same-SHA governance anchor: architecture-state changes rerun Phase 1 domain-contract evidence.
