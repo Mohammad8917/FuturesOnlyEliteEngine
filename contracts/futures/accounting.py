@@ -7,6 +7,8 @@ order submission, or account mutation is performed here.
 
 from __future__ import annotations
 
+import typing
+
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
@@ -23,7 +25,7 @@ class AccountingDirection(StrEnum):
     CREDIT = "CREDIT"
 
 
-def _decimal(value: Decimal, field: str, *, positive: bool = False) -> Decimal:
+def _decimal(value: object, field: str, *, positive: bool = False) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, Decimal):
         raise AccountingValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite():
@@ -33,20 +35,20 @@ def _decimal(value: Decimal, field: str, *, positive: bool = False) -> Decimal:
     return value
 
 
-def _text(value: str, field: str) -> str:
+def _text(value: object, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise AccountingValidationError(f"{field} must be non-empty")
     return value.strip()
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     asset = _text(value, field).upper()
     if asset.startswith("SPOT") or not asset.replace("_", "").isalnum():
         raise AccountingValidationError(f"{field} is invalid")
     return asset
 
 
-def _sequence(value: int, field: str) -> int:
+def _sequence(value: object, field: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise AccountingValidationError(f"{field} must be a non-negative integer")
     return value
@@ -73,11 +75,15 @@ class FuturesLedgerEntry:
         _sequence(self.state_version, "state_version")
         _sequence(self.sequence, "sequence")
         _text(self.account_id, "account_id")
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
+        if not isinstance(
+            typing.cast(object, self.instrument), FuturesInstrumentIdentity
+        ):
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
         _text(self.ledger_account, "ledger_account")
         _asset(self.asset, "asset")
-        if not isinstance(self.direction, AccountingDirection):
+        if not isinstance(typing.cast(object, self.direction), AccountingDirection):
             raise AccountingValidationError("direction must be DEBIT or CREDIT")
         _decimal(self.amount, "amount", positive=True)
 
@@ -93,7 +99,10 @@ class FuturesAccountingJournal:
         _text(self.journal_id, "journal_id")
         if not self.entries:
             raise AccountingValidationError("journal must contain entries")
-        if any(not isinstance(entry, FuturesLedgerEntry) for entry in self.entries):
+        if any(
+            not isinstance(typing.cast(object, entry), FuturesLedgerEntry)
+            for entry in self.entries
+        ):
             raise AccountingValidationError("all entries must be FuturesLedgerEntry")
 
         seen: set[str] = set()
@@ -117,29 +126,37 @@ class FuturesAccountingJournal:
             totals[entry.asset] = totals.get(entry.asset, Decimal("0")) + entry.amount
 
         for asset in set(debit_totals) | set(credit_totals):
-            if debit_totals.get(asset, Decimal("0")) != credit_totals.get(asset, Decimal("0")):
-                raise AccountingValidationError(f"journal is unbalanced for asset {asset}")
+            if debit_totals.get(asset, Decimal("0")) != credit_totals.get(
+                asset, Decimal("0")
+            ):
+                raise AccountingValidationError(
+                    f"journal is unbalanced for asset {asset}"
+                )
 
     @property
     def asset_balances(self) -> dict[str, Decimal]:
         return {
             asset: debit - credit
-            for asset in set(
-                entry.asset for entry in self.entries
-            )
+            for asset in set(entry.asset for entry in self.entries)
             for debit, credit in [
                 (
                     sum(
-                        entry.amount
-                        for entry in self.entries
-                        if entry.asset == asset
-                        and entry.direction is AccountingDirection.DEBIT
+                        (
+                            entry.amount
+                            for entry in self.entries
+                            if entry.asset == asset
+                            and entry.direction is AccountingDirection.DEBIT
+                        ),
+                        Decimal("0"),
                     ),
                     sum(
-                        entry.amount
-                        for entry in self.entries
-                        if entry.asset == asset
-                        and entry.direction is AccountingDirection.CREDIT
+                        (
+                            entry.amount
+                            for entry in self.entries
+                            if entry.asset == asset
+                            and entry.direction is AccountingDirection.CREDIT
+                        ),
+                        Decimal("0"),
                     ),
                 )
             ]
@@ -154,10 +171,14 @@ class FuturesAccountingSpecification:
     instrument: FuturesInstrumentIdentity
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise AccountingValidationError("market must be a supported Futures market")
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
+        if not isinstance(
+            typing.cast(object, self.instrument), FuturesInstrumentIdentity
+        ):
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
         if self.instrument.market is not self.market:
             raise AccountingValidationError("market must match instrument")
 

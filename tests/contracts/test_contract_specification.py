@@ -51,7 +51,11 @@ def test_multiplier_contract_is_explicit_for_all_supported_futures_markets(
     market: Market,
 ) -> None:
     symbol = CanonicalFuturesSymbol(
-        base_asset="eur" if market is Market.FOREX else "btc" if market is Market.CRYPTO else "xau",
+        base_asset="eur"
+        if market is Market.FOREX
+        else "btc"
+        if market is Market.CRYPTO
+        else "xau",
         quote_asset="usd" if market is not Market.CRYPTO else "usdt",
         contract_family=ContractFamily.LINEAR,
         settlement_asset="usd" if market is not Market.CRYPTO else "usdt",
@@ -71,15 +75,23 @@ def test_multiplier_contract_is_explicit_for_all_supported_futures_markets(
 def test_linear_notional_and_base_exposure_are_dimensionally_explicit() -> None:
     spec = _linear()
 
-    assert spec.notional(quantity=Decimal("10"), price=Decimal("50000")) == Decimal("500")
-    assert spec.base_exposure(quantity=Decimal("10"), price=Decimal("50000")) == Decimal("0.010")
+    assert spec.notional(quantity=Decimal("10"), price=Decimal("50000")) == Decimal(
+        "500"
+    )
+    assert spec.base_exposure(
+        quantity=Decimal("10"), price=Decimal("50000")
+    ) == Decimal("0.010")
 
 
 def test_inverse_notional_and_base_exposure_are_distinct() -> None:
     spec = _inverse()
 
-    assert spec.notional(quantity=Decimal("10"), price=Decimal("50000")) == Decimal("1000")
-    assert spec.base_exposure(quantity=Decimal("10"), price=Decimal("50000")) == Decimal("0.02")
+    assert spec.notional(quantity=Decimal("10"), price=Decimal("50000")) == Decimal(
+        "1000"
+    )
+    assert spec.base_exposure(
+        quantity=Decimal("10"), price=Decimal("50000")
+    ) == Decimal("0.02")
 
 
 def test_decimal_math_is_exact_and_does_not_require_float_conversion() -> None:
@@ -141,4 +153,4 @@ def test_specification_is_immutable() -> None:
     spec = _linear()
 
     with pytest.raises(AttributeError):
-        spec.contract_multiplier = Decimal("2")
+        setattr(spec, "contract_multiplier", Decimal("2"))

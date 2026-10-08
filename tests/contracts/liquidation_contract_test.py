@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import cast
 
 import pytest
 
@@ -20,7 +21,9 @@ def make_symbol(market: Market, family: ContractFamily) -> CanonicalFuturesSymbo
     return CanonicalFuturesSymbol(base, "USD", family, "USD")
 
 
-def make_contract(market: Market, family: ContractFamily) -> FuturesContractSpecification:
+def make_contract(
+    market: Market, family: ContractFamily
+) -> FuturesContractSpecification:
     return FuturesContractSpecification(
         market=market,
         symbol=make_symbol(market, family),
@@ -32,7 +35,9 @@ def make_contract(market: Market, family: ContractFamily) -> FuturesContractSpec
 
 @pytest.mark.parametrize("market", list(Market))
 @pytest.mark.parametrize("family", list(ContractFamily))
-def test_scope_is_explicit_for_all_markets_and_families(market, family):
+def test_scope_is_explicit_for_all_markets_and_families(
+    market: Market, family: ContractFamily
+) -> None:
     specification = FuturesLiquidationSpecification(market, make_symbol(market, family))
     assert specification.market is market
     assert specification.symbol.contract_family is family
@@ -117,7 +122,9 @@ def test_inverse_short_liquidation_price_preserves_inverse_base_denominated_sema
         (ContractFamily.INVERSE, LiquidationDenomination.QUOTE),
     ],
 )
-def test_wrong_margin_denomination_fails_closed(family, denomination):
+def test_wrong_margin_denomination_fails_closed(
+    family: ContractFamily, denomination: LiquidationDenomination
+) -> None:
     contract = make_contract(Market.CRYPTO, family)
     specification = FuturesLiquidationSpecification(Market.CRYPTO, contract.symbol)
 
@@ -137,14 +144,14 @@ def test_wrong_margin_denomination_fails_closed(family, denomination):
     "value",
     [True, False, 0, -1, 0.1, float("nan"), Decimal("NaN")],
 )
-def test_financial_inputs_fail_closed(value):
+def test_financial_inputs_fail_closed(value: object) -> None:
     contract = make_contract(Market.CRYPTO, ContractFamily.LINEAR)
     specification = FuturesLiquidationSpecification(Market.CRYPTO, contract.symbol)
 
     with pytest.raises(LiquidationValidationError):
         specification.liquidation_price(
             contract=contract,
-            quantity=value,
+            quantity=cast(Decimal, value),
             entry_price=Decimal("50"),
             margin_amount=Decimal("900"),
             margin_denomination=LiquidationDenomination.QUOTE,
@@ -176,7 +183,7 @@ def test_maintenance_ratio_and_side_are_explicit_and_constrained():
             margin_amount=Decimal("900"),
             margin_denomination=LiquidationDenomination.QUOTE,
             maintenance_margin_ratio=Decimal("0.05"),
-            position_side="LONG",
+            position_side=cast(PositionSide, "LONG"),
         )
 
 

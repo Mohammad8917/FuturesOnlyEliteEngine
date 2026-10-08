@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from typing import cast
 
 import pytest
 
@@ -16,7 +17,7 @@ from contracts.futures.position_side import PositionSide
 UTC = timezone.utc
 
 
-def symbol(family):
+def symbol(family: ContractFamily) -> CanonicalFuturesSymbol:
     return CanonicalFuturesSymbol(
         base_asset="BTC",
         quote_asset="USDT",
@@ -25,13 +26,15 @@ def symbol(family):
     )
 
 
-def funding(family=ContractFamily.LINEAR, rate=Decimal("0.000125")):
+def funding(
+    family: ContractFamily = ContractFamily.LINEAR, rate: object = Decimal("0.000125")
+) -> FuturesFundingSpecification:
     return FuturesFundingSpecification(
         market=Market.CRYPTO,
         symbol=symbol(family),
         funding_rate_unit=FundingRateUnit.INTERVAL_RATE,
         funding_sign_convention=FundingSignConvention.POSITIVE_LONG_PAYS,
-        funding_rate=rate,
+        funding_rate=cast(Decimal, rate),
         interval_start=datetime(2026, 1, 1, tzinfo=UTC),
         interval_end=datetime(2026, 1, 1, 8, tzinfo=UTC),
         rate_source="synthetic-test-source",
@@ -42,7 +45,9 @@ def funding(family=ContractFamily.LINEAR, rate=Decimal("0.000125")):
 
 @pytest.mark.parametrize("family", [ContractFamily.LINEAR, ContractFamily.INVERSE])
 @pytest.mark.parametrize("market", list(Market))
-def test_contract_is_explicit_across_markets_and_families(family, market):
+def test_contract_is_explicit_across_markets_and_families(
+    family: ContractFamily, market: Market
+) -> None:
     spec = FuturesFundingSpecification(
         market=market,
         symbol=CanonicalFuturesSymbol(
@@ -87,26 +92,29 @@ def test_negative_rate_reverses_payer():
 
 
 def test_zero_rate_is_valid_but_creates_no_transfer():
-    assert funding(rate=Decimal("0")).calculate_payment(
-        notional=Decimal("1000"),
-        position_side=PositionSide.LONG,
-    ) is None
+    assert (
+        funding(rate=Decimal("0")).calculate_payment(
+            notional=Decimal("1000"),
+            position_side=PositionSide.LONG,
+        )
+        is None
+    )
 
 
 @pytest.mark.parametrize(
     "value",
     [True, False, 0.1, float("nan"), float("inf"), Decimal("NaN"), Decimal("Infinity")],
 )
-def test_binary_float_bool_and_nonfinite_rate_are_rejected(value):
+def test_binary_float_bool_and_nonfinite_rate_are_rejected(value: object) -> None:
     with pytest.raises(FundingValidationError):
         funding(rate=value)
 
 
 @pytest.mark.parametrize("value", [True, False, 0, -1, 0.0, None, Decimal("NaN")])
-def test_invalid_notional_is_rejected(value):
+def test_invalid_notional_is_rejected(value: object) -> None:
     with pytest.raises(FundingValidationError):
         funding().calculate_payment(
-            notional=value,
+            notional=cast(Decimal, value),
             position_side=PositionSide.LONG,
         )
 
@@ -159,7 +167,7 @@ def test_missing_provenance_and_denomination_are_rejected():
 def test_specification_is_immutable():
     spec = funding()
     with pytest.raises((AttributeError, TypeError)):
-        spec.funding_rate = Decimal("1")
+        setattr(spec, "funding_rate", Decimal("1"))
 
 
 def test_rate_vocabulary_is_frozen():

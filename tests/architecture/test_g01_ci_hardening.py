@@ -9,7 +9,7 @@ def test_g01_ci_has_strict_reproducibility_and_execution_controls() -> None:
     lock = Path("requirements-ci.txt").read_text(encoding="utf-8")
 
     required_fragments = (
-        'workflow_dispatch:',
+        "workflow_dispatch:",
         "concurrency:",
         "cancel-in-progress: true",
         "permissions:",
@@ -27,7 +27,8 @@ def test_g01_ci_has_strict_reproducibility_and_execution_controls() -> None:
     for fragment in required_fragments:
         assert fragment in content
 
-    assert lock.strip().splitlines()[-1] == "pytest==8.4.2"
+    assert lock.strip().splitlines()[-1] == "pytest==9.0.3"
+    assert "pytest==8.4.2" not in lock
 
     assert "continue-on-error: true" not in content
     assert "continue-on-error: false" not in content

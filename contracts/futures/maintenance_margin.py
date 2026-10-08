@@ -8,11 +8,13 @@ state, exchange tiers, or exchange-specific defaults.
 
 from __future__ import annotations
 
+import typing
+
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from .instrument import FuturesInstrumentIdentity, Market
+from .instrument import CanonicalFuturesSymbol, FuturesInstrumentIdentity, Market
 
 
 class MaintenanceMarginValidationError(ValueError):
@@ -25,7 +27,7 @@ class MaintenanceMarginUnit(StrEnum):
     RATIO = "RATIO"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
+def _positive_decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise MaintenanceMarginValidationError(
             f"{field} must be an exact Decimal value"
@@ -43,20 +45,14 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
     return result
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     if not isinstance(value, str):
-        raise MaintenanceMarginValidationError(
-            f"{field} must be an asset symbol"
-        )
+        raise MaintenanceMarginValidationError(f"{field} must be an asset symbol")
     normalized = value.strip().upper()
     if not normalized or normalized.startswith("SPOT"):
-        raise MaintenanceMarginValidationError(
-            f"{field} must be a valid Futures asset"
-        )
+        raise MaintenanceMarginValidationError(f"{field} must be a valid Futures asset")
     if not normalized.replace("_", "").isalnum():
-        raise MaintenanceMarginValidationError(
-            f"{field} contains invalid characters"
-        )
+        raise MaintenanceMarginValidationError(f"{field} contains invalid characters")
     return normalized
 
 
@@ -80,11 +76,13 @@ class FuturesMaintenanceMarginSpecification:
     notional_asset: str
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise MaintenanceMarginValidationError(
                 "market must be a supported Futures market"
             )
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(
+            typing.cast(object, self.instrument), FuturesInstrumentIdentity
+        ):
             raise MaintenanceMarginValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
@@ -93,7 +91,7 @@ class FuturesMaintenanceMarginSpecification:
                 "market must match the instrument identity"
             )
         if not isinstance(
-            self.maintenance_margin_unit, MaintenanceMarginUnit
+            typing.cast(object, self.maintenance_margin_unit), MaintenanceMarginUnit
         ):
             raise MaintenanceMarginValidationError(
                 "maintenance_margin_unit must be RATIO"
@@ -108,7 +106,7 @@ class FuturesMaintenanceMarginSpecification:
         object.__setattr__(self, "notional_asset", notional_asset)
 
     @property
-    def symbol(self) -> str:
+    def symbol(self) -> CanonicalFuturesSymbol:
         """Return the canonical Futures symbol."""
         return self.instrument.symbol
 

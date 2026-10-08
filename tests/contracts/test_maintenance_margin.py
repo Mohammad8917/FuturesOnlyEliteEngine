@@ -1,6 +1,7 @@
 """Contract tests for canonical Futures maintenance-margin semantics."""
 
 from decimal import Decimal
+from typing import cast
 
 import pytest
 
@@ -149,13 +150,13 @@ def test_decimal_inputs_are_exact_and_immutable() -> None:
         market=Market.CRYPTO,
         instrument=_instrument(),
         maintenance_margin_unit=MaintenanceMarginUnit.RATIO,
-        maintenance_margin_ratio="0.06250",
+        maintenance_margin_ratio=cast(Decimal, "0.06250"),
         notional_asset="usdt",
     )
     assert spec.maintenance_margin_ratio == Decimal("0.06250")
     assert spec.notional_asset == "USDT"
     with pytest.raises((AttributeError, TypeError)):
-        spec.maintenance_margin_ratio = Decimal("0.2")
+        setattr(spec, "maintenance_margin_ratio", Decimal("0.2"))
 
 
 def test_maintenance_margin_does_not_depend_on_leverage_or_initial_margin() -> None:

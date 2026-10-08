@@ -7,6 +7,8 @@ rate discovery, persistence, transport, exchange calls, or account mutation.
 
 from __future__ import annotations
 
+import typing
+
 from dataclasses import dataclass
 from decimal import Decimal
 
@@ -21,13 +23,15 @@ from .settlement import FuturesSettlementSpecification
 
 
 def _text(value: str, field: str) -> str:
-    if not isinstance(value, str) or not value.strip():
+    if not isinstance(typing.cast(object, value), str) or not value.strip():
         raise AccountingValidationError(f"{field} must be non-empty")
     return value.strip()
 
 
 def _decimal(value: Decimal, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, Decimal):
+    if isinstance(typing.cast(object, value), bool) or not isinstance(
+        typing.cast(object, value), Decimal
+    ):
         raise AccountingValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite() or value <= 0:
         raise AccountingValidationError(f"{field} must be finite and greater than zero")
@@ -35,7 +39,11 @@ def _decimal(value: Decimal, field: str) -> Decimal:
 
 
 def _sequence(value: int, field: str) -> int:
-    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+    if (
+        isinstance(typing.cast(object, value), bool)
+        or not isinstance(typing.cast(object, value), int)
+        or value < 0
+    ):
         raise AccountingValidationError(f"{field} must be a non-negative integer")
     return value
 
@@ -49,13 +57,19 @@ class FuturesSettlementAccountingSpecification:
     settlement: FuturesSettlementSpecification
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise AccountingValidationError("market must be a supported Futures market")
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
+        if not isinstance(
+            typing.cast(object, self.instrument), FuturesInstrumentIdentity
+        ):
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
         if self.instrument.market is not self.market:
             raise AccountingValidationError("market must match instrument")
-        if not isinstance(self.settlement, FuturesSettlementSpecification):
+        if not isinstance(
+            typing.cast(object, self.settlement), FuturesSettlementSpecification
+        ):
             raise AccountingValidationError(
                 "settlement must be FuturesSettlementSpecification"
             )
@@ -83,9 +97,7 @@ class FuturesSettlementAccountingSpecification:
             "settlement_counterparty_account_id",
         )
         if account == counterparty:
-            raise AccountingValidationError(
-                "settlement counterparty must be distinct"
-            )
+            raise AccountingValidationError("settlement counterparty must be distinct")
         _sequence(state_version, "state_version")
         start = _sequence(sequence, "sequence")
         source_value = _decimal(source_amount, "source_amount")

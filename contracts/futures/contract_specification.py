@@ -6,11 +6,18 @@ metadata into this specification; it may not redefine its financial meaning.
 
 from __future__ import annotations
 
+import typing
+
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from .instrument import CanonicalFuturesSymbol, ContractFamily, InstrumentValidationError, Market
+from .instrument import (
+    CanonicalFuturesSymbol,
+    ContractFamily,
+    InstrumentValidationError,
+    Market,
+)
 
 
 class ContractSpecificationValidationError(InstrumentValidationError):
@@ -23,9 +30,11 @@ class QuantityUnit(StrEnum):
     CONTRACTS = "CONTRACTS"
 
 
-def _decimal(value: Decimal | int | str, field: str) -> Decimal:
+def _decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool):
-        raise ContractSpecificationValidationError(f"{field} must be an exact Decimal value")
+        raise ContractSpecificationValidationError(
+            f"{field} must be an exact Decimal value"
+        )
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
@@ -37,7 +46,7 @@ def _decimal(value: Decimal | int | str, field: str) -> Decimal:
     return result
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
+def _positive_decimal(value: object, field: str) -> Decimal:
     result = _decimal(value, field)
     if result <= 0:
         raise ContractSpecificationValidationError(f"{field} must be greater than zero")
@@ -73,26 +82,24 @@ class FuturesContractSpecification:
     price_quote_asset: str
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise ContractSpecificationValidationError(
                 "market must be a supported Futures market"
             )
-        if not isinstance(self.symbol, CanonicalFuturesSymbol):
+        if not isinstance(typing.cast(object, self.symbol), CanonicalFuturesSymbol):
             raise ContractSpecificationValidationError(
                 "symbol must be CanonicalFuturesSymbol"
             )
-        if not isinstance(self.quantity_unit, QuantityUnit):
+        if not isinstance(typing.cast(object, self.quantity_unit), QuantityUnit):
             raise ContractSpecificationValidationError(
                 "quantity_unit must be CONTRACTS"
             )
 
-        multiplier = _positive_decimal(
-            self.contract_multiplier, "contract_multiplier"
-        )
+        multiplier = _positive_decimal(self.contract_multiplier, "contract_multiplier")
 
         quote = (
             self.price_quote_asset.strip().upper()
-            if isinstance(self.price_quote_asset, str)
+            if isinstance(typing.cast(object, self.price_quote_asset), str)
             else ""
         )
         if not quote or quote != self.symbol.quote_asset:

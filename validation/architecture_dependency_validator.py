@@ -22,15 +22,20 @@ LAYER_ALIASES = {
     "observability": {"observability", "notification", "notifications"},
 }
 
-ALLOWED = {
+ALLOWED: dict[str, set[str]] = {
     "domain": {"contracts"},
     "contracts": set(),
     "application": {"domain", "contracts"},
     "risk": {"domain", "contracts"},
     "execution": {"contracts", "domain", "risk", "infrastructure"},
     "infrastructure": {
-        "application", "contracts", "domain", "market_data", "execution",
-        "configuration", "observability",
+        "application",
+        "contracts",
+        "domain",
+        "market_data",
+        "execution",
+        "configuration",
+        "observability",
     },
     "market_data": {"contracts", "domain", "infrastructure"},
     "analysis": {"domain", "contracts", "market_data", "application"},
@@ -40,36 +45,105 @@ ALLOWED = {
 
 FORBIDDEN_IMPORTS = {
     "domain": {
-        "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
-        "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
+        "requests",
+        "httpx",
+        "aiohttp",
+        "sqlalchemy",
+        "psycopg",
+        "redis",
+        "boto3",
+        "kafka",
+        "pika",
+        "dotenv",
+        "fastapi",
+        "flask",
+        "ccxt",
+        "binance",
     },
     "contracts": {
-        "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
-        "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
+        "requests",
+        "httpx",
+        "aiohttp",
+        "sqlalchemy",
+        "psycopg",
+        "redis",
+        "boto3",
+        "kafka",
+        "pika",
+        "dotenv",
+        "fastapi",
+        "flask",
+        "ccxt",
+        "binance",
     },
     "application": {
-        "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
-        "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
+        "requests",
+        "httpx",
+        "aiohttp",
+        "sqlalchemy",
+        "psycopg",
+        "redis",
+        "boto3",
+        "kafka",
+        "pika",
+        "dotenv",
+        "fastapi",
+        "flask",
+        "ccxt",
+        "binance",
     },
     "risk": {
-        "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
-        "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
+        "requests",
+        "httpx",
+        "aiohttp",
+        "sqlalchemy",
+        "psycopg",
+        "redis",
+        "boto3",
+        "kafka",
+        "pika",
+        "dotenv",
+        "fastapi",
+        "flask",
+        "ccxt",
+        "binance",
     },
     "analysis": {
-        "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
-        "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
+        "requests",
+        "httpx",
+        "aiohttp",
+        "sqlalchemy",
+        "psycopg",
+        "redis",
+        "boto3",
+        "kafka",
+        "pika",
+        "dotenv",
+        "fastapi",
+        "flask",
+        "ccxt",
+        "binance",
     },
 }
 
 SPOT_TOKENS = {"spot", "spotmarket", "spotorder", "spotprovider"}
 ORDER_CALLS = {
-    "create_order", "submit_order", "place_order", "send_order",
-    "cancel_order", "replace_order",
+    "create_order",
+    "submit_order",
+    "place_order",
+    "send_order",
+    "cancel_order",
+    "replace_order",
 }
 HTTP_CALLS = {"request", "get", "post", "put", "patch", "delete"}
 HTTP_RECEIVER_NAMES = {"client", "session", "http", "transport"}
 NON_EXECUTION_ORDER_LAYERS = {
-    "domain", "contracts", "application", "risk", "analysis", "market_data",
+    "domain",
+    "contracts",
+    "application",
+    "risk",
+    "analysis",
+    "market_data",
 }
 NON_IO_LAYERS = {"domain", "risk", "analysis"}
 EXCLUDED = {".git", ".venv", "venv", "__pycache__"}
@@ -88,8 +162,7 @@ def _layer_for(path: Path, root: Path) -> str | None:
 
 def _files(root: Path) -> list[Path]:
     return sorted(
-        p for p in root.rglob("*.py")
-        if not any(part in EXCLUDED for part in p.parts)
+        p for p in root.rglob("*.py") if not any(part in EXCLUDED for part in p.parts)
     )
 
 
@@ -185,12 +258,20 @@ def validate(root: Path = ROOT) -> list[str]:
                         f"{layer} -> {target_layer} via {imported or 'relative import'}"
                     )
 
-            if level == 0 and _forbidden_root(imported, FORBIDDEN_IMPORTS.get(layer, set())):
+            if level == 0 and _forbidden_root(
+                imported, FORBIDDEN_IMPORTS.get(layer, set())
+            ):
                 errors.add(f"{module_name}: forbidden external dependency: {imported}")
 
-            if layer in {"domain", "contracts"} and level == 0 and not _is_stdlib_import(imported):
+            if (
+                layer in {"domain", "contracts"}
+                and level == 0
+                and not _is_stdlib_import(imported)
+            ):
                 root_name = imported.split(".", 1)[0]
-                known_internal = any(root_name in aliases for aliases in LAYER_ALIASES.values())
+                known_internal = any(
+                    root_name in aliases for aliases in LAYER_ALIASES.values()
+                )
                 if not known_internal:
                     errors.add(
                         f"{module_name}: non-stdlib external dependency in {layer}: {imported}"
@@ -202,13 +283,17 @@ def validate(root: Path = ROOT) -> list[str]:
             if layer == "domain" and imported.lower().startswith(
                 ("infrastructure.", "exchange.", "exchanges.")
             ):
-                errors.add(f"{module_name}: domain imports exchange infrastructure: {imported}")
+                errors.add(
+                    f"{module_name}: domain imports exchange infrastructure: {imported}"
+                )
 
             if layer == "risk" and any(
                 token in imported.lower()
                 for token in ("execution", "exchange", "order", "ccxt", "binance")
             ):
-                errors.add(f"{module_name}: risk imports execution/order authority: {imported}")
+                errors.add(
+                    f"{module_name}: risk imports execution/order authority: {imported}"
+                )
 
             if layer == "analysis" and target_layer == "execution":
                 errors.add(f"{module_name}: analysis imports execution: {imported}")
@@ -216,11 +301,15 @@ def validate(root: Path = ROOT) -> list[str]:
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
                 if _spot(node.name):
-                    errors.add(f"{module_name}: forbidden Spot symbol/reference: {node.name}")
+                    errors.add(
+                        f"{module_name}: forbidden Spot symbol/reference: {node.name}"
+                    )
 
                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                     positional = list(node.args.posonlyargs) + list(node.args.args)
-                    defaults = [None] * (len(positional) - len(node.args.defaults)) + list(node.args.defaults)
+                    defaults = [None] * (
+                        len(positional) - len(node.args.defaults)
+                    ) + list(node.args.defaults)
                     for argument, default in zip(positional, defaults):
                         if (
                             argument.arg == "futures"
@@ -228,9 +317,11 @@ def validate(root: Path = ROOT) -> list[str]:
                             and default.value is False
                         ):
                             errors.add(f"{module_name}: forbidden futures=False switch")
-                    for keyword_arg, default in zip(node.args.kwonlyargs, node.args.kw_defaults):
+                    for keyword_arg, default in zip(
+                        node.args.kwonlyargs, node.args.kw_defaults
+                    ):
                         if (
-                            argument.arg == "futures"
+                            keyword_arg.arg == "futures"
                             and isinstance(default, ast.Constant)
                             and default.value is False
                         ):
@@ -238,7 +329,10 @@ def validate(root: Path = ROOT) -> list[str]:
 
             if isinstance(node, ast.Call):
                 if isinstance(node.func, ast.Attribute):
-                    if node.func.attr in ORDER_CALLS and layer in NON_EXECUTION_ORDER_LAYERS:
+                    if (
+                        node.func.attr in ORDER_CALLS
+                        and layer in NON_EXECUTION_ORDER_LAYERS
+                    ):
                         errors.add(
                             f"{module_name}: forbidden order call in {layer}: {node.func.attr}"
                         )
@@ -251,21 +345,27 @@ def validate(root: Path = ROOT) -> list[str]:
                             f"{module_name}: forbidden HTTP call in {layer}: {node.func.attr}"
                         )
                 for keyword in node.keywords:
-                    if keyword.arg == "futures" and isinstance(keyword.value, ast.Constant):
+                    if keyword.arg == "futures" and isinstance(
+                        keyword.value, ast.Constant
+                    ):
                         if keyword.value.value is False:
                             errors.add(f"{module_name}: forbidden futures=False switch")
 
             if isinstance(node, ast.Name) and _spot(node.id):
                 errors.add(f"{module_name}: forbidden Spot symbol/reference: {node.id}")
             if isinstance(node, ast.Attribute) and _spot(node.attr):
-                errors.add(f"{module_name}: forbidden Spot symbol/reference: {node.attr}")
+                errors.add(
+                    f"{module_name}: forbidden Spot symbol/reference: {node.attr}"
+                )
 
     visiting: set[str] = set()
     visited: set[str] = set()
 
     def visit(layer: str, stack: list[str]) -> None:
         if layer in visiting:
-            errors.add(f"architectural dependency cycle: {' -> '.join(stack + [layer])}")
+            errors.add(
+                f"architectural dependency cycle: {' -> '.join(stack + [layer])}"
+            )
             return
         if layer in visited:
             return

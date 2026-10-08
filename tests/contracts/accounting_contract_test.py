@@ -1,6 +1,7 @@
 """Contract tests for canonical Futures accounting semantics."""
 
 from decimal import Decimal
+from typing import TypedDict, cast
 
 import pytest
 
@@ -23,7 +24,19 @@ from contracts.futures.settlement_accounting import (
 )
 
 
-def instrument(family=ContractFamily.LINEAR):
+class RealizedPnLArgs(TypedDict):
+    journal_id: str
+    causation_id: str
+    state_version: int
+    sequence: int
+    account_id: str
+    pnl_amount: Decimal
+    denomination: str
+
+
+def instrument(
+    family: ContractFamily = ContractFamily.LINEAR,
+) -> FuturesInstrumentIdentity:
     symbol = CanonicalFuturesSymbol("BTC", "USD", family, "USD")
     return FuturesInstrumentIdentity.create(
         market=Market.CRYPTO,
@@ -32,13 +45,17 @@ def instrument(family=ContractFamily.LINEAR):
     )
 
 
-def accounting(family=ContractFamily.LINEAR):
+def accounting(
+    family: ContractFamily = ContractFamily.LINEAR,
+) -> FuturesAccountingSpecification:
     inst = instrument(family)
     return FuturesAccountingSpecification(Market.CRYPTO, inst)
 
 
 @pytest.mark.parametrize("family", list(ContractFamily))
-def test_realized_pnl_accounts_signed_fact_without_recomputing(family):
+def test_realized_pnl_accounts_signed_fact_without_recomputing(
+    family: ContractFamily,
+) -> None:
     positive = accounting(family).realized_pnl(
         journal_id="j-profit",
         causation_id="pnl-1",
@@ -135,8 +152,10 @@ def test_journal_rejects_duplicate_ids_and_unbalanced_assets():
         ("pnl_amount", Decimal("0")),
     ],
 )
-def test_financial_boundaries_reject_bool_float_and_invalid_decimal(field, value):
-    kwargs = dict(
+def test_financial_boundaries_reject_bool_float_and_invalid_decimal(
+    field: str, value: object
+) -> None:
+    kwargs: dict[str, object] = dict(
         journal_id="j-invalid",
         causation_id="cause",
         state_version=1,
@@ -147,7 +166,7 @@ def test_financial_boundaries_reject_bool_float_and_invalid_decimal(field, value
     )
     kwargs[field] = value
     with pytest.raises(AccountingValidationError):
-        accounting().realized_pnl(**kwargs)
+        accounting().realized_pnl(**cast(RealizedPnLArgs, kwargs))
 
 
 def test_linear_and_inverse_remain_explicit_in_journal_identity():
@@ -170,10 +189,12 @@ def test_linear_and_inverse_remain_explicit_in_journal_identity():
         denomination="USD",
     )
     assert linear.entries[0].instrument.symbol.contract_family is ContractFamily.LINEAR
-    assert inverse.entries[0].instrument.symbol.contract_family is ContractFamily.INVERSE
+    assert (
+        inverse.entries[0].instrument.symbol.contract_family is ContractFamily.INVERSE
+    )
 
 
-def settlement_spec(source_asset):
+def settlement_spec(source_asset: str) -> FuturesSettlementSpecification:
     inst = instrument()
     return FuturesSettlementSpecification(
         market=Market.CRYPTO,
@@ -266,6 +287,6 @@ def test_settlement_boundary_rejects_non_decimal_source_amount():
             sequence=1,
             account_id="acct",
             settlement_counterparty_account_id="settlement",
-            source_amount=1.0,
+            source_amount=cast(Decimal, 1.0),
             source_asset="USD",
         )

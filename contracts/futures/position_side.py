@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import typing
+
 from enum import StrEnum
 
 
@@ -15,6 +17,6 @@ class PositionSide(StrEnum):
 
 
 def validate_position_side(value: PositionSide) -> PositionSide:
-    if not isinstance(value, PositionSide):
+    if not isinstance(typing.cast(object, value), PositionSide):
         raise PositionSideValidationError("position side must be LONG or SHORT")
     return value

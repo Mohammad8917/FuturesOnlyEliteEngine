@@ -154,4 +154,4 @@ def test_instrument_identity_id_is_derived_and_immutable() -> None:
 
     assert identity.instrument_id == "FUTURES|CRYPTO|BTC/USDT.LINEAR.USDT"
     with pytest.raises((AttributeError, TypeError)):
-        identity.instrument_id = "FUTURES|CRYPTO|ETH/USDT.LINEAR.USDT"
+        setattr(identity, "instrument_id", "FUTURES|CRYPTO|ETH/USDT.LINEAR.USDT")

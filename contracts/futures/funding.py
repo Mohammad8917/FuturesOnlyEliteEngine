@@ -1,5 +1,8 @@
 """Canonical Futures funding-rate semantics."""
+
 from __future__ import annotations
+
+import typing
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -22,7 +25,7 @@ class FundingSignConvention(StrEnum):
     POSITIVE_LONG_PAYS = "POSITIVE_LONG_PAYS"
 
 
-def _decimal(value, field, *, positive=False):
+def _decimal(value: object, field: str, *, positive: bool = False) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise FundingValidationError(f"{field} must be an exact Decimal value")
     try:
@@ -34,7 +37,7 @@ def _decimal(value, field, *, positive=False):
     return result
 
 
-def _utc(value, field):
+def _utc(value: object, field: str) -> datetime:
     if (
         not isinstance(value, datetime)
         or value.tzinfo is None
@@ -51,20 +54,25 @@ class FundingPayment:
     amount: Decimal
     denomination: str
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if (
-            not isinstance(self.payer, PositionSide)
-            or not isinstance(self.receiver, PositionSide)
+            not isinstance(typing.cast(object, self.payer), PositionSide)
+            or not isinstance(typing.cast(object, self.receiver), PositionSide)
             or self.payer is self.receiver
         ):
-            raise FundingValidationError("payer and receiver must be distinct explicit sides")
+            raise FundingValidationError(
+                "payer and receiver must be distinct explicit sides"
+            )
         if (
-            not isinstance(self.amount, Decimal)
+            not isinstance(typing.cast(object, self.amount), Decimal)
             or not self.amount.is_finite()
             or self.amount <= 0
         ):
             raise FundingValidationError("payment amount must be positive")
-        if not isinstance(self.denomination, str) or not self.denomination.strip():
+        if (
+            not isinstance(typing.cast(object, self.denomination), str)
+            or not self.denomination.strip()
+        ):
             raise FundingValidationError("payment denomination must be explicit")
         object.__setattr__(self, "denomination", self.denomination.strip().upper())
 
@@ -82,19 +90,21 @@ class FuturesFundingSpecification:
     observed_at: datetime
     notional_denomination: str
 
-    def __post_init__(self):
-        if not isinstance(self.market, Market):
+    def __post_init__(self) -> None:
+        if not isinstance(typing.cast(object, self.market), Market):
             raise FundingValidationError("market must be a supported Futures market")
-        if not isinstance(self.symbol, CanonicalFuturesSymbol):
+        if not isinstance(typing.cast(object, self.symbol), CanonicalFuturesSymbol):
             raise FundingValidationError("symbol must be canonical")
         if self.symbol.contract_family not in (
             ContractFamily.LINEAR,
             ContractFamily.INVERSE,
         ):
             raise FundingValidationError("unsupported contract family")
-        if not isinstance(self.funding_rate_unit, FundingRateUnit):
+        if not isinstance(typing.cast(object, self.funding_rate_unit), FundingRateUnit):
             raise FundingValidationError("funding_rate_unit must be INTERVAL_RATE")
-        if not isinstance(self.funding_sign_convention, FundingSignConvention):
+        if not isinstance(
+            typing.cast(object, self.funding_sign_convention), FundingSignConvention
+        ):
             raise FundingValidationError("funding sign convention must be explicit")
 
         rate = _decimal(self.funding_rate, "funding_rate")
@@ -105,10 +115,14 @@ class FuturesFundingSpecification:
         if end <= start:
             raise FundingValidationError("funding interval must have positive duration")
 
-        source = self.rate_source.strip() if isinstance(self.rate_source, str) else ""
+        source = (
+            self.rate_source.strip()
+            if isinstance(typing.cast(object, self.rate_source), str)
+            else ""
+        )
         denomination = (
             self.notional_denomination.strip().upper()
-            if isinstance(self.notional_denomination, str)
+            if isinstance(typing.cast(object, self.notional_denomination), str)
             else ""
         )
         if not source or not denomination:
@@ -129,7 +143,9 @@ class FuturesFundingSpecification:
 
     def validate_freshness(self, *, as_of: datetime, max_age: timedelta) -> None:
         current = _utc(as_of, "as_of")
-        if not isinstance(max_age, timedelta) or max_age <= timedelta(0):
+        if not isinstance(
+            typing.cast(object, max_age), timedelta
+        ) or max_age <= timedelta(0):
             raise FundingValidationError("max_age must be positive")
         if current < self.observed_at or current - self.observed_at > max_age:
             raise FundingValidationError(
@@ -137,30 +153,33 @@ class FuturesFundingSpecification:
             )
 
     def calculate_payment(
-        self, *, notional, position_side: PositionSide
+        self, *, notional: Decimal | int | str, position_side: PositionSide
     ) -> FundingPayment | None:
         amount = _decimal(notional, "notional", positive=True)
-        if not isinstance(position_side, PositionSide):
+        rate = _decimal(self.funding_rate, "funding_rate")
+        if not isinstance(typing.cast(object, position_side), PositionSide):
             raise FundingValidationError("position_side must be explicit")
 
         # Zero is a valid, meaningful funding rate: it produces no transfer.
-        if self.funding_rate == 0:
+        if rate == 0:
             return None
 
-        payment = amount * abs(self.funding_rate)
+        payment = amount * abs(rate)
         if not payment.is_finite() or payment <= 0:
             raise FundingValidationError("funding payment is invalid")
 
         payer = (
             position_side
-            if self.funding_rate > 0
+            if rate > 0
             else (
                 PositionSide.SHORT
                 if position_side is PositionSide.LONG
                 else PositionSide.LONG
             )
         )
-        receiver = PositionSide.SHORT if payer is PositionSide.LONG else PositionSide.LONG
+        receiver = (
+            PositionSide.SHORT if payer is PositionSide.LONG else PositionSide.LONG
+        )
         return FundingPayment(
             payer,
             receiver,

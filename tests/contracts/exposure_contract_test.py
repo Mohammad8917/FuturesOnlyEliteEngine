@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from typing import cast
 
 import pytest
 
@@ -23,7 +24,9 @@ def make_symbol(market: Market, family: ContractFamily) -> CanonicalFuturesSymbo
     return CanonicalFuturesSymbol(base, "USD", family, "USD")
 
 
-def make_contract(market: Market, family: ContractFamily) -> FuturesContractSpecification:
+def make_contract(
+    market: Market, family: ContractFamily
+) -> FuturesContractSpecification:
     return FuturesContractSpecification(
         market=market,
         symbol=make_symbol(market, family),
@@ -35,7 +38,9 @@ def make_contract(market: Market, family: ContractFamily) -> FuturesContractSpec
 
 @pytest.mark.parametrize("market", list(Market))
 @pytest.mark.parametrize("family", list(ContractFamily))
-def test_scope_is_explicit_for_all_markets_and_families(market, family):
+def test_scope_is_explicit_for_all_markets_and_families(
+    market: Market, family: ContractFamily
+) -> None:
     specification = FuturesExposureSpecification(market, make_symbol(market, family))
     assert specification.market is market
     assert specification.symbol.contract_family is family
@@ -101,14 +106,16 @@ def test_explicit_denomination_and_reference_provenance():
     ) == Decimal("200")
 
 
-@pytest.mark.parametrize("value", [True, False, 0, -1, 0.1, float("nan"), Decimal("NaN")])
-def test_financial_inputs_fail_closed(value):
+@pytest.mark.parametrize(
+    "value", [True, False, 0, -1, 0.1, float("nan"), Decimal("NaN")]
+)
+def test_financial_inputs_fail_closed(value: object) -> None:
     contract = make_contract(Market.CRYPTO, ContractFamily.LINEAR)
     specification = FuturesExposureSpecification(Market.CRYPTO, contract.symbol)
 
     with pytest.raises(ExposureValidationError):
         specification.base_exposure(
-            contract=contract, quantity=value, price=Decimal("50")
+            contract=contract, quantity=cast(Decimal, value), price=Decimal("50")
         )
 
 
@@ -164,7 +171,7 @@ def test_mismatched_contract_and_side_fail_closed():
             contract=contract,
             quantity=Decimal("1"),
             price=Decimal("100"),
-            position_side="LONG",
+            position_side=cast(PositionSide, "LONG"),
         )
 
 
@@ -177,7 +184,7 @@ def test_valuation_denomination_and_provenance_are_mandatory():
             contract=contract,
             quantity=Decimal("1"),
             reference_price=Decimal("100"),
-            denomination="QUOTE",
+            denomination=cast(ExposureDenomination, "QUOTE"),
             valuation_source="synthetic",
             observed_at=datetime(2026, 1, 1, 12, tzinfo=UTC),
         )
@@ -198,4 +205,4 @@ def test_specification_is_immutable():
         Market.CRYPTO, make_symbol(Market.CRYPTO, ContractFamily.LINEAR)
     )
     with pytest.raises(AttributeError):
-        specification.market = Market.GOLD
+        setattr(specification, "market", Market.GOLD)
