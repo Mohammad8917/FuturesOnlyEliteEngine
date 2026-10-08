@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
+from typing import cast
 from .instrument import CanonicalFuturesSymbol, ContractFamily, Market
 from .position_side import PositionSide
 
@@ -11,7 +12,7 @@ class PnLValidationError(ValueError): pass
 class PnLUnit(StrEnum): REALIZED_OR_UNREALIZED = "REALIZED_OR_UNREALIZED"
 class PnLDenomination(StrEnum): QUOTE = "QUOTE"; BASE = "BASE"
 
-def _positive_decimal(value, field):
+def _positive_decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise PnLValidationError(f"{field} must be an exact Decimal value")
     try: result = value if isinstance(value, Decimal) else Decimal(str(value))
@@ -19,7 +20,7 @@ def _positive_decimal(value, field):
     if not result.is_finite() or result <= 0: raise PnLValidationError(f"{field} must be finite and greater than zero")
     return result
 
-def _utc(value, field):
+def _utc(value: object, field: str) -> datetime:
     if not isinstance(value, datetime) or value.tzinfo is None or value.utcoffset() != timedelta(0):
         raise PnLValidationError(f"{field} must be an aware UTC datetime")
     return value
@@ -31,19 +32,19 @@ class FuturesPnLSpecification:
     pnl_unit: PnLUnit
 
     def __post_init__(self):
-        if not isinstance(self.market, Market): raise PnLValidationError("market must be a supported Futures market")
-        if not isinstance(self.symbol, CanonicalFuturesSymbol): raise PnLValidationError("symbol must be CanonicalFuturesSymbol")
+        if not isinstance(cast(object, self.market), Market): raise PnLValidationError("market must be a supported Futures market")
+        if not isinstance(cast(object, self.symbol), CanonicalFuturesSymbol): raise PnLValidationError("symbol must be CanonicalFuturesSymbol")
         if self.symbol.contract_family not in (ContractFamily.LINEAR, ContractFamily.INVERSE): raise PnLValidationError("unsupported contract family")
-        if not isinstance(self.pnl_unit, PnLUnit): raise PnLValidationError("pnl_unit must be explicit")
+        if not isinstance(cast(object, self.pnl_unit), PnLUnit): raise PnLValidationError("pnl_unit must be explicit")
 
     @property
     def denomination(self):
         return PnLDenomination.QUOTE if self.symbol.contract_family is ContractFamily.LINEAR else PnLDenomination.BASE
 
-    def _calculate(self, *, quantity, multiplier, entry_price, reference_price, position_side):
+    def _calculate(\n        self,\n        *,\n        quantity: Decimal | int | str,\n        multiplier: Decimal | int | str,\n        entry_price: Decimal | int | str,\n        reference_price: Decimal | int | str,\n        position_side: PositionSide,\n    ) -> Decimal:
         qty = _positive_decimal(quantity, "quantity"); mult = _positive_decimal(multiplier, "contract_multiplier")
         entry = _positive_decimal(entry_price, "entry_price"); reference = _positive_decimal(reference_price, "reference_price")
-        if not isinstance(position_side, PositionSide): raise PnLValidationError("position_side must be explicit")
+        if not isinstance(cast(object, position_side), PositionSide): raise PnLValidationError("position_side must be explicit")
         if self.symbol.contract_family is ContractFamily.LINEAR:
             raw = qty * mult * (reference - entry)
         elif self.symbol.contract_family is ContractFamily.INVERSE:
@@ -53,16 +54,16 @@ class FuturesPnLSpecification:
         if not result.is_finite(): raise PnLValidationError("PnL result is non-finite")
         return result
 
-    def calculate_realized(self, *, quantity, multiplier, entry_price, exit_price, position_side):
+    def calculate_realized(\n        self,\n        *,\n        quantity: Decimal | int | str,\n        multiplier: Decimal | int | str,\n        entry_price: Decimal | int | str,\n        exit_price: Decimal | int | str,\n        position_side: PositionSide,\n    ) -> Decimal:
         return self._calculate(quantity=quantity, multiplier=multiplier, entry_price=entry_price, reference_price=exit_price, position_side=position_side)
 
-    def calculate_unrealized(self, *, quantity, multiplier, entry_price, valuation_price, position_side, valuation_source, observed_at):
+    def calculate_unrealized(\n        self,\n        *,\n        quantity: Decimal | int | str,\n        multiplier: Decimal | int | str,\n        entry_price: Decimal | int | str,\n        valuation_price: Decimal | int | str,\n        position_side: PositionSide,\n        valuation_source: str,\n        observed_at: datetime,\n    ) -> Decimal:
         source = valuation_source.strip() if isinstance(valuation_source, str) else ""
         if not source: raise PnLValidationError("valuation_source must be explicit")
         _utc(observed_at, "observed_at")
         return self._calculate(quantity=quantity, multiplier=multiplier, entry_price=entry_price, reference_price=valuation_price, position_side=position_side)
 
-    def validate_valuation_freshness(self, *, as_of, observed_at, max_age):
+    def validate_valuation_freshness(\n        self,\n        *,\n        as_of: datetime,\n        observed_at: datetime,\n        max_age: timedelta,\n    ) -> None:
         current = _utc(as_of, "as_of"); observed = _utc(observed_at, "observed_at")
         if not isinstance(max_age, timedelta) or max_age <= timedelta(0): raise PnLValidationError("max_age must be positive")
         if current < observed or current - observed > max_age: raise PnLValidationError("valuation is stale or time ordering is invalid")
