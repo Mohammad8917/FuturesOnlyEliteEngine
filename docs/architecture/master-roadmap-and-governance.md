@@ -835,3 +835,7 @@ Before implementation, the next unit must freeze one explicit owner and define:
 11. same-SHA evidence before the cursor advances.
 
 No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounting default may be guessed into the canonical contract.
+
+## Phase 1 exposure / position valuation semantic lock
+
+The authorized Phase 1 unit is exposure and position valuation. Exit criteria are frozen: explicit Futures-domain owner; separate exposure versus valuation meaning; explicit Linear/Inverse formulas and BASE/QUOTE denomination; CRYPTO/FOREX/GOLD coverage; exact Decimal/no implicit rounding; explicit reference-price provenance and UTC freshness; consumption rather than redefinition of prior contracts; no exchange-specific defaults; fail-closed invalid/stale/contradictory/unsupported/ambiguous state; domain-safe dependency boundary; meaningful tests; CI enforcement; and same-SHA evidence. Gross exposure/value is non-negative, while LONG/SHORT supplies signed direction. No threshold reduction, skip/xfail, assertion weakening, or dependency-boundary weakening is allowed.
