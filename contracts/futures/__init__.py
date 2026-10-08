@@ -18,6 +18,7 @@ from .initial_margin import (
     InitialMarginUnit,
     InitialMarginValidationError,
 )
+from .pnl import FuturesPnLSpecification, PnLDenomination, PnLUnit, PnLValidationError
 from .funding import (
     FundingPayment,
     FundingRateUnit,
@@ -63,6 +64,10 @@ __all__ = [
     "FuturesMaintenanceMarginSpecification",
     "FuturesInitialMarginSpecification",
     "FuturesFundingSpecification",
+    "FuturesPnLSpecification",
+    "PnLDenomination",
+    "PnLUnit",
+    "PnLValidationError",
     "FundingPayment",
     "InstrumentStatus",
     "InstrumentValidationError",
