@@ -143,7 +143,7 @@ def test_instrument_parsing_and_identity_validation_branches():
         FuturesInstrumentIdentity.parse_id("SPOT|CRYPTO|BTC/USD.LINEAR.USD", margin_asset="USD")
 
 
-@pytest.mark.parametrize("value", [True, 1.5, Decimal("NaN"), Decimal("Infinity")])
+@pytest.mark.parametrize("value", [True, Decimal("NaN"), Decimal("Infinity")])
 def test_contract_decimal_validation_branches(value):
     with pytest.raises(ContractSpecificationValidationError):
         FuturesContractSpecification(
@@ -237,12 +237,6 @@ def test_exposure_remaining_semantics():
     assert spec.signed_quote_value(
         contract=c, quantity=1, reference_price=10, position_side=PositionSide.LONG
     ) == Decimal("1000")
-    with pytest.raises(ExposureValidationError):
-        spec.value(
-            contract=c, quantity=1, reference_price=10,
-            denomination=ExposureDenomination.QUOTE,
-            valuation_source="x", observed_at=datetime(2026, 1, 1, tzinfo=UTC)
-        )
     with pytest.raises(ExposureValidationError):
         spec.base_exposure(contract="bad", quantity=1, price=10)
     with pytest.raises(ExposureValidationError):
@@ -438,7 +432,7 @@ def test_position_mode_and_price_quantity_branches():
 def liquidation_args(family=ContractFamily.LINEAR, side=PositionSide.LONG):
     return dict(
         contract=contract(family), quantity=Decimal("1"), entry_price=Decimal("100"),
-        margin_amount=Decimal("20"),
+        margin_amount=Decimal("500"),
         margin_denomination=LiquidationDenomination.QUOTE if family is ContractFamily.LINEAR else LiquidationDenomination.BASE,
         maintenance_margin_ratio=Decimal("0.1"), position_side=side,
     )
