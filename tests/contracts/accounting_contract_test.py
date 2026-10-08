@@ -23,7 +23,7 @@ from contracts.futures.settlement_accounting import (
 )
 
 
-def instrument(family=ContractFamily.LINEAR):
+def instrument(family: ContractFamily = ContractFamily.LINEAR) -> FuturesInstrumentIdentity:
     symbol = CanonicalFuturesSymbol("BTC", "USD", family, "USD")
     return FuturesInstrumentIdentity.create(
         market=Market.CRYPTO,
@@ -32,13 +32,13 @@ def instrument(family=ContractFamily.LINEAR):
     )
 
 
-def accounting(family=ContractFamily.LINEAR):
+def accounting(family: ContractFamily = ContractFamily.LINEAR) -> FuturesAccountingSpecification:
     inst = instrument(family)
     return FuturesAccountingSpecification(Market.CRYPTO, inst)
 
 
 @pytest.mark.parametrize("family", list(ContractFamily))
-def test_realized_pnl_accounts_signed_fact_without_recomputing(family):
+def test_realized_pnl_accounts_signed_fact_without_recomputing(family: ContractFamily) -> None:
     positive = accounting(family).realized_pnl(
         journal_id="j-profit",
         causation_id="pnl-1",
@@ -135,7 +135,7 @@ def test_journal_rejects_duplicate_ids_and_unbalanced_assets():
         ("pnl_amount", Decimal("0")),
     ],
 )
-def test_financial_boundaries_reject_bool_float_and_invalid_decimal(field, value):
+def test_financial_boundaries_reject_bool_float_and_invalid_decimal(field: str, value: object) -> None:
     kwargs = dict(
         journal_id="j-invalid",
         causation_id="cause",
@@ -173,7 +173,7 @@ def test_linear_and_inverse_remain_explicit_in_journal_identity():
     assert inverse.entries[0].instrument.symbol.contract_family is ContractFamily.INVERSE
 
 
-def settlement_spec(source_asset):
+def settlement_spec(source_asset: str) -> FuturesSettlementSpecification:
     inst = instrument()
     return FuturesSettlementSpecification(
         market=Market.CRYPTO,
