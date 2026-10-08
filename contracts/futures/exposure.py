@@ -72,7 +72,9 @@ class FuturesExposureSpecification:
         price: Decimal | int | str,
     ) -> Decimal:
         spec = self._validate_contract(contract)
-        result = spec.base_exposure(quantity=quantity, price=price)
+        qty = _positive_decimal(quantity, "quantity")
+        px = _positive_decimal(price, "price")
+        result = spec.base_exposure(quantity=qty, price=px)
         if not result.is_finite() or result <= 0:
             raise ExposureValidationError("base exposure must be finite and greater than zero")
         return result
@@ -85,7 +87,9 @@ class FuturesExposureSpecification:
         reference_price: Decimal | int | str,
     ) -> Decimal:
         spec = self._validate_contract(contract)
-        result = spec.notional(quantity=quantity, price=reference_price)
+        qty = _positive_decimal(quantity, "quantity")
+        px = _positive_decimal(reference_price, "reference_price")
+        result = spec.notional(quantity=qty, price=px)
         if not result.is_finite() or result <= 0:
             raise ExposureValidationError("quote value must be finite and greater than zero")
         return result
