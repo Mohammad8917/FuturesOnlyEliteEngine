@@ -34,12 +34,15 @@ jobs:
           cache-dependency-path: |
             requirements-ci.txt
             requirements-security.txt
+            requirements-sast.txt
 
       - name: Install pinned CI and audit dependencies
         run: >-
           python -m pip install --disable-pip-version-check --no-input
           -r requirements-ci.txt
           -r requirements-security.txt
+          -r requirements-sast.txt
+          -r requirements-sast.txt
 
       - name: Audit direct and transitive Python dependencies
         run: >-
