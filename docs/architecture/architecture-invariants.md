@@ -192,7 +192,7 @@ The following are architectural safety requirements and must have an explicit ow
 
 ## 8.1 Phase 1 domain-contract enforcement invariant
 
-The instrument identity and canonical Futures symbol unit, and the multiplier/contract-specification unit, are complete on the verified main lineage. The first incomplete Phase 1 production contract is now **initial margin semantics**.
+The instrument identity and canonical Futures symbol unit, and the multiplier/contract-specification unit, are complete on the verified main lineage. The first incomplete Phase 1 production contract is now **maintenance margin semantics**.
 
 The multiplier/contract-specification contract must make the following explicit and validated: contract quantity/unit, multiplier meaning, contract-size semantics, quote/settlement denomination, Linear/Inverse applicability, market applicability (CRYPTO Futures, FOREX Futures, GOLD Futures), precision/representation requirements, valid ranges, and failure semantics for unknown, zero, negative, contradictory, stale, unsupported, or ambiguous specifications.
 
@@ -402,7 +402,7 @@ The canonical production contract is `contracts/futures/contract_specification.p
 
 The multiplier and contract-specification unit is **complete** on the verified main lineage: production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence all passed.
 
-The current incomplete Phase 1 production contract is **initial margin semantics**. It must preserve the explicit multiplier, settlement, margin, and leverage boundaries and independently define initial-margin denomination, formula inputs, ownership, applicability, validation, and fail-closed behavior before implementation.
+The current incomplete Phase 1 production contract is **maintenance margin semantics**. It must preserve the explicit multiplier, settlement, margin, and leverage boundaries and independently define initial-margin denomination, formula inputs, ownership, applicability, validation, and fail-closed behavior before implementation.
 \n## 8.1.3 Settlement asset / settlement semantics lock
 
 The settlement contract is now frozen for this implementation unit:
@@ -480,3 +480,30 @@ Initial margin semantics are COMPLETE on main merge SHA `4bf8eb7f54f08b372d0dd30
 The next incomplete Phase 1 production contract is **maintenance margin semantics**. It must explicitly define its ownership, formula inputs, denomination, precision, Linear/Inverse applicability, market applicability, tier/rate/amount semantics where applicable, and fail-closed behavior before implementation.
 
 The initial-margin contract remains independently owned and must not be redefined by maintenance-margin logic.
+
+
+## Phase 1 maintenance margin semantic lock
+
+Maintenance margin is an explicit Futures domain/contract requirement. It is distinct from leverage, initial margin, liquidation, risk policy, and exchange-specific collateral policy.
+
+Frozen semantics:
+- owner: Futures domain/contract boundary;
+- unit: RATIO for the maintenance-margin requirement rate;
+- numeric representation: exact finite Decimal;
+- inputs: canonical Futures instrument identity, matching market, explicit positive finite notional, and explicit positive finite maintenance-margin ratio;
+- formula: `maintenance_margin_amount = notional × maintenance_margin_ratio`;
+- output denomination: identical to the explicit notional denomination;
+- precision: exact Decimal multiplication with no implicit rounding or quantization;
+- applicability: CRYPTO Futures, FOREX Futures, GOLD Futures; Linear and Inverse;
+- the notional is consumed from canonical multiplier/contract-specification semantics and is not redefined here;
+- exchange-specific tiers, rates, offsets, brackets, notional bands, or collateral rules are not guessed or silently defaulted by this canonical contract;
+- no inference from leverage, initial margin, account state, liquidation, risk policy, exchange defaults, or position sizing;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation dependency;
+- missing, invalid, zero, negative, non-finite, contradictory, unsupported, stale, or ambiguous critical terms fail closed;
+- meaningful contract tests, CI enforcement, and same-SHA evidence are required before the cursor can advance.
+
+Production boundary: `contracts/futures/maintenance_margin.py`.
+Test boundary: `tests/contracts/test_maintenance_margin.py`.
+CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
+
+The canonical implementation does not claim exchange-specific tier schedules. Such schedules may be mapped later through explicit exchange/infrastructure contracts only when their provenance, tier selection semantics, denomination, precision, freshness, and failure behavior are explicit.

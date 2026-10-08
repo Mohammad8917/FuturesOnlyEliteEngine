@@ -191,7 +191,7 @@ No Futures implementation is accepted until its owner, inputs, outputs, forbidde
 
 ## Phase 1 cursor — settlement ownership
 
-The multiplier, settlement, margin, and leverage responsibilities are closed with verified production and CI evidence. The next incomplete responsibility is initial margin semantics, which must receive one explicit primary owner before implementation.
+The multiplier, settlement, margin, and leverage responsibilities are closed with verified production and CI evidence. The next incomplete responsibility is maintenance margin semantics, which must receive one explicit primary owner before implementation.
 \n## Settlement asset / settlement semantics ownership
 
 **Primary owner:** Futures domain/contract boundary.
@@ -215,7 +215,7 @@ The multiplier, settlement, margin, and leverage responsibilities are closed wit
 **Downstream consumers:** settlement accounting, PnL, margin, reconciliation, and execution may consume the validated settlement specification; none may redefine its denomination semantics.
 \n## Phase 1 cursor — margin ownership
 
-Settlement asset, margin asset/margin semantics, and leverage are closed with verified implementation and CI evidence. The next incomplete responsibility is initial margin semantics, which must receive one explicit primary owner without redefining multiplier, settlement, margin, or leverage semantics.
+Settlement asset, margin asset/margin semantics, and leverage are closed with verified implementation and CI evidence. The next incomplete responsibility is maintenance margin semantics, which must receive one explicit primary owner without redefining multiplier, settlement, margin, leverage, or initial-margin semantics.
 
 
 ## Phase 1 margin asset / margin semantics ownership
@@ -271,3 +271,30 @@ Initial-margin semantics are closed with verified implementation and CI evidence
 The next incomplete responsibility is **maintenance margin semantics** and must receive one explicit primary owner before implementation. Ownership must define inputs, outputs, units/precision, Linear/Inverse applicability, market applicability, tier/rate/amount semantics where applicable, dependencies, failure semantics, and downstream consumers.
 
 No exchange-specific maintenance-margin policy may be silently promoted to canonical domain meaning.
+
+
+## Phase 1 maintenance margin semantic lock
+
+Maintenance margin is an explicit Futures domain/contract requirement. It is distinct from leverage, initial margin, liquidation, risk policy, and exchange-specific collateral policy.
+
+Frozen semantics:
+- owner: Futures domain/contract boundary;
+- unit: RATIO for the maintenance-margin requirement rate;
+- numeric representation: exact finite Decimal;
+- inputs: canonical Futures instrument identity, matching market, explicit positive finite notional, and explicit positive finite maintenance-margin ratio;
+- formula: `maintenance_margin_amount = notional × maintenance_margin_ratio`;
+- output denomination: identical to the explicit notional denomination;
+- precision: exact Decimal multiplication with no implicit rounding or quantization;
+- applicability: CRYPTO Futures, FOREX Futures, GOLD Futures; Linear and Inverse;
+- the notional is consumed from canonical multiplier/contract-specification semantics and is not redefined here;
+- exchange-specific tiers, rates, offsets, brackets, notional bands, or collateral rules are not guessed or silently defaulted by this canonical contract;
+- no inference from leverage, initial margin, account state, liquidation, risk policy, exchange defaults, or position sizing;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation dependency;
+- missing, invalid, zero, negative, non-finite, contradictory, unsupported, stale, or ambiguous critical terms fail closed;
+- meaningful contract tests, CI enforcement, and same-SHA evidence are required before the cursor can advance.
+
+Production boundary: `contracts/futures/maintenance_margin.py`.
+Test boundary: `tests/contracts/test_maintenance_margin.py`.
+CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
+
+The canonical implementation does not claim exchange-specific tier schedules. Such schedules may be mapped later through explicit exchange/infrastructure contracts only when their provenance, tier selection semantics, denomination, precision, freshness, and failure behavior are explicit.

@@ -175,7 +175,7 @@ The canonical settlement asset comes from the Futures instrument identity and mu
 The settlement contract performs no network access, rate discovery, exchange selection, scheduling, persistence, account mutation, or margin inference. Those concerns belong to later application/infrastructure contracts. Missing or contradictory settlement terms fail closed.
 \n## Phase 1 cursor — margin
 
-The leverage vocabulary/contract-level constraints contract is complete and evidenced on main. The next incomplete Phase 1 contract is initial margin semantics. It must explicitly define formula inputs, denomination, ownership, Linear/Inverse applicability, market applicability, validation, and fail-closed behavior before production implementation.
+The leverage vocabulary/contract-level constraints contract is complete and evidenced on main. The next incomplete Phase 1 contract is maintenance margin semantics. It must explicitly define formula inputs, denomination, ownership, Linear/Inverse applicability, market applicability, tier/rate/amount semantics where applicable, validation, precision, and fail-closed behavior before production implementation.
 
 
 ## Phase 1 margin asset / margin semantics contract
@@ -214,3 +214,30 @@ The production boundary is `contracts/futures/initial_margin.py`; meaningful con
 Initial-margin semantics are complete and evidenced on main merge SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`. The next incomplete Phase 1 contract is maintenance margin semantics.
 
 Maintenance margin must not be treated as a leverage alias. Its canonical contract must explicitly define formula inputs, denomination, precision, Linear/Inverse and market applicability, and any tier/rate/offset semantics before implementation. Unknown or contradictory critical terms must fail closed.
+
+
+## Phase 1 maintenance margin semantic lock
+
+Maintenance margin is an explicit Futures domain/contract requirement. It is distinct from leverage, initial margin, liquidation, risk policy, and exchange-specific collateral policy.
+
+Frozen semantics:
+- owner: Futures domain/contract boundary;
+- unit: RATIO for the maintenance-margin requirement rate;
+- numeric representation: exact finite Decimal;
+- inputs: canonical Futures instrument identity, matching market, explicit positive finite notional, and explicit positive finite maintenance-margin ratio;
+- formula: `maintenance_margin_amount = notional × maintenance_margin_ratio`;
+- output denomination: identical to the explicit notional denomination;
+- precision: exact Decimal multiplication with no implicit rounding or quantization;
+- applicability: CRYPTO Futures, FOREX Futures, GOLD Futures; Linear and Inverse;
+- the notional is consumed from canonical multiplier/contract-specification semantics and is not redefined here;
+- exchange-specific tiers, rates, offsets, brackets, notional bands, or collateral rules are not guessed or silently defaulted by this canonical contract;
+- no inference from leverage, initial margin, account state, liquidation, risk policy, exchange defaults, or position sizing;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation dependency;
+- missing, invalid, zero, negative, non-finite, contradictory, unsupported, stale, or ambiguous critical terms fail closed;
+- meaningful contract tests, CI enforcement, and same-SHA evidence are required before the cursor can advance.
+
+Production boundary: `contracts/futures/maintenance_margin.py`.
+Test boundary: `tests/contracts/test_maintenance_margin.py`.
+CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
+
+The canonical implementation does not claim exchange-specific tier schedules. Such schedules may be mapped later through explicit exchange/infrastructure contracts only when their provenance, tier selection semantics, denomination, precision, freshness, and failure behavior are explicit.
