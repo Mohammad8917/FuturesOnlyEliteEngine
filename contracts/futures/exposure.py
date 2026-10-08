@@ -34,7 +34,7 @@ def _positive_decimal(value: object, field: str) -> Decimal:
     return result
 
 
-def _utc(value: datetime, field: str) -> datetime:
+def _utc(value: object, field: str) -> datetime:
     if not isinstance(value, datetime) or value.tzinfo is None or value.utcoffset() != timedelta(0):
         raise ExposureValidationError(f"{field} must be an aware UTC datetime")
     return value
