@@ -93,7 +93,7 @@ Order and position reconciliation must detect divergence and unknown state; no d
 
 ## Phase 1 domain-contract dependency boundary
 
-The instrument identity and canonical Futures symbol unit and multiplier/contract-specification unit are complete on the current main lineage. The next Phase 1 implementation unit is **leverage vocabulary and contract-level constraints**.
+The instrument identity and canonical Futures symbol unit and multiplier/contract-specification unit are complete on the current main lineage. The next Phase 1 implementation unit is **initial margin semantics**.
 
 Ownership:
 - domain/futures owns the pure financial meaning of multiplier and contract-size semantics.
@@ -182,9 +182,9 @@ Leverage vocabulary and contract-level constraints are owned by the Futures doma
 
 Leverage configuration must be explicit, validated, provenance-aware, and fail closed. Exchange SDKs, network I/O, persistence, runtime configuration access, hidden defaults, risk policy, and execution mutation are forbidden dependencies of the canonical leverage contract.
 
-## Phase 1 leverage contract dependency boundary
+## Phase 1 initial margin dependency boundary
 
-The leverage contract owns only leverage vocabulary and explicit contract-level bounds. It may consume canonical Futures instrument identity and explicit market vocabulary.
+The initial-margin contract owns only initial-margin requirement semantics and explicit formula inputs. It may consume canonical Futures instrument identity and explicit market vocabulary.
 
 Required inputs are explicit: canonical instrument identity; matching market; leverage unit RATIO; requested leverage; positive minimum leverage; positive maximum leverage.
 
