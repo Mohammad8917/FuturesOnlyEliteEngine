@@ -18,8 +18,8 @@ def test_linear_long_short():
     assert s.calculate_realized(quantity=Decimal("10"),multiplier=Decimal("0.001"),entry_price=Decimal("100"),exit_price=Decimal("120"),position_side=PositionSide.SHORT)==Decimal("-0.2")
 def test_inverse_long_short():
     s=spec(ContractFamily.INVERSE)
-    assert s.calculate_realized(quantity=Decimal("10"),multiplier=Decimal("100"),entry_price=Decimal("100"),exit_price=Decimal("200"),position_side=PositionSide.LONG)==Decimal("0.5")
-    assert s.calculate_realized(quantity=Decimal("10"),multiplier=Decimal("100"),entry_price=Decimal("100"),exit_price=Decimal("200"),position_side=PositionSide.SHORT)==Decimal("-0.5")
+    assert s.calculate_realized(quantity=Decimal("10"),multiplier=Decimal("100"),entry_price=Decimal("100"),exit_price=Decimal("200"),position_side=PositionSide.LONG)==Decimal("5")
+    assert s.calculate_realized(quantity=Decimal("10"),multiplier=Decimal("100"),entry_price=Decimal("100"),exit_price=Decimal("200"),position_side=PositionSide.SHORT)==Decimal("-5")
 def test_unrealized_exact():
     assert spec(ContractFamily.LINEAR).calculate_unrealized(quantity=Decimal("3"),multiplier=Decimal("0.1"),entry_price=Decimal("100.00"),valuation_price=Decimal("100.123456789"),position_side=PositionSide.LONG,valuation_source="synthetic",observed_at=datetime(2026,1,1,12,tzinfo=UTC))==Decimal("0.0370370367")
 def test_zero_pnl():
