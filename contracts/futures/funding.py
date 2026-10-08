@@ -151,17 +151,19 @@ class FuturesFundingSpecification:
         if not isinstance(position_side, PositionSide):
             raise FundingValidationError("position_side must be explicit")
 
+        rate = _decimal(self.funding_rate, "funding_rate")
+
         # Zero is a valid, meaningful funding rate: it produces no transfer.
-        if self.funding_rate == 0:
+        if rate == 0:
             return None
 
-        payment = amount * abs(self.funding_rate)
+        payment = amount * abs(rate)
         if not payment.is_finite() or payment <= 0:
             raise FundingValidationError("funding payment is invalid")
 
         payer = (
             position_side
-            if self.funding_rate > 0
+            if rate > 0
             else (
                 PositionSide.SHORT
                 if position_side is PositionSide.LONG
