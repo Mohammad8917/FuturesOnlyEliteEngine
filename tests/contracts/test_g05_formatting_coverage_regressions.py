@@ -28,7 +28,11 @@ from contracts.futures.instrument import (
     FuturesInstrumentIdentity,
     Market,
 )
-from contracts.futures.margin import FuturesMarginSpecification, MarginUnit, MarginValidationError
+from contracts.futures.margin import (
+    FuturesMarginSpecification,
+    MarginUnit,
+    MarginValidationError,
+)
 from contracts.futures.liquidation import (
     FuturesLiquidationSpecification,
     LiquidationValidationError,
