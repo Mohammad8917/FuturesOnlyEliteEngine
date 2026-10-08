@@ -21,6 +21,7 @@ on:
       - "tests/architecture/test_phase_control_consistency.py"
       - "tests/architecture/test_dependency_direction.py"
       - "tests/architecture/test_forbidden_imports.py"
+      - "requirements-ci.txt"
       - ".github/workflows/architecture-invariants.yml"
   pull_request:
     paths:
