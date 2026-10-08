@@ -40,3 +40,5 @@ jobs:
         run: python -m pytest -q tests/architecture/test_dependency_direction.py tests/architecture/test_forbidden_imports.py
 
 # Gate-chain alignment: architecture, dependency, and domain evidence share one commit.
+
+# Same-SHA trigger anchor: liquidation-trigger contract closure verification.

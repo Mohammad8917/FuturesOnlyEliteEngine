@@ -62,3 +62,5 @@ jobs:
 
       - name: Run authoritative architecture contract tests
         run: python -m pytest -q tests/architecture/test_architecture_invariants_contract.py tests/architecture/test_architecture_contract.py tests/architecture/test_dependency_rules_contract.py tests/architecture/test_futures_responsibility_map_contract.py tests/architecture/test_phase_control_consistency.py tests/architecture/test_dependency_direction.py tests/architecture/test_forbidden_imports.py
+
+# Same-SHA trigger anchor: liquidation-trigger contract closure verification.
