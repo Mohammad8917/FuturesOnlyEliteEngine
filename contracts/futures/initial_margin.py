@@ -101,7 +101,7 @@ class FuturesInitialMarginSpecification:
     @property
     def symbol(self):
         """Return the canonical Futures symbol."""
-        return self.instrument.symbol.as_text()
+        return self.instrument.symbol
 
     def calculate(self, notional: Decimal | int | str) -> Decimal:
         """Calculate initial margin in the notional's explicit denomination."""
