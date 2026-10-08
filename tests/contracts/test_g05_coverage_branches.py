@@ -23,7 +23,6 @@ from contracts.futures.contract_specification import (
     QuantityUnit,
 )
 from contracts.futures.exposure import (
-    ExposureDenomination,
     ExposureValidationError,
     FuturesExposureSpecification,
 )
@@ -182,7 +181,7 @@ def test_instrument_parsing_and_identity_validation_branches():
     with pytest.raises(InstrumentValidationError):
         CanonicalFuturesSymbol.parse("BTC/USD.LINEAR.USD.20270230")
     with pytest.raises(InstrumentValidationError):
-        CanonicalFuturesSymbol.parse(1)
+        CanonicalFuturesSymbol.parse(cast(str, 1))
     with pytest.raises(InstrumentValidationError):
         FuturesInstrumentIdentity.build_id("CRYPTO", symbol())
     with pytest.raises(InstrumentValidationError):
@@ -237,7 +236,7 @@ def test_accounting_entry_and_journal_validation_branches():
         with pytest.raises(AccountingValidationError):
             FuturesLedgerEntry(**cast(LedgerEntryArgs, {**base, field: value}))
 
-    valid = FuturesLedgerEntry(**base)
+    valid = FuturesLedgerEntry(**cast(LedgerEntryArgs, base))
     with pytest.raises(AccountingValidationError):
         FuturesAccountingJournal("j", (valid,))
     with pytest.raises(AccountingValidationError):
@@ -248,9 +247,9 @@ def test_accounting_entry_and_journal_validation_branches():
 
 def test_accounting_constructor_and_funding_boundaries():
     with pytest.raises(AccountingValidationError):
-        FuturesAccountingSpecification("bad", instrument())
+        FuturesAccountingSpecification(cast(Market, "bad"), instrument())
     with pytest.raises(AccountingValidationError):
-        FuturesAccountingSpecification(Market.CRYPTO, "bad")
+        FuturesAccountingSpecification(Market.CRYPTO, cast(FuturesInstrumentIdentity, "bad"))
     spec = FuturesAccountingSpecification(Market.CRYPTO, instrument())
     with pytest.raises(AccountingValidationError):
         spec.funding_transfer(
@@ -286,11 +285,11 @@ def test_exposure_remaining_semantics():
         contract=c, quantity=1, reference_price=10, position_side=PositionSide.LONG
     ) == Decimal("1000")
     with pytest.raises(ExposureValidationError):
-        spec.base_exposure(contract="bad", quantity=1, price=10)
+        spec.base_exposure(contract=cast(FuturesContractSpecification, "bad"), quantity=1, price=10)
     with pytest.raises(ExposureValidationError):
         spec.value(
             contract=c, quantity=1, reference_price=10,
-            denomination="BASE", valuation_source="x",
+            denomination=cast(ExposureDenomination, "BASE"), valuation_source="x",
             observed_at=datetime(2026, 1, 1, tzinfo=UTC)
         )
 
@@ -339,7 +338,7 @@ def test_funding_interval_provenance_and_side_branches():
             max_age=timedelta(0),
         )
     with pytest.raises(FundingValidationError):
-        funding_spec().calculate_payment(notional=1, position_side="LONG")
+        funding_spec().calculate_payment(notional=1, position_side=cast(PositionSide, "LONG"))
     payment = funding_spec().calculate_payment(notional=Decimal("10"), position_side=PositionSide.SHORT)
     assert payment.payer is PositionSide.SHORT
     assert payment.receiver is PositionSide.LONG
@@ -370,7 +369,7 @@ def test_margin_all_conversion_branches():
         FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "EUR", 0)
 
 
-def margin_bad(field, value):
+def margin_bad(field: str, value: object) -> None:
     kwargs = dict(
         market=Market.CRYPTO, instrument=margin_instrument(),
         margin_unit=MarginUnit.ASSET, margin_asset="USD", source_asset="USD"
@@ -384,11 +383,11 @@ def margin_bad(field, value):
     ("market", "CRYPTO"), ("instrument", "bad"), ("margin_unit", "ASSET"),
     ("margin_asset", "SPOTUSD"), ("source_asset", "USD/EUR"),
 ])
-def test_margin_constructor_validation(field, value):
+def test_margin_constructor_validation(field: str, value: object) -> None:
     margin_bad(field, value)
 
 
-def test_initial_and_maintenance_margin_remaining_branches():
+def test_initial_and_maintenance_margin_remaining_branches() -> None:
     inst = instrument()
     initial = FuturesInitialMarginSpecification(
         Market.CRYPTO, inst, InitialMarginUnit.RATIO, Decimal("0.1"), "USD"
@@ -414,7 +413,7 @@ def test_initial_and_maintenance_margin_remaining_branches():
             cls(Market.CRYPTO, inst, unit, Decimal("NaN"), "USD")
 
 
-def test_leverage_remaining_validation_branches():
+def test_leverage_remaining_validation_branches() -> None:
     inst = instrument()
     spec = FuturesLeverageSpecification(
         Market.CRYPTO, inst, LeverageUnit.RATIO, Decimal("2"), Decimal("1"), Decimal("5")
@@ -447,7 +446,7 @@ def test_pnl_remaining_semantics():
         observed_at=datetime(2026, 1, 1, tzinfo=UTC),
     ) == Decimal("12")
     with pytest.raises(PnLValidationError):
-        spec.calculate_realized(quantity=1, multiplier=1, entry_price=1, exit_price=2, position_side="LONG")
+        spec.calculate_realized(quantity=1, multiplier=1, entry_price=1, exit_price=2, position_side=cast(PositionSide, "LONG"))
     with pytest.raises(PnLValidationError):
         spec.calculate_unrealized(
             quantity=1, multiplier=1, entry_price=1, valuation_price=2,
@@ -458,14 +457,14 @@ def test_pnl_remaining_semantics():
 
 def test_position_mode_and_price_quantity_branches():
     with pytest.raises(PositionModeValidationError):
-        FuturesPositionModeSpecification("ONE_WAY")
+        FuturesPositionModeSpecification(cast(PositionMode, "ONE_WAY"))
     one = FuturesPositionModeSpecification(PositionMode.ONE_WAY)
     hedge = FuturesPositionModeSpecification(PositionMode.HEDGE)
     assert one.allowed_sides == (PositionSide.LONG, PositionSide.SHORT)
     assert not one.supports_independent_long_short
     assert hedge.supports_independent_long_short
     with pytest.raises(PositionModeValidationError):
-        one.accepts("LONG")
+        one.accepts(cast(PositionSide, "LONG"))
     pq = FuturesPriceQuantitySpecification(
         Market.CRYPTO, symbol(), PriceUnit.QUOTE_PER_BASE, QuantityUnit.CONTRACTS,
         "USD", PrecisionPolicy.EXACT, RoundingPolicy.NONE,
@@ -613,7 +612,7 @@ def test_settlement_and_settlement_accounting_remaining_branches():
     with pytest.raises(AccountingValidationError):
         FuturesSettlementAccountingSpecification(Market.CRYPTO, "bad", same)
     with pytest.raises(AccountingValidationError):
-        FuturesSettlementAccountingSpecification(Market.CRYPTO, inst, "bad")
+        FuturesSettlementAccountingSpecification(Market.CRYPTO, inst, cast(FuturesSettlementSpecification, "bad"))
     with pytest.raises(AccountingValidationError):
         accounting.transfer(
             journal_id="j", causation_id="c", state_version=-1, sequence=1,
