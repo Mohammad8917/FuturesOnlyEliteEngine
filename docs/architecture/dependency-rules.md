@@ -522,3 +522,12 @@ No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounti
 ## Phase 1 exposure / position valuation dependency lock
 
 Exposure/position valuation is a domain-safe canonical contract. It may depend only on existing domain/contract facts such as instrument identity, multiplier/contract specification, price/quantity, and explicit position side. It must not depend on exchange SDKs, network I/O, persistence, runtime configuration, scheduling, account mutation, or exchange transport. Linear/Inverse formulas remain explicit: base exposure is quantity × multiplier for Linear and quantity × multiplier ÷ price for Inverse; quote value is quantity × multiplier × price for Linear and quantity × multiplier for Inverse. Valuation requires explicit denomination, reference provenance, and aware UTC observation/freshness. PnL/funding/margin/settlement/accounting are not redefined or silently included. Invalid, stale, contradictory, unsupported, or ambiguous critical state fails closed. Same-SHA CI evidence is mandatory and no dependency or quality gate may be weakened.
+
+
+## Phase 1 exposure / position valuation closure evidence
+
+Exposure/position valuation closed on implementation SHA `dc9461a562426e02af3fc3585beed917940da049`, merged to main as `953c69ee2335cda62d0729f5b7f0bb53f6b2a080`. Phase 1, G01, and Architecture Invariants were green on the implementation SHA.
+
+## Phase 1 next-unit dependency gate — liquidation price and liquidation constraints
+
+The liquidation-price contract remains domain-safe and may consume only canonical domain/contract facts. Network, exchange SDK, persistence, runtime configuration, scheduler, account mutation, and exchange transport are forbidden. It must not redefine multiplier, margin, leverage, maintenance margin, side/mode, PnL, funding, price/quantity, or exposure. Linear/Inverse formulas, exact Decimal arithmetic, explicit provenance/freshness, fail-closed ambiguity handling, meaningful tests, CI, and same-SHA evidence are mandatory. Exchange-specific liquidation formulas, mark-price rules, tiers, fees, funding, settlement, and defaults cannot be guessed into the domain contract.
