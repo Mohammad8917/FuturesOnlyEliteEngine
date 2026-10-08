@@ -20,6 +20,7 @@ on:
       - "tests/contracts/**"
       - "docs/architecture/**"
       - ".github/workflows/g01-dependency-architecture.yml"
+      - "requirements-ci.txt"
   workflow_dispatch:
 
 concurrency:
