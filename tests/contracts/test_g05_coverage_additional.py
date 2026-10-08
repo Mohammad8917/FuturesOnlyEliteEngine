@@ -552,7 +552,7 @@ def test_g05_targeted_validation_and_calculation_branches():
         **{**liquidation_args(ContractFamily.INVERSE, PositionSide.LONG),
            "margin_amount": Decimal("0.2")}
     )
-    assert inverse_long > Decimal("100")
+    assert inverse_long < Decimal("100")
     with pytest.raises(LiquidationValidationError):
         inverse.liquidation_price(
             **{**liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
