@@ -1,4 +1,4 @@
-name: G01 Dependency Architecture
+name: G01 Format/Lint + Dependency Architecture
 run-name: G01 Dependency Architecture • ${{ github.event_name }} • ${{ github.sha }}
 
 on:
@@ -49,6 +49,12 @@ jobs:
 
       - name: Install test dependency
         run: python -m pip install --disable-pip-version-check --no-input -r requirements-ci.txt
+
+      - name: Enforce Ruff lint
+        run: python -m ruff check .
+
+      - name: Enforce Ruff formatting
+        run: python -m ruff format --check .
 
       - name: Run G01 CI hardening regression tests
         run: python -m pytest -q tests/architecture/test_g01_ci_hardening.py
