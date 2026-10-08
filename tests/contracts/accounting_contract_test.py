@@ -94,6 +94,11 @@ def test_funding_transfer_is_balanced_across_distinct_accounts():
     assert journal.entries[1].account_id == "receiver"
 
 
+def test_journal_rejects_empty_batch():
+    with pytest.raises(AccountingValidationError):
+        FuturesAccountingJournal("empty", ())
+
+
 def test_journal_rejects_duplicate_ids_and_unbalanced_assets():
     entry = FuturesLedgerEntry(
         entry_id="same",
