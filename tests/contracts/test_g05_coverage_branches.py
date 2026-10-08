@@ -465,12 +465,12 @@ def test_position_mode_and_price_quantity_branches():
 
 
 def liquidation_args(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> LiquidationArgs:
-    return dict(
+    return cast(LiquidationArgs, dict(
         contract=contract(family), quantity=Decimal("1"), entry_price=Decimal("100"),
         margin_amount=Decimal("2000"),
         margin_denomination=LiquidationDenomination.QUOTE if family is ContractFamily.LINEAR else LiquidationDenomination.BASE,
         maintenance_margin_ratio=Decimal("0.1"), position_side=side,
-    )
+    ))
 
 
 def test_liquidation_linear_and_inverse_branches():
@@ -485,7 +485,7 @@ def test_liquidation_linear_and_inverse_branches():
     with pytest.raises(LiquidationValidationError):
         inverse.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(ContractFamily.INVERSE), "margin_denomination": LiquidationDenomination.QUOTE}))
     with pytest.raises(LiquidationValidationError):
-        linear.liquidation_price(**{**liquidation_args(), "maintenance_margin_ratio": Decimal("1")})
+        linear.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "maintenance_margin_ratio": Decimal("1")}))
 
 
 def liquidation_event_spec(family: ContractFamily = ContractFamily.LINEAR) -> FuturesLiquidationTriggerSpecification:
@@ -493,7 +493,7 @@ def liquidation_event_spec(family: ContractFamily = ContractFamily.LINEAR) -> Fu
 
 
 def event_kwargs(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> LiquidationEventArgs:
-    return dict(
+    return cast(LiquidationEventArgs, dict(
         account_id="acct", position_id="pos", event_id="evt", causation_id="cause",
         state_version=1, contract_family=family, position_mode=PositionMode.ONE_WAY,
         position_side=side, quantity=Decimal("1"), entry_price=Decimal("100"),
@@ -506,7 +506,7 @@ def event_kwargs(family: ContractFamily = ContractFamily.LINEAR, side: PositionS
         observed_at=datetime(2026, 1, 1, tzinfo=UTC),
         as_of=datetime(2026, 1, 1, 1, tzinfo=UTC),
         max_age=timedelta(hours=2), previous_event_sequence=1, event_sequence=2,
-    )
+    ))
 
 
 def test_liquidation_event_trigger_and_non_trigger_paths():
@@ -514,7 +514,7 @@ def test_liquidation_event_trigger_and_non_trigger_paths():
     triggered = spec.evaluate(**event_kwargs())
     assert triggered.trigger is LiquidationTrigger.TRIGGERED
     assert triggered.event is not None
-    not_triggered = spec.evaluate(**{**event_kwargs(), "reference_price": Decimal("90"), "event_sequence": 1})
+    not_triggered = spec.evaluate(**cast(LiquidationEventArgs, {**event_kwargs(), "reference_price": Decimal("90"), "event_sequence": 1}))
     assert not_triggered.trigger is LiquidationTrigger.NOT_TRIGGERED
     assert not_triggered.event is None
     short = liquidation_event_spec().evaluate(**event_kwargs(side=PositionSide.SHORT))
@@ -535,23 +535,23 @@ def test_liquidation_event_identifier_validation(field, value):
 def test_liquidation_event_sequence_and_input_validation():
     spec = liquidation_event_spec()
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**event_kwargs(), "event_sequence": 1, "previous_event_sequence": 2})
+        spec.evaluate(**cast(LiquidationEventArgs, {**event_kwargs(), "event_sequence": 1, "previous_event_sequence": 2}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**event_kwargs(), "contract_family": ContractFamily.INVERSE})
+        spec.evaluate(**cast(LiquidationEventArgs, {**event_kwargs(), "contract_family": ContractFamily.INVERSE}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**event_kwargs(), "position_mode": "ONE_WAY"})
+        spec.evaluate(**cast(LiquidationEventArgs, {**event_kwargs(), "position_mode": "ONE_WAY"}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**event_kwargs(), "position_side": "LONG"})
+        spec.evaluate(**cast(LiquidationEventArgs, {**event_kwargs(), "position_side": "LONG"}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**event_kwargs(), "margin_denomination": LiquidationDenomination.BASE})
+        spec.evaluate(**cast(LiquidationEventArgs, {**event_kwargs(), "margin_denomination": LiquidationDenomination.BASE}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**event_kwargs(), "maintenance_margin_ratio": Decimal("1")})
+        spec.evaluate(**cast(LiquidationEventArgs, {**event_kwargs(), "maintenance_margin_ratio": Decimal("1")}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**event_kwargs(), "liquidation_price": Decimal("100")})
+        spec.evaluate(**cast(LiquidationEventArgs, {**event_kwargs(), "liquidation_price": Decimal("100")}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**event_kwargs(), "reference_price_source": ""})
+        spec.evaluate(**cast(LiquidationEventArgs, {**event_kwargs(), "reference_price_source": ""}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**event_kwargs(), "max_age": timedelta(0)})
+        spec.evaluate(**cast(LiquidationEventArgs, {**event_kwargs(), "max_age": timedelta(0)}))
 
 
 def test_liquidation_event_class_invariants_and_evaluation_validation():
