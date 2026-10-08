@@ -98,11 +98,11 @@ from contracts.futures.settlement_accounting import (
 UTC = timezone.utc
 
 
-def symbol(family=ContractFamily.LINEAR):
+def symbol(family: ContractFamily = ContractFamily.LINEAR) -> CanonicalFuturesSymbol:
     return CanonicalFuturesSymbol("BTC", "USD", family, "USD")
 
 
-def instrument(family=ContractFamily.LINEAR):
+def instrument(family: ContractFamily = ContractFamily.LINEAR) -> FuturesInstrumentIdentity:
     return FuturesInstrumentIdentity.create(
         market=Market.CRYPTO,
         symbol=symbol(family),
@@ -111,7 +111,7 @@ def instrument(family=ContractFamily.LINEAR):
     )
 
 
-def contract(family=ContractFamily.LINEAR):
+def contract(family: ContractFamily = ContractFamily.LINEAR) -> FuturesContractSpecification:
     return FuturesContractSpecification(
         market=Market.CRYPTO,
         symbol=symbol(family),
@@ -121,7 +121,7 @@ def contract(family=ContractFamily.LINEAR):
     )
 
 
-def funding_spec(rate=Decimal("0.1")):
+def funding_spec(rate: Decimal = Decimal("0.1")) -> FuturesFundingSpecification:
     return FuturesFundingSpecification(
         market=Market.CRYPTO,
         symbol=symbol(),
@@ -313,7 +313,7 @@ def test_margin_extra_validation_branches():
         same.to_margin_amount(0)
 
 
-def liquidation_args(family=ContractFamily.LINEAR, side=PositionSide.LONG):
+def liquidation_args(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> dict[str, object]:
     return dict(
         contract=contract(family), quantity=Decimal("1"),
         entry_price=Decimal("100"), margin_amount=Decimal("2000"),
