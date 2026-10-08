@@ -27,11 +27,11 @@ class InitialMarginUnit(StrEnum):
     RATIO = "RATIO"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
+def _positive_decimal(value: object, field: str) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise InitialMarginValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
+        result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise InitialMarginValidationError(
             f"{field} must be an exact Decimal value"
@@ -44,7 +44,7 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
 
 
 def _asset(value: str, field: str) -> str:
-    if not isinstance(typing.cast(object, value), str):
+    if not isinstance(value, str):
         raise InitialMarginValidationError(f"{field} must be an asset symbol")
     normalized = value.strip().upper()
     if not normalized or normalized.startswith("SPOT"):
