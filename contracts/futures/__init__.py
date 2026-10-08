@@ -7,6 +7,7 @@ from .contract_specification import (
 )
 from .settlement import FuturesSettlementSpecification, SettlementUnit, SettlementValidationError
 from .margin import FuturesMarginSpecification, MarginUnit, MarginValidationError
+from .leverage import FuturesLeverageSpecification, LeverageUnit, LeverageValidationError
 from .instrument import (
     CanonicalFuturesSymbol,
     ContractFamily,
@@ -24,12 +25,15 @@ __all__ = [
     "FuturesInstrumentIdentity",
     "FuturesSettlementSpecification",
     "FuturesMarginSpecification",
+    "FuturesLeverageSpecification",
     "InstrumentStatus",
     "InstrumentValidationError",
     "Market",
     "SettlementUnit",
     "MarginUnit",
     "MarginValidationError",
+    "LeverageUnit",
+    "LeverageValidationError",
     "SettlementValidationError",
     "QuantityUnit",
 ]
