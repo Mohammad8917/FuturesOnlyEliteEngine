@@ -614,3 +614,8 @@ Accounting/settlement-accounting is the last minimum Futures domain contract lis
 
 
 - Final CI hardening evidence anchor: checkout credential persistence is disabled (`persist-credentials: false`) across the Phase 1/G01/Architecture Invariants workflows; final same-SHA rerun is required.
+
+
+## G01 CI trigger-coverage closure
+
+The shared CI dependency lock `requirements-ci.txt` is an authoritative G01/Phase 1/Architecture Invariants input and is included in all three workflow trigger paths. G01 also reruns when this project-state evidence file changes, so state/evidence reconciliation can produce a same-SHA verification point across the three Phase 1 evidence workflows. No G02 production implementation is entered by this control.
