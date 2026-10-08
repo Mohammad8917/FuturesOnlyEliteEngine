@@ -229,7 +229,7 @@ def test_contract_decimal_validation_branches(value: object) -> None:
             market=Market.CRYPTO,
             symbol=symbol(),
             quantity_unit=QuantityUnit.CONTRACTS,
-            contract_multiplier=value,
+            contract_multiplier=cast(Decimal, value),
             price_quote_asset="USD",
         )
 
@@ -347,7 +347,7 @@ def funding_spec(rate: Decimal = Decimal("0.1")) -> FuturesFundingSpecification:
     ("funding_rate_unit", "INTERVAL_RATE"),
     ("funding_sign_convention", "POSITIVE_LONG_PAYS"),
 ])
-def test_funding_constructor_types_fail_closed(field, value):
+def test_funding_constructor_types_fail_closed(field: str, value: object) -> None:
     kwargs: dict[str, object] = dict(
         market=Market.CRYPTO, symbol=symbol(),
         funding_rate_unit=FundingRateUnit.INTERVAL_RATE,
@@ -399,7 +399,7 @@ def test_margin_all_conversion_branches():
     with pytest.raises(MarginValidationError):
         FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "EUR")
     with pytest.raises(MarginValidationError):
-        FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "EUR", 0)
+        FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "EUR", cast(Decimal, 0))
 
 
 def margin_bad(field: str, value: object) -> None:
