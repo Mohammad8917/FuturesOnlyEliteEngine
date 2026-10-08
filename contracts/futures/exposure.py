@@ -22,11 +22,11 @@ class ExposureDenomination(StrEnum):
     QUOTE = "QUOTE"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
+def _positive_decimal(value: object, field: str) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise ExposureValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
+        result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise ExposureValidationError(f"{field} must be an exact Decimal value") from exc
     if not result.is_finite() or result <= 0:
@@ -35,7 +35,7 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
 
 
 def _utc(value: datetime, field: str) -> datetime:
-    if not isinstance(typing.cast(object, value), datetime) or value.tzinfo is None or value.utcoffset() != timedelta(0):
+    if not isinstance(value, datetime) or value.tzinfo is None or value.utcoffset() != timedelta(0):
         raise ExposureValidationError(f"{field} must be an aware UTC datetime")
     return value
 
