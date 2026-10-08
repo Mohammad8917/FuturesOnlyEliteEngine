@@ -24,11 +24,11 @@ class FundingSignConvention(StrEnum):
     POSITIVE_LONG_PAYS = "POSITIVE_LONG_PAYS"
 
 
-def _decimal(value: Decimal | int | str, field: str, *, positive: bool = False) -> Decimal:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
+def _decimal(value: object, field: str, *, positive: bool = False) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise FundingValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
+        result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise FundingValidationError(f"{field} must be an exact Decimal value") from exc
     if not result.is_finite() or (positive and result <= 0):
@@ -38,7 +38,7 @@ def _decimal(value: Decimal | int | str, field: str, *, positive: bool = False) 
 
 def _utc(value: datetime, field: str) -> datetime:
     if (
-        not isinstance(typing.cast(object, value), datetime)
+        not isinstance(value, datetime)
         or value.tzinfo is None
         or value.utcoffset() != timedelta(0)
     ):
