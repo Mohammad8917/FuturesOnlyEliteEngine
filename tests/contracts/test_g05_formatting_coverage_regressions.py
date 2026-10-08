@@ -3,6 +3,7 @@
 These tests exercise existing fail-closed behavior. They do not alter runtime
 contracts, coverage thresholds, or production semantics.
 """
+
 from decimal import Decimal
 from typing import cast
 
@@ -113,9 +114,7 @@ def test_exposure_rejects_non_finite_contract_calculations(
         FuturesContractSpecification, "notional", non_finite_calculation
     )
     with pytest.raises(ExposureValidationError):
-        specification.quote_value(
-            contract=contract, quantity=1, reference_price=10
-        )
+        specification.quote_value(contract=contract, quantity=1, reference_price=10)
 
 
 def test_pnl_constructor_rejects_invalid_typed_boundaries() -> None:
@@ -132,9 +131,7 @@ def test_pnl_constructor_rejects_invalid_typed_boundaries() -> None:
             PnLUnit.REALIZED_OR_UNREALIZED,
         )
     with pytest.raises(PnLValidationError):
-        FuturesPnLSpecification(
-            Market.CRYPTO, symbol, cast(PnLUnit, "invalid")
-        )
+        FuturesPnLSpecification(Market.CRYPTO, symbol, cast(PnLUnit, "invalid"))
 
 
 def test_price_quantity_constructor_rejects_invalid_typed_boundaries() -> None:
@@ -148,9 +145,7 @@ def test_price_quantity_constructor_rejects_invalid_typed_boundaries() -> None:
     )
 
     with pytest.raises(PriceQuantityValidationError):
-        FuturesPriceQuantitySpecification(
-            cast(Market, "invalid"), symbol, *args
-        )
+        FuturesPriceQuantitySpecification(cast(Market, "invalid"), symbol, *args)
     with pytest.raises(PriceQuantityValidationError):
         FuturesPriceQuantitySpecification(
             Market.CRYPTO, cast(CanonicalFuturesSymbol, "invalid"), *args
@@ -161,9 +156,7 @@ def test_price_quantity_constructor_rejects_invalid_typed_boundaries() -> None:
         corrupted_symbol, "contract_family", cast(ContractFamily, object())
     )
     with pytest.raises(PriceQuantityValidationError):
-        FuturesPriceQuantitySpecification(
-            Market.CRYPTO, corrupted_symbol, *args
-        )
+        FuturesPriceQuantitySpecification(Market.CRYPTO, corrupted_symbol, *args)
 
 
 def test_liquidation_constructor_rejects_unsupported_family_state() -> None:
