@@ -1,4 +1,11 @@
-from .price_quantity import (\n    FuturesPriceQuantitySpecification,\n    PrecisionPolicy,\n    PriceQuantityValidationError,\n    PriceUnit,\n    RoundingPolicy,\n)\n"""Canonical Futures domain boundary contracts."""
+from .price_quantity import (
+    FuturesPriceQuantitySpecification,
+    PrecisionPolicy,
+    PriceQuantityValidationError,
+    PriceUnit,
+    RoundingPolicy,
+)
+"""Canonical Futures domain boundary contracts."""
 
 from .contract_specification import (
     ContractSpecificationValidationError,
