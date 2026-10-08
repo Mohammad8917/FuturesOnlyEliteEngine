@@ -78,3 +78,7 @@ Evidence boundary:
 - no threshold reduction, test weakening, skip/xfail, assertion removal, or dependency-boundary weakening.
 
 Cross-journal idempotency and durable sequence enforcement remain downstream persistence/reconciliation responsibilities; the canonical domain journal enforces immutable entry identity, explicit causation/version data, and monotonic sequence within each declared journal batch. Contradictory external outcomes remain divergence rather than success.
+
+## Phase 1 completeness correction
+
+The Phase 1 completeness audit recognizes `position_side.py` and `position_mode.py` as separate production boundaries covered by the combined position-side/mode contract test. Gate thresholds remain immutable: G05 >= 98% and G08 >= 90%.
