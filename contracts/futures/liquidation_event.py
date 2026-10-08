@@ -137,7 +137,7 @@ class FuturesLiquidationTriggerSpecification:
             raise LiquidationEventValidationError(
                 "contract_family does not match the canonical symbol"
             )
-        if not isinstance(position_mode, PositionMode):
+        if not isinstance(cast(object, position_mode), PositionMode):
             raise LiquidationEventValidationError(
                 "position_mode must be ONE_WAY or HEDGE"
             )
@@ -189,7 +189,7 @@ class FuturesLiquidationTriggerSpecification:
         source = _identifier(reference_price_source, "reference_price_source")
         observed = _utc(observed_at, "observed_at")
         current = _utc(as_of, "as_of")
-        if not isinstance(max_age, timedelta) or max_age <= timedelta(0):
+        if not isinstance(cast(object, max_age), timedelta) or max_age <= timedelta(0):
             raise LiquidationEventValidationError("max_age must be positive")
         if current < observed or current - observed > max_age:
             raise LiquidationEventValidationError(
