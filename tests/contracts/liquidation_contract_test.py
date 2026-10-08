@@ -21,7 +21,9 @@ def make_symbol(market: Market, family: ContractFamily) -> CanonicalFuturesSymbo
     return CanonicalFuturesSymbol(base, "USD", family, "USD")
 
 
-def make_contract(market: Market, family: ContractFamily) -> FuturesContractSpecification:
+def make_contract(
+    market: Market, family: ContractFamily
+) -> FuturesContractSpecification:
     return FuturesContractSpecification(
         market=market,
         symbol=make_symbol(market, family),
@@ -33,7 +35,9 @@ def make_contract(market: Market, family: ContractFamily) -> FuturesContractSpec
 
 @pytest.mark.parametrize("market", list(Market))
 @pytest.mark.parametrize("family", list(ContractFamily))
-def test_scope_is_explicit_for_all_markets_and_families(market: Market, family: ContractFamily) -> None:
+def test_scope_is_explicit_for_all_markets_and_families(
+    market: Market, family: ContractFamily
+) -> None:
     specification = FuturesLiquidationSpecification(market, make_symbol(market, family))
     assert specification.market is market
     assert specification.symbol.contract_family is family
@@ -118,7 +122,9 @@ def test_inverse_short_liquidation_price_preserves_inverse_base_denominated_sema
         (ContractFamily.INVERSE, LiquidationDenomination.QUOTE),
     ],
 )
-def test_wrong_margin_denomination_fails_closed(family: ContractFamily, denomination: LiquidationDenomination) -> None:
+def test_wrong_margin_denomination_fails_closed(
+    family: ContractFamily, denomination: LiquidationDenomination
+) -> None:
     contract = make_contract(Market.CRYPTO, family)
     specification = FuturesLiquidationSpecification(Market.CRYPTO, contract.symbol)
 

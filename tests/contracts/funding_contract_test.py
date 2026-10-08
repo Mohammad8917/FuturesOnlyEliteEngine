@@ -26,7 +26,9 @@ def symbol(family: ContractFamily) -> CanonicalFuturesSymbol:
     )
 
 
-def funding(family: ContractFamily = ContractFamily.LINEAR, rate: object = Decimal("0.000125")) -> FuturesFundingSpecification:
+def funding(
+    family: ContractFamily = ContractFamily.LINEAR, rate: object = Decimal("0.000125")
+) -> FuturesFundingSpecification:
     return FuturesFundingSpecification(
         market=Market.CRYPTO,
         symbol=symbol(family),
@@ -43,7 +45,9 @@ def funding(family: ContractFamily = ContractFamily.LINEAR, rate: object = Decim
 
 @pytest.mark.parametrize("family", [ContractFamily.LINEAR, ContractFamily.INVERSE])
 @pytest.mark.parametrize("market", list(Market))
-def test_contract_is_explicit_across_markets_and_families(family: ContractFamily, market: Market) -> None:
+def test_contract_is_explicit_across_markets_and_families(
+    family: ContractFamily, market: Market
+) -> None:
     spec = FuturesFundingSpecification(
         market=market,
         symbol=CanonicalFuturesSymbol(
@@ -88,10 +92,13 @@ def test_negative_rate_reverses_payer():
 
 
 def test_zero_rate_is_valid_but_creates_no_transfer():
-    assert funding(rate=Decimal("0")).calculate_payment(
-        notional=Decimal("1000"),
-        position_side=PositionSide.LONG,
-    ) is None
+    assert (
+        funding(rate=Decimal("0")).calculate_payment(
+            notional=Decimal("1000"),
+            position_side=PositionSide.LONG,
+        )
+        is None
+    )
 
 
 @pytest.mark.parametrize(

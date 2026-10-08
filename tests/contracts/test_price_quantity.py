@@ -1,4 +1,5 @@
 """Contract tests for canonical Futures price/quantity semantics."""
+
 from decimal import Decimal
 from typing import TypedDict, cast
 
@@ -52,11 +53,9 @@ def test_supported_markets_and_families_are_explicit(
 
 
 def test_price_is_exact_and_not_rounded() -> None:
-    assert make_spec(
-        Market.CRYPTO, ContractFamily.LINEAR
-    ).quote_per_base("123.456789012345678901") == Decimal(
+    assert make_spec(Market.CRYPTO, ContractFamily.LINEAR).quote_per_base(
         "123.456789012345678901"
-    )
+    ) == Decimal("123.456789012345678901")
 
 
 @pytest.mark.parametrize("value", [0, -1, "NaN", "Infinity", True, 0.1, None])
@@ -79,9 +78,7 @@ def test_quote_asset_mismatch_fails_closed() -> None:
     with pytest.raises(PriceQuantityValidationError):
         FuturesPriceQuantitySpecification(
             Market.CRYPTO,
-            CanonicalFuturesSymbol(
-                "BTC", "USDT", ContractFamily.LINEAR, "USDT"
-            ),
+            CanonicalFuturesSymbol("BTC", "USDT", ContractFamily.LINEAR, "USDT"),
             PriceUnit.QUOTE_PER_BASE,
             QuantityUnit.CONTRACTS,
             "USD",
@@ -104,9 +101,7 @@ def test_unsupported_semantic_vocabulary_fails_closed(
 ) -> None:
     base = dict(
         market=Market.CRYPTO,
-        symbol=CanonicalFuturesSymbol(
-            "BTC", "USDT", ContractFamily.LINEAR, "USDT"
-        ),
+        symbol=CanonicalFuturesSymbol("BTC", "USDT", ContractFamily.LINEAR, "USDT"),
         price_unit=PriceUnit.QUOTE_PER_BASE,
         quantity_unit=QuantityUnit.CONTRACTS,
         price_quote_asset="USDT",

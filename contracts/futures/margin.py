@@ -76,10 +76,10 @@ class FuturesMarginSpecification:
     def __post_init__(self) -> None:
         if not isinstance(typing.cast(object, self.market), Market):
             raise MarginValidationError("market must be a supported Futures market")
-        if not isinstance(typing.cast(object, self.instrument), FuturesInstrumentIdentity):
-            raise MarginValidationError(
-                "instrument must be FuturesInstrumentIdentity"
-            )
+        if not isinstance(
+            typing.cast(object, self.instrument), FuturesInstrumentIdentity
+        ):
+            raise MarginValidationError("instrument must be FuturesInstrumentIdentity")
         if self.instrument.market is not self.market:
             raise MarginValidationError("market must match the instrument identity")
         if not isinstance(typing.cast(object, self.margin_unit), MarginUnit):

@@ -75,8 +75,12 @@ class FuturesLedgerEntry:
         _sequence(self.state_version, "state_version")
         _sequence(self.sequence, "sequence")
         _text(self.account_id, "account_id")
-        if not isinstance(typing.cast(object, self.instrument), FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
+        if not isinstance(
+            typing.cast(object, self.instrument), FuturesInstrumentIdentity
+        ):
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
         _text(self.ledger_account, "ledger_account")
         _asset(self.asset, "asset")
         if not isinstance(typing.cast(object, self.direction), AccountingDirection):
@@ -95,7 +99,10 @@ class FuturesAccountingJournal:
         _text(self.journal_id, "journal_id")
         if not self.entries:
             raise AccountingValidationError("journal must contain entries")
-        if any(not isinstance(typing.cast(object, entry), FuturesLedgerEntry) for entry in self.entries):
+        if any(
+            not isinstance(typing.cast(object, entry), FuturesLedgerEntry)
+            for entry in self.entries
+        ):
             raise AccountingValidationError("all entries must be FuturesLedgerEntry")
 
         seen: set[str] = set()
@@ -119,16 +126,18 @@ class FuturesAccountingJournal:
             totals[entry.asset] = totals.get(entry.asset, Decimal("0")) + entry.amount
 
         for asset in set(debit_totals) | set(credit_totals):
-            if debit_totals.get(asset, Decimal("0")) != credit_totals.get(asset, Decimal("0")):
-                raise AccountingValidationError(f"journal is unbalanced for asset {asset}")
+            if debit_totals.get(asset, Decimal("0")) != credit_totals.get(
+                asset, Decimal("0")
+            ):
+                raise AccountingValidationError(
+                    f"journal is unbalanced for asset {asset}"
+                )
 
     @property
     def asset_balances(self) -> dict[str, Decimal]:
         return {
             asset: debit - credit
-            for asset in set(
-                entry.asset for entry in self.entries
-            )
+            for asset in set(entry.asset for entry in self.entries)
             for debit, credit in [
                 (
                     sum(
@@ -164,8 +173,12 @@ class FuturesAccountingSpecification:
     def __post_init__(self) -> None:
         if not isinstance(typing.cast(object, self.market), Market):
             raise AccountingValidationError("market must be a supported Futures market")
-        if not isinstance(typing.cast(object, self.instrument), FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
+        if not isinstance(
+            typing.cast(object, self.instrument), FuturesInstrumentIdentity
+        ):
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
         if self.instrument.market is not self.market:
             raise AccountingValidationError("market must match instrument")
 

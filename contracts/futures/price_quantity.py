@@ -1,4 +1,5 @@
 """Canonical Futures price, quantity, denomination, precision and rounding semantics."""
+
 from __future__ import annotations
 
 import typing
@@ -28,9 +29,7 @@ class RoundingPolicy(StrEnum):
 
 def _positive_decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
-        raise PriceQuantityValidationError(
-            field + " must be an exact Decimal value"
-        )
+        raise PriceQuantityValidationError(field + " must be an exact Decimal value")
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
@@ -59,34 +58,20 @@ class FuturesPriceQuantitySpecification:
             raise PriceQuantityValidationError(
                 "market must be a supported Futures market"
             )
-        if not isinstance(
-            typing.cast(object, self.symbol), CanonicalFuturesSymbol
-        ):
-            raise PriceQuantityValidationError(
-                "symbol must be CanonicalFuturesSymbol"
-            )
+        if not isinstance(typing.cast(object, self.symbol), CanonicalFuturesSymbol):
+            raise PriceQuantityValidationError("symbol must be CanonicalFuturesSymbol")
         if self.symbol.contract_family not in (
             ContractFamily.LINEAR,
             ContractFamily.INVERSE,
         ):
             raise PriceQuantityValidationError("unsupported contract family")
         if not isinstance(typing.cast(object, self.price_unit), PriceUnit):
-            raise PriceQuantityValidationError(
-                "price_unit must be QUOTE_PER_BASE"
-            )
+            raise PriceQuantityValidationError("price_unit must be QUOTE_PER_BASE")
         if not isinstance(typing.cast(object, self.quantity_unit), QuantityUnit):
-            raise PriceQuantityValidationError(
-                "quantity_unit must be CONTRACTS"
-            )
-        if not isinstance(
-            typing.cast(object, self.precision_policy), PrecisionPolicy
-        ):
-            raise PriceQuantityValidationError(
-                "precision_policy must be EXACT"
-            )
-        if not isinstance(
-            typing.cast(object, self.rounding_policy), RoundingPolicy
-        ):
+            raise PriceQuantityValidationError("quantity_unit must be CONTRACTS")
+        if not isinstance(typing.cast(object, self.precision_policy), PrecisionPolicy):
+            raise PriceQuantityValidationError("precision_policy must be EXACT")
+        if not isinstance(typing.cast(object, self.rounding_policy), RoundingPolicy):
             raise PriceQuantityValidationError("rounding_policy must be NONE")
         quote = (
             self.price_quote_asset.strip().upper()

@@ -1,4 +1,5 @@
 """Contract tests for realized and unrealized Futures PnL semantics."""
+
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from typing import cast
@@ -34,9 +35,7 @@ def spec(family: ContractFamily) -> FuturesPnLSpecification:
     ],
 )
 @pytest.mark.parametrize("market", list(Market))
-def test_scope(
-    family: ContractFamily, denom: PnLDenomination, market: Market
-) -> None:
+def test_scope(family: ContractFamily, denom: PnLDenomination, market: Market) -> None:
     base = "BTC" if market is Market.CRYPTO else "XAU"
     s = FuturesPnLSpecification(
         market,
@@ -106,9 +105,7 @@ def test_zero_pnl() -> None:
     ) == Decimal("0")
 
 
-@pytest.mark.parametrize(
-    "v", [True, False, 0, -1, 0.1, float("nan"), Decimal("NaN")]
-)
+@pytest.mark.parametrize("v", [True, False, 0, -1, 0.1, float("nan"), Decimal("NaN")])
 def test_invalid(v: object) -> None:
     with pytest.raises(PnLValidationError):
         spec(ContractFamily.LINEAR).calculate_realized(

@@ -34,9 +34,7 @@ class FuturesPositionModeSpecification:
 
     def __post_init__(self) -> None:
         if not isinstance(typing.cast(object, self.mode), PositionMode):
-            raise PositionModeValidationError(
-                "mode must be ONE_WAY or HEDGE"
-            )
+            raise PositionModeValidationError("mode must be ONE_WAY or HEDGE")
 
     @property
     def allowed_sides(self) -> tuple[PositionSide, ...]:
@@ -49,7 +47,5 @@ class FuturesPositionModeSpecification:
 
     def accepts(self, side: PositionSide) -> bool:
         if not isinstance(typing.cast(object, side), PositionSide):
-            raise PositionModeValidationError(
-                "position side must be LONG or SHORT"
-            )
+            raise PositionModeValidationError("position side must be LONG or SHORT")
         return side in self.allowed_sides

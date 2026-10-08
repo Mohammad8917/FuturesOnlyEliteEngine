@@ -1,4 +1,5 @@
 """Canonical Futures funding-rate semantics."""
+
 from __future__ import annotations
 
 import typing
@@ -59,14 +60,19 @@ class FundingPayment:
             or not isinstance(typing.cast(object, self.receiver), PositionSide)
             or self.payer is self.receiver
         ):
-            raise FundingValidationError("payer and receiver must be distinct explicit sides")
+            raise FundingValidationError(
+                "payer and receiver must be distinct explicit sides"
+            )
         if (
             not isinstance(typing.cast(object, self.amount), Decimal)
             or not self.amount.is_finite()
             or self.amount <= 0
         ):
             raise FundingValidationError("payment amount must be positive")
-        if not isinstance(typing.cast(object, self.denomination), str) or not self.denomination.strip():
+        if (
+            not isinstance(typing.cast(object, self.denomination), str)
+            or not self.denomination.strip()
+        ):
             raise FundingValidationError("payment denomination must be explicit")
         object.__setattr__(self, "denomination", self.denomination.strip().upper())
 
@@ -96,7 +102,9 @@ class FuturesFundingSpecification:
             raise FundingValidationError("unsupported contract family")
         if not isinstance(typing.cast(object, self.funding_rate_unit), FundingRateUnit):
             raise FundingValidationError("funding_rate_unit must be INTERVAL_RATE")
-        if not isinstance(typing.cast(object, self.funding_sign_convention), FundingSignConvention):
+        if not isinstance(
+            typing.cast(object, self.funding_sign_convention), FundingSignConvention
+        ):
             raise FundingValidationError("funding sign convention must be explicit")
 
         rate = _decimal(self.funding_rate, "funding_rate")
@@ -107,7 +115,11 @@ class FuturesFundingSpecification:
         if end <= start:
             raise FundingValidationError("funding interval must have positive duration")
 
-        source = self.rate_source.strip() if isinstance(typing.cast(object, self.rate_source), str) else ""
+        source = (
+            self.rate_source.strip()
+            if isinstance(typing.cast(object, self.rate_source), str)
+            else ""
+        )
         denomination = (
             self.notional_denomination.strip().upper()
             if isinstance(typing.cast(object, self.notional_denomination), str)
@@ -131,7 +143,9 @@ class FuturesFundingSpecification:
 
     def validate_freshness(self, *, as_of: datetime, max_age: timedelta) -> None:
         current = _utc(as_of, "as_of")
-        if not isinstance(typing.cast(object, max_age), timedelta) or max_age <= timedelta(0):
+        if not isinstance(
+            typing.cast(object, max_age), timedelta
+        ) or max_age <= timedelta(0):
             raise FundingValidationError("max_age must be positive")
         if current < self.observed_at or current - self.observed_at > max_age:
             raise FundingValidationError(
@@ -163,7 +177,9 @@ class FuturesFundingSpecification:
                 else PositionSide.LONG
             )
         )
-        receiver = PositionSide.SHORT if payer is PositionSide.LONG else PositionSide.LONG
+        receiver = (
+            PositionSide.SHORT if payer is PositionSide.LONG else PositionSide.LONG
+        )
         return FundingPayment(
             payer,
             receiver,

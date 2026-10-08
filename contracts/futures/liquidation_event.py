@@ -1,4 +1,5 @@
 """Canonical Futures liquidation-trigger event semantics."""
+
 from __future__ import annotations
 
 import typing
@@ -45,25 +46,19 @@ def _utc(value: object, field: str) -> datetime:
         or value.tzinfo is None
         or value.utcoffset() != timedelta(0)
     ):
-        raise LiquidationEventValidationError(
-            f"{field} must be an aware UTC datetime"
-        )
+        raise LiquidationEventValidationError(f"{field} must be an aware UTC datetime")
     return value
 
 
 def _identifier(value: object, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
-        raise LiquidationEventValidationError(
-            f"{field} must be a non-empty identifier"
-        )
+        raise LiquidationEventValidationError(f"{field} must be a non-empty identifier")
     return value.strip()
 
 
 def _non_negative_integer(value: object, field: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
-        raise LiquidationEventValidationError(
-            f"{field} must be a non-negative integer"
-        )
+        raise LiquidationEventValidationError(f"{field} must be a non-negative integer")
     return value
 
 
@@ -143,9 +138,7 @@ class FuturesLiquidationTriggerSpecification:
                 "position_mode must be ONE_WAY or HEDGE"
             )
         if not isinstance(typing.cast(object, position_side), PositionSide):
-            raise LiquidationEventValidationError(
-                "position_side must be LONG or SHORT"
-            )
+            raise LiquidationEventValidationError("position_side must be LONG or SHORT")
         try:
             FuturesPositionModeSpecification(position_mode).accepts(position_side)
         except ValueError as exc:
@@ -154,13 +147,13 @@ class FuturesLiquidationTriggerSpecification:
         qty = _positive_decimal(quantity, "quantity")
         entry = _positive_decimal(entry_price, "entry_price")
         margin = _positive_decimal(margin_amount, "margin_amount")
-        mmr = _positive_decimal(
-            maintenance_margin_ratio, "maintenance_margin_ratio"
-        )
+        mmr = _positive_decimal(maintenance_margin_ratio, "maintenance_margin_ratio")
         liquidation = _positive_decimal(liquidation_price, "liquidation_price")
         reference = _positive_decimal(reference_price, "reference_price")
 
-        if not isinstance(typing.cast(object, margin_denomination), LiquidationDenomination):
+        if not isinstance(
+            typing.cast(object, margin_denomination), LiquidationDenomination
+        ):
             raise LiquidationEventValidationError(
                 "margin_denomination must be explicitly BASE or QUOTE"
             )
@@ -190,7 +183,9 @@ class FuturesLiquidationTriggerSpecification:
         source = _identifier(reference_price_source, "reference_price_source")
         observed = _utc(observed_at, "observed_at")
         current = _utc(as_of, "as_of")
-        if not isinstance(typing.cast(object, max_age), timedelta) or max_age <= timedelta(0):
+        if not isinstance(
+            typing.cast(object, max_age), timedelta
+        ) or max_age <= timedelta(0):
             raise LiquidationEventValidationError("max_age must be positive")
         if current < observed or current - observed > max_age:
             raise LiquidationEventValidationError(
@@ -293,9 +288,7 @@ class FuturesLiquidationTriggerEvent:
                 "position_mode must be ONE_WAY or HEDGE"
             )
         if not isinstance(typing.cast(object, self.position_side), PositionSide):
-            raise LiquidationEventValidationError(
-                "position_side must be LONG or SHORT"
-            )
+            raise LiquidationEventValidationError("position_side must be LONG or SHORT")
         FuturesPositionModeSpecification(self.position_mode).accepts(self.position_side)
         _positive_decimal(self.quantity, "quantity")
         entry = _positive_decimal(self.entry_price, "entry_price")
@@ -305,7 +298,9 @@ class FuturesLiquidationTriggerEvent:
         )
         liquidation = _positive_decimal(self.liquidation_price, "liquidation_price")
         reference = _positive_decimal(self.reference_price, "reference_price")
-        if not isinstance(typing.cast(object, self.margin_denomination), LiquidationDenomination):
+        if not isinstance(
+            typing.cast(object, self.margin_denomination), LiquidationDenomination
+        ):
             raise LiquidationEventValidationError(
                 "margin_denomination must be explicit"
             )
@@ -330,9 +325,7 @@ class FuturesLiquidationTriggerEvent:
             raise LiquidationEventValidationError(
                 "short liquidation price must be above entry price"
             )
-        if (
-            self.position_side is PositionSide.LONG and reference > liquidation
-        ) or (
+        if (self.position_side is PositionSide.LONG and reference > liquidation) or (
             self.position_side is PositionSide.SHORT and reference < liquidation
         ):
             raise LiquidationEventValidationError(
@@ -341,7 +334,9 @@ class FuturesLiquidationTriggerEvent:
         _identifier(self.reference_price_source, "reference_price_source")
         observed = _utc(self.observed_at, "observed_at")
         current = _utc(self.as_of, "as_of")
-        if not isinstance(typing.cast(object, self.max_age), timedelta) or self.max_age <= timedelta(0):
+        if not isinstance(
+            typing.cast(object, self.max_age), timedelta
+        ) or self.max_age <= timedelta(0):
             raise LiquidationEventValidationError("max_age must be positive")
         if current < observed or current - observed > self.max_age:
             raise LiquidationEventValidationError(
@@ -363,10 +358,7 @@ class FuturesLiquidationTriggerEvaluation:
             raise LiquidationEventValidationError(
                 "triggered evaluation must contain an event"
             )
-        if (
-            self.trigger is LiquidationTrigger.NOT_TRIGGERED
-            and self.event is not None
-        ):
+        if self.trigger is LiquidationTrigger.NOT_TRIGGERED and self.event is not None:
             raise LiquidationEventValidationError(
                 "non-triggered evaluation must not contain an event"
             )

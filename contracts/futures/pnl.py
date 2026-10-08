@@ -1,4 +1,5 @@
 """Canonical realized and unrealized Futures PnL semantics."""
+
 from __future__ import annotations
 
 import typing
@@ -30,13 +31,9 @@ def _positive_decimal(value: object, field: str) -> Decimal:
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
-        raise PnLValidationError(
-            f"{field} must be an exact Decimal value"
-        ) from exc
+        raise PnLValidationError(f"{field} must be an exact Decimal value") from exc
     if not result.is_finite() or result <= 0:
-        raise PnLValidationError(
-            f"{field} must be finite and greater than zero"
-        )
+        raise PnLValidationError(f"{field} must be finite and greater than zero")
     return result
 
 
@@ -58,12 +55,8 @@ class FuturesPnLSpecification:
 
     def __post_init__(self) -> None:
         if not isinstance(typing.cast(object, self.market), Market):
-            raise PnLValidationError(
-                "market must be a supported Futures market"
-            )
-        if not isinstance(
-            typing.cast(object, self.symbol), CanonicalFuturesSymbol
-        ):
+            raise PnLValidationError("market must be a supported Futures market")
+        if not isinstance(typing.cast(object, self.symbol), CanonicalFuturesSymbol):
             raise PnLValidationError("symbol must be CanonicalFuturesSymbol")
         if self.symbol.contract_family not in (
             ContractFamily.LINEAR,
@@ -99,9 +92,7 @@ class FuturesPnLSpecification:
         if self.symbol.contract_family is ContractFamily.LINEAR:
             raw = qty * mult * (reference - entry)
         elif self.symbol.contract_family is ContractFamily.INVERSE:
-            raw = qty * mult * (
-                (Decimal("1") / entry) - (Decimal("1") / reference)
-            )
+            raw = qty * mult * ((Decimal("1") / entry) - (Decimal("1") / reference))
         else:
             raise PnLValidationError("unsupported contract family")
         result = raw if position_side is PositionSide.LONG else -raw
@@ -162,12 +153,9 @@ class FuturesPnLSpecification:
     ) -> None:
         current = _utc(as_of, "as_of")
         observed = _utc(observed_at, "observed_at")
-        if (
-            not isinstance(typing.cast(object, max_age), timedelta)
-            or max_age <= timedelta(0)
-        ):
+        if not isinstance(
+            typing.cast(object, max_age), timedelta
+        ) or max_age <= timedelta(0):
             raise PnLValidationError("max_age must be positive")
         if current < observed or current - observed > max_age:
-            raise PnLValidationError(
-                "valuation is stale or time ordering is invalid"
-            )
+            raise PnLValidationError("valuation is stale or time ordering is invalid")

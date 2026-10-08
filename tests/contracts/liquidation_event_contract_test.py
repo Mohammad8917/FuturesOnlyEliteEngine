@@ -77,7 +77,9 @@ def evaluate(
         position_side=side,
         quantity=Decimal("2"),
         entry_price=Decimal("50"),
-        margin_amount=Decimal("900") if family is ContractFamily.LINEAR else Decimal("1"),
+        margin_amount=Decimal("900")
+        if family is ContractFamily.LINEAR
+        else Decimal("1"),
         margin_denomination=(
             LiquidationDenomination.QUOTE
             if family is ContractFamily.LINEAR
@@ -101,7 +103,9 @@ def evaluate(
 @pytest.mark.parametrize("family", list(ContractFamily))
 @pytest.mark.parametrize("mode", list(PositionMode))
 @pytest.mark.parametrize("side", list(PositionSide))
-def test_scope_and_side_mode_are_explicit(market: Market, family: ContractFamily, mode: PositionMode, side: PositionSide) -> None:
+def test_scope_and_side_mode_are_explicit(
+    market: Market, family: ContractFamily, mode: PositionMode, side: PositionSide
+) -> None:
     liquidation = Decimal("42") if side is PositionSide.LONG else Decimal("58")
     reference = Decimal("40") if side is PositionSide.LONG else Decimal("60")
     result = evaluate(
@@ -176,7 +180,9 @@ def test_missing_provenance_or_identity_fails_closed(field: str) -> None:
 @pytest.mark.parametrize(
     "value", [True, False, 0, -1, 0.1, float("nan"), Decimal("NaN")]
 )
-def test_numeric_boundaries_reject_bool_float_and_invalid_values(field: str, value: object) -> None:
+def test_numeric_boundaries_reject_bool_float_and_invalid_values(
+    field: str, value: object
+) -> None:
     with pytest.raises(LiquidationEventValidationError):
         evaluate(**cast(LiquidationEventArgs, {field: value}))
 

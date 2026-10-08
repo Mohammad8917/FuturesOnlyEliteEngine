@@ -57,7 +57,9 @@ def test_constitution_preserves_layer_and_fail_closed_boundaries() -> None:
         assert marker in content, marker
 
 
-def test_constitution_covers_safety_critical_configuration_and_financial_state() -> None:
+def test_constitution_covers_safety_critical_configuration_and_financial_state() -> (
+    None
+):
     content = INVARIANTS.read_text(encoding="utf-8")
     required = (
         "Credentials, API keys, signing material, passwords, tokens, private keys",
@@ -106,4 +108,7 @@ def test_constitution_requires_rule_to_implementation_to_evidence_chain() -> Non
 
 def test_constitution_contains_no_frozen_test_skeleton_marker() -> None:
     content = INVARIANTS.read_text(encoding="utf-8")
-    assert "Frozen skeleton; executable implementation is intentionally deferred" not in content
+    assert (
+        "Frozen skeleton; executable implementation is intentionally deferred"
+        not in content
+    )

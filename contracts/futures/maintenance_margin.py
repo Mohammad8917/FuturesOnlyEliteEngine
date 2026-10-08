@@ -47,18 +47,12 @@ def _positive_decimal(value: object, field: str) -> Decimal:
 
 def _asset(value: object, field: str) -> str:
     if not isinstance(value, str):
-        raise MaintenanceMarginValidationError(
-            f"{field} must be an asset symbol"
-        )
+        raise MaintenanceMarginValidationError(f"{field} must be an asset symbol")
     normalized = value.strip().upper()
     if not normalized or normalized.startswith("SPOT"):
-        raise MaintenanceMarginValidationError(
-            f"{field} must be a valid Futures asset"
-        )
+        raise MaintenanceMarginValidationError(f"{field} must be a valid Futures asset")
     if not normalized.replace("_", "").isalnum():
-        raise MaintenanceMarginValidationError(
-            f"{field} contains invalid characters"
-        )
+        raise MaintenanceMarginValidationError(f"{field} contains invalid characters")
     return normalized
 
 
@@ -86,7 +80,9 @@ class FuturesMaintenanceMarginSpecification:
             raise MaintenanceMarginValidationError(
                 "market must be a supported Futures market"
             )
-        if not isinstance(typing.cast(object, self.instrument), FuturesInstrumentIdentity):
+        if not isinstance(
+            typing.cast(object, self.instrument), FuturesInstrumentIdentity
+        ):
             raise MaintenanceMarginValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
@@ -94,7 +90,8 @@ class FuturesMaintenanceMarginSpecification:
             raise MaintenanceMarginValidationError(
                 "market must match the instrument identity"
             )
-        if not isinstance(typing.cast(object, self.maintenance_margin_unit), MaintenanceMarginUnit
+        if not isinstance(
+            typing.cast(object, self.maintenance_margin_unit), MaintenanceMarginUnit
         ):
             raise MaintenanceMarginValidationError(
                 "maintenance_margin_unit must be RATIO"

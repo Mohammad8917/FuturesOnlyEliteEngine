@@ -46,4 +46,6 @@ def test_authoritative_architecture_contract_is_present_and_nonempty() -> None:
 def test_architecture_contract_contains_non_negotiable_requirements() -> None:
     text = CONTRACT.read_text(encoding="utf-8")
     missing = [marker for marker in REQUIRED_MARKERS if marker not in text]
-    assert not missing, "Missing architecture-contract requirements: " + ", ".join(missing)
+    assert not missing, "Missing architecture-contract requirements: " + ", ".join(
+        missing
+    )

@@ -78,7 +78,9 @@ class FuturesInitialMarginSpecification:
             raise InitialMarginValidationError(
                 "market must be a supported Futures market"
             )
-        if not isinstance(typing.cast(object, self.instrument), FuturesInstrumentIdentity):
+        if not isinstance(
+            typing.cast(object, self.instrument), FuturesInstrumentIdentity
+        ):
             raise InitialMarginValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
@@ -86,14 +88,12 @@ class FuturesInitialMarginSpecification:
             raise InitialMarginValidationError(
                 "market must match the instrument identity"
             )
-        if not isinstance(typing.cast(object, self.initial_margin_unit), InitialMarginUnit):
-            raise InitialMarginValidationError(
-                "initial_margin_unit must be RATIO"
-            )
+        if not isinstance(
+            typing.cast(object, self.initial_margin_unit), InitialMarginUnit
+        ):
+            raise InitialMarginValidationError("initial_margin_unit must be RATIO")
 
-        ratio = _positive_decimal(
-            self.initial_margin_ratio, "initial_margin_ratio"
-        )
+        ratio = _positive_decimal(self.initial_margin_ratio, "initial_margin_ratio")
         notional_asset = _asset(self.notional_asset, "notional_asset")
 
         object.__setattr__(self, "initial_margin_ratio", ratio)
