@@ -9,6 +9,7 @@ on:
       - "tests/architecture/**"
       - "tests/contracts/**"
       - "docs/architecture/**"
+      - "docs/architecture/project-state.md"
       - "requirements-ci.txt"
       - ".github/workflows/g01-dependency-architecture.yml"
   pull_request:
