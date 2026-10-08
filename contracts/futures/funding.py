@@ -22,7 +22,12 @@ class FundingSignConvention(StrEnum):
     POSITIVE_LONG_PAYS = "POSITIVE_LONG_PAYS"
 
 
-def _decimal(value, field, *, positive=False):
+def _decimal(
+    value: Decimal | int | str,
+    field: str,
+    *,
+    positive: bool = False,
+) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise FundingValidationError(f"{field} must be an exact Decimal value")
     try:
@@ -34,7 +39,7 @@ def _decimal(value, field, *, positive=False):
     return result
 
 
-def _utc(value, field):
+def _utc(value: datetime, field: str) -> datetime:
     if (
         not isinstance(value, datetime)
         or value.tzinfo is None
@@ -51,7 +56,7 @@ class FundingPayment:
     amount: Decimal
     denomination: str
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if (
             not isinstance(self.payer, PositionSide)
             or not isinstance(self.receiver, PositionSide)
@@ -137,7 +142,10 @@ class FuturesFundingSpecification:
             )
 
     def calculate_payment(
-        self, *, notional, position_side: PositionSide
+        self,
+        *,
+        notional: Decimal | int | str,
+        position_side: PositionSide,
     ) -> FundingPayment | None:
         amount = _decimal(notional, "notional", positive=True)
         if not isinstance(position_side, PositionSide):
