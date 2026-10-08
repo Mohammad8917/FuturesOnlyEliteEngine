@@ -43,4 +43,4 @@ def test_unsupported_semantic_vocabulary_fails_closed(kwargs: dict[str, str]) ->
 def test_precision_and_rounding_are_explicit_and_immutable():
     spec=make_spec(Market.GOLD,ContractFamily.INVERSE)
     assert spec.precision_policy is PrecisionPolicy.EXACT and spec.rounding_policy is RoundingPolicy.NONE
-    with pytest.raises((AttributeError,TypeError)): spec.rounding_policy=RoundingPolicy.NONE
+    with pytest.raises((AttributeError,TypeError)): setattr(spec, "rounding_policy", RoundingPolicy.NONE)
