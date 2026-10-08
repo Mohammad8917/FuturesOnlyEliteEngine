@@ -149,7 +149,7 @@ def test_non_ratio_unit_fails_closed() -> None:
         FuturesLeverageSpecification(
             market=Market.CRYPTO,
             instrument=_instrument(),
-            leverage_unit="RATIO"  # type: ignore[arg-type],
+            leverage_unit="RATIO",  # type: ignore[arg-type]
             leverage =Decimal("2"),
             minimum_leverage=Decimal("1"),
             maximum_leverage=Decimal("20"),
@@ -161,10 +161,10 @@ def test_decimal_conversion_is_exact_and_immutable() -> None:
         market=Market.CRYPTO,
         instrument=_instrument(),
         leverage_unit=LeverageUnit.RATIO,
-        leverage ="12.500"  # type: ignore[arg-type],
-        minimum_leverage="1"  # type: ignore[arg-type],
-        maximum_leverage="20"  # type: ignore[arg-type],
+        leverage="12.500",  # type: ignore[arg-type]
+        minimum_leverage="1",  # type: ignore[arg-type]
+        maximum_leverage="20",  # type: ignore[arg-type]
     )
     assert spec.leverage == Decimal("12.500")
     with pytest.raises((AttributeError, TypeError)):
-        spec.leverage =  # type: ignore[misc] Decimal("5")
+        spec.leverage = Decimal("5")  # type: ignore[misc]
