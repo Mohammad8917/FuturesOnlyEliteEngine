@@ -601,3 +601,36 @@ Frozen baseline:
 - production: contracts/futures/exposure.py; tests: tests/contracts/exposure_contract_test.py; CI: .github/workflows/phase1-domain-contracts.yml;
 - meaningful tests, CI enforcement, and same-SHA evidence are mandatory before cursor advance;
 - no threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening is permitted.
+
+
+## Phase 1 exposure / position valuation closure evidence
+
+Exposure and position valuation semantics are COMPLETE on implementation merge SHA `953c69ee2335cda62d0729f5b7f0bb53f6b2a080`.
+
+Evidence on the exact implementation lineage:
+- production boundary: `contracts/futures/exposure.py`;
+- test boundary: `tests/contracts/exposure_contract_test.py`;
+- export boundary: `contracts/futures/__init__.py`;
+- CI boundary: `.github/workflows/phase1-domain-contracts.yml`;
+- Phase 1 Domain Contracts: green on implementation commit `dc9461a562426e02af3fc3585beed917940da049`;
+- G01 Dependency Architecture: green on implementation commit `dc9461a562426e02af3fc3585beed917940da049`;
+- Architecture Invariants: green on implementation commit `dc9461a562426e02af3fc3585beed917940da049`.
+
+The frozen semantics remain explicit gross exposure versus valuation, Linear/Inverse formulas, explicit BASE/QUOTE denomination, LONG/SHORT directional sign, exact Decimal arithmetic, reference provenance/freshness, all three Futures markets, fail-closed critical state, and no exchange-specific defaults or dependency weakening.
+
+## Phase 1 next-unit semantic gate — liquidation price and liquidation constraints
+
+Before implementation, the next unit must freeze one explicit owner and define:
+1. liquidation price meaning versus liquidation event/engine responsibility;
+2. required position, entry, quantity, multiplier, margin, leverage, maintenance-margin, fee/funding/settlement inputs and explicit outputs;
+3. Linear/Inverse formulas without collapsing their financial meaning;
+4. CRYPTO/FOREX/GOLD applicability;
+5. interaction with all closed contracts without redefining them;
+6. exact numeric representation and precision/rounding behavior;
+7. reference-price/account-state provenance and freshness where applicable;
+8. invalid, missing, stale, contradictory, unsupported, or ambiguous state behavior;
+9. allowed and forbidden dependencies, including no exchange SDK/network in the canonical contract;
+10. meaningful tests and CI enforcement;
+11. same-SHA evidence before cursor advance.
+
+No exchange-specific liquidation formula, fee/funding treatment, tier/default, mark-price, rounding, or account-state assumption may be guessed into the canonical contract.
