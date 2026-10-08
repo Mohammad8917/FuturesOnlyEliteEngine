@@ -208,3 +208,9 @@ The contract is:
 - invalid or ambiguous inputs fail closed.
 
 The production boundary is `contracts/futures/initial_margin.py`; meaningful contract tests are in `tests/contracts/test_initial_margin.py`; CI enforcement is through `.github/workflows/phase1-domain-contracts.yml`.
+
+## Phase 1 cursor — maintenance margin
+
+Initial-margin semantics are complete and evidenced on main merge SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`. The next incomplete Phase 1 contract is maintenance margin semantics.
+
+Maintenance margin must not be treated as a leverage alias. Its canonical contract must explicitly define formula inputs, denomination, precision, Linear/Inverse and market applicability, and any tier/rate/offset semantics before implementation. Unknown or contradictory critical terms must fail closed.
