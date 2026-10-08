@@ -21,11 +21,11 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: 13c8edef7a0553b1262f2487935e001ef5348aa7; verified by same-SHA Phase 1 and G01 evidence after instrument-identity hardening.
+- Last verified SHA: 2f695795757e89870859e23fa20252fd008baa8d; verified on current main with Architecture Invariants, G01 Dependency Architecture, and Phase 1 Domain Contracts all green on the same SHA.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — instrument identity, multiplier/contract specification, settlement, margin, leverage, and initial margin are implemented and evidenced; maintenance margin and position side/mode semantics are closed; price, quantity, monetary units, denomination, precision, and rounding semantics are now the first incomplete contract.
+- Active work: Phase 1 Domain Contracts — instrument, multiplier, settlement, margin, leverage, initial/maintenance margin, position side/mode, price/quantity, funding, PnL, exposure/valuation, and liquidation-price constraints are closed; the current incomplete unit is liquidation event and trigger semantics.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: define and implement the explicit funding-rate contract from the canonical baseline; preserve UTC, provenance/freshness, exact numeric, and fail-closed semantics.
+- Next authorized action: freeze and then implement liquidation event and trigger semantics across all eight architecture documents; preserve provenance/freshness, exact numeric behavior, idempotency/ordering/concurrency, and fail-closed semantics.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
