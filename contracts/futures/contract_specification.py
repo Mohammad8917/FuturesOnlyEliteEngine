@@ -6,6 +6,8 @@ metadata into this specification; it may not redefine its financial meaning.
 
 from __future__ import annotations
 
+import typing
+
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
@@ -24,10 +26,10 @@ class QuantityUnit(StrEnum):
 
 
 def _decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool):
+    if isinstance(typing.cast(object, value), bool):
         raise ContractSpecificationValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(value, Decimal) else Decimal(str(value))
+        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise ContractSpecificationValidationError(
             f"{field} must be an exact Decimal value"
@@ -73,15 +75,15 @@ class FuturesContractSpecification:
     price_quote_asset: str
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise ContractSpecificationValidationError(
                 "market must be a supported Futures market"
             )
-        if not isinstance(self.symbol, CanonicalFuturesSymbol):
+        if not isinstance(typing.cast(object, self.symbol), CanonicalFuturesSymbol):
             raise ContractSpecificationValidationError(
                 "symbol must be CanonicalFuturesSymbol"
             )
-        if not isinstance(self.quantity_unit, QuantityUnit):
+        if not isinstance(typing.cast(object, self.quantity_unit), QuantityUnit):
             raise ContractSpecificationValidationError(
                 "quantity_unit must be CONTRACTS"
             )
@@ -92,7 +94,7 @@ class FuturesContractSpecification:
 
         quote = (
             self.price_quote_asset.strip().upper()
-            if isinstance(self.price_quote_asset, str)
+            if isinstance(typing.cast(object, self.price_quote_asset), str)
             else ""
         )
         if not quote or quote != self.symbol.quote_asset:
