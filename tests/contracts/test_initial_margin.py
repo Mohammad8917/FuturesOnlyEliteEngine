@@ -1,6 +1,7 @@
 """Contract tests for canonical Futures initial-margin semantics."""
 
 from decimal import Decimal
+from typing import cast
 
 import pytest
 
@@ -141,7 +142,7 @@ def test_decimal_inputs_are_exact_and_immutable() -> None:
     assert spec.initial_margin_ratio == Decimal("0.1250")
     assert spec.notional_asset == "USDT"
     with pytest.raises((AttributeError, TypeError)):
-        spec.initial_margin_ratio = Decimal("0.2")
+        setattr(spec, "initial_margin_ratio", Decimal("0.2"))
 
 
 def test_initial_margin_does_not_depend_on_leverage() -> None:
