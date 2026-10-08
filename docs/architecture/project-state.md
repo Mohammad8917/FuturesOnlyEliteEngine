@@ -21,7 +21,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: `f0915668d8677e185490634bd781bd8b68f9c357`; G01 Dependency Architecture (`37812236679`), Architecture Invariants (`37812236804`), and Phase 1 Domain Contracts (`37812236765`) are all green on this exact SHA. This is the current same-SHA Phase 1 evidence anchor.
+- Last verified SHA: `b18a6ef85dfa1c8c1dfd20c55300412d81151140`; G01 Dependency Architecture (`37814347213`), Architecture Invariants (`37814347249`), and Phase 1 Domain Contracts (`37814347420`) are all green on this exact pre-snapshot SHA. This is the current same-SHA Phase 1 evidence anchor; the state snapshot commit itself becomes the next repository HEAD and must be re-verified by CI.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
 - Active work: Phase 1 Domain Contracts — implementation and final completeness/evidence audit are CLOSED on the verified SHA.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
@@ -626,4 +626,4 @@ All Phase 1 sections below **Current authoritative state** are immutable histori
 
 ## Final Phase 1 evidence reconciliation — VERIFIED
 
-Phase 1 final completeness and same-SHA evidence are VERIFIED on `f0915668d8677e185490634bd781bd8b68f9c357`. G01=`37812236679`, Architecture Invariants=`37812236804`, and Phase 1 Domain Contracts=`37812236765` are completed successfully on that exact HEAD. No Phase 2+ production implementation is authorized until the G02 entry control is explicitly satisfied.
+Phase 1 final completeness and same-SHA evidence are VERIFIED on pre-snapshot SHA `b18a6ef85dfa1c8c1dfd20c55300412d81151140`. G01=`37814347213`, Architecture Invariants=`37814347249`, and Phase 1 Domain Contracts=`37814347420` are completed successfully on that exact SHA. The state snapshot commit is evidence-bearing and must trigger a fresh same-SHA verification before this state is treated as current. No Phase 2+ production implementation is authorized until the G02 entry control is explicitly satisfied.
