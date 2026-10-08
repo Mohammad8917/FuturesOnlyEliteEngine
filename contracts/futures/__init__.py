@@ -1,3 +1,10 @@
+from .price_quantity import (
+    FuturesPriceQuantitySpecification,
+    PrecisionPolicy,
+    PriceQuantityValidationError,
+    PriceUnit,
+    RoundingPolicy,
+)
 """Canonical Futures domain boundary contracts."""
 
 from .contract_specification import (
@@ -67,6 +74,11 @@ __all__ = [
     "FuturesPositionModeSpecification",
     "PositionMode",
     "PositionModeValidationError",
+    "FuturesPriceQuantitySpecification",
+    "PrecisionPolicy",
+    "PriceQuantityValidationError",
+    "PriceUnit",
+    "RoundingPolicy",
     "SettlementValidationError",
     "QuantityUnit",
 ]
