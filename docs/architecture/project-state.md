@@ -21,7 +21,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: `09fe5779f0c5541814042eeda86c8c21d5db849a`; verified immediately before this state snapshot with Architecture Invariants, G01 Dependency Architecture, and Phase 1 Domain Contracts all green on that exact SHA. The snapshot commit itself must be re-verified before being recorded as the next last-verified SHA.
+- Last verified SHA: `8c3b8ecc1e1cec8e179b88a54f766a411e7e7211`; G01 Dependency Architecture, Architecture Invariants, and Phase 1 Domain Contracts are all green on this exact SHA. Any subsequent state-document commit must itself be re-verified before it can become the next last-verified SHA.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
 - Active work: Phase 1 Domain Contracts — all minimum canonical Futures financial contracts through accounting/settlement-accounting are implemented; the remaining authorized action is the Phase 1 final completeness/evidence audit before Phase 2 can be considered.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
@@ -624,6 +624,6 @@ The shared CI dependency lock `requirements-ci.txt` is an authoritative G01/Phas
 
 All Phase 1 sections below **Current authoritative state** are immutable historical transition/evidence records. Any historical wording such as “current cursor”, “next authorized unit”, or “active work” in those records describes the state at that recorded transition and is not a live authorization. Only **Current authoritative state** controls the present session. A phase/gate transition is valid only after the current repository evidence and same-SHA CI requirements are re-established.
 
-## Final Phase 1 evidence reconciliation — pending same-SHA verification
+## Final Phase 1 evidence reconciliation — verified on 8c3b8ecc
 
-The current repository HEAD is being treated as an evidence candidate only. The recorded **Last verified SHA** must not be advanced until G01 Dependency Architecture, Architecture Invariants, and Phase 1 Domain Contracts are all green on the exact same parent SHA. This state update intentionally does not claim that verification yet.
+The evidence candidate `8c3b8ecc1e1cec8e179b88a54f766a411e7e7211` is verified: G01 Dependency Architecture, Architecture Invariants, and Phase 1 Domain Contracts are all green on the exact same SHA (runs 37804341423, 37804341364, and 37804341266). The next state-document commit must be treated as a new evidence candidate and re-verified before its SHA is recorded as last verified.
