@@ -93,7 +93,7 @@ def evaluate(
         previous_event_sequence=previous_sequence,
         event_sequence=event_sequence,
     )
-    values.update(overrides)
+    values.update(cast(EvaluationArgs, overrides))
     return spec.evaluate(**cast(EvaluationArgs, values))
 
 
