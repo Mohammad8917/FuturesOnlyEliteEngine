@@ -549,14 +549,14 @@ def test_g05_targeted_validation_and_calculation_branches():
 
     inverse = FuturesLiquidationSpecification(Market.CRYPTO, symbol(ContractFamily.INVERSE))
     inverse_short = inverse.liquidation_price(
-        **liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
-        margin_amount=Decimal("0.1"),
+        **{**liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
+           "margin_amount": Decimal("0.1")}
     )
     assert inverse_short == Decimal("100")
     with pytest.raises(LiquidationValidationError):
         inverse.liquidation_price(
-            **liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
-            margin_amount=Decimal("0.9"),
+            **{**liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
+               "margin_amount": Decimal("0.9")}
         )
     with pytest.raises(LiquidationValidationError):
         FuturesLiquidationSpecification("bad", symbol())
