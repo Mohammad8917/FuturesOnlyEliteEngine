@@ -11,7 +11,6 @@ import pytest
 from contracts.futures.accounting import (
     AccountingValidationError,
     FuturesAccountingJournal,
-    FuturesSettlementAccountingSpecification,
 )
 from contracts.futures.contract_specification import (
     ContractSpecificationValidationError,
@@ -32,15 +31,16 @@ from contracts.futures.liquidation import (
     FuturesLiquidationSpecification,
     LiquidationValidationError,
 )
-from contracts.futures.liquidation_event import LiquidationEventValidationError
 from contracts.futures.pnl import FuturesPnLSpecification, PnLUnit, PnLValidationError
-from contracts.futures.position_side import PositionSide
 from contracts.futures.price_quantity import (
     FuturesPriceQuantitySpecification,
     PrecisionPolicy,
     PriceQuantityValidationError,
     PriceUnit,
     RoundingPolicy,
+)
+from contracts.futures.settlement_accounting import (
+    FuturesSettlementAccountingSpecification,
 )
 from contracts.futures.settlement import (
     FuturesSettlementSpecification,
@@ -166,7 +166,7 @@ def test_price_quantity_constructor_rejects_invalid_typed_boundaries() -> None:
 
 def test_liquidation_constructor_rejects_unsupported_family_state() -> None:
     symbol = make_symbol()
-    specification = FuturesLiquidationSpecification(Market.CRYPTO, symbol)
+    FuturesLiquidationSpecification(Market.CRYPTO, symbol)
     object.__setattr__(symbol, "contract_family", cast(ContractFamily, object()))
 
     with pytest.raises(LiquidationValidationError):
