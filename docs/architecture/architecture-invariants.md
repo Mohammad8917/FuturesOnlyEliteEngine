@@ -448,3 +448,17 @@ CI boundary: .github/workflows/phase1-domain-contracts.yml.
 The first incomplete leverage unit is now authorized. It must explicitly define leverage representation, admissible bounds, ownership, Linear/Inverse applicability, CRYPTO/FOREX/GOLD applicability, configuration provenance, validation, and fail-closed behavior.
 
 Leverage must never be silently inferred from exchange defaults, margin amount, notional, or account state. This unit does not calculate initial margin, maintenance margin, liquidation, or risk decisions; those remain separately owned contracts.
+
+## 8.1.7 Phase 1 leverage contract lock
+
+Leverage is a dimensionless RATIO and must be represented with exact finite Decimal semantics. The canonical leverage contract requires all three values explicitly: requested leverage, minimum contract-level leverage, and maximum contract-level leverage.
+
+The requested leverage is valid only inside the explicit inclusive interval. No bound has a hidden default. Minimum must be positive, maximum must be positive and not below minimum.
+
+This unit applies to CRYPTO/FOREX/GOLD and Linear/Inverse Futures. It consumes canonical instrument identity but does not redefine margin, settlement, multiplier, risk policy, position sizing, liquidation, or exchange transport semantics.
+
+Leverage is never inferred from margin, notional, account state, exchange defaults, or runtime configuration. Invalid, missing, non-finite, zero, negative, reversed, contradictory, or out-of-bounds terms fail closed.
+
+Production boundary: contracts/futures/leverage.py.
+Test boundary: tests/contracts/test_leverage.py.
+CI boundary: .github/workflows/phase1-domain-contracts.yml.
