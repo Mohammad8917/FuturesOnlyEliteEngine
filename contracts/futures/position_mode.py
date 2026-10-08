@@ -47,7 +47,7 @@ class FuturesPositionModeSpecification:
         return self.mode is PositionMode.HEDGE
 
     def accepts(self, side: PositionSide) -> bool:
-        if not isinstance(side, PositionSide):
+        if not isinstance(cast(object, side), PositionSide):
             raise PositionModeValidationError(
                 "position side must be LONG or SHORT"
             )
