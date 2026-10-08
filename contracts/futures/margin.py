@@ -39,7 +39,7 @@ def _asset(value: str, field: str) -> str:
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool):
+    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise MarginValidationError(f"{field} must be an exact Decimal value")
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
