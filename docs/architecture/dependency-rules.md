@@ -181,3 +181,13 @@ Forbidden dependencies remain exchange SDKs, network I/O, persistence, clocks, r
 Leverage vocabulary and contract-level constraints are owned by the Futures domain/contract boundary. The contract may consume canonical instrument identity and explicit margin facts as domain inputs but may not redefine their semantics.
 
 Leverage configuration must be explicit, validated, provenance-aware, and fail closed. Exchange SDKs, network I/O, persistence, runtime configuration access, hidden defaults, risk policy, and execution mutation are forbidden dependencies of the canonical leverage contract.
+
+## Phase 1 leverage contract dependency boundary
+
+The leverage contract owns only leverage vocabulary and explicit contract-level bounds. It may consume canonical Futures instrument identity and explicit market vocabulary.
+
+Required inputs are explicit: canonical instrument identity; matching market; leverage unit RATIO; requested leverage; positive minimum leverage; positive maximum leverage.
+
+Forbidden dependencies remain exchange SDKs, network I/O, persistence, runtime configuration, clocks, notifications, hidden exchange defaults, account state, margin calculation, risk policy, position sizing, and liquidation logic.
+
+No caller may omit bounds and rely on an exchange or runtime default. The domain contract fails closed instead.

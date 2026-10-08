@@ -245,3 +245,22 @@ The leverage unit must explicitly define:
 - fail-closed behavior for missing, invalid, contradictory, stale, or unsupported leverage;
 - no exchange-default inference or hidden leverage;
 - production implementation, meaningful tests, CI enforcement, and same-SHA evidence before cursor advance.
+
+## 10.9 Phase 1 leverage implementation contract
+
+Leverage is explicitly defined as:
+- unit: RATIO;
+- numeric type: exact finite Decimal;
+- requested value: strictly positive;
+- minimum bound: strictly positive and explicit;
+- maximum bound: strictly positive, explicit, and greater than or equal to minimum;
+- requested leverage: valid only within the inclusive explicit bounds;
+- applicability: CRYPTO/FOREX/GOLD and Linear/Inverse;
+- ownership: Futures domain/contract boundary;
+- no hidden defaults or exchange inference;
+- no calculation of margin, liquidation, risk, or position sizing;
+- fail closed on invalid, contradictory, missing, non-finite, zero, negative, or out-of-bounds values.
+
+Production boundary: contracts/futures/leverage.py.
+Test boundary: tests/contracts/test_leverage.py.
+CI boundary: .github/workflows/phase1-domain-contracts.yml.

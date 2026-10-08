@@ -489,3 +489,21 @@ The margin unit must close with:
 12. same-SHA evidence.
 
 No later Phase 1 contract may advance ahead of this gate.
+
+## Phase 1 leverage gate
+
+The leverage unit must close with:
+1. explicit RATIO denomination;
+2. exact finite Decimal semantics;
+3. explicit positive minimum and maximum bounds;
+4. inclusive requested-leverage bound validation;
+5. CRYPTO/FOREX/GOLD coverage;
+6. Linear/Inverse coverage;
+7. no exchange/default/account-state inference;
+8. no margin/risk/liquidation/position-sizing redefinition;
+9. fail-closed invalid and contradictory inputs;
+10. meaningful contract tests;
+11. CI enforcement;
+12. same-SHA evidence.
+
+No Phase 1 cursor advance is permitted until all twelve conditions are evidenced.

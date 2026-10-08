@@ -184,3 +184,21 @@ Margin asset and margin semantics are COMPLETE on main merge SHA f2c30bf3da77f56
 Current cursor: leverage vocabulary and contract-level constraints.
 
 Next authorized action: define and implement leverage vocabulary and contract-level constraints. No Phase 2+ work is authorized, and no threshold/test/gate weakening is permitted.
+
+## Phase 1 leverage implementation contract
+
+The active implementation unit is leverage vocabulary and contract-level constraints.
+
+Frozen semantics:
+- leverage unit = RATIO;
+- requested/minimum/maximum leverage are explicit finite positive Decimal values;
+- minimum <= maximum;
+- requested leverage must be within inclusive bounds;
+- all supported Futures markets and Linear/Inverse families are covered;
+- no leverage default is inferred from exchange, margin, notional, or account state;
+- leverage does not calculate margin, liquidation, risk, or position sizing;
+- invalid or ambiguous leverage terms fail closed.
+
+Production boundary: contracts/futures/leverage.py.
+Test boundary: tests/contracts/test_leverage.py.
+CI boundary: .github/workflows/phase1-domain-contracts.yml.

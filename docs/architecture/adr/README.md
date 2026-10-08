@@ -90,3 +90,9 @@ Any future proposal to redefine margin-asset ownership, equate margin with settl
 
 Margin asset and margin semantics are a closed implementation of the approved Phase 1 baseline and are evidenced by same-SHA CI on main merge SHA f2c30bf3da77f56b2dd2d9350af7bb1376f47797. The Phase 1 cursor now advances to leverage vocabulary and contract-level constraints. Any future semantic change to margin-asset ownership, denomination, conversion direction, or fail-closed behavior remains subject to the ADR process.
 
+
+## Phase 1 leverage closure rule
+
+Leverage vocabulary and contract-level constraints are a closed implementation only when explicit RATIO semantics, exact Decimal bounds, fail-closed validation, meaningful tests, CI enforcement, and same-SHA evidence are present.
+
+Any proposal to introduce hidden leverage defaults, infer leverage from margin/notional/account state, redefine the RATIO unit, change bound semantics, or move ownership across dependency boundaries is an Architecture Change Candidate and must use the ADR process before implementation.

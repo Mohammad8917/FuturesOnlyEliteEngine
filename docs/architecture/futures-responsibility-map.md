@@ -237,3 +237,19 @@ Dependencies allowed: canonical instrument identity, explicit market vocabulary,
 Dependencies forbidden: exchange SDKs, network I/O, persistence, runtime configuration, clocks, notifications, hidden defaults, leverage inference, liquidation policy, and exchange-specific collateral policy.
 
 Downstream consumers: leverage, risk, position sizing, liquidation, PnL, reconciliation, and execution may consume the validated margin specification; none may redefine the margin asset or conversion semantics.
+
+## Phase 1 leverage vocabulary / contract-level constraints ownership
+
+Primary owner: Futures domain/contract boundary.
+
+Unit: dimensionless RATIO.
+
+Inputs: canonical Futures instrument identity, matching market, explicit requested leverage, explicit positive minimum, and explicit positive maximum.
+
+Validation: exact finite Decimal values; minimum <= maximum; requested leverage inside inclusive bounds.
+
+Applicability: CRYPTO/FOREX/GOLD and Linear/Inverse Futures.
+
+Forbidden dependencies: exchange SDKs, network, persistence, runtime configuration, account state, hidden defaults, margin calculation, liquidation, risk policy, position sizing, and execution mutation.
+
+Downstream consumers: risk and position-sizing policy may consume validated leverage; none may redefine its unit or contract-level bounds.
