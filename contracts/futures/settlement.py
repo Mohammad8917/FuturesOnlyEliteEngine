@@ -5,6 +5,7 @@ It does not perform exchange settlement, account mutation, persistence,
 network I/O, or scheduling.
 """
 
+import typing
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -25,7 +26,7 @@ class SettlementUnit(StrEnum):
 
 
 def _asset(value: str, field: str) -> str:
-    if not isinstance(value, str):
+    if not isinstance(typing.cast(object, value), str):
         raise SettlementValidationError(f"{field} must be an asset symbol")
     value = value.strip().upper()
     if not value or value.startswith("SPOT"):
@@ -36,7 +37,7 @@ def _asset(value: str, field: str) -> str:
 
 
 def _positive_decimal(value: Decimal, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, Decimal):
+    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), Decimal):
         raise SettlementValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite() or value <= 0:
         raise SettlementValidationError(f"{field} must be finite and greater than zero")
@@ -67,11 +68,11 @@ class FuturesSettlementSpecification:
     conversion_rate: Decimal | None = None
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise SettlementValidationError("market must be a supported Futures market")
-        if not isinstance(self.symbol, CanonicalFuturesSymbol):
+        if not isinstance(typing.cast(object, self.symbol), CanonicalFuturesSymbol):
             raise SettlementValidationError("symbol must be CanonicalFuturesSymbol")
-        if not isinstance(self.settlement_unit, SettlementUnit):
+        if not isinstance(typing.cast(object, self.settlement_unit), SettlementUnit):
             raise SettlementValidationError("settlement_unit must be ASSET")
 
         settlement_asset = _asset(self.settlement_asset, "settlement_asset")
