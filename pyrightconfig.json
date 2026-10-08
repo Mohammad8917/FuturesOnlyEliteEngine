@@ -22,7 +22,6 @@
   "reportUnusedVariable": "error",
   "reportDuplicateImport": "error",
   "reportIncompatibleMethodOverride": "error",
-  "reportUntypedFunctionCall": "error",
   "reportGeneralTypeIssues": "error",
   "reportOptionalMemberAccess": "error",
   "reportOptionalSubscript": "error",
