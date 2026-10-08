@@ -32,7 +32,7 @@ def funding(family: ContractFamily = ContractFamily.LINEAR, rate: object = Decim
         symbol=symbol(family),
         funding_rate_unit=FundingRateUnit.INTERVAL_RATE,
         funding_sign_convention=FundingSignConvention.POSITIVE_LONG_PAYS,
-        funding_rate=rate,
+        funding_rate=cast(Decimal, rate),
         interval_start=datetime(2026, 1, 1, tzinfo=UTC),
         interval_end=datetime(2026, 1, 1, 8, tzinfo=UTC),
         rate_source="synthetic-test-source",
@@ -107,7 +107,7 @@ def test_binary_float_bool_and_nonfinite_rate_are_rejected(value: object) -> Non
 def test_invalid_notional_is_rejected(value: object) -> None:
     with pytest.raises(FundingValidationError):
         funding().calculate_payment(
-            notional=value,
+            notional=cast(Decimal, value),
             position_side=PositionSide.LONG,
         )
 
