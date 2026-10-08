@@ -18,7 +18,6 @@ UTC = timezone.utc
 
 def symbol(family):
     return CanonicalFuturesSymbol(
-        market=Market.CRYPTO,
         base_asset="BTC",
         quote_asset="USDT",
         settlement_asset="USDT",
