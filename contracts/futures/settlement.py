@@ -5,8 +5,9 @@ It does not perform exchange settlement, account mutation, persistence,
 network I/O, or scheduling.
 """
 
-import typing
 from __future__ import annotations
+
+import typing
 
 from dataclasses import dataclass
 from decimal import Decimal
