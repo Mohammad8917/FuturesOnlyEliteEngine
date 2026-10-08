@@ -139,7 +139,7 @@ Phase 1 is complete only when every required contract has a production implement
 
 ## 10.2 Phase 1 execution cursor
 
-**Current cursor:** Futures accounting and settlement accounting semantics.
+**Current cursor:** Phase 1 final completeness/evidence audit.
 
 The instrument identity and canonical Futures symbol unit is evidenced complete on the current main lineage. The next incomplete authorized Phase 1 unit must be completed through the full implementation-unit path:
 
@@ -694,3 +694,20 @@ Frozen baseline:
 - settlement accounting records denomination-preserving transfers and explicit cross-asset conversions only when an explicit positive conversion rate is supplied by the settlement contract;
 - no exchange-specific fee, tier, balance, settlement timing, wallet, collateral, or ledger policy is guessed into the canonical contract;
 - meaningful contract tests, Phase 1 CI, Architecture Invariants CI, G01 CI, and same-SHA evidence are mandatory before the cursor advances.
+
+## Phase 1 final completeness/evidence audit
+
+Futures accounting and settlement accounting are the final minimum financial contract units in the canonical Phase 1 contract set. Before Phase 2, the repository must prove on one exact SHA that every required Phase 1 contract has a production boundary, meaningful tests, dependency enforcement, aligned eight-document governance state, and green Phase 1/G01/Architecture evidence. This is an evidence/governance gate, not authorization for Phase 2 production coding.
+
+
+## Phase 1 accounting / settlement-accounting closure evidence
+
+Futures accounting and settlement accounting semantics are implemented at the canonical Futures domain/contract boundary. The implementation is immutable and deterministic: it records balanced journal facts, consumes already-validated realized-PnL, funding, and settlement facts, preserves explicit asset denomination, Linear/Inverse identity, CRYPTO/FOREX/GOLD applicability, exact Decimal behavior, and fail-closed validation. No persistence, network, exchange SDK, order submission, account mutation, or exchange-specific accounting policy is introduced.
+
+Evidence boundary:
+- production: `contracts/futures/accounting.py`, `contracts/futures/settlement_accounting.py`;
+- tests: `tests/contracts/accounting_contract_test.py`;
+- CI: Phase 1 Domain Contracts, Architecture Invariants, and G01 Dependency Architecture on the same verification SHA;
+- no threshold reduction, test weakening, skip/xfail, assertion removal, or dependency-boundary weakening.
+
+Cross-journal idempotency and durable sequence enforcement remain downstream persistence/reconciliation responsibilities; the canonical domain journal enforces immutable entry identity, explicit causation/version data, and monotonic sequence within each declared journal batch. Contradictory external outcomes remain divergence rather than success.
