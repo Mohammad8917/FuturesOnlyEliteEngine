@@ -5,6 +5,7 @@ for margin amounts. It does not calculate initial/maintenance margin,
 leverage, liquidation, risk limits, or exchange-specific collateral policy.
 """
 
+import typing
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -30,7 +31,7 @@ class MarginUnit(StrEnum):
 
 
 def _asset(value: str, field: str) -> str:
-    if not isinstance(value, str):
+    if not isinstance(typing.cast(object, value), str):
         raise MarginValidationError(f"{field} must be an asset symbol")
     value = value.strip().upper()
     if not value or value.startswith("SPOT") or not value.replace("_", "").isalnum():
@@ -39,10 +40,10 @@ def _asset(value: str, field: str) -> str:
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool):
+    if isinstance(typing.cast(object, value), bool):
         raise MarginValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(value, Decimal) else Decimal(str(value))
+        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise MarginValidationError(f"{field} must be an exact Decimal value") from exc
     if not result.is_finite() or result <= 0:
@@ -72,15 +73,15 @@ class FuturesMarginSpecification:
     conversion_rate: Decimal | None = None
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise MarginValidationError("market must be a supported Futures market")
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(typing.cast(object, self.instrument), FuturesInstrumentIdentity):
             raise MarginValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
         if self.instrument.market is not self.market:
             raise MarginValidationError("market must match the instrument identity")
-        if not isinstance(self.margin_unit, MarginUnit):
+        if not isinstance(typing.cast(object, self.margin_unit), MarginUnit):
             raise MarginValidationError("margin_unit must be ASSET")
 
         margin_asset = _asset(self.margin_asset, "margin_asset")
