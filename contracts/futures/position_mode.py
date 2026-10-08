@@ -40,6 +40,11 @@ class FuturesPositionModeSpecification:
     def allowed_sides(self) -> tuple[PositionSide, ...]:
         return (PositionSide.LONG, PositionSide.SHORT)
 
+    @property
+    def supports_independent_long_short(self) -> bool:
+        """Whether LONG and SHORT positions may coexist independently."""
+        return self.mode is PositionMode.HEDGE
+
     def accepts(self, side: PositionSide) -> bool:
         if not isinstance(side, PositionSide):
             raise PositionModeValidationError(
