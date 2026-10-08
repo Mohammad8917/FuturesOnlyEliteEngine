@@ -23,11 +23,11 @@ class LiquidationTrigger(StrEnum):
     TRIGGERED = "TRIGGERED"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
+def _positive_decimal(value: object, field: str) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise LiquidationEventValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
+        result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise LiquidationEventValidationError(
             f"{field} must be an exact Decimal value"
@@ -41,7 +41,7 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
 
 def _utc(value: datetime, field: str) -> datetime:
     if (
-        not isinstance(typing.cast(object, value), datetime)
+        not isinstance(value, datetime)
         or value.tzinfo is None
         or value.utcoffset() != timedelta(0)
     ):
@@ -52,15 +52,15 @@ def _utc(value: datetime, field: str) -> datetime:
 
 
 def _identifier(value: str, field: str) -> str:
-    if not isinstance(typing.cast(object, value), str) or not value.strip():
+    if not isinstance(value, str) or not value.strip():
         raise LiquidationEventValidationError(
             f"{field} must be a non-empty identifier"
         )
     return value.strip()
 
 
-def _non_negative_integer(value: int, field: str) -> int:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), int) or value < 0:
+def _non_negative_integer(value: object, field: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise LiquidationEventValidationError(
             f"{field} must be a non-negative integer"
         )
