@@ -1,7 +1,8 @@
 """Canonical Futures position-side vocabulary and validation."""
 
-import typing
 from __future__ import annotations
+
+import typing
 
 from enum import StrEnum
 
