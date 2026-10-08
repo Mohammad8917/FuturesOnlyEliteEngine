@@ -427,3 +427,12 @@ No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounti
 ## Phase 1 exposure / position valuation semantic lock
 
 No architecture change is proposed. The exposure/position-valuation unit is an authorized Phase 1 contract under the frozen architecture. Owner is the Futures domain/contract boundary. Linear base exposure = quantity × multiplier and quote value = quantity × multiplier × explicit price; Inverse base exposure = quantity × multiplier ÷ price and quote value = quantity × multiplier. Gross magnitude is non-negative; LONG/SHORT supplies signed direction. Inputs are explicit CONTRACTS and exact finite Decimal values. Valuation requires explicit BASE/QUOTE denomination, reference provenance, and aware UTC observation/freshness. Prior contracts are consumed without redefinition; PnL, funding, margin, settlement, liquidation, accounting, execution, exchange transport and I/O remain outside. Invalid/stale/contradictory/unsupported/ambiguous critical state fails closed. No exchange-specific default, threshold reduction, test weakening, skip/xfail, or dependency weakening is permitted. Production, test, CI and same-SHA evidence are required for closure.
+
+
+## Phase 1 exposure / position valuation closure evidence
+
+Exposure and position valuation is COMPLETE on implementation SHA `dc9461a562426e02af3fc3585beed917940da049`, merged to main as `953c69ee2335cda62d0729f5b7f0bb53f6b2a080`. No architecture change was proposed. Phase 1, G01, and Architecture Invariants were green on the implementation SHA.
+
+## Phase 1 next-unit ADR gate — liquidation price and liquidation constraints
+
+No architecture change is proposed for the next unit. The authorized liquidation-price contract must remain within the frozen architecture and explicitly separate deterministic liquidation-price constraints from liquidation-event execution. It must define owner, formulas, inputs/outputs, denomination, Linear/Inverse and market applicability, exact numeric/rounding rules, provenance/freshness, failure semantics, dependencies, tests, CI, and same-SHA evidence. Exchange-specific defaults must not be guessed into the canonical boundary; any actual architecture change must follow the ADR procedure before implementation.

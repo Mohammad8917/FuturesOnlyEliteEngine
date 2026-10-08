@@ -539,3 +539,16 @@ Frozen baseline:
 - invalid, missing, stale, contradictory, unsupported, or ambiguous critical state fails closed;
 - production: contracts/futures/exposure.py; tests: tests/contracts/exposure_contract_test.py; CI: .github/workflows/phase1-domain-contracts.yml;
 - same-SHA evidence is mandatory before cursor advance; no threshold/test/gate/dependency weakening.
+
+
+## Phase 1 exposure / position valuation closure evidence
+
+Exposure and position valuation semantics are COMPLETE. Production: `contracts/futures/exposure.py`; tests: `tests/contracts/exposure_contract_test.py`; exports and Phase 1 CI were updated. Implementation commit: `dc9461a562426e02af3fc3585beed917940da049`. The implementation commit passed Phase 1 Domain Contracts, G01 Dependency Architecture, and Architecture Invariants on the same SHA. It was merged to main as `953c69ee2335cda62d0729f5b7f0bb53f6b2a080`.
+
+Frozen semantics: explicit gross exposure versus valuation; Linear base = quantity × multiplier; Inverse base = quantity × multiplier ÷ price; Linear quote value = quantity × multiplier × reference price; Inverse quote value = quantity × multiplier; LONG/SHORT supplies signed direction only; exact Decimal; explicit BASE/QUOTE denomination; explicit provenance and aware-UTC freshness; CRYPTO/FOREX/GOLD and Linear/Inverse; fail closed; no exchange-specific defaults or dependency weakening.
+
+## Phase 1 next authorized unit — liquidation price and liquidation constraints
+
+The next authorized Phase 1 unit is **liquidation price and liquidation constraints**. Before production implementation, all eight architecture documents must freeze owner, lifecycle meaning, required inputs/outputs, Linear/Inverse formulas, market applicability, interaction with closed contracts, exact numeric/rounding semantics, provenance/freshness, failure semantics, dependencies, meaningful tests, CI enforcement, and same-SHA evidence.
+
+No Phase 2+ production work is authorized. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.

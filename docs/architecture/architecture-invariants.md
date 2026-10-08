@@ -796,3 +796,12 @@ The canonical Futures exposure/position-valuation boundary is now frozen for thi
 - invalid, missing, stale, contradictory, unsupported, non-finite, zero, negative, or ambiguous state fails closed;
 - production/test/CI boundaries are explicit and same-SHA evidence is required before cursor advance;
 - no threshold reduction, test weakening, skip/xfail, guessed exchange semantics, or dependency-boundary weakening is permitted.
+
+
+## Phase 1 exposure / position valuation closure evidence
+
+Exposure and position valuation semantics are COMPLETE on implementation SHA `dc9461a562426e02af3fc3585beed917940da049`, merged to main as `953c69ee2335cda62d0729f5b7f0bb53f6b2a080`. Same-SHA evidence: Phase 1 Domain Contracts green; G01 Dependency Architecture green; Architecture Invariants green. Production `contracts/futures/exposure.py`, tests `tests/contracts/exposure_contract_test.py`, and CI `.github/workflows/phase1-domain-contracts.yml` are the enforced boundaries. No threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency weakening was used.
+
+## Phase 1 next-unit semantic gate — liquidation price and liquidation constraints
+
+The next authorized contract must freeze: owner and lifecycle boundary; explicit liquidation-price versus liquidation-event meaning; required position/entry/quantity/multiplier/margin/leverage/maintenance-margin and other explicitly owned inputs; Linear/Inverse formulas; CRYPTO/FOREX/GOLD; interaction without redefining closed contracts; exact Decimal/no implicit rounding; account/reference provenance and freshness; fail-closed invalid/stale/contradictory/unsupported/ambiguous state; domain-safe dependencies only; meaningful tests; CI; same-SHA evidence. Exchange-specific liquidation formulas, mark-price conventions, tiers, fees, funding, settlement, or defaults may not be guessed into the canonical contract.
