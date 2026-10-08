@@ -16,7 +16,7 @@ from contracts.futures.position_side import PositionSide
 UTC = timezone.utc
 
 
-def symbol(family):
+def symbol(family: ContractFamily) -> CanonicalFuturesSymbol:
     return CanonicalFuturesSymbol(
         base_asset="BTC",
         quote_asset="USDT",
@@ -25,7 +25,7 @@ def symbol(family):
     )
 
 
-def funding(family=ContractFamily.LINEAR, rate=Decimal("0.000125")):
+def funding(family: ContractFamily = ContractFamily.LINEAR, rate: object = Decimal("0.000125")) -> FuturesFundingSpecification:
     return FuturesFundingSpecification(
         market=Market.CRYPTO,
         symbol=symbol(family),
@@ -42,7 +42,7 @@ def funding(family=ContractFamily.LINEAR, rate=Decimal("0.000125")):
 
 @pytest.mark.parametrize("family", [ContractFamily.LINEAR, ContractFamily.INVERSE])
 @pytest.mark.parametrize("market", list(Market))
-def test_contract_is_explicit_across_markets_and_families(family, market):
+def test_contract_is_explicit_across_markets_and_families(family: ContractFamily, market: Market) -> None:
     spec = FuturesFundingSpecification(
         market=market,
         symbol=CanonicalFuturesSymbol(
@@ -97,13 +97,13 @@ def test_zero_rate_is_valid_but_creates_no_transfer():
     "value",
     [True, False, 0.1, float("nan"), float("inf"), Decimal("NaN"), Decimal("Infinity")],
 )
-def test_binary_float_bool_and_nonfinite_rate_are_rejected(value):
+def test_binary_float_bool_and_nonfinite_rate_are_rejected(value: object) -> None:
     with pytest.raises(FundingValidationError):
         funding(rate=value)
 
 
 @pytest.mark.parametrize("value", [True, False, 0, -1, 0.0, None, Decimal("NaN")])
-def test_invalid_notional_is_rejected(value):
+def test_invalid_notional_is_rejected(value: object) -> None:
     with pytest.raises(FundingValidationError):
         funding().calculate_payment(
             notional=value,
