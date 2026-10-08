@@ -311,7 +311,7 @@ def test_margin_extra_validation_branches():
 def liquidation_args(family=ContractFamily.LINEAR, side=PositionSide.LONG):
     return dict(
         contract=contract(family), quantity=Decimal("1"),
-        entry_price=Decimal("100"), margin_amount=Decimal("500"),
+        entry_price=Decimal("100"), margin_amount=Decimal("2000"),
         margin_denomination=(
             LiquidationDenomination.QUOTE
             if family is ContractFamily.LINEAR
