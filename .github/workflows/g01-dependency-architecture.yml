@@ -52,6 +52,9 @@ jobs:
       - name: Run G01 CI hardening regression tests
         run: python -m pytest -q tests/architecture/test_g01_ci_hardening.py
 
+      - name: Run Phase 1 completeness regression tests
+        run: python -m pytest -q tests/architecture/test_phase1_completeness.py
+
       - name: Run dependency architecture regression tests
         run: python -m pytest -q tests/architecture/test_dependency_direction.py tests/architecture/test_forbidden_imports.py
 
