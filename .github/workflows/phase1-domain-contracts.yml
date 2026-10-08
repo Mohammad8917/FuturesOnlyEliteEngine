@@ -47,6 +47,9 @@ jobs:
       - name: Install test dependency
         run: python -m pip install --disable-pip-version-check --no-input -r requirements-ci.txt
 
+      - name: Run Phase 1 completeness regression tests
+        run: python -m pytest -q tests/architecture/test_phase1_completeness.py
+
       - name: Run Phase 1 contract tests
         env:
           PYTHONPATH: .
