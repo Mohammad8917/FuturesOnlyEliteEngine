@@ -100,6 +100,19 @@ from contracts.futures.settlement_accounting import (
     FuturesSettlementAccountingSpecification,
 )
 
+class LedgerEntryArgs(TypedDict):
+    entry_id: str
+    causation_id: str
+    state_version: int
+    sequence: int
+    account_id: str
+    instrument: FuturesInstrumentIdentity
+    ledger_account: str
+    asset: str
+    direction: AccountingDirection
+    amount: Decimal
+
+
 class LiquidationArgs(TypedDict):
     contract: FuturesContractSpecification
     quantity: Decimal
@@ -222,15 +235,15 @@ def test_accounting_entry_and_journal_validation_branches():
     ]
     for field, value in bad_fields:
         with pytest.raises(AccountingValidationError):
-            FuturesLedgerEntry(**{**base, field: value})
+            FuturesLedgerEntry(**cast(LedgerEntryArgs, {**base, field: value}))
 
     valid = FuturesLedgerEntry(**base)
     with pytest.raises(AccountingValidationError):
         FuturesAccountingJournal("j", (valid,))
     with pytest.raises(AccountingValidationError):
-        FuturesAccountingJournal("j", (valid, FuturesLedgerEntry(**{**base, "entry_id": "e2", "sequence": 1})))
+        FuturesAccountingJournal("j", (valid, FuturesLedgerEntry(**cast(LedgerEntryArgs, {**base, "entry_id": "e2", "sequence": 1}))))
     with pytest.raises(AccountingValidationError):
-        FuturesAccountingJournal("j", (valid, FuturesLedgerEntry(**{**base, "entry_id": "e2", "sequence": 2, "direction": AccountingDirection.CREDIT, "asset": "USD", "amount": Decimal("2")})))
+        FuturesAccountingJournal("j", (valid, FuturesLedgerEntry(**cast(LedgerEntryArgs, {**base, "entry_id": "e2", "sequence": 2, "direction": AccountingDirection.CREDIT, "asset": "USD", "amount": Decimal("2")}))))
 
 
 def test_accounting_constructor_and_funding_boundaries():
