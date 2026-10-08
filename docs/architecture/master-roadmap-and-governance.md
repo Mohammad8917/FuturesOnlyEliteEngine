@@ -511,3 +511,27 @@ The initial-margin unit must close with:
 16. same-SHA evidence.
 
 No Phase 1 cursor advance is permitted until all sixteen conditions are evidenced.
+
+## Phase 1 cursor transition — initial margin closed
+
+Initial margin semantics have exited their gate with production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence on main SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`.
+
+The next authorized Phase 1 unit is **maintenance margin semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
+
+## Phase 1 maintenance margin gate
+
+Before implementation, maintenance margin must explicitly define:
+1. owner and responsibility boundary;
+2. formula inputs and outputs;
+3. denomination and exact numeric representation;
+4. Linear/Inverse applicability;
+5. CRYPTO/FOREX/GOLD applicability;
+6. tier/rate/amount semantics where applicable;
+7. precision and rounding behavior;
+8. fail-closed handling of missing, invalid, contradictory, stale, unsupported, or ambiguous terms;
+9. allowed and forbidden dependencies;
+10. meaningful contract tests;
+11. CI enforcement;
+12. same-SHA evidence.
+
+No maintenance-margin implementation may infer exchange-specific values or weaken any quality threshold.
