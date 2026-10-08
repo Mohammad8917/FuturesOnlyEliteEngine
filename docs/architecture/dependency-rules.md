@@ -212,3 +212,9 @@ Forbidden dependencies:
 - exchange-specific collateral defaults.
 
 The contract computes only `initial_margin_amount = notional × initial_margin_ratio`, preserves the notional denomination, performs no implicit conversion or rounding, and fails closed on invalid or ambiguous inputs.
+
+## Phase 1 cursor after initial margin closure
+
+Initial-margin semantics are closed with same-SHA evidence on main merge SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`. The next dependency-boundary unit is maintenance margin semantics.
+
+Maintenance-margin implementation must first establish explicit ownership and formula inputs. Exchange-specific tier tables may be mapped into a canonical domain contract but may not be guessed or silently defaulted. The contract must remain free of exchange SDKs, network I/O, persistence, runtime configuration, and account mutation.

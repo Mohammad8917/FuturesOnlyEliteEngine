@@ -21,11 +21,11 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: b051fee5b33a3d39ff8db6c7249c2333ea51b1ff; Architecture Invariants and G01 are green on this SHA.
+- Last verified SHA: 4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f; verified by same-SHA Phase 1, Architecture Invariants, and G01 evidence.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — instrument identity, multiplier/contract specification, settlement asset/settlement semantics, and margin asset/margin semantics are implemented and evidenced; leverage vocabulary and contract-level constraints are implemented and evidenced; initial margin semantics are now the first incomplete contract.
+- Active work: Phase 1 Domain Contracts — instrument identity, multiplier/contract specification, settlement, margin, leverage, and initial margin are implemented and evidenced; maintenance margin semantics are now the first incomplete contract.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: define and implement the explicit initial-margin requirement contract from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
+- Next authorized action: define and implement the explicit maintenance-margin contract from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -208,3 +208,16 @@ Test boundary: `tests/contracts/test_initial_margin.py`.
 CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
 
 No cursor advance is authorized until production implementation, contract tests, CI enforcement, and same-SHA evidence are green.
+
+## Phase 1 cursor transition — initial margin closed
+
+- Initial margin semantics: COMPLETE — production implementation, contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on same SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`.
+- Active work: Phase 1 Domain Contracts — maintenance margin semantics.
+- Next authorized action: define and implement the explicit maintenance-margin contract without inferring exchange-specific tiers, rates, or amounts.
+- Forbidden action: do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, weaken tests/gates, lower G05/G08, or skip the first incomplete phase/gate.
+
+## Phase 1 current cursor — maintenance margin
+
+Current cursor: **maintenance margin semantics**.
+
+The next unit must first freeze explicit ownership, inputs, outputs, denomination, precision, applicability, tier/rate/amount semantics where applicable, and fail-closed behavior before production implementation.

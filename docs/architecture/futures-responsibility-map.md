@@ -263,3 +263,11 @@ Downstream consumers: leverage, risk, position sizing, liquidation, PnL, reconci
 **Failure semantics:** missing, invalid, zero, negative, non-finite, contradictory, or ambiguous inputs fail closed.
 
 **Downstream consumers:** risk and position-sizing policy may consume the validated initial-margin result; none may redefine its formula, denomination, or ownership.
+
+## Phase 1 maintenance margin semantics ownership cursor
+
+Initial-margin semantics are closed with verified implementation and CI evidence on merge SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`.
+
+The next incomplete responsibility is **maintenance margin semantics** and must receive one explicit primary owner before implementation. Ownership must define inputs, outputs, units/precision, Linear/Inverse applicability, market applicability, tier/rate/amount semantics where applicable, dependencies, failure semantics, and downstream consumers.
+
+No exchange-specific maintenance-margin policy may be silently promoted to canonical domain meaning.
