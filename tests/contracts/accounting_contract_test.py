@@ -4,6 +4,16 @@ from decimal import Decimal
 
 import pytest
 
+class RealizedPnLArgs(TypedDict):
+    journal_id: str
+    causation_id: str
+    state_version: int
+    sequence: int
+    account_id: str
+    pnl_amount: Decimal
+    denomination: str
+
+
 from contracts.futures.accounting import (
     AccountingDirection,
     AccountingValidationError,
@@ -136,7 +146,7 @@ def test_journal_rejects_duplicate_ids_and_unbalanced_assets():
     ],
 )
 def test_financial_boundaries_reject_bool_float_and_invalid_decimal(field: str, value: object) -> None:
-    kwargs = dict(
+    kwargs: dict[str, object] = dict(
         journal_id="j-invalid",
         causation_id="cause",
         state_version=1,
@@ -147,7 +157,7 @@ def test_financial_boundaries_reject_bool_float_and_invalid_decimal(field: str, 
     )
     kwargs[field] = value
     with pytest.raises(AccountingValidationError):
-        accounting().realized_pnl(**kwargs)
+        accounting().realized_pnl(**cast(RealizedPnLArgs, kwargs))
 
 
 def test_linear_and_inverse_remain_explicit_in_journal_identity():
@@ -266,6 +276,6 @@ def test_settlement_boundary_rejects_non_decimal_source_amount():
             sequence=1,
             account_id="acct",
             settlement_counterparty_account_id="settlement",
-            source_amount=1.0,
+            source_amount=cast(Decimal, 1.0),
             source_asset="USD",
         )
