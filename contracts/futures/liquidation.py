@@ -1,6 +1,8 @@
 """Canonical Futures liquidation-price constraint semantics."""
 from __future__ import annotations
 
+import typing
+
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
@@ -20,10 +22,10 @@ class LiquidationDenomination(StrEnum):
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
         raise LiquidationValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(value, Decimal) else Decimal(str(value))
+        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise LiquidationValidationError(
             f"{field} must be an exact Decimal value"
@@ -47,9 +49,9 @@ class FuturesLiquidationSpecification:
     symbol: CanonicalFuturesSymbol
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise LiquidationValidationError("market must be a supported Futures market")
-        if not isinstance(self.symbol, CanonicalFuturesSymbol):
+        if not isinstance(typing.cast(object, self.symbol), CanonicalFuturesSymbol):
             raise LiquidationValidationError("symbol must be CanonicalFuturesSymbol")
         if self.symbol.contract_family not in (
             ContractFamily.LINEAR,
@@ -60,7 +62,7 @@ class FuturesLiquidationSpecification:
     def _validate_contract(
         self, contract: FuturesContractSpecification
     ) -> FuturesContractSpecification:
-        if not isinstance(contract, FuturesContractSpecification):
+        if not isinstance(typing.cast(object, contract), FuturesContractSpecification):
             raise LiquidationValidationError(
                 "contract must be FuturesContractSpecification"
             )
@@ -85,11 +87,11 @@ class FuturesLiquidationSpecification:
         margin = _positive_decimal(margin_amount, "margin_amount")
         mmr = _positive_decimal(maintenance_margin_ratio, "maintenance_margin_ratio")
 
-        if not isinstance(margin_denomination, LiquidationDenomination):
+        if not isinstance(typing.cast(object, margin_denomination), LiquidationDenomination):
             raise LiquidationValidationError(
                 "margin_denomination must be explicitly BASE or QUOTE"
             )
-        if not isinstance(position_side, PositionSide):
+        if not isinstance(typing.cast(object, position_side), PositionSide):
             raise LiquidationValidationError("position_side must be explicit")
         if mmr >= Decimal("1"):
             raise LiquidationValidationError(
