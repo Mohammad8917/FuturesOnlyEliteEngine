@@ -450,7 +450,7 @@ Gate exit requires production implementation, meaningful contract tests, CI enfo
 
 Multiplier and contract specification has exited its gate with production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence on main SHA `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`.
 
-The next authorized Phase 1 unit is **leverage vocabulary and contract-level constraints**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
+The next authorized Phase 1 unit is **initial margin semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
 \n## Phase 1 settlement gate
 
 The settlement unit must close with:
@@ -490,7 +490,7 @@ The margin unit must close with:
 
 No later Phase 1 contract may advance ahead of this gate.
 
-## Phase 1 leverage gate
+## Phase 1 initial margin gate
 
 The leverage unit must close with:
 1. explicit RATIO denomination;

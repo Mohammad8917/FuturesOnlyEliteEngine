@@ -93,6 +93,12 @@ Margin asset and margin semantics are a closed implementation of the approved Ph
 
 ## Phase 1 leverage closure rule
 
+Leverage vocabulary and contract-level constraints are closed on main with same-SHA evidence at merge SHA 9949bad3641cba8474027019360b5539974c13e2. The Phase 1 cursor now advances to initial margin semantics.
+
+Any future semantic change to leverage unit or bound semantics remains subject to the ADR process.
+
+## Phase 1 initial margin cursor rule
+
 Leverage vocabulary and contract-level constraints are a closed implementation only when explicit RATIO semantics, exact Decimal bounds, fail-closed validation, meaningful tests, CI enforcement, and same-SHA evidence are present.
 
 Any proposal to introduce hidden leverage defaults, infer leverage from margin/notional/account state, redefine the RATIO unit, change bound semantics, or move ownership across dependency boundaries is an Architecture Change Candidate and must use the ADR process before implementation.

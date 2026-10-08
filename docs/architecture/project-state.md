@@ -23,7 +23,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
 - Last verified SHA: 8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf; verified by current GitHub Actions same-SHA evidence.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — instrument identity, multiplier/contract specification, settlement asset/settlement semantics, and margin asset/margin semantics are implemented and evidenced; leverage vocabulary and contract-level constraints are now the first incomplete contract.
+- Active work: Phase 1 Domain Contracts — instrument identity, multiplier/contract specification, settlement asset/settlement semantics, and margin asset/margin semantics are implemented and evidenced; leverage vocabulary and contract-level constraints are implemented and evidenced; initial margin semantics are now the first incomplete contract.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
 - Next authorized action: define and implement leverage vocabulary and contract-level constraints from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
@@ -122,11 +122,11 @@ No downstream Phase 1 cursor advance is authorized until production implementati
 - Current documentation cursor snapshot is maintained on the current main HEAD and must be re-verified after every state change.
 - Multiplier / contract specification: COMPLETE — production implementation, contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on the same merge SHA.
 - Active work: Phase 1 Domain Contracts — leverage vocabulary and contract-level constraints.
-- Next authorized action: define and implement the leverage vocabulary/contract-level constraints contract.
+- Next authorized action: define and implement the initial margin semantics contract.
 - Forbidden action: do not bypass settlement semantics, reinterpret multiplier meaning, weaken tests/gates, lower G05/G08, or skip the first incomplete Phase 1 contract.
 \n## Phase 1 settlement implementation evidence
 
-The active cursor is **leverage vocabulary and contract-level constraints**.
+The active cursor is **initial margin semantics**.
 
 The implementation contract is frozen:
 - settlement unit = ASSET;
@@ -145,7 +145,7 @@ CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
 
 - Settlement asset and settlement semantics: COMPLETE — production implementation, contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on same SHA `164dcb97c38271ab29f79f8e9b8068bcc8a55234`.
 - Active work: Phase 1 Domain Contracts — margin asset and margin semantics.
-- Next authorized action: define and implement leverage vocabulary and contract-level constraints.
+- Next authorized action: define and implement initial margin semantics.
 - Forbidden action: bypass margin semantics, redefine settlement/multiplier meaning, weaken tests/gates, lower G05/G08, or skip the first incomplete Phase 1 contract.
 
 
@@ -179,9 +179,9 @@ Margin asset and margin semantics are COMPLETE on main merge SHA f2c30bf3da77f56
 - G01 CI: green on the same SHA
 - Phase 1 contract CI: green on the same SHA
 
-## Phase 1 current cursor — leverage
+## Phase 1 current cursor — initial margin
 
-Current cursor: leverage vocabulary and contract-level constraints.
+Current cursor: initial margin semantics.
 
 Next authorized action: define and implement leverage vocabulary and contract-level constraints. No Phase 2+ work is authorized, and no threshold/test/gate weakening is permitted.
 

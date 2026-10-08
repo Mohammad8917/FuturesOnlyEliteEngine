@@ -192,7 +192,7 @@ The following are architectural safety requirements and must have an explicit ow
 
 ## 8.1 Phase 1 domain-contract enforcement invariant
 
-The instrument identity and canonical Futures symbol unit, and the multiplier/contract-specification unit, are complete on the verified main lineage. The first incomplete Phase 1 production contract is now **leverage vocabulary and contract-level constraints**.
+The instrument identity and canonical Futures symbol unit, and the multiplier/contract-specification unit, are complete on the verified main lineage. The first incomplete Phase 1 production contract is now **initial margin semantics**.
 
 The multiplier/contract-specification contract must make the following explicit and validated: contract quantity/unit, multiplier meaning, contract-size semantics, quote/settlement denomination, Linear/Inverse applicability, market applicability (CRYPTO Futures, FOREX Futures, GOLD Futures), precision/representation requirements, valid ranges, and failure semantics for unknown, zero, negative, contradictory, stale, unsupported, or ambiguous specifications.
 
@@ -402,7 +402,7 @@ The canonical production contract is `contracts/futures/contract_specification.p
 
 The multiplier and contract-specification unit is **complete** on the verified main lineage: production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence all passed.
 
-The current incomplete Phase 1 production contract is **leverage vocabulary and contract-level constraints**. It must preserve the explicit multiplier, settlement, and margin boundaries and independently define leverage units, limits, applicability, validation, and fail-closed behavior before implementation.
+The current incomplete Phase 1 production contract is **initial margin semantics**. It must preserve the explicit multiplier, settlement, margin, and leverage boundaries and independently define initial-margin denomination, formula inputs, ownership, applicability, validation, and fail-closed behavior before implementation.
 \n## 8.1.3 Settlement asset / settlement semantics lock
 
 The settlement contract is now frozen for this implementation unit:
@@ -420,7 +420,7 @@ The settlement contract is now frozen for this implementation unit:
 
 Settlement asset and settlement semantics are complete on verified main SHA `164dcb97c38271ab29f79f8e9b8068bcc8a55234`: production implementation, meaningful contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on the same SHA.
 
-The next incomplete Phase 1 production contract is **leverage vocabulary and contract-level constraints**. It must define leverage representation, bounds, Linear/Inverse applicability, market applicability, configuration ownership, validation, and fail-closed behavior before implementation.
+The next incomplete Phase 1 production contract is **initial margin semantics**. It must define explicit formula inputs, denomination, Linear/Inverse applicability, market applicability, ownership, validation, and fail-closed behavior before implementation.
 
 
 ## 8.1.5 Phase 1 margin asset / margin semantics lock
@@ -449,7 +449,7 @@ The first incomplete leverage unit is now authorized. It must explicitly define 
 
 Leverage must never be silently inferred from exchange defaults, margin amount, notional, or account state. This unit does not calculate initial margin, maintenance margin, liquidation, or risk decisions; those remain separately owned contracts.
 
-## 8.1.7 Phase 1 leverage contract lock
+## 8.1.8 Phase 1 initial margin cursor
 
 Leverage is a dimensionless RATIO and must be represented with exact finite Decimal semantics. The canonical leverage contract requires all three values explicitly: requested leverage, minimum contract-level leverage, and maximum contract-level leverage.
 
@@ -457,7 +457,7 @@ The requested leverage is valid only inside the explicit inclusive interval. No 
 
 This unit applies to CRYPTO/FOREX/GOLD and Linear/Inverse Futures. It consumes canonical instrument identity but does not redefine margin, settlement, multiplier, risk policy, position sizing, liquidation, or exchange transport semantics.
 
-Leverage is never inferred from margin, notional, account state, exchange defaults, or runtime configuration. Invalid, missing, non-finite, zero, negative, reversed, contradictory, or out-of-bounds terms fail closed.
+Initial margin must not infer leverage, margin asset, settlement asset, multiplier, or exchange-specific collateral policy. Its formula inputs must be explicit and validated; invalid, missing, contradictory, or ambiguous terms fail closed.
 
 Production boundary: contracts/futures/leverage.py.
 Test boundary: tests/contracts/test_leverage.py.

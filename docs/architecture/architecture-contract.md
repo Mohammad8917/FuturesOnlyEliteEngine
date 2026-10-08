@@ -165,7 +165,7 @@ The price quote asset must equal the canonical Futures symbol quote asset. Margi
 
 ## Phase 1 cursor — settlement
 
-The multiplier/contract-specification and settlement contracts are complete and evidenced on main. The next incomplete Phase 1 contract is leverage vocabulary and contract-level constraints. It must explicitly define leverage representation, bounds, ownership, Linear/Inverse applicability, market applicability, precision/UTC requirements where applicable, and fail-closed behavior before production implementation.
+The multiplier/contract-specification, settlement, margin, and leverage contracts are complete and evidenced on main. The next incomplete Phase 1 contract is initial margin semantics. It must explicitly define formula inputs, denomination, ownership, Linear/Inverse applicability, market applicability, precision requirements, and fail-closed behavior before production implementation.
 \n## Phase 1 settlement asset / settlement semantics
 
 Settlement is an explicit domain contract, not an exchange-side guess.
@@ -175,7 +175,7 @@ The canonical settlement asset comes from the Futures instrument identity and mu
 The settlement contract performs no network access, rate discovery, exchange selection, scheduling, persistence, account mutation, or margin inference. Those concerns belong to later application/infrastructure contracts. Missing or contradictory settlement terms fail closed.
 \n## Phase 1 cursor — margin
 
-The margin asset/margin semantics contract is complete and evidenced on main. The next incomplete Phase 1 contract is leverage vocabulary and contract-level constraints. It must explicitly define leverage representation, contract-level constraints, ownership, Linear/Inverse applicability, market applicability, validation, and fail-closed behavior before production implementation.
+The leverage vocabulary/contract-level constraints contract is complete and evidenced on main. The next incomplete Phase 1 contract is initial margin semantics. It must explicitly define formula inputs, denomination, ownership, Linear/Inverse applicability, market applicability, validation, and fail-closed behavior before production implementation.
 
 
 ## Phase 1 margin asset / margin semantics contract
@@ -188,7 +188,7 @@ This contract applies to CRYPTO/FOREX/GOLD and Linear/Inverse Futures. It perfor
 
 The production boundary is contracts/futures/margin.py; meaningful contract tests are in tests/contracts/test_margin.py; CI enforcement is through .github/workflows/phase1-domain-contracts.yml.
 
-## Phase 1 leverage vocabulary / contract-level constraints
+## Phase 1 initial margin semantics cursor
 
 The canonical leverage contract is a dimensionless ratio. Requested leverage, minimum leverage, and maximum leverage are explicit exact finite positive Decimal values. The minimum must not exceed the maximum, and the requested leverage must lie within the inclusive explicit interval.
 
