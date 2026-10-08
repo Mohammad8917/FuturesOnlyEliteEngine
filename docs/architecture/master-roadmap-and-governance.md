@@ -848,3 +848,12 @@ Exposure and position valuation is COMPLETE on implementation SHA `dc9461a562426
 ## Phase 1 next-unit governance gate — liquidation price and liquidation constraints
 
 The next authorized Phase 1 unit is liquidation price and liquidation constraints. Entry requires an explicit semantic lock across ownership, lifecycle, inputs/outputs, denomination, Linear/Inverse formulas, market applicability, interactions with all closed contracts, exact Decimal/no rounding, provenance/freshness, fail-closed behavior, dependency boundaries, meaningful tests, CI, and same-SHA evidence. No exchange-specific liquidation/mark-price/tier/fee/funding/settlement default may be introduced. No threshold, test, skip/xfail, or dependency weakening is allowed.
+
+
+## Phase 1 liquidation-price constraint closure evidence
+
+Liquidation-price constraints are COMPLETE on implementation SHA `b8b65b721fcae5720d5cf430c979700516d8c10a`, merged as `c18a99d58b8b8dc904250fce38d738eee3bd9bd6`. The implementation passed Phase 1 Domain Contracts and G01 on the implementation lineage; merge SHA Phase 1 evidence is green. No quality gate was weakened.
+
+## Phase 1 next-unit governance gate — liquidation event and trigger semantics
+
+The next authorized unit is liquidation event and trigger semantics. Entry requires explicit ownership, trigger/reference provenance and freshness, side/mode semantics, required state, Linear/Inverse and three-market scope, exact Decimal/no implicit rounding, fail-closed stale/ambiguous behavior, idempotency/ordering/concurrency, dependency boundaries, meaningful tests, CI, and same-SHA evidence. The canonical contract must not implement forced execution, order placement, account mutation, exchange transport, or exchange-specific mark-price/tier/fee/funding defaults. No threshold reduction, skip/xfail, assertion weakening, or dependency weakening is permitted.
