@@ -138,7 +138,7 @@ class LiquidationEventDataArgs(TypedDict):
     event_id: str
     causation_id: str
     state_version: int
-    contract_family: ContractFamily
+    event_sequence: int
     position_mode: PositionMode
     position_side: PositionSide
     quantity: Decimal
@@ -153,7 +153,6 @@ class LiquidationEventDataArgs(TypedDict):
     as_of: datetime
     max_age: timedelta
     previous_event_sequence: int
-    event_sequence: int
 
 
 class LedgerEntryArgs(TypedDict):
