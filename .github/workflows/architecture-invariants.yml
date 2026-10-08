@@ -66,3 +66,5 @@ jobs:
 # Same-SHA trigger anchor: liquidation-trigger contract closure verification.
 
 # Final same-SHA trigger anchor: liquidation-trigger verification after export repair.
+
+# Same-SHA trigger anchor: accounting cursor follows liquidation-trigger closure.

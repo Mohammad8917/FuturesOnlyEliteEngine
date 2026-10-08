@@ -23,9 +23,9 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
 - Last verified SHA: `9762a29bcc4ba92166c4ed3a1dff239c5f501636`; verified immediately before this state snapshot with Architecture Invariants, G01 Dependency Architecture, and Phase 1 Domain Contracts all green on that exact SHA. The snapshot commit itself must be re-verified before being recorded as the next last-verified SHA.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — instrument, multiplier, settlement, margin, leverage, initial/maintenance margin, position side/mode, price/quantity, funding, PnL, exposure/valuation, and liquidation-price constraints are closed; the current incomplete unit is liquidation event and trigger semantics.
+- Active work: Phase 1 Domain Contracts — instrument, multiplier, settlement, margin, leverage, initial/maintenance margin, position side/mode, price/quantity, funding, PnL, exposure/valuation, and liquidation-price constraints are closed; liquidation event and trigger semantics are closed; the current incomplete unit is Futures accounting and settlement accounting semantics.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: freeze and then implement liquidation event and trigger semantics across all eight architecture documents; preserve provenance/freshness, exact numeric behavior, idempotency/ordering/concurrency, and fail-closed semantics.
+- Next authorized action: freeze and then implement Futures accounting and settlement accounting semantics across the authoritative architecture path; preserve denomination, exact numeric behavior, provenance, ordering/idempotency, reconciliation boundaries, and fail-closed semantics.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -563,3 +563,11 @@ Liquidation-price and liquidation-constraint semantics are COMPLETE. Implementat
 The next authorized Phase 1 unit is **liquidation event and trigger semantics**. Before implementation, all eight architecture documents must freeze trigger ownership, reference-price provenance/freshness, LONG/SHORT and ONE_WAY/HEDGE behavior, state inputs/outputs, Linear/Inverse and three-market scope, exact numeric/rounding rules, invalid/stale/ambiguous handling, dependency boundaries, idempotency/ordering/concurrency, tests, CI, and same-SHA evidence.
 
 No Phase 2+ production work is authorized. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
+
+## Phase 1 liquidation event / trigger semantics closure
+
+Liquidation event and trigger semantics are COMPLETE on evidence SHA `67b3592f7dbaa4f87c7065d439565e2a32b9eef4`.
+
+Frozen semantics: the Futures domain/contract boundary owns deterministic trigger evaluation only; liquidation-price calculation is consumed, not redefined; the reference price requires explicit provenance, aware UTC observation time, explicit UTC `as_of`, and positive freshness `max_age`; LONG triggers at reference <= liquidation price and SHORT triggers at reference >= liquidation price; side is LONG/SHORT only and mode is ONE_WAY/HEDGE only; account/position identity, event/causation identity, state version, event sequence, quantity, entry, margin, maintenance ratio, liquidation price, and reference price are explicit; Linear/Inverse and CRYPTO/FOREX/GOLD are explicit; financial inputs are exact finite Decimal with no implicit rounding; stale, contradictory, ambiguous, invalid, or unsupported critical state fails closed; triggered events require monotonic sequence advancement and immutable event identity; execution, forced orders, account mutation, network, persistence, and exchange-specific mark-price/tier/fee/funding policy are forbidden.
+
+Production: `contracts/futures/liquidation_event.py`. Tests: `tests/contracts/liquidation_event_contract_test.py`. CI: Phase 1 Domain Contracts + Architecture Invariants + G01. All three are green on the same evidence SHA.

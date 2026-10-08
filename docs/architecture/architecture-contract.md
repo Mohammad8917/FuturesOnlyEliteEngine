@@ -536,3 +536,11 @@ Liquidation-price and liquidation-constraint semantics are COMPLETE on implement
 ## Phase 1 next-unit semantic gate — liquidation event and trigger semantics
 
 The next canonical contract must own deterministic trigger-condition semantics only. It must define explicit reference-price provenance/freshness, LONG/SHORT and ONE_WAY/HEDGE trigger direction, state inputs/outputs, Linear/Inverse and CRYPTO/FOREX/GOLD applicability, exact numeric/rounding behavior, stale/ambiguous failure semantics, idempotency/ordering/concurrency, meaningful tests, CI, and same-SHA evidence. It must consume the closed liquidation-price, exposure, PnL, margin, maintenance, position, and price/quantity contracts without redefining them. Forced execution, order placement, account mutation, network, SDK, persistence, and exchange-specific trigger/mark-price/tier/fee/funding defaults remain outside.
+
+## Phase 1 liquidation event / trigger semantics closure
+
+Liquidation event and trigger semantics are COMPLETE on evidence SHA `67b3592f7dbaa4f87c7065d439565e2a32b9eef4`.
+
+Frozen semantics: the Futures domain/contract boundary owns deterministic trigger evaluation only; liquidation-price calculation is consumed, not redefined; the reference price requires explicit provenance, aware UTC observation time, explicit UTC `as_of`, and positive freshness `max_age`; LONG triggers at reference <= liquidation price and SHORT triggers at reference >= liquidation price; side is LONG/SHORT only and mode is ONE_WAY/HEDGE only; account/position identity, event/causation identity, state version, event sequence, quantity, entry, margin, maintenance ratio, liquidation price, and reference price are explicit; Linear/Inverse and CRYPTO/FOREX/GOLD are explicit; financial inputs are exact finite Decimal with no implicit rounding; stale, contradictory, ambiguous, invalid, or unsupported critical state fails closed; triggered events require monotonic sequence advancement and immutable event identity; execution, forced orders, account mutation, network, persistence, and exchange-specific mark-price/tier/fee/funding policy are forbidden.
+
+Production: `contracts/futures/liquidation_event.py`. Tests: `tests/contracts/liquidation_event_contract_test.py`. CI: Phase 1 Domain Contracts + Architecture Invariants + G01. All three are green on the same evidence SHA.
