@@ -21,11 +21,11 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: 6731c6c80d4d31c4bb180dbb2d343de76537971a; verified by same-SHA Phase 1 and G01 evidence after instrument-identity hardening.
+- Last verified SHA: 365dc0b38b8decb3d1f970ba4bd659cf694ddf41; verified by same-SHA Phase 1 and G01 evidence after instrument-identity hardening.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
 - Active work: Phase 1 Domain Contracts — instrument identity, multiplier/contract specification, settlement, margin, leverage, and initial margin are implemented and evidenced; maintenance margin and position side/mode semantics are closed; price, quantity, monetary units, denomination, precision, and rounding semantics are now the first incomplete contract.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: define and implement the explicit price/quantity/monetary-unit contract from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
+- Next authorized action: complete the explicit price/quantity/monetary-unit contract from the canonical baseline, then require same-SHA CI evidence before advancing the cursor.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -181,7 +181,7 @@ Margin asset and margin semantics are COMPLETE on main merge SHA f2c30bf3da77f56
 
 ## Phase 1 current cursor — initial margin
 
-Current cursor: **position side and position mode semantics**.
+Current cursor: **price, quantity, monetary units, denomination, precision, and rounding semantics**.
 
 Next authorized action: define and implement the explicit maintenance-margin requirement contract from the frozen architecture baseline. No Phase 2+ work is authorized, and no threshold/test/gate weakening is permitted.
 
@@ -332,3 +332,27 @@ The next unit must first freeze one explicit primary owner and define:
 12. same-SHA evidence.
 
 No exchange-specific precision, tick size, lot size, rounding mode, or default may be guessed into the canonical contract.
+
+
+## Phase 1 price / quantity / monetary-unit semantic lock
+
+Position side and position mode are complete on main merge SHA 6731c6c80d4d31c4bb180dbb2d343de76537971a. The active Phase 1 contract is price, quantity, monetary units, denomination, precision, and rounding semantics.
+
+Frozen baseline:
+- owner: Futures domain/contract boundary;
+- price unit: QUOTE_PER_BASE — quote-asset units per one base-asset unit;
+- quantity unit: CONTRACTS, consistent with the canonical multiplier contract;
+- price denomination must equal the canonical Futures symbol quote asset;
+- price and quantity are exact finite positive Decimal values; bool and binary float inputs are rejected;
+- canonical precision policy is EXACT and canonical rounding policy is NONE: no implicit quantization or rounding occurs;
+- exchange tick sizes, lot sizes, decimal-place limits, exchange-specific precision, and exchange rounding modes are not guessed or embedded here;
+- applicable to CRYPTO/FOREX/GOLD and Linear/Inverse Futures;
+- this contract does not redefine multiplier, settlement, margin, leverage, initial/maintenance margin, position side/mode, funding, PnL, liquidation, or execution rules;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation dependency;
+- invalid, missing, contradictory, unsupported, non-finite, zero, negative, or ambiguous values fail closed;
+- infrastructure may map exchange-specific precision/rounding metadata only after this canonical semantic boundary and may not redefine its meaning;
+- meaningful tests, CI enforcement, and same-SHA evidence are required before the cursor advances.
+
+Production boundary: contracts/futures/price_quantity.py.
+Test boundary: tests/contracts/test_price_quantity.py.
+CI boundary: .github/workflows/phase1-domain-contracts.yml.
