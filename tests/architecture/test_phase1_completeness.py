@@ -70,4 +70,4 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     state = (ARCH / "project-state.md").read_text(encoding="utf-8")
     assert "Phase 2+ production implementation remains blocked" in state
     assert "final completeness/evidence audit are CLOSED" in state
-    assert "Next authorized action: G02 entry review/announcement." in state
+    assert "Next authorized action: G05 coverage implementation/audit." in state

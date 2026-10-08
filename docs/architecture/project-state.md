@@ -18,15 +18,15 @@ This is project state, not the architectural contract. Architectural rules remai
 - Architecture status: FROZEN BY DEFAULT
 - Operational Spot: FORBIDDEN
 - Current phase: Phase 1 — Domain Contracts
-- Current gate: Phase 1 Domain Contracts
+- Current gate: G05 — Coverage
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: `b18a6ef85dfa1c8c1dfd20c55300412d81151140`; G01 Dependency Architecture (`37814347213`), Architecture Invariants (`37814347249`), and Phase 1 Domain Contracts (`37814347420`) are all green on this exact pre-snapshot SHA. This is the current same-SHA Phase 1 evidence anchor; the state snapshot commit itself becomes the next repository HEAD and must be re-verified by CI.
-- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — implementation and final completeness/evidence audit are CLOSED on the verified SHA.
-- Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: G02 entry review/announcement. No G02 production coding begins until the required pre-entry announcement and explicit authorization are obtained.
-- Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
+- Last verified SHA: `5affea424d4ca6907c1ebc9b63797e35b8f535af` — G01 Dependency Architecture (`37839180000`) and G04 Architecture Boundary Enforcement (`37839180011`) are green on this exact main merge SHA.
+- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 — Domain Contracts.
+- Active work: Phase 1 Domain Contracts — Phase 1 final completeness/evidence audit are CLOSED. G05 — achieve and evidence the immutable `>= 98%` coverage requirement without excluding meaningful production code, weakening tests, or changing thresholds.
+- Blocked work: Phase 2+ production implementation remains blocked until the current gate sequence is resolved according to the roadmap. Any gate skip/weakening remains forbidden.
+- Next authorized action: G05 coverage implementation/audit.
+- Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, add exclusions/ignores solely to obtain green, or skip the first incomplete gate.
 
 ## Required state fields for every update
 

@@ -35,7 +35,7 @@ def test_phase_control_documents_are_consistent() -> None:
     assert "Phase 2+ remains blocked" in roadmap
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
-    assert "- Current gate: Phase 1 Domain Contracts" in state
+    assert "- Current gate: G05 — Coverage" in state
     assert (
         "- Implementation phase authorized: YES — Phase 1 Domain Contracts"
         in state
