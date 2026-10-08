@@ -2,6 +2,7 @@
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from typing import Any, cast
 
 import pytest
 
@@ -69,14 +70,19 @@ def evaluate(
         event_sequence=event_sequence,
     )
     values.update(overrides)
-    return spec.evaluate(**values)
+    return spec.evaluate(**cast(Any, values))
 
 
 @pytest.mark.parametrize("market", list(Market))
 @pytest.mark.parametrize("family", list(ContractFamily))
 @pytest.mark.parametrize("mode", list(PositionMode))
 @pytest.mark.parametrize("side", list(PositionSide))
-def test_scope_and_side_mode_are_explicit(\n    market: Market,\n    family: ContractFamily,\n    mode: PositionMode,\n    side: PositionSide,\n) -> None:
+def test_scope_and_side_mode_are_explicit(
+    market: Market,
+    family: ContractFamily,
+    mode: PositionMode,
+    side: PositionSide,
+) -> None:
     liquidation = Decimal("42") if side is PositionSide.LONG else Decimal("58")
     reference = Decimal("40") if side is PositionSide.LONG else Decimal("60")
     result = evaluate(
