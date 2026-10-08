@@ -5,14 +5,14 @@ on:
     paths:
       - "contracts/**"
       - "tests/contracts/**"
-      - "pyproject.toml"
+      - "setup.cfg"
       - "requirements-ci.txt"
       - ".github/workflows/g08-mutation.yml"
   pull_request:
     paths:
       - "contracts/**"
       - "tests/contracts/**"
-      - "pyproject.toml"
+      - "setup.cfg"
       - "requirements-ci.txt"
       - ".github/workflows/g08-mutation.yml"
   workflow_dispatch:
