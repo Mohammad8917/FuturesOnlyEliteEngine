@@ -133,7 +133,7 @@ def test_validator_rejects_keyword_only_futures_false_switch(tmp_path: Path) -> 
     (tmp_path / "application").mkdir()
     (tmp_path / "application" / "__init__.py").write_text("", encoding="utf-8")
     (tmp_path / "application" / "provider.py").write_text(
-        "def route(provider, *, futures=False):\\n    return provider\\n",
+        "def route(provider, *, futures=False):\n    return provider\n",
         encoding="utf-8",
     )
 
