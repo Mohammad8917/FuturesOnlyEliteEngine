@@ -30,7 +30,7 @@ def test_position_mode_is_explicit_and_immutable(mode: PositionMode) -> None:
     assert spec.allowed_sides == (PositionSide.LONG, PositionSide.SHORT)
     assert spec.supports_independent_long_short is (mode is PositionMode.HEDGE)
     with pytest.raises((AttributeError, TypeError)):
-        spec.mode = PositionMode.HEDGE
+        spec.mode = PositionMode.HEDGE  # type: ignore[misc]
 
 
 @pytest.mark.parametrize("value", ["ONE_WAY", "HEDGE", "NET", True, None])
