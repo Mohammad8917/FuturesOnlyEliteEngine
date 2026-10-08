@@ -102,11 +102,11 @@ from contracts.futures.settlement_accounting import (
 UTC = timezone.utc
 
 
-def symbol(family=ContractFamily.LINEAR, *, expiry=None):
+def symbol(family: ContractFamily = ContractFamily.LINEAR, *, expiry: date | None = None) -> CanonicalFuturesSymbol:
     return CanonicalFuturesSymbol("BTC", "USD", family, "USD", expiry=expiry)
 
 
-def instrument(market=Market.CRYPTO, family=ContractFamily.LINEAR):
+def instrument(market: Market = Market.CRYPTO, family: ContractFamily = ContractFamily.LINEAR) -> FuturesInstrumentIdentity:
     return FuturesInstrumentIdentity.create(
         market=market,
         symbol=symbol(family),
@@ -115,7 +115,7 @@ def instrument(market=Market.CRYPTO, family=ContractFamily.LINEAR):
     )
 
 
-def contract(family=ContractFamily.LINEAR):
+def contract(family: ContractFamily = ContractFamily.LINEAR) -> FuturesContractSpecification:
     return FuturesContractSpecification(
         market=Market.CRYPTO,
         symbol=symbol(family),
@@ -247,7 +247,7 @@ def test_exposure_remaining_semantics():
         )
 
 
-def funding_spec(rate=Decimal("0.1")):
+def funding_spec(rate: Decimal = Decimal("0.1")) -> FuturesFundingSpecification:
     return FuturesFundingSpecification(
         market=Market.CRYPTO,
         symbol=symbol(),
@@ -429,7 +429,7 @@ def test_position_mode_and_price_quantity_branches():
         pq.validate_price(0)
 
 
-def liquidation_args(family=ContractFamily.LINEAR, side=PositionSide.LONG):
+def liquidation_args(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> dict[str, object]:
     return dict(
         contract=contract(family), quantity=Decimal("1"), entry_price=Decimal("100"),
         margin_amount=Decimal("2000"),
@@ -453,11 +453,11 @@ def test_liquidation_linear_and_inverse_branches():
         linear.liquidation_price(**{**liquidation_args(), "maintenance_margin_ratio": Decimal("1")})
 
 
-def liquidation_event_spec(family=ContractFamily.LINEAR):
+def liquidation_event_spec(family: ContractFamily = ContractFamily.LINEAR) -> FuturesLiquidationTriggerSpecification:
     return FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol(family))
 
 
-def event_kwargs(family=ContractFamily.LINEAR, side=PositionSide.LONG):
+def event_kwargs(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> dict[str, object]:
     return dict(
         account_id="acct", position_id="pos", event_id="evt", causation_id="cause",
         state_version=1, contract_family=family, position_mode=PositionMode.ONE_WAY,
