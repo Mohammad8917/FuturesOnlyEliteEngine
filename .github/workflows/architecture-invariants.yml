@@ -1,5 +1,6 @@
 name: Architecture Invariants
 # Same-SHA evidence anchor: authoritative state/gate commits rerun architecture verification.
+# Gate-chain alignment: architecture, dependency, and domain evidence share one commit.
 run-name: Architecture Invariants • ${{ github.event_name }} • ${{ github.sha }}
 
 on:

@@ -2,6 +2,7 @@ name: Phase 1 Domain Contracts
 # Same-SHA gate anchor: architecture documentation closure commits must rerun contract CI.
 # Project-state refreshes are evidence-bearing commits and must remain testable.
 # Dual-workflow anchor keeps architecture and domain-contract evidence aligned.
+# Gate-chain alignment: architecture, dependency, and domain evidence share one commit.
 
 on:
   push:
