@@ -6,6 +6,7 @@ semantics.
 """
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
+from typing import TypedDict, cast
 
 import pytest
 
@@ -98,6 +99,40 @@ from contracts.futures.settlement import (
 from contracts.futures.settlement_accounting import (
     FuturesSettlementAccountingSpecification,
 )
+
+class LiquidationArgs(TypedDict):
+    contract: FuturesContractSpecification
+    quantity: Decimal
+    entry_price: Decimal
+    margin_amount: Decimal
+    margin_denomination: LiquidationDenomination
+    maintenance_margin_ratio: Decimal
+    position_side: PositionSide
+
+
+class LiquidationEventArgs(TypedDict):
+    account_id: str
+    position_id: str
+    event_id: str
+    causation_id: str
+    state_version: int
+    contract_family: ContractFamily
+    position_mode: PositionMode
+    position_side: PositionSide
+    quantity: Decimal
+    entry_price: Decimal
+    margin_amount: Decimal
+    margin_denomination: LiquidationDenomination
+    maintenance_margin_ratio: Decimal
+    liquidation_price: Decimal
+    reference_price: Decimal
+    reference_price_source: str
+    observed_at: datetime
+    as_of: datetime
+    max_age: timedelta
+    previous_event_sequence: int
+    event_sequence: int
+
 
 UTC = timezone.utc
 
@@ -429,7 +464,7 @@ def test_position_mode_and_price_quantity_branches():
         pq.validate_price(0)
 
 
-def liquidation_args(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> dict[str, object]:
+def liquidation_args(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> LiquidationArgs:
     return dict(
         contract=contract(family), quantity=Decimal("1"), entry_price=Decimal("100"),
         margin_amount=Decimal("2000"),
@@ -446,9 +481,9 @@ def test_liquidation_linear_and_inverse_branches():
     inverse = FuturesLiquidationSpecification(Market.CRYPTO, symbol(ContractFamily.INVERSE))
     assert inverse.liquidation_price(**liquidation_args(ContractFamily.INVERSE)) < Decimal("100")
     with pytest.raises(LiquidationValidationError):
-        linear.liquidation_price(**{**liquidation_args(), "margin_denomination": LiquidationDenomination.BASE})
+        linear.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "margin_denomination": LiquidationDenomination.BASE}))
     with pytest.raises(LiquidationValidationError):
-        inverse.liquidation_price(**{**liquidation_args(ContractFamily.INVERSE), "margin_denomination": LiquidationDenomination.QUOTE})
+        inverse.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(ContractFamily.INVERSE), "margin_denomination": LiquidationDenomination.QUOTE}))
     with pytest.raises(LiquidationValidationError):
         linear.liquidation_price(**{**liquidation_args(), "maintenance_margin_ratio": Decimal("1")})
 
@@ -457,7 +492,7 @@ def liquidation_event_spec(family: ContractFamily = ContractFamily.LINEAR) -> Fu
     return FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol(family))
 
 
-def event_kwargs(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> dict[str, object]:
+def event_kwargs(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> LiquidationEventArgs:
     return dict(
         account_id="acct", position_id="pos", event_id="evt", causation_id="cause",
         state_version=1, contract_family=family, position_mode=PositionMode.ONE_WAY,
