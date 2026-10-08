@@ -137,21 +137,28 @@ class CanonicalFuturesSymbol:
 
 @dataclass(frozen=True, slots=True)
 class FuturesInstrumentIdentity:
-    """Stable, exchange-independent identity for a Futures instrument.
+    """Validated Futures identity with explicitly owned instrument metadata.
 
-    Identity contains only immutable identity semantics. Lifecycle status,
-    margin, leverage, contract size, and other economic terms belong to their
-    owning contracts and are intentionally excluded from this value object.
+    The canonical instrument_id is derived solely from market and symbol.
+    Margin and lifecycle status are retained as validated metadata for the
+    current contract API, but neither can alter or rebind the stable identity.
+    Economic margin/leverage/valuation rules remain owned by their contracts.
     """
 
     market: Market
     symbol: CanonicalFuturesSymbol
+    margin_asset: str
+    status: InstrumentStatus = InstrumentStatus.ACTIVE
 
     def __post_init__(self) -> None:
         if not isinstance(self.market, Market):
             raise InstrumentValidationError("market must be a supported Futures market")
         if not isinstance(self.symbol, CanonicalFuturesSymbol):
             raise InstrumentValidationError("symbol must be CanonicalFuturesSymbol")
+        if not isinstance(self.status, InstrumentStatus):
+            raise InstrumentValidationError("status must be a known instrument status")
+
+        object.__setattr__(self, "margin_asset", _asset(self.margin_asset, "margin_asset"))
 
     @property
     def instrument_id(self) -> str:
@@ -171,11 +178,24 @@ class FuturesInstrumentIdentity:
         *,
         market: Market,
         symbol: CanonicalFuturesSymbol,
+        margin_asset: str,
+        status: InstrumentStatus = InstrumentStatus.ACTIVE,
     ) -> "FuturesInstrumentIdentity":
-        return cls(market=market, symbol=symbol)
+        return cls(
+            market=market,
+            symbol=symbol,
+            margin_asset=margin_asset,
+            status=status,
+        )
 
     @classmethod
-    def parse_id(cls, instrument_id: str) -> "FuturesInstrumentIdentity":
+    def parse_id(
+        cls,
+        instrument_id: str,
+        *,
+        margin_asset: str,
+        status: InstrumentStatus = InstrumentStatus.ACTIVE,
+    ) -> "FuturesInstrumentIdentity":
         if not isinstance(instrument_id, str) or not _INSTRUMENT_ID_RE.fullmatch(instrument_id):
             raise InstrumentValidationError("invalid canonical Futures instrument_id")
 
@@ -183,4 +203,6 @@ class FuturesInstrumentIdentity:
         return cls.create(
             market=Market(market_text),
             symbol=CanonicalFuturesSymbol.parse(symbol_text),
+            margin_asset=margin_asset,
+            status=status,
         )
