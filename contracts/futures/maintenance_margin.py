@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
+from typing import cast
 
 from .instrument import FuturesInstrumentIdentity, Market
 
@@ -25,7 +26,7 @@ class MaintenanceMarginUnit(StrEnum):
     RATIO = "RATIO"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
+def _positive_decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise MaintenanceMarginValidationError(
             f"{field} must be an exact Decimal value"
@@ -43,7 +44,7 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
     return result
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     if not isinstance(value, str):
         raise MaintenanceMarginValidationError(
             f"{field} must be an asset symbol"
@@ -80,11 +81,11 @@ class FuturesMaintenanceMarginSpecification:
     notional_asset: str
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(cast(object, self.market), Market):
             raise MaintenanceMarginValidationError(
                 "market must be a supported Futures market"
             )
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(cast(object, self.instrument), FuturesInstrumentIdentity):
             raise MaintenanceMarginValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
@@ -110,9 +111,9 @@ class FuturesMaintenanceMarginSpecification:
     @property
     def symbol(self) -> str:
         """Return the canonical Futures symbol."""
-        return self.instrument.symbol
+        return self.instrument.symbol.as_text()
 
-    def calculate(self, notional: Decimal | int | str) -> Decimal:
+    def calculate(self, notional: Decimal | int | str) -> Decimal -> Decimal:
         """Calculate maintenance margin in the notional's denomination."""
         value = _positive_decimal(notional, "notional")
         return value * self.maintenance_margin_ratio
