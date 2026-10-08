@@ -26,7 +26,7 @@ def _linear() -> FuturesContractSpecification:
             settlement_asset="usdt",
         ),
         quantity_unit=QuantityUnit.CONTRACTS,
-        contract_multiplier =Decimal("0.001"),  # type: ignore[misc]
+        contract_multiplier =Decimal("0.001"),
         price_quote_asset="usdt",
     )
 
@@ -41,7 +41,7 @@ def _inverse() -> FuturesContractSpecification:
             settlement_asset="btc",
         ),
         quantity_unit=QuantityUnit.CONTRACTS,
-        contract_multiplier =Decimal("100"),  # type: ignore[misc]
+        contract_multiplier =Decimal("100"),
         price_quote_asset="usd",
     )
 
@@ -60,7 +60,7 @@ def test_multiplier_contract_is_explicit_for_all_supported_futures_markets(
         market=market,
         symbol=symbol,
         quantity_unit=QuantityUnit.CONTRACTS,
-        contract_multiplier =Decimal("1.25"),  # type: ignore[misc]
+        contract_multiplier =Decimal("1.25"),
         price_quote_asset=symbol.quote_asset,
     )
 
@@ -105,7 +105,7 @@ def test_invalid_multiplier_fails_closed(field: str, value: Decimal) -> None:
             market=Market.CRYPTO,
             symbol=_linear().symbol,
             quantity_unit=QuantityUnit.CONTRACTS,
-            contract_multiplier =value,  # type: ignore[misc]
+            contract_multiplier =value,
             price_quote_asset="usdt",
         )
 
@@ -132,7 +132,7 @@ def test_quote_denomination_mismatch_fails_closed() -> None:
             market=Market.CRYPTO,
             symbol=_linear().symbol,
             quantity_unit=QuantityUnit.CONTRACTS,
-            contract_multiplier =Decimal("1"),  # type: ignore[misc]
+            contract_multiplier =Decimal("1"),
             price_quote_asset="usd",
         )
 
@@ -141,4 +141,4 @@ def test_specification_is_immutable() -> None:
     spec = _linear()
 
     with pytest.raises(AttributeError):
-        spec.contract_multiplier = Decimal("2")
+        spec.contract_multiplier =  # type: ignore[misc] Decimal("2")
