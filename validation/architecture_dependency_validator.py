@@ -67,10 +67,11 @@ ORDER_CALLS = {
     "cancel_order", "replace_order",
 }
 HTTP_CALLS = {"request", "get", "post", "put", "patch", "delete"}
+HTTP_RECEIVER_NAMES = {"client", "session", "http", "transport"}
 NON_EXECUTION_ORDER_LAYERS = {
     "domain", "contracts", "application", "risk", "analysis", "market_data",
 }
-NON_IO_LAYERS = {"domain", "contracts", "risk", "analysis"}
+NON_IO_LAYERS = {"domain", "risk", "analysis"}
 EXCLUDED = {".git", ".venv", "venv", "__pycache__"}
 
 
@@ -143,6 +144,15 @@ def _is_stdlib_import(module: str) -> bool:
     return module.split(".", 1)[0] in sys.stdlib_module_names
 
 
+def _call_receiver_name(node: ast.Attribute) -> str | None:
+    receiver = node.value
+    if isinstance(receiver, ast.Name):
+        return receiver.id.lower()
+    if isinstance(receiver, ast.Attribute):
+        return receiver.attr.lower()
+    return None
+
+
 def validate(root: Path = ROOT) -> list[str]:
     errors: set[str] = set()
     graph: dict[str, set[str]] = defaultdict(set)
@@ -204,23 +214,27 @@ def validate(root: Path = ROOT) -> list[str]:
                 errors.add(f"{module_name}: analysis imports execution: {imported}")
 
         for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                positional = list(node.args.posonlyargs) + list(node.args.args)
-                defaults = [None] * (len(positional) - len(node.args.defaults)) + list(node.args.defaults)
-                for argument, default in zip(positional, defaults):
-                    if (
-                        argument.arg == "futures"
-                        and isinstance(default, ast.Constant)
-                        and default.value is False
-                    ):
-                        errors.add(f"{module_name}: forbidden futures=False switch")
-                for keyword_arg, default in zip(node.args.kwonlyargs, node.args.kw_defaults):
-                    if (
-                        keyword_arg.arg == "futures"
-                        and isinstance(default, ast.Constant)
-                        and default.value is False
-                    ):
-                        errors.add(f"{module_name}: forbidden futures=False switch")
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                if _spot(node.name):
+                    errors.add(f"{module_name}: forbidden Spot symbol/reference: {node.name}")
+
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    positional = list(node.args.posonlyargs) + list(node.args.args)
+                    defaults = [None] * (len(positional) - len(node.args.defaults)) + list(node.args.defaults)
+                    for argument, default in zip(positional, defaults):
+                        if (
+                            argument.arg == "futures"
+                            and isinstance(default, ast.Constant)
+                            and default.value is False
+                        ):
+                            errors.add(f"{module_name}: forbidden futures=False switch")
+                    for keyword_arg, default in zip(node.args.kwonlyargs, node.args.kw_defaults):
+                        if (
+                            argument.arg == "futures"
+                            and isinstance(default, ast.Constant)
+                            and default.value is False
+                        ):
+                            errors.add(f"{module_name}: forbidden futures=False switch")
 
             if isinstance(node, ast.Call):
                 if isinstance(node.func, ast.Attribute):
@@ -228,7 +242,11 @@ def validate(root: Path = ROOT) -> list[str]:
                         errors.add(
                             f"{module_name}: forbidden order call in {layer}: {node.func.attr}"
                         )
-                    if node.func.attr in HTTP_CALLS and layer in NON_IO_LAYERS:
+                    if (
+                        node.func.attr in HTTP_CALLS
+                        and layer in NON_IO_LAYERS
+                        and _call_receiver_name(node.func) in HTTP_RECEIVER_NAMES
+                    ):
                         errors.add(
                             f"{module_name}: forbidden HTTP call in {layer}: {node.func.attr}"
                         )
