@@ -714,3 +714,34 @@ Before implementation, the next unit must freeze one explicit owner and define:
 12. same-SHA evidence before the cursor advances.
 
 No exchange-specific PnL formula, fee treatment, mark-price convention, settlement behavior, rounding rule, or accounting default may be guessed into the canonical contract.
+
+
+## Phase 1 realized/unrealized PnL semantic lock
+
+The active Phase 1 unit is realized PnL and unrealized PnL. This is a canonical Futures financial contract boundary and does not own execution, fees, funding transfers, settlement, liquidation, or account mutation.
+
+Frozen baseline:
+- owner: Futures domain/contract boundary;
+- realized PnL is deterministic PnL for an explicit quantity of an existing position that is closed/offset by an explicit exit price;
+- unrealized PnL is deterministic mark/reference-price PnL for an explicit still-open position quantity;
+- Linear PnL denomination is QUOTE; formula before side sign is quantity × multiplier × (reference_price − entry_price);
+- Inverse PnL denomination is BASE; formula before side sign is quantity × multiplier × (1 / entry_price − 1 / reference_price);
+- LONG uses the formula sign directly; SHORT negates it;
+- realized calculation uses the explicit closing/offsetting execution price; unrealized calculation uses an explicit valuation/reference price;
+- quantity, multiplier, and prices are explicit positive finite exact Decimal values; bool and binary floating-point inputs are rejected;
+- zero PnL is valid and is not treated as an error;
+- no implicit rounding or quantization is introduced;
+- unrealized valuation requires explicit non-empty provenance and an aware UTC observation timestamp; stale or time-inconsistent valuation fails closed when freshness is checked;
+- freshness uses explicit UTC as_of and positive max_age; no hidden clock or age threshold is used;
+- fees, commissions, funding transfers, settlement transfers, margin, leverage, liquidation, and accounting entries are not silently included in PnL;
+- partial close/offset semantics are represented by the explicit quantity supplied to the contract; this contract does not invent position-state transitions;
+- applicable to CRYPTO, FOREX, and GOLD Futures and Linear and Inverse contract families;
+- prior instrument, multiplier, settlement, margin, leverage, position side/mode, price/quantity, and funding contracts are consumed without redefinition;
+- execution infrastructure owns provenance of a realized closing execution; market/data infrastructure owns valuation-price sourcing; this contract consumes validated facts;
+- no network, exchange SDK, persistence, runtime configuration, scheduler, account mutation, or exchange-specific mark-price/fee/accounting rule belongs here;
+- exchange-specific PnL conventions must be normalized at the infrastructure boundary and may not silently redefine canonical formulas;
+- production boundary: contracts/futures/pnl.py;
+- test boundary: tests/contracts/pnl_contract_test.py;
+- CI boundary: .github/workflows/phase1-domain-contracts.yml;
+- meaningful tests, CI enforcement, and same-SHA evidence are mandatory before the cursor advances;
+- no threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening is permitted.
