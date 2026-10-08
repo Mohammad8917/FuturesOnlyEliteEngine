@@ -111,7 +111,7 @@ class FuturesMaintenanceMarginSpecification:
     @property
     def symbol(self) -> str:
         """Return the canonical Futures symbol."""
-        return self.instrument.symbol
+        return self.instrument.symbol.as_text()
 
     def calculate(self, notional: Decimal | int | str) -> Decimal:
         """Calculate maintenance margin in the notional's denomination."""
