@@ -624,6 +624,6 @@ The shared CI dependency lock `requirements-ci.txt` is an authoritative G01/Phas
 
 All Phase 1 sections below **Current authoritative state** are immutable historical transition/evidence records. Any historical wording such as “current cursor”, “next authorized unit”, or “active work” in those records describes the state at that recorded transition and is not a live authorization. Only **Current authoritative state** controls the present session. A phase/gate transition is valid only after the current repository evidence and same-SHA CI requirements are re-established.
 
-## Final Phase 1 evidence reconciliation — verified on 8c3b8ecc
+## Final Phase 1 evidence reconciliation — current candidate 1df286fa
 
-The evidence candidate `8c3b8ecc1e1cec8e179b88a54f766a411e7e7211` is verified: G01 Dependency Architecture, Architecture Invariants, and Phase 1 Domain Contracts are all green on the exact same SHA (runs 37804341423, 37804341364, and 37804341266). The next state-document commit must be treated as a new evidence candidate and re-verified before its SHA is recorded as last verified.
+The repository HEAD is `1df286fa2cd65c786f677886789db5ff4a0ebfe2`. Phase 1 completeness is closed at the contract/governance level, and this commit contains only the fail-closed canonical Futures contract-family enforcement plus its regression test. The final evidence state must be established on one exact SHA across G01 Dependency Architecture, Architecture Invariants, and Phase 1 Domain Contracts before Phase 1 is declared fully verified.
