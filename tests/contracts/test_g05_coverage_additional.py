@@ -727,3 +727,48 @@ def test_g05_close_remaining_contract_validation_paths():
 
     with pytest.raises(FundingValidationError):
         funding_spec().calculate_payment(notional=Decimal("10"), position_side="LONG")
+
+    # Cover remaining valid boundary semantics without changing production behavior.
+    with pytest.raises(InstrumentValidationError):
+        FuturesInstrumentIdentity.create(
+            market=Market.CRYPTO, symbol=symbol(), margin_asset="BAD-ASSET", status=InstrumentStatus.ACTIVE
+        )
+
+    with pytest.raises(LiquidationValidationError):
+        liquidation.liquidation_price(
+            **{**liquidation_args(), "margin_amount": Decimal("100")}
+        )
+    with pytest.raises(LiquidationValidationError):
+        liquidation.liquidation_price(
+            **{**liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT), "margin_amount": Decimal("1")}
+        )
+
+    with pytest.raises(SettlementValidationError):
+        FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, SettlementUnit.ASSET, 123, "USD")
+    with pytest.raises(SettlementValidationError):
+        FuturesSettlementSpecification("bad", inst.symbol, SettlementUnit.ASSET, "USD", "USD")
+    with pytest.raises(SettlementValidationError):
+        FuturesSettlementSpecification(Market.CRYPTO, "bad", SettlementUnit.ASSET, "USD", "USD")
+
+    with pytest.raises(AccountingValidationError):
+        settlement_accounting.transfer(
+            journal_id="j", causation_id="c", state_version=0, sequence=0,
+            account_id="a", settlement_counterparty_account_id="a",
+            source_amount=Decimal("1"), source_asset="USD"
+        )
+    with pytest.raises(AccountingValidationError):
+        settlement_accounting.transfer(
+            journal_id="j", causation_id="c", state_version=0, sequence=0,
+            account_id="a", settlement_counterparty_account_id="b",
+            source_amount=Decimal("0"), source_asset="USD"
+        )
+    mismatched_market_settlement = FuturesSettlementSpecification(
+        Market.GOLD, inst.symbol, SettlementUnit.ASSET, "USD", "USD"
+    )
+    with pytest.raises(AccountingValidationError):
+        FuturesSettlementAccountingSpecification(Market.CRYPTO, inst, mismatched_market_settlement)
+    mismatched_symbol_settlement = FuturesSettlementSpecification(
+        Market.CRYPTO, symbol(ContractFamily.INVERSE), SettlementUnit.ASSET, "USD", "USD"
+    )
+    with pytest.raises(AccountingValidationError):
+        FuturesSettlementAccountingSpecification(Market.CRYPTO, inst, mismatched_symbol_settlement)
