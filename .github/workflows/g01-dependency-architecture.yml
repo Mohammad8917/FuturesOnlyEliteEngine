@@ -1,4 +1,5 @@
 name: G01 Dependency Architecture
+run-name: G01 Dependency Architecture • ${{ github.event_name }} • ${{ github.sha }}
 
 on:
   push:
@@ -8,6 +9,7 @@ on:
       - "tests/architecture/**"
       - "tests/contracts/**"
       - "docs/architecture/**"
+      - "requirements-ci.txt"
       - ".github/workflows/g01-dependency-architecture.yml"
   pull_request:
     paths:
