@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from .instrument import FuturesInstrumentIdentity, Market
+from .instrument import CanonicalFuturesSymbol, FuturesInstrumentIdentity, Market
 
 
 class MaintenanceMarginValidationError(ValueError):
@@ -108,7 +108,7 @@ class FuturesMaintenanceMarginSpecification:
         object.__setattr__(self, "notional_asset", notional_asset)
 
     @property
-    def symbol(self) -> str:
+    def symbol(self) -> CanonicalFuturesSymbol:
         """Return the canonical Futures symbol."""
         return self.instrument.symbol
 
