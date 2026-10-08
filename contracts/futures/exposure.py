@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
+from typing import cast
 
 from .contract_specification import FuturesContractSpecification
 from .instrument import CanonicalFuturesSymbol, ContractFamily, Market
@@ -20,7 +21,7 @@ class ExposureDenomination(StrEnum):
     QUOTE = "QUOTE"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
+def _positive_decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise ExposureValidationError(f"{field} must be an exact Decimal value")
     try:
@@ -32,7 +33,7 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
     return result
 
 
-def _utc(value: datetime, field: str) -> datetime:
+def _utc(value: object, field: str) -> datetime:
     if not isinstance(value, datetime) or value.tzinfo is None or value.utcoffset() != timedelta(0):
         raise ExposureValidationError(f"{field} must be an aware UTC datetime")
     return value
@@ -46,9 +47,9 @@ class FuturesExposureSpecification:
     symbol: CanonicalFuturesSymbol
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(cast(object, self.market), Market):
             raise ExposureValidationError("market must be a supported Futures market")
-        if not isinstance(self.symbol, CanonicalFuturesSymbol):
+        if not isinstance(cast(object, self.symbol), CanonicalFuturesSymbol):
             raise ExposureValidationError("symbol must be CanonicalFuturesSymbol")
         if self.symbol.contract_family not in (ContractFamily.LINEAR, ContractFamily.INVERSE):
             raise ExposureValidationError("unsupported contract family")
@@ -102,7 +103,7 @@ class FuturesExposureSpecification:
         price: Decimal | int | str,
         position_side: PositionSide,
     ) -> Decimal:
-        if not isinstance(position_side, PositionSide):
+        if not isinstance(cast(object, position_side), PositionSide):
             raise ExposureValidationError("position_side must be explicit")
         magnitude = self.base_exposure(
             contract=contract, quantity=quantity, price=price
@@ -117,7 +118,7 @@ class FuturesExposureSpecification:
         reference_price: Decimal | int | str,
         position_side: PositionSide,
     ) -> Decimal:
-        if not isinstance(position_side, PositionSide):
+        if not isinstance(cast(object, position_side), PositionSide):
             raise ExposureValidationError("position_side must be explicit")
         magnitude = self.quote_value(
             contract=contract, quantity=quantity, reference_price=reference_price
@@ -134,7 +135,7 @@ class FuturesExposureSpecification:
         valuation_source: str,
         observed_at: datetime,
     ) -> Decimal:
-        if not isinstance(denomination, ExposureDenomination):
+        if not isinstance(cast(object, denomination), ExposureDenomination):
             raise ExposureValidationError("denomination must be explicitly BASE or QUOTE")
         source = valuation_source.strip() if isinstance(valuation_source, str) else ""
         if not source:
