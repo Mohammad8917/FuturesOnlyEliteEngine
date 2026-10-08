@@ -39,9 +39,10 @@ jobs:
         with:
           python-version: "3.13"
           cache: "pip"
+          cache-dependency-path: requirements-ci.txt
 
       - name: Install test dependency
-        run: python -m pip install --disable-pip-version-check --no-input "pytest==8.4.2"
+        run: python -m pip install --disable-pip-version-check --no-input -r requirements-ci.txt
 
       - name: Run G01 CI hardening regression tests
         run: python -m pytest -q tests/architecture/test_g01_ci_hardening.py
