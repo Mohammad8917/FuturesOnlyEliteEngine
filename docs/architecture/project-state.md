@@ -21,11 +21,11 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: 34487f4e9a6c848537bd9451286b275ab5cd24ef; verified by same-SHA Phase 1 and G01 evidence after instrument-identity hardening.
+- Last verified SHA: 8c06d3a75f09b5bf2725eb84834ddfe5e03f2c1a; verified by same-SHA Phase 1 and G01 evidence after instrument-identity hardening.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — instrument identity, multiplier/contract specification, settlement, margin, leverage, and initial margin are implemented and evidenced; maintenance margin semantics are now the first incomplete contract.
+- Active work: Phase 1 Domain Contracts — instrument identity, multiplier/contract specification, settlement, margin, leverage, and initial margin are implemented and evidenced; maintenance margin semantics are closed; position side and position mode semantics are now the first incomplete contract.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: define and implement the explicit maintenance-margin contract from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
+- Next authorized action: define and implement the explicit position side and position mode contract from the canonical baseline; preserve explicit Linear/Inverse semantics and the mandatory implementation unit protocol.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -181,7 +181,7 @@ Margin asset and margin semantics are COMPLETE on main merge SHA f2c30bf3da77f56
 
 ## Phase 1 current cursor — initial margin
 
-Current cursor: **maintenance margin semantics**.
+Current cursor: **position side and position mode semantics**.
 
 Next authorized action: define and implement the explicit maintenance-margin requirement contract from the frozen architecture baseline. No Phase 2+ work is authorized, and no threshold/test/gate weakening is permitted.
 
@@ -273,3 +273,27 @@ The frozen contract remains:
 - no threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening.
 
 The next authorized Phase 1 unit is **position side and position mode semantics**. No Phase 2+ production implementation is authorized before the preceding Phase 1 exit criteria are evidenced.
+
+
+## Phase 1 position side / position mode semantic lock
+
+Maintenance-margin semantics are closed. The next Phase 1 unit is position side and position mode semantics.
+
+Frozen baseline:
+- owner: Futures domain/contract boundary;
+- position side vocabulary: explicit LONG or SHORT only;
+- position mode vocabulary: explicit ONE_WAY or HEDGE only;
+- both are immutable, exchange-independent boundary vocabulary;
+- ONE_WAY means one net position side at a time; HEDGE permits independently addressed LONG and SHORT positions;
+- BOTH, NET, Spot, or implicit third states are rejected by the canonical contract;
+- mode and side must be explicitly supplied; neither may be inferred from exchange/account state, order payloads, leverage, margin, or strategy behavior;
+- exact financial calculation is not performed by this vocabulary contract;
+- applicable to CRYPTO Futures, FOREX Futures, and GOLD Futures, and to Linear and Inverse Futures;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation dependency;
+- invalid, missing, contradictory, unsupported, or ambiguous values fail closed;
+- exchange-specific mapping may translate external mode/side representations only at infrastructure boundaries and may not redefine canonical meaning;
+- meaningful contract tests, CI enforcement, and same-SHA evidence are required before the cursor advances.
+
+Production boundaries: contracts/futures/position_side.py, contracts/futures/position_mode.py.
+Test boundary: tests/contracts/test_position_side_mode.py.
+CI boundary: .github/workflows/phase1-domain-contracts.yml.

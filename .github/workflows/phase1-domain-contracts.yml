@@ -34,4 +34,4 @@ jobs:
       - name: Run Phase 1 contract tests
         env:
           PYTHONPATH: .
-        run: python -m pytest -q tests/contracts/test_instrument_identity.py tests/contracts/test_contract_specification.py tests/contracts/test_settlement.py tests/contracts/test_margin.py tests/contracts/test_leverage.py tests/contracts/test_initial_margin.py tests/contracts/test_maintenance_margin.py
+        run: python -m pytest -q tests/contracts/test_instrument_identity.py tests/contracts/test_contract_specification.py tests/contracts/test_settlement.py tests/contracts/test_margin.py tests/contracts/test_leverage.py tests/contracts/test_initial_margin.py tests/contracts/test_maintenance_margin.py tests/contracts/test_position_side_mode.py
