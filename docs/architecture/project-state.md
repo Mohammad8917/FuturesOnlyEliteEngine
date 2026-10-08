@@ -23,9 +23,9 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
 - Last verified SHA: `1d729f713c6094b9ae0cd59673632fd6dde43f5e`; verified immediately before this state snapshot with Architecture Invariants, G01 Dependency Architecture, and Phase 1 Domain Contracts all green on that exact SHA. The snapshot commit itself must be re-verified before being recorded as the next last-verified SHA.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — instrument, multiplier, settlement, margin, leverage, initial/maintenance margin, position side/mode, price/quantity, funding, PnL, exposure/valuation, and liquidation-price constraints are closed; liquidation event and trigger semantics are closed; the current incomplete unit is Futures accounting and settlement accounting semantics.
+- Active work: Phase 1 Domain Contracts — all minimum canonical Futures financial contracts through accounting/settlement-accounting are implemented; the remaining authorized action is the Phase 1 final completeness/evidence audit before Phase 2 can be considered.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: freeze and then implement Futures accounting and settlement accounting semantics across the authoritative architecture path; preserve denomination, exact numeric behavior, provenance, ordering/idempotency, reconciliation boundaries, and fail-closed semantics.
+- Next authorized action: perform the Phase 1 final completeness/evidence audit across all eight authoritative architecture documents, canonical contracts, tests, CI, dependency boundaries, and same-SHA evidence. Phase 2+ production work remains blocked until this audit closes.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -591,3 +591,20 @@ Frozen baseline:
 - settlement accounting records denomination-preserving transfers and explicit cross-asset conversions only when an explicit positive conversion rate is supplied by the settlement contract;
 - no exchange-specific fee, tier, balance, settlement timing, wallet, collateral, or ledger policy is guessed into the canonical contract;
 - meaningful contract tests, Phase 1 CI, Architecture Invariants CI, G01 CI, and same-SHA evidence are mandatory before the cursor advances.
+
+
+## Phase 1 accounting / settlement-accounting closure evidence
+
+Futures accounting and settlement accounting semantics are implemented at the canonical Futures domain/contract boundary. The implementation is immutable and deterministic: it records balanced journal facts, consumes already-validated realized-PnL, funding, and settlement facts, preserves explicit asset denomination, Linear/Inverse identity, CRYPTO/FOREX/GOLD applicability, exact Decimal behavior, and fail-closed validation. No persistence, network, exchange SDK, order submission, account mutation, or exchange-specific accounting policy is introduced.
+
+Evidence boundary:
+- production: `contracts/futures/accounting.py`, `contracts/futures/settlement_accounting.py`;
+- tests: `tests/contracts/accounting_contract_test.py`;
+- CI: Phase 1 Domain Contracts, Architecture Invariants, and G01 Dependency Architecture on the same verification SHA;
+- no threshold reduction, test weakening, skip/xfail, assertion removal, or dependency-boundary weakening.
+
+Cross-journal idempotency and durable sequence enforcement remain downstream persistence/reconciliation responsibilities; the canonical domain journal enforces immutable entry identity, explicit causation/version data, and monotonic sequence within each declared journal batch. Contradictory external outcomes remain divergence rather than success.
+
+## Phase 1 final completeness audit gate
+
+Accounting/settlement-accounting is the last minimum Futures domain contract listed by the authoritative Phase 1 contract set. The next action is governance/evidence reconciliation only: verify every required contract has production implementation, meaningful tests, current CI evidence, and aligned ownership/failure semantics across all eight architecture documents. No Phase 2+ production implementation is authorized before that audit closes.
