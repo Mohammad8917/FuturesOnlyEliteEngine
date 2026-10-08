@@ -46,3 +46,5 @@ jobs:
 # Final same-SHA trigger anchor: liquidation-trigger verification after export repair.
 
 # Same-SHA trigger anchor: accounting cursor follows liquidation-trigger closure.
+
+# Final evidence trigger: current-head gate verification after state reconciliation.
