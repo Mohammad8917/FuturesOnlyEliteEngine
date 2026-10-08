@@ -93,9 +93,7 @@ class FuturesMaintenanceMarginSpecification:
             raise MaintenanceMarginValidationError(
                 "market must match the instrument identity"
             )
-        if not isinstance(
-            self.maintenance_margin_unit, MaintenanceMarginUnit
-        ):
+        if not isinstance(cast(object, self.maintenance_margin_unit), MaintenanceMarginUnit):
             raise MaintenanceMarginValidationError(
                 "maintenance_margin_unit must be RATIO"
             )
