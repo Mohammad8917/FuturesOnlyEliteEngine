@@ -51,10 +51,12 @@ def test_identity_is_exchange_independent_and_deterministic() -> None:
     first = FuturesInstrumentIdentity.create(
         market=Market.FOREX,
         symbol=symbol,
+        margin_asset="usd",
     )
     second = FuturesInstrumentIdentity.create(
         market=Market.FOREX,
         symbol=symbol,
+        margin_asset="usd",
     )
 
     assert first.instrument_id == "FUTURES|FOREX|EUR/USD.LINEAR.USD"
@@ -71,9 +73,13 @@ def test_identity_round_trip_from_canonical_id() -> None:
     identity = FuturesInstrumentIdentity.create(
         market=Market.GOLD,
         symbol=symbol,
+        margin_asset="usd",
     )
 
-    parsed = FuturesInstrumentIdentity.parse_id(identity.instrument_id)
+    parsed = FuturesInstrumentIdentity.parse_id(
+        identity.instrument_id,
+        margin_asset="usd",
+    )
 
     assert parsed == identity
 
@@ -104,6 +110,7 @@ def test_linear_identity_does_not_infer_economic_terms_from_symbol() -> None:
     identity = FuturesInstrumentIdentity.create(
         market=Market.CRYPTO,
         symbol=symbol,
+        margin_asset="btc",
     )
 
     assert identity.instrument_id == "FUTURES|CRYPTO|BTC/USD.LINEAR.BTC"
@@ -120,7 +127,7 @@ def test_datetime_is_not_accepted_as_a_date_expiry() -> None:
         )
 
 
-def test_instrument_identity_cannot_be_rebound_to_another_symbol() -> None:
+def test_instrument_identity_id_is_derived_and_immutable() -> None:
     symbol = CanonicalFuturesSymbol(
         base_asset="btc",
         quote_asset="usdt",
@@ -131,6 +138,9 @@ def test_instrument_identity_cannot_be_rebound_to_another_symbol() -> None:
     identity = FuturesInstrumentIdentity.create(
         market=Market.CRYPTO,
         symbol=symbol,
+        margin_asset="usdt",
     )
 
     assert identity.instrument_id == "FUTURES|CRYPTO|BTC/USDT.LINEAR.USDT"
+    with pytest.raises((AttributeError, TypeError)):
+        identity.instrument_id = "FUTURES|CRYPTO|ETH/USDT.LINEAR.USDT"
