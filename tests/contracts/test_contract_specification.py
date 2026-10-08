@@ -141,4 +141,4 @@ def test_specification_is_immutable() -> None:
     spec = _linear()
 
     with pytest.raises(AttributeError):
-        spec.contract_multiplier =  # type: ignore[misc] Decimal("2")
+        spec.contract_multiplier = Decimal("2")  # type: ignore[misc]
