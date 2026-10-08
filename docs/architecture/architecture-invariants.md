@@ -805,3 +805,12 @@ Exposure and position valuation semantics are COMPLETE on implementation SHA `dc
 ## Phase 1 next-unit semantic gate — liquidation price and liquidation constraints
 
 The next authorized contract must freeze: owner and lifecycle boundary; explicit liquidation-price versus liquidation-event meaning; required position/entry/quantity/multiplier/margin/leverage/maintenance-margin and other explicitly owned inputs; Linear/Inverse formulas; CRYPTO/FOREX/GOLD; interaction without redefining closed contracts; exact Decimal/no implicit rounding; account/reference provenance and freshness; fail-closed invalid/stale/contradictory/unsupported/ambiguous state; domain-safe dependencies only; meaningful tests; CI; same-SHA evidence. Exchange-specific liquidation formulas, mark-price conventions, tiers, fees, funding, settlement, or defaults may not be guessed into the canonical contract.
+
+
+## Phase 1 liquidation-price constraint closure evidence
+
+Liquidation-price constraints are COMPLETE on implementation SHA `b8b65b721fcae5720d5cf430c979700516d8c10a`, merged as `c18a99d58b8b8dc904250fce38d738eee3bd9bd6`. Phase 1 Domain Contracts is green on the merge SHA; G01 is green on the implementation lineage. The boundary is exact Decimal, explicit denomination, Linear/Inverse, all three markets, fail-closed, and excludes exchange-specific trigger/transport/execution semantics.
+
+## Phase 1 next-unit invariant gate — liquidation event and trigger semantics
+
+The next contract must preserve the distinction between a deterministic trigger condition and liquidation execution. It must explicitly define reference-price provenance/freshness, LONG/SHORT and ONE_WAY/HEDGE trigger direction, required state, Linear/Inverse and three-market scope, exact Decimal/no implicit rounding, fail-closed stale/ambiguous behavior, domain-safe dependencies, idempotency/ordering/concurrency, meaningful tests, CI, and same-SHA evidence. Network, SDK, exchange transport, forced-order placement, account mutation, and exchange-specific mark-price/tier/fee/funding defaults remain outside the canonical domain boundary. No gate or threshold weakening is permitted.
