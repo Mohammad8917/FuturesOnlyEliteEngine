@@ -589,3 +589,64 @@ def test_g05_targeted_validation_and_calculation_branches():
             max_age=timedelta(hours=2),
             previous_event_sequence=1, event_sequence=1,
         )
+
+
+
+def test_g05_remaining_validation_and_boundary_branches():
+    """Exercise remaining real validation/boundary semantics without changing production behavior."""
+    inst = instrument()
+    with pytest.raises(InitialMarginValidationError):
+        FuturesInitialMarginSpecification(Market.CRYPTO, inst, InitialMarginUnit.RATIO, "bad", "USD")
+    with pytest.raises(MaintenanceMarginValidationError):
+        FuturesMaintenanceMarginSpecification(Market.CRYPTO, inst, MaintenanceMarginUnit.RATIO, "bad", "USD")
+    with pytest.raises(LeverageValidationError):
+        FuturesLeverageSpecification(Market.CRYPTO, inst, LeverageUnit.RATIO, "bad", Decimal("1"), Decimal("5"))
+    with pytest.raises(MarginValidationError):
+        FuturesMarginSpecification(Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "EUR", "bad")
+    with pytest.raises(MarginValidationError):
+        FuturesMarginSpecification(Market.CRYPTO, instrument(ContractFamily.INVERSE), MarginUnit.ASSET, "USD", "USD")
+
+    pnl = FuturesPnLSpecification(Market.CRYPTO, symbol(), PnLUnit.REALIZED_OR_UNREALIZED)
+    with pytest.raises(PnLValidationError):
+        pnl.calculate_realized(quantity="bad", multiplier=1, entry_price=100, exit_price=110, position_side=PositionSide.LONG)
+    with pytest.raises(PnLValidationError):
+        pnl.validate_valuation_freshness(as_of=datetime(2026, 1, 1, tzinfo=UTC), observed_at=datetime(2026, 1, 1), max_age=timedelta(hours=1))
+
+    pq = FuturesPriceQuantitySpecification(Market.CRYPTO, symbol(), PriceUnit.QUOTE_PER_BASE, QuantityUnit.CONTRACTS, "USD", PrecisionPolicy.EXACT, RoundingPolicy.NONE)
+    with pytest.raises(PriceQuantityValidationError):
+        pq.validate_price("bad")
+
+    with pytest.raises(SettlementValidationError):
+        FuturesSettlementSpecification(Market.CRYPTO, symbol(), SettlementUnit.ASSET, "bad", "USD")
+    with pytest.raises(SettlementValidationError):
+        FuturesSettlementSpecification(Market.CRYPTO, symbol(), SettlementUnit.ASSET, "USD", "EUR", "bad")
+    with pytest.raises(SettlementValidationError):
+        FuturesSettlementSpecification(Market.CRYPTO, symbol(), SettlementUnit.ASSET, "USD", "EUR", Decimal("NaN"))
+
+    with pytest.raises(AccountingValidationError):
+        FuturesAccountingSpecification(Market.FOREX, instrument())
+
+    linear = FuturesContractSpecification(market=Market.CRYPTO, symbol=symbol(), quantity_unit=QuantityUnit.CONTRACTS, contract_multiplier=Decimal("2"), price_quote_asset="USD")
+    assert linear.base_exposure(quantity=3, price=10) == Decimal("6")
+
+    settlement = FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, SettlementUnit.ASSET, "USD", "EUR", Decimal("2"))
+    accounting = FuturesSettlementAccountingSpecification(Market.CRYPTO, inst, settlement)
+    with pytest.raises(AccountingValidationError):
+        accounting.transfer(journal_id="j", causation_id="c", state_version=1, sequence=1, account_id="a", settlement_counterparty_account_id="a", source_amount=Decimal("1"), source_asset="EUR")
+    with pytest.raises(AccountingValidationError):
+        accounting.transfer(journal_id="j", causation_id="c", state_version=1, sequence=1, account_id="a", settlement_counterparty_account_id="b", source_amount=Decimal("1"), source_asset="USD")
+
+    liquidation = FuturesLiquidationSpecification(Market.CRYPTO, symbol())
+    with pytest.raises(LiquidationValidationError):
+        liquidation.liquidation_price(**{**liquidation_args(), "entry_price": "bad"})
+    with pytest.raises(LiquidationValidationError):
+        liquidation.liquidation_price(**{**liquidation_args(), "maintenance_margin_ratio": "bad"})
+    with pytest.raises(LiquidationValidationError):
+        liquidation.liquidation_price(**{**liquidation_args(), "margin_denomination": "QUOTE"})
+    with pytest.raises(LiquidationValidationError):
+        liquidation.liquidation_price(**{**liquidation_args(), "margin_amount": Decimal("-1")})
+
+    with pytest.raises(FundingValidationError):
+        funding_spec().validate_freshness(as_of=datetime(2026, 1, 1, tzinfo=UTC), max_age=timedelta(0))
+    with pytest.raises(FundingValidationError):
+        FuturesFundingSpecification(market=Market.CRYPTO, symbol=symbol(), funding_rate_unit=FundingRateUnit.INTERVAL_RATE, funding_sign_convention=FundingSignConvention.POSITIVE_LONG_PAYS, funding_rate=Decimal("0.1"), interval_start=datetime(2026, 1, 1, tzinfo=UTC), interval_end=datetime(2026, 1, 1, 2, tzinfo=UTC), rate_source="", observed_at=datetime(2026, 1, 1, 1, tzinfo=UTC), notional_denomination="USD")
