@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-from typing import Any, cast
+from typing import TypedDict, cast
 
 import pytest
 
@@ -19,6 +19,30 @@ from contracts.futures.position_mode import PositionMode
 from contracts.futures.position_side import PositionSide
 
 
+class EvaluationArgs(TypedDict):
+    account_id: str
+    position_id: str
+    event_id: str
+    causation_id: str
+    state_version: int
+    contract_family: ContractFamily
+    position_mode: PositionMode
+    position_side: PositionSide
+    quantity: Decimal
+    entry_price: Decimal
+    margin_amount: Decimal
+    margin_denomination: LiquidationDenomination
+    maintenance_margin_ratio: Decimal
+    liquidation_price: Decimal
+    reference_price: Decimal
+    reference_price_source: str
+    observed_at: datetime
+    as_of: datetime
+    max_age: timedelta
+    previous_event_sequence: int
+    event_sequence: int
+
+
 UTC = timezone.utc
 OBSERVED = datetime(2026, 10, 8, 10, 0, tzinfo=UTC)
 AS_OF = OBSERVED + timedelta(seconds=5)
@@ -31,14 +55,14 @@ def make_symbol(market: Market, family: ContractFamily) -> CanonicalFuturesSymbo
 
 def evaluate(
     *,
-    market=Market.CRYPTO,
-    family=ContractFamily.LINEAR,
-    side=PositionSide.LONG,
-    mode=PositionMode.ONE_WAY,
-    reference=Decimal("40"),
-    liquidation=Decimal("42"),
-    previous_sequence=4,
-    event_sequence=5,
+    market: Market = Market.CRYPTO,
+    family: ContractFamily = ContractFamily.LINEAR,
+    side: PositionSide = PositionSide.LONG,
+    mode: PositionMode = PositionMode.ONE_WAY,
+    reference: Decimal = Decimal("40"),
+    liquidation: Decimal = Decimal("42"),
+    previous_sequence: int = 4,
+    event_sequence: int = 5,
     **overrides: object,
 ) -> FuturesLiquidationTriggerEvaluation:
     spec = FuturesLiquidationTriggerSpecification(market, make_symbol(market, family))
@@ -70,7 +94,7 @@ def evaluate(
         event_sequence=event_sequence,
     )
     values.update(overrides)
-    return spec.evaluate(**cast(Any, values))
+    return spec.evaluate(**cast(EvaluationArgs, values))
 
 
 @pytest.mark.parametrize("market", list(Market))
