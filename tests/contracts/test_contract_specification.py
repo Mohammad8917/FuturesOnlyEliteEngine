@@ -142,3 +142,29 @@ def test_specification_is_immutable() -> None:
 
     with pytest.raises(AttributeError):
         spec.contract_multiplier = Decimal("2")
+
+
+@pytest.mark.parametrize("value", [0.1, 1.0, True])
+def test_binary_float_and_bool_multiplier_inputs_fail_closed(value: object) -> None:
+    with pytest.raises(ContractSpecificationValidationError):
+        FuturesContractSpecification(
+            market=Market.CRYPTO,
+            symbol=_linear().symbol,
+            quantity_unit=QuantityUnit.CONTRACTS,
+            contract_multiplier=value,  # type: ignore[arg-type]
+            price_quote_asset="usdt",
+        )
+
+
+@pytest.mark.parametrize(
+    ("quantity", "price"),
+    [(1.0, Decimal("100")), (Decimal("1"), 100.0), (True, Decimal("100"))],
+)
+def test_binary_float_and_bool_notional_inputs_fail_closed(
+    quantity: object, price: object
+) -> None:
+    with pytest.raises(ContractSpecificationValidationError):
+        _linear().notional(
+            quantity=quantity,  # type: ignore[arg-type]
+            price=price,  # type: ignore[arg-type]
+        )
