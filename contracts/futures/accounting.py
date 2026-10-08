@@ -131,16 +131,22 @@ class FuturesAccountingJournal:
             for debit, credit in [
                 (
                     sum(
-                        entry.amount
-                        for entry in self.entries
-                        if entry.asset == asset
-                        and entry.direction is AccountingDirection.DEBIT
+                        (
+                            entry.amount
+                            for entry in self.entries
+                            if entry.asset == asset
+                            and entry.direction is AccountingDirection.DEBIT
+                        ),
+                        Decimal("0"),
                     ),
                     sum(
-                        entry.amount
-                        for entry in self.entries
-                        if entry.asset == asset
-                        and entry.direction is AccountingDirection.CREDIT
+                        (
+                            entry.amount
+                            for entry in self.entries
+                            if entry.asset == asset
+                            and entry.direction is AccountingDirection.CREDIT
+                        ),
+                        Decimal("0"),
                     ),
                 )
             ]
