@@ -20,7 +20,6 @@ def test_g01_ci_has_strict_reproducibility_and_execution_controls() -> None:
         'cache: "pip"',
         "--disable-pip-version-check",
         "--no-input",
-        'pytest==8.4.2',
         "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
         "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
     )
