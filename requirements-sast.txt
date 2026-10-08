@@ -1,0 +1,2 @@
+# P0-5 static application security testing toolchain lock
+bandit==1.9.4
