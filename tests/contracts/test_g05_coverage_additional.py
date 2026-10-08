@@ -152,7 +152,6 @@ class LiquidationEventDataArgs(TypedDict):
     observed_at: datetime
     as_of: datetime
     max_age: timedelta
-    previous_event_sequence: int
 
 
 class LedgerEntryArgs(TypedDict):
