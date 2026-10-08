@@ -23,7 +23,7 @@ class AccountingDirection(StrEnum):
     CREDIT = "CREDIT"
 
 
-def _decimal(value: Decimal, field: str, *, positive: bool = False) -> Decimal:
+def _decimal(value: object, field: str, *, positive: bool = False) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, Decimal):
         raise AccountingValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite():
@@ -33,20 +33,20 @@ def _decimal(value: Decimal, field: str, *, positive: bool = False) -> Decimal:
     return value
 
 
-def _text(value: str, field: str) -> str:
+def _text(value: object, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise AccountingValidationError(f"{field} must be non-empty")
     return value.strip()
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     asset = _text(value, field).upper()
     if asset.startswith("SPOT") or not asset.replace("_", "").isalnum():
         raise AccountingValidationError(f"{field} is invalid")
     return asset
 
 
-def _sequence(value: int, field: str) -> int:
+def _sequence(value: object, field: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise AccountingValidationError(f"{field} must be a non-negative integer")
     return value
@@ -130,16 +130,22 @@ class FuturesAccountingJournal:
             for debit, credit in [
                 (
                     sum(
-                        entry.amount
-                        for entry in self.entries
-                        if entry.asset == asset
-                        and entry.direction is AccountingDirection.DEBIT
+                        (
+                            entry.amount
+                            for entry in self.entries
+                            if entry.asset == asset
+                            and entry.direction is AccountingDirection.DEBIT
+                        ),
+                        Decimal("0"),
                     ),
                     sum(
-                        entry.amount
-                        for entry in self.entries
-                        if entry.asset == asset
-                        and entry.direction is AccountingDirection.CREDIT
+                        (
+                            entry.amount
+                            for entry in self.entries
+                            if entry.asset == asset
+                            and entry.direction is AccountingDirection.CREDIT
+                        ),
+                        Decimal("0"),
                     ),
                 )
             ]
