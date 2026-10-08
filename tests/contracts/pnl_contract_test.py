@@ -5,10 +5,10 @@ from contracts.futures.pnl import FuturesPnLSpecification,PnLDenomination,PnLUni
 from contracts.futures.instrument import CanonicalFuturesSymbol,ContractFamily,Market
 from contracts.futures.position_side import PositionSide
 UTC=timezone.utc
-def spec(family): return FuturesPnLSpecification(Market.CRYPTO,CanonicalFuturesSymbol("BTC","USD",family,"USD"),PnLUnit.REALIZED_OR_UNREALIZED)
+def spec(family: ContractFamily) -> FuturesPnLSpecification: return FuturesPnLSpecification(Market.CRYPTO,CanonicalFuturesSymbol("BTC","USD",family,"USD"),PnLUnit.REALIZED_OR_UNREALIZED)
 @pytest.mark.parametrize("family,denom",[(ContractFamily.LINEAR,PnLDenomination.QUOTE),(ContractFamily.INVERSE,PnLDenomination.BASE)])
 @pytest.mark.parametrize("market",list(Market))
-def test_scope(family,denom,market):
+def test_scope(family: ContractFamily, denom: PnLDenomination, market: Market) -> None:
     base="BTC" if market is Market.CRYPTO else "XAU"
     s=FuturesPnLSpecification(market,CanonicalFuturesSymbol(base,"USD",family,"USD"),PnLUnit.REALIZED_OR_UNREALIZED)
     assert s.denomination is denom
@@ -25,7 +25,7 @@ def test_unrealized_exact():
 def test_zero_pnl():
     assert spec(ContractFamily.LINEAR).calculate_unrealized(quantity=Decimal("1"),multiplier=Decimal("1"),entry_price=Decimal("100"),valuation_price=Decimal("100"),position_side=PositionSide.LONG,valuation_source="synthetic",observed_at=datetime(2026,1,1,12,tzinfo=UTC))==Decimal("0")
 @pytest.mark.parametrize("v",[True,False,0,-1,0.1,float("nan"),Decimal("NaN")])
-def test_invalid(v):
+def test_invalid(v: object) -> None:
     with pytest.raises(PnLValidationError): spec(ContractFamily.LINEAR).calculate_realized(quantity=v,multiplier=Decimal("1"),entry_price=Decimal("100"),exit_price=Decimal("101"),position_side=PositionSide.LONG)
 def test_utc_source_and_freshness():
     with pytest.raises(PnLValidationError): spec(ContractFamily.LINEAR).calculate_unrealized(quantity=Decimal("1"),multiplier=Decimal("1"),entry_price=Decimal("100"),valuation_price=Decimal("101"),position_side=PositionSide.LONG,valuation_source="",observed_at=datetime(2026,1,1,12))
