@@ -35,18 +35,12 @@ def _asset(value: str, field: str) -> str:
     return value
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool):
+def _positive_decimal(value: Decimal, field: str) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, Decimal):
         raise SettlementValidationError(f"{field} must be an exact Decimal value")
-    try:
-        result = value if isinstance(value, Decimal) else Decimal(str(value))
-    except (InvalidOperation, ValueError) as exc:
-        raise SettlementValidationError(
-            f"{field} must be an exact Decimal value"
-        ) from exc
-    if not result.is_finite() or result <= 0:
+    if not value.is_finite() or value <= 0:
         raise SettlementValidationError(f"{field} must be finite and greater than zero")
-    return result
+    return value
 
 
 @dataclass(frozen=True, slots=True)
@@ -108,7 +102,7 @@ class FuturesSettlementSpecification:
     def conversion_required(self) -> bool:
         return self.source_asset != self.settlement_asset
 
-    def settle_amount(self, amount: Decimal | int | str) -> Decimal:
+    def settle_amount(self, amount: Decimal) -> Decimal:
         """Convert a positive source-asset amount into settlement-asset units."""
         value = _positive_decimal(amount, "amount")
         if not self.conversion_required:
