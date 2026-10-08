@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import cast
 
 import pytest
 
@@ -144,7 +145,7 @@ def test_financial_inputs_fail_closed(value: object) -> None:
     with pytest.raises(LiquidationValidationError):
         specification.liquidation_price(
             contract=contract,
-            quantity=value,
+            quantity=cast(Decimal, value),
             entry_price=Decimal("50"),
             margin_amount=Decimal("900"),
             margin_denomination=LiquidationDenomination.QUOTE,
@@ -176,7 +177,7 @@ def test_maintenance_ratio_and_side_are_explicit_and_constrained():
             margin_amount=Decimal("900"),
             margin_denomination=LiquidationDenomination.QUOTE,
             maintenance_margin_ratio=Decimal("0.05"),
-            position_side="LONG",
+            position_side=cast(PositionSide, "LONG"),
         )
 
 
