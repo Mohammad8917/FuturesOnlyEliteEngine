@@ -1,5 +1,6 @@
 """Canonical Futures liquidation-trigger contract tests."""
 
+from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
@@ -234,6 +235,29 @@ def test_event_is_immutable_and_contains_audit_provenance():
     assert event.max_age == timedelta(minutes=1)
     with pytest.raises((AttributeError, TypeError)):
         event.reference_price = Decimal("1")  # type: ignore[misc]
+
+
+def test_direct_event_revalidates_price_direction_and_freshness():
+    long_result = evaluate()
+    assert long_result.event is not None
+    with pytest.raises(LiquidationEventValidationError):
+        replace(long_result.event, liquidation_price=Decimal("50"))
+    with pytest.raises(LiquidationEventValidationError):
+        replace(
+            long_result.event,
+            as_of=AS_OF + timedelta(minutes=2),
+        )
+    with pytest.raises(LiquidationEventValidationError):
+        replace(long_result.event, max_age=timedelta(0))
+
+    short_result = evaluate(
+        side=PositionSide.SHORT,
+        liquidation=Decimal("58"),
+        reference=Decimal("58"),
+    )
+    assert short_result.event is not None
+    with pytest.raises(LiquidationEventValidationError):
+        replace(short_result.event, liquidation_price=Decimal("50"))
 
 
 def test_direct_event_cannot_claim_trigger_without_crossing_liquidation_price():
