@@ -552,3 +552,14 @@ Frozen semantics: explicit gross exposure versus valuation; Linear base = quanti
 The next authorized Phase 1 unit is **liquidation price and liquidation constraints**. Before production implementation, all eight architecture documents must freeze owner, lifecycle meaning, required inputs/outputs, Linear/Inverse formulas, market applicability, interaction with closed contracts, exact numeric/rounding semantics, provenance/freshness, failure semantics, dependencies, meaningful tests, CI enforcement, and same-SHA evidence.
 
 No Phase 2+ production work is authorized. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
+
+
+## Phase 1 liquidation-price constraint closure evidence
+
+Liquidation-price and liquidation-constraint semantics are COMPLETE. Implementation SHA: `b8b65b721fcae5720d5cf430c979700516d8c10a`; merge SHA: `c18a99d58b8b8dc904250fce38d738eee3bd9bd6`. Production `contracts/futures/liquidation.py`, tests `tests/contracts/liquidation_contract_test.py`, exports, and Phase 1 CI were updated. Phase 1 Domain Contracts is green on both implementation and merge SHA; G01 is green on the implementation lineage. The contract uses explicit Linear/Inverse formulas, denomination, exact Decimal arithmetic, fail-closed constraints, and excludes exchange-specific liquidation execution/transport.
+
+## Phase 1 current cursor — liquidation event and trigger semantics
+
+The next authorized Phase 1 unit is **liquidation event and trigger semantics**. Before implementation, all eight architecture documents must freeze trigger ownership, reference-price provenance/freshness, LONG/SHORT and ONE_WAY/HEDGE behavior, state inputs/outputs, Linear/Inverse and three-market scope, exact numeric/rounding rules, invalid/stale/ambiguous handling, dependency boundaries, idempotency/ordering/concurrency, tests, CI, and same-SHA evidence.
+
+No Phase 2+ production work is authorized. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
