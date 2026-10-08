@@ -12,7 +12,8 @@ This index does not override the constitutional source-of-truth hierarchy. It te
 5. docs/architecture/futures-responsibility-map.md — ownership of responsibilities.
 6. docs/architecture/dependency-rules.md — allowed/forbidden dependency direction.
 7. docs/architecture/master-roadmap-and-governance.md — phase order, entry/exit criteria, and change control.
-8. docs/architecture/adr/README.md — architecture-change process.
+8. docs/architecture/CHANGE-GUARD.md — repository-level protected-surface and enforcement guard.
+9. docs/architecture/adr/README.md — architecture-change process.
 README.md is the public product boundary and points back to this index.
 
 ### Conflict resolution
@@ -138,7 +139,7 @@ Phase 1 is complete only when every required contract has a production implement
 
 ## 10.2 Phase 1 execution cursor
 
-**Current cursor:** initial margin semantics.
+**Current cursor:** liquidation event and trigger semantics.
 
 The instrument identity and canonical Futures symbol unit is evidenced complete on the current main lineage. The next incomplete authorized Phase 1 unit must be completed through the full implementation-unit path:
 
