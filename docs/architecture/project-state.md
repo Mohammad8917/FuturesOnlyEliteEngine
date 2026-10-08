@@ -126,7 +126,7 @@ No downstream Phase 1 cursor advance is authorized until production implementati
 - Forbidden action: do not bypass settlement semantics, reinterpret multiplier meaning, weaken tests/gates, lower G05/G08, or skip the first incomplete Phase 1 contract.
 \n## Phase 1 settlement implementation evidence
 
-The active cursor is **initial margin semantics**.
+The active cursor is **maintenance margin semantics**.
 
 The implementation contract is frozen:
 - settlement unit = ASSET;
@@ -181,9 +181,9 @@ Margin asset and margin semantics are COMPLETE on main merge SHA f2c30bf3da77f56
 
 ## Phase 1 current cursor — initial margin
 
-Current cursor: **initial margin semantics**.
+Current cursor: **maintenance margin semantics**.
 
-Next authorized action: define and implement the explicit initial-margin requirement contract from the frozen architecture baseline. No Phase 2+ work is authorized, and no threshold/test/gate weakening is permitted.
+Next authorized action: define and implement the explicit maintenance-margin requirement contract from the frozen architecture baseline. No Phase 2+ work is authorized, and no threshold/test/gate weakening is permitted.
 
 ## Phase 1 initial margin implementation contract
 
@@ -221,3 +221,30 @@ No cursor advance is authorized until production implementation, contract tests,
 Current cursor: **maintenance margin semantics**.
 
 The next unit must first freeze explicit ownership, inputs, outputs, denomination, precision, applicability, tier/rate/amount semantics where applicable, and fail-closed behavior before production implementation.
+
+
+## Phase 1 maintenance margin semantic lock
+
+Maintenance margin is an explicit Futures domain/contract requirement. It is distinct from leverage, initial margin, liquidation, risk policy, and exchange-specific collateral policy.
+
+Frozen semantics:
+- owner: Futures domain/contract boundary;
+- unit: RATIO for the maintenance-margin requirement rate;
+- numeric representation: exact finite Decimal;
+- inputs: canonical Futures instrument identity, matching market, explicit positive finite notional, and explicit positive finite maintenance-margin ratio;
+- formula: `maintenance_margin_amount = notional × maintenance_margin_ratio`;
+- output denomination: identical to the explicit notional denomination;
+- precision: exact Decimal multiplication with no implicit rounding or quantization;
+- applicability: CRYPTO Futures, FOREX Futures, GOLD Futures; Linear and Inverse;
+- the notional is consumed from canonical multiplier/contract-specification semantics and is not redefined here;
+- exchange-specific tiers, rates, offsets, brackets, notional bands, or collateral rules are not guessed or silently defaulted by this canonical contract;
+- no inference from leverage, initial margin, account state, liquidation, risk policy, exchange defaults, or position sizing;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation dependency;
+- missing, invalid, zero, negative, non-finite, contradictory, unsupported, stale, or ambiguous critical terms fail closed;
+- meaningful contract tests, CI enforcement, and same-SHA evidence are required before the cursor can advance.
+
+Production boundary: `contracts/futures/maintenance_margin.py`.
+Test boundary: `tests/contracts/test_maintenance_margin.py`.
+CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
+
+The canonical implementation does not claim exchange-specific tier schedules. Such schedules may be mapped later through explicit exchange/infrastructure contracts only when their provenance, tier selection semantics, denomination, precision, freshness, and failure behavior are explicit.
