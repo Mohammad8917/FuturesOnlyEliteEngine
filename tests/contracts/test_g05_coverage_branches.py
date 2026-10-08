@@ -24,6 +24,7 @@ from contracts.futures.contract_specification import (
 )
 from contracts.futures.exposure import (
     ExposureValidationError,
+    ExposureDenomination,
     FuturesExposureSpecification,
 )
 from contracts.futures.funding import (
@@ -122,6 +123,37 @@ class LiquidationArgs(TypedDict):
     position_side: PositionSide
 
 
+class FundingSpecificationArgs(TypedDict):
+    market: Market
+    symbol: CanonicalFuturesSymbol
+    funding_rate_unit: FundingRateUnit
+    funding_sign_convention: FundingSignConvention
+    funding_rate: Decimal
+    interval_start: datetime
+    interval_end: datetime
+    rate_source: str
+    observed_at: datetime
+    notional_denomination: str
+
+
+class MarginSpecificationArgs(TypedDict):
+    market: Market
+    instrument: FuturesInstrumentIdentity
+    margin_unit: MarginUnit
+    margin_asset: str
+    source_asset: str
+    conversion_rate: Decimal | None
+
+
+class LeverageSpecificationArgs(TypedDict):
+    market: Market
+    instrument: FuturesInstrumentIdentity
+    leverage_unit: LeverageUnit
+    leverage: Decimal
+    minimum_leverage: Decimal
+    maximum_leverage: Decimal
+
+
 class LiquidationEventArgs(TypedDict):
     account_id: str
     position_id: str
@@ -183,15 +215,15 @@ def test_instrument_parsing_and_identity_validation_branches():
     with pytest.raises(InstrumentValidationError):
         CanonicalFuturesSymbol.parse(cast(str, 1))
     with pytest.raises(InstrumentValidationError):
-        FuturesInstrumentIdentity.build_id("CRYPTO", symbol())
+        FuturesInstrumentIdentity.build_id(cast(Market, "CRYPTO"), symbol())
     with pytest.raises(InstrumentValidationError):
-        FuturesInstrumentIdentity.build_id(Market.CRYPTO, "BTC/USD")
+        FuturesInstrumentIdentity.build_id(Market.CRYPTO, cast(CanonicalFuturesSymbol, "BTC/USD"))
     with pytest.raises(InstrumentValidationError):
         FuturesInstrumentIdentity.parse_id("SPOT|CRYPTO|BTC/USD.LINEAR.USD", margin_asset="USD")
 
 
 @pytest.mark.parametrize("value", [True, Decimal("NaN"), Decimal("Infinity")])
-def test_contract_decimal_validation_branches(value):
+def test_contract_decimal_validation_branches(value: object) -> None:
     with pytest.raises(ContractSpecificationValidationError):
         FuturesContractSpecification(
             market=Market.CRYPTO,
@@ -202,7 +234,7 @@ def test_contract_decimal_validation_branches(value):
         )
 
 
-def test_contract_family_fallback_branch_is_fail_closed(monkeypatch):
+def test_contract_family_fallback_branch_is_fail_closed() -> None:
     spec = contract()
     object.__setattr__(spec.symbol, "contract_family", object()) if False else None
     assert spec.notional(quantity=1, price=2) == Decimal("200")
@@ -294,7 +326,7 @@ def test_exposure_remaining_semantics():
         )
 
 
-def funding_spec(rate: Decimal = Decimal("0.1")) -> FuturesFundingSpecification:
+def funding_spec(rate: Decimal = Decimal("0.1")) -> FuturesFundingSpecification -> FuturesFundingSpecification:
     return FuturesFundingSpecification(
         market=Market.CRYPTO,
         symbol=symbol(),
@@ -316,7 +348,7 @@ def funding_spec(rate: Decimal = Decimal("0.1")) -> FuturesFundingSpecification:
     ("funding_sign_convention", "POSITIVE_LONG_PAYS"),
 ])
 def test_funding_constructor_types_fail_closed(field, value):
-    kwargs = dict(
+    kwargs: dict[str, object] = dict(
         market=Market.CRYPTO, symbol=symbol(),
         funding_rate_unit=FundingRateUnit.INTERVAL_RATE,
         funding_sign_convention=FundingSignConvention.POSITIVE_LONG_PAYS,
@@ -328,7 +360,7 @@ def test_funding_constructor_types_fail_closed(field, value):
     )
     kwargs[field] = value
     with pytest.raises(FundingValidationError):
-        FuturesFundingSpecification(**kwargs)
+        FuturesFundingSpecification(**cast(FundingSpecificationArgs, kwargs))
 
 
 def test_funding_interval_provenance_and_side_branches():
@@ -340,11 +372,12 @@ def test_funding_interval_provenance_and_side_branches():
     with pytest.raises(FundingValidationError):
         funding_spec().calculate_payment(notional=1, position_side=cast(PositionSide, "LONG"))
     payment = funding_spec().calculate_payment(notional=Decimal("10"), position_side=PositionSide.SHORT)
+    assert payment is not None
     assert payment.payer is PositionSide.SHORT
     assert payment.receiver is PositionSide.LONG
 
 
-def margin_instrument():
+def margin_instrument() -> FuturesInstrumentIdentity:
     return FuturesInstrumentIdentity.create(
         market=Market.CRYPTO, symbol=symbol(), margin_asset="USD"
     )
@@ -370,13 +403,13 @@ def test_margin_all_conversion_branches():
 
 
 def margin_bad(field: str, value: object) -> None:
-    kwargs = dict(
+    kwargs: dict[str, object] = dict(
         market=Market.CRYPTO, instrument=margin_instrument(),
         margin_unit=MarginUnit.ASSET, margin_asset="USD", source_asset="USD"
     )
     kwargs[field] = value
     with pytest.raises(MarginValidationError):
-        FuturesMarginSpecification(**kwargs)
+        FuturesMarginSpecification(**cast(MarginSpecificationArgs, kwargs))
 
 
 @pytest.mark.parametrize("field,value", [
@@ -399,18 +432,22 @@ def test_initial_and_maintenance_margin_remaining_branches() -> None:
     assert maintenance.symbol == inst.symbol
     assert initial.calculate(Decimal("100")) == Decimal("10.0")
     assert maintenance.calculate(Decimal("100")) == Decimal("5.00")
-    for cls, unit, ratio, exc in [
-        (FuturesInitialMarginSpecification, InitialMarginUnit.RATIO, Decimal("0.1"), InitialMarginValidationError),
-        (FuturesMaintenanceMarginSpecification, MaintenanceMarginUnit.RATIO, Decimal("0.1"), MaintenanceMarginValidationError),
-    ]:
-        with pytest.raises(exc):
-            cls("bad", inst, unit, ratio, "USD")
-        with pytest.raises(exc):
-            cls(Market.CRYPTO, "bad", unit, ratio, "USD")
-        with pytest.raises(exc):
-            cls(Market.CRYPTO, inst, "RATIO", ratio, "USD")
-        with pytest.raises(exc):
-            cls(Market.CRYPTO, inst, unit, Decimal("NaN"), "USD")
+    with pytest.raises(InitialMarginValidationError):
+        FuturesInitialMarginSpecification(cast(Market, "bad"), inst, InitialMarginUnit.RATIO, Decimal("0.1"), "USD")
+    with pytest.raises(InitialMarginValidationError):
+        FuturesInitialMarginSpecification(Market.CRYPTO, cast(FuturesInstrumentIdentity, "bad"), InitialMarginUnit.RATIO, Decimal("0.1"), "USD")
+    with pytest.raises(InitialMarginValidationError):
+        FuturesInitialMarginSpecification(Market.CRYPTO, inst, cast(InitialMarginUnit, "RATIO"), Decimal("0.1"), "USD")
+    with pytest.raises(InitialMarginValidationError):
+        FuturesInitialMarginSpecification(Market.CRYPTO, inst, InitialMarginUnit.RATIO, Decimal("NaN"), "USD")
+    with pytest.raises(MaintenanceMarginValidationError):
+        FuturesMaintenanceMarginSpecification(cast(Market, "bad"), inst, MaintenanceMarginUnit.RATIO, Decimal("0.1"), "USD")
+    with pytest.raises(MaintenanceMarginValidationError):
+        FuturesMaintenanceMarginSpecification(Market.CRYPTO, cast(FuturesInstrumentIdentity, "bad"), MaintenanceMarginUnit.RATIO, Decimal("0.1"), "USD")
+    with pytest.raises(MaintenanceMarginValidationError):
+        FuturesMaintenanceMarginSpecification(Market.CRYPTO, inst, cast(MaintenanceMarginUnit, "RATIO"), Decimal("0.1"), "USD")
+    with pytest.raises(MaintenanceMarginValidationError):
+        FuturesMaintenanceMarginSpecification(Market.CRYPTO, inst, MaintenanceMarginUnit.RATIO, Decimal("NaN"), "USD")
 
 
 def test_leverage_remaining_validation_branches() -> None:
@@ -421,13 +458,13 @@ def test_leverage_remaining_validation_branches() -> None:
     assert spec.is_within_contract_bounds
     cases = [("market", "CRYPTO"), ("instrument", "bad"), ("leverage_unit", "RATIO")]
     for field, value in cases:
-        kwargs = dict(
+        kwargs: dict[str, object] = dict(
             market=Market.CRYPTO, instrument=inst, leverage_unit=LeverageUnit.RATIO,
             leverage=Decimal("2"), minimum_leverage=Decimal("1"), maximum_leverage=Decimal("5")
         )
         kwargs[field] = value
         with pytest.raises(LeverageValidationError):
-            FuturesLeverageSpecification(**kwargs)
+            FuturesLeverageSpecification(**cast(LeverageSpecificationArgs, kwargs))
     with pytest.raises(LeverageValidationError):
         FuturesLeverageSpecification(Market.CRYPTO, inst, LeverageUnit.RATIO, Decimal("2"), Decimal("6"), Decimal("5"))
     with pytest.raises(LeverageValidationError):
@@ -603,9 +640,9 @@ def test_settlement_and_settlement_accounting_remaining_branches():
     with pytest.raises(SettlementValidationError):
         FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, SettlementUnit.ASSET, "USD", "EUR")
     with pytest.raises(SettlementValidationError):
-        FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, "ASSET", "USD", "USD")
+        FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, cast(SettlementUnit, "ASSET"), "USD", "USD")
     with pytest.raises(SettlementValidationError):
-        same.settle_amount(0)
+        same.settle_amount(cast(Decimal, 0))
     accounting = FuturesSettlementAccountingSpecification(Market.CRYPTO, inst, same)
     with pytest.raises(AccountingValidationError):
         FuturesSettlementAccountingSpecification("bad", inst, same)
