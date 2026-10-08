@@ -128,9 +128,9 @@ class FuturesFundingSpecification:
     def interval(self) -> timedelta:
         return self.interval_end - self.interval_start
 
-    def validate_freshness(self, *, as_of: datetime, max_age: timedelta) -> None:
+    def validate_freshness(self, *, as_of: datetime, max_age: object) -> None:
         current = _utc(as_of, "as_of")
-        if max_age <= timedelta(0):
+        if not isinstance(max_age, timedelta) or max_age <= timedelta(0):
             raise FundingValidationError("max_age must be positive")
         if current < self.observed_at or current - self.observed_at > max_age:
             raise FundingValidationError(
