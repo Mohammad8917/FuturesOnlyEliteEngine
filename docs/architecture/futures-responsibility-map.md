@@ -584,3 +584,12 @@ Exposure and position valuation is COMPLETE on implementation SHA `dc9461a562426
 ## Phase 1 next-unit ownership gate — liquidation price and liquidation constraints
 
 Owner: Futures domain/contract boundary for deterministic liquidation-price semantics and constraints. Execution/account mutation/liquidation events remain outside. The contract must explicitly consume prior position, multiplier, margin, leverage, maintenance-margin, price/quantity, side/mode, funding, PnL, and exposure facts without redefining them; define Linear/Inverse formulas, all three markets, exact Decimal/no rounding, provenance/freshness, fail-closed state, and domain-safe dependencies. Exchange transport, SDK, network, account mutation, exchange-specific mark-price/tier/fee/funding/settlement defaults are forbidden. Meaningful tests, CI, and same-SHA evidence are mandatory.
+
+
+## Phase 1 liquidation-price constraint closure evidence
+
+Liquidation-price constraints are COMPLETE on implementation SHA `b8b65b721fcae5720d5cf430c979700516d8c10a`, merged as `c18a99d58b8b8dc904250fce38d738eee3bd9bd6`. Ownership remains the Futures domain/contract boundary; execution, forced close, account mutation, and exchange transport are outside.
+
+## Phase 1 next-unit ownership gate — liquidation event and trigger semantics
+
+Owner: Futures domain/contract boundary for deterministic trigger-condition vocabulary and state evaluation. It must consume explicit liquidation price, reference price, side/mode, and validated position/account facts without redefining them. Trigger provenance/freshness, LONG/SHORT and ONE_WAY/HEDGE behavior, Linear/Inverse, all three markets, exact Decimal/no rounding, fail-closed state, idempotency/ordering/concurrency, tests, CI, and same-SHA evidence are mandatory. Execution infrastructure owns forced-order placement and account mutation; exchange adapters own external trigger/mark-price normalization. Network, SDK, persistence, scheduler, and exchange-specific defaults are forbidden in the canonical contract.
