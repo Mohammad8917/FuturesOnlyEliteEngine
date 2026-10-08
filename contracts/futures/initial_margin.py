@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
+from typing import cast
 
 from .instrument import FuturesInstrumentIdentity, Market
 
@@ -25,7 +26,7 @@ class InitialMarginUnit(StrEnum):
     RATIO = "RATIO"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
+def _positive_decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise InitialMarginValidationError(f"{field} must be an exact Decimal value")
     try:
@@ -41,7 +42,7 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
     return result
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     if not isinstance(value, str):
         raise InitialMarginValidationError(f"{field} must be an asset symbol")
     normalized = value.strip().upper()
@@ -72,11 +73,11 @@ class FuturesInitialMarginSpecification:
     notional_asset: str
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(cast(object, self.market), Market):
             raise InitialMarginValidationError(
                 "market must be a supported Futures market"
             )
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(cast(object, self.instrument), FuturesInstrumentIdentity):
             raise InitialMarginValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
@@ -84,7 +85,7 @@ class FuturesInitialMarginSpecification:
             raise InitialMarginValidationError(
                 "market must match the instrument identity"
             )
-        if not isinstance(self.initial_margin_unit, InitialMarginUnit):
+        if not isinstance(cast(object, self.initial_margin_unit), InitialMarginUnit):
             raise InitialMarginValidationError(
                 "initial_margin_unit must be RATIO"
             )

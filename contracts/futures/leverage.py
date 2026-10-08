@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
+from typing import cast
 
 from .instrument import FuturesInstrumentIdentity, Market
 
@@ -25,7 +26,7 @@ class LeverageUnit(StrEnum):
     RATIO = "RATIO"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
+def _positive_decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise LeverageValidationError(f"{field} must be an exact Decimal value")
     try:
@@ -57,15 +58,15 @@ class FuturesLeverageSpecification:
     maximum_leverage: Decimal
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(cast(object, self.market), Market):
             raise LeverageValidationError("market must be a supported Futures market")
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(cast(object, self.instrument), FuturesInstrumentIdentity):
             raise LeverageValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
         if self.instrument.market is not self.market:
             raise LeverageValidationError("market must match the instrument identity")
-        if not isinstance(self.leverage_unit, LeverageUnit):
+        if not isinstance(cast(object, self.leverage_unit), LeverageUnit):
             raise LeverageValidationError("leverage_unit must be RATIO")
 
         leverage = _positive_decimal(self.leverage, "leverage")

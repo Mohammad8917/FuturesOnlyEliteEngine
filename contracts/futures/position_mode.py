@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import cast
 
 from .position_side import PositionSide
 
@@ -31,7 +32,7 @@ class FuturesPositionModeSpecification:
     mode: PositionMode
 
     def __post_init__(self) -> None:
-        if not isinstance(self.mode, PositionMode):
+        if not isinstance(cast(object, self.mode), PositionMode):
             raise PositionModeValidationError(
                 "mode must be ONE_WAY or HEDGE"
             )
@@ -46,7 +47,7 @@ class FuturesPositionModeSpecification:
         return self.mode is PositionMode.HEDGE
 
     def accepts(self, side: PositionSide) -> bool:
-        if not isinstance(side, PositionSide):
+        if not isinstance(cast(object, side), PositionSide):
             raise PositionModeValidationError(
                 "position side must be LONG or SHORT"
             )

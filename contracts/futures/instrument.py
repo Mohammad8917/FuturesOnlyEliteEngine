@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from enum import StrEnum
+from typing import cast
 import re
 
 
@@ -46,7 +47,7 @@ class InstrumentStatus(StrEnum):
     DELISTED = "DELISTED"
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     if not isinstance(value, str):
         raise InstrumentValidationError(f"{field} must be a string")
     normalized = value.strip().upper()
@@ -77,7 +78,7 @@ class CanonicalFuturesSymbol:
     expiry: date | None = None
 
     def __post_init__(self) -> None:
-        if not isinstance(self.contract_family, ContractFamily):
+        if not isinstance(cast(object, self.contract_family), ContractFamily):
             raise InstrumentValidationError(
                 "contract_family must be LINEAR or INVERSE"
             )
@@ -89,7 +90,7 @@ class CanonicalFuturesSymbol:
         if base == quote:
             raise InstrumentValidationError("base_asset and quote_asset must differ")
         if self.expiry is not None and (
-            not isinstance(self.expiry, date)
+            not isinstance(cast(object, self.expiry), date)
             or self.expiry.__class__ is not date
         ):
             raise InstrumentValidationError("expiry must be an exact date or None")
@@ -109,7 +110,7 @@ class CanonicalFuturesSymbol:
 
     @classmethod
     def parse(cls, value: str) -> "CanonicalFuturesSymbol":
-        if not isinstance(value, str):
+        if not isinstance(cast(object, value), str):
             raise InstrumentValidationError("canonical symbol must be a string")
         normalized = value.strip().upper()
         match = _CANONICAL_RE.fullmatch(normalized)
@@ -156,11 +157,11 @@ class FuturesInstrumentIdentity:
     status: InstrumentStatus = InstrumentStatus.ACTIVE
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(cast(object, self.market), Market):
             raise InstrumentValidationError("market must be a supported Futures market")
-        if not isinstance(self.symbol, CanonicalFuturesSymbol):
+        if not isinstance(cast(object, self.symbol), CanonicalFuturesSymbol):
             raise InstrumentValidationError("symbol must be CanonicalFuturesSymbol")
-        if not isinstance(self.status, InstrumentStatus):
+        if not isinstance(cast(object, self.status), InstrumentStatus):
             raise InstrumentValidationError("status must be a known instrument status")
 
         object.__setattr__(self, "margin_asset", _asset(self.margin_asset, "margin_asset"))
@@ -171,9 +172,9 @@ class FuturesInstrumentIdentity:
 
     @staticmethod
     def build_id(market: Market, symbol: CanonicalFuturesSymbol) -> str:
-        if not isinstance(market, Market):
+        if not isinstance(cast(object, market), Market):
             raise InstrumentValidationError("market must be a supported Futures market")
-        if not isinstance(symbol, CanonicalFuturesSymbol):
+        if not isinstance(cast(object, symbol), CanonicalFuturesSymbol):
             raise InstrumentValidationError("symbol must be CanonicalFuturesSymbol")
         return f"FUTURES|{market.value}|{symbol.as_text()}"
 
@@ -201,7 +202,7 @@ class FuturesInstrumentIdentity:
         margin_asset: str,
         status: InstrumentStatus = InstrumentStatus.ACTIVE,
     ) -> "FuturesInstrumentIdentity":
-        if not isinstance(instrument_id, str) or not _INSTRUMENT_ID_RE.fullmatch(instrument_id):
+        if not isinstance(cast(object, instrument_id), str) or not _INSTRUMENT_ID_RE.fullmatch(instrument_id):
             raise InstrumentValidationError("invalid canonical Futures instrument_id")
 
         _, market_text, symbol_text = instrument_id.split("|", 2)

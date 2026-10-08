@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal
+from typing import cast
 
 from .accounting import (
     AccountingDirection,
@@ -20,13 +21,13 @@ from .instrument import FuturesInstrumentIdentity, Market
 from .settlement import FuturesSettlementSpecification
 
 
-def _text(value: str, field: str) -> str:
+def _text(value: object, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise AccountingValidationError(f"{field} must be non-empty")
     return value.strip()
 
 
-def _decimal(value: Decimal, field: str) -> Decimal:
+def _decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, Decimal):
         raise AccountingValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite() or value <= 0:
@@ -34,7 +35,7 @@ def _decimal(value: Decimal, field: str) -> Decimal:
     return value
 
 
-def _sequence(value: int, field: str) -> int:
+def _sequence(value: object, field: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise AccountingValidationError(f"{field} must be a non-negative integer")
     return value
@@ -49,13 +50,13 @@ class FuturesSettlementAccountingSpecification:
     settlement: FuturesSettlementSpecification
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(cast(object, self.market), Market):
             raise AccountingValidationError("market must be a supported Futures market")
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(cast(object, self.instrument), FuturesInstrumentIdentity):
             raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
         if self.instrument.market is not self.market:
             raise AccountingValidationError("market must match instrument")
-        if not isinstance(self.settlement, FuturesSettlementSpecification):
+        if not isinstance(cast(object, self.settlement), FuturesSettlementSpecification):
             raise AccountingValidationError(
                 "settlement must be FuturesSettlementSpecification"
             )

@@ -42,7 +42,7 @@ def test_all_source_of_truth_documents_exist() -> None:
 
 
 def test_phase1_has_production_and_test_boundaries() -> None:
-    missing = []
+    missing: list[str] = []
     for production_names, test_name in PHASE1_BOUNDARIES:
         for production_name in production_names:
             if not (CONTRACTS / f"{production_name}.py").is_file():

@@ -2,6 +2,7 @@
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from typing import TypedDict, cast
 
 import pytest
 
@@ -9,12 +10,37 @@ from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily,
 from contracts.futures.liquidation import LiquidationDenomination
 from contracts.futures.liquidation_event import (
     FuturesLiquidationTriggerEvent,
+    FuturesLiquidationTriggerEvaluation,
     FuturesLiquidationTriggerSpecification,
     LiquidationEventValidationError,
     LiquidationTrigger,
 )
 from contracts.futures.position_mode import PositionMode
 from contracts.futures.position_side import PositionSide
+
+
+class EvaluationArgs(TypedDict):
+    account_id: str
+    position_id: str
+    event_id: str
+    causation_id: str
+    state_version: int
+    contract_family: ContractFamily
+    position_mode: PositionMode
+    position_side: PositionSide
+    quantity: Decimal
+    entry_price: Decimal
+    margin_amount: Decimal
+    margin_denomination: LiquidationDenomination
+    maintenance_margin_ratio: Decimal
+    liquidation_price: Decimal
+    reference_price: Decimal
+    reference_price_source: str
+    observed_at: datetime
+    as_of: datetime
+    max_age: timedelta
+    previous_event_sequence: int
+    event_sequence: int
 
 
 UTC = timezone.utc
@@ -29,18 +55,18 @@ def make_symbol(market: Market, family: ContractFamily) -> CanonicalFuturesSymbo
 
 def evaluate(
     *,
-    market=Market.CRYPTO,
-    family=ContractFamily.LINEAR,
-    side=PositionSide.LONG,
-    mode=PositionMode.ONE_WAY,
-    reference=Decimal("40"),
-    liquidation=Decimal("42"),
-    previous_sequence=4,
-    event_sequence=5,
-    **overrides,
-):
+    market: Market = Market.CRYPTO,
+    family: ContractFamily = ContractFamily.LINEAR,
+    side: PositionSide = PositionSide.LONG,
+    mode: PositionMode = PositionMode.ONE_WAY,
+    reference: Decimal = Decimal("40"),
+    liquidation: Decimal = Decimal("42"),
+    previous_sequence: int = 4,
+    event_sequence: int = 5,
+    **overrides: object,
+) -> FuturesLiquidationTriggerEvaluation:
     spec = FuturesLiquidationTriggerSpecification(market, make_symbol(market, family))
-    values = dict(
+    values: dict[str, object] = dict(
         account_id="account-1",
         position_id="position-1",
         event_id="liq-event-1",
@@ -68,14 +94,19 @@ def evaluate(
         event_sequence=event_sequence,
     )
     values.update(overrides)
-    return spec.evaluate(**values)
+    return spec.evaluate(**cast(EvaluationArgs, values))
 
 
 @pytest.mark.parametrize("market", list(Market))
 @pytest.mark.parametrize("family", list(ContractFamily))
 @pytest.mark.parametrize("mode", list(PositionMode))
 @pytest.mark.parametrize("side", list(PositionSide))
-def test_scope_and_side_mode_are_explicit(market, family, mode, side):
+def test_scope_and_side_mode_are_explicit(
+    market: Market,
+    family: ContractFamily,
+    mode: PositionMode,
+    side: PositionSide,
+) -> None:
     liquidation = Decimal("42") if side is PositionSide.LONG else Decimal("58")
     reference = Decimal("40") if side is PositionSide.LONG else Decimal("60")
     result = evaluate(
@@ -94,7 +125,7 @@ def test_scope_and_side_mode_are_explicit(market, family, mode, side):
     assert result.event.symbol.contract_family is family
 
 
-def test_long_trigger_is_downward_and_not_triggered_above_liquidation():
+def test_long_trigger_is_downward_and_not_triggered_above_liquidation() -> None:
     triggered = evaluate(side=PositionSide.LONG, reference=Decimal("42"))
     assert triggered.trigger is LiquidationTrigger.TRIGGERED
     assert triggered.event is not None
@@ -104,7 +135,7 @@ def test_long_trigger_is_downward_and_not_triggered_above_liquidation():
     assert not_triggered.event is None
 
 
-def test_short_trigger_is_upward_and_not_triggered_below_liquidation():
+def test_short_trigger_is_upward_and_not_triggered_below_liquidation() -> None:
     triggered = evaluate(
         side=PositionSide.SHORT,
         liquidation=Decimal("58"),
@@ -132,9 +163,9 @@ def test_short_trigger_is_upward_and_not_triggered_below_liquidation():
         "reference_price_source",
     ],
 )
-def test_missing_provenance_or_identity_fails_closed(field):
+def test_missing_provenance_or_identity_fails_closed(field: str) -> None:
     with pytest.raises(LiquidationEventValidationError):
-        evaluate(**{field: ""})
+        evaluate(**{field: ""})  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize(
@@ -150,12 +181,12 @@ def test_missing_provenance_or_identity_fails_closed(field):
 @pytest.mark.parametrize(
     "value", [True, False, 0, -1, 0.1, float("nan"), Decimal("NaN")]
 )
-def test_numeric_boundaries_reject_bool_float_and_invalid_values(field, value):
+def test_numeric_boundaries_reject_bool_float_and_invalid_values(field: str, value: object) -> None:
     with pytest.raises(LiquidationEventValidationError):
-        evaluate(**{field: value})
+        evaluate(**{field: value})  # type: ignore[arg-type]
 
 
-def test_freshness_and_utc_are_fail_closed():
+def test_freshness_and_utc_are_fail_closed() -> None:
     with pytest.raises(LiquidationEventValidationError):
         evaluate(as_of=AS_OF + timedelta(minutes=2))
 
@@ -169,7 +200,7 @@ def test_freshness_and_utc_are_fail_closed():
         )
 
 
-def test_triggered_event_requires_monotonic_sequence():
+def test_triggered_event_requires_monotonic_sequence() -> None:
     with pytest.raises(LiquidationEventValidationError):
         evaluate(previous_sequence=5, event_sequence=5)
 
@@ -177,7 +208,7 @@ def test_triggered_event_requires_monotonic_sequence():
         evaluate(previous_sequence=6, event_sequence=5)
 
 
-def test_non_triggered_evaluation_can_keep_same_sequence_without_emitting_event():
+def test_non_triggered_evaluation_can_keep_same_sequence_without_emitting_event() -> None:
     result = evaluate(
         reference=Decimal("45"),
         previous_sequence=5,
@@ -187,7 +218,7 @@ def test_non_triggered_evaluation_can_keep_same_sequence_without_emitting_event(
     assert result.event is None
 
 
-def test_family_denomination_mismatch_fails_closed():
+def test_family_denomination_mismatch_fails_closed() -> None:
     with pytest.raises(LiquidationEventValidationError):
         evaluate(
             family=ContractFamily.LINEAR,
@@ -200,12 +231,12 @@ def test_family_denomination_mismatch_fails_closed():
         )
 
 
-def test_contradictory_contract_family_and_symbol_fails_closed():
+def test_contradictory_contract_family_and_symbol_fails_closed() -> None:
     with pytest.raises(LiquidationEventValidationError):
         evaluate(family=ContractFamily.INVERSE, contract_family=ContractFamily.LINEAR)
 
 
-def test_invalid_liquidation_direction_fails_closed():
+def test_invalid_liquidation_direction_fails_closed() -> None:
     with pytest.raises(LiquidationEventValidationError):
         evaluate(
             side=PositionSide.LONG,
@@ -221,7 +252,7 @@ def test_invalid_liquidation_direction_fails_closed():
         )
 
 
-def test_event_is_immutable_and_contains_audit_provenance():
+def test_event_is_immutable_and_contains_audit_provenance() -> None:
     result = evaluate()
     assert result.event is not None
     event = result.event
@@ -234,7 +265,7 @@ def test_event_is_immutable_and_contains_audit_provenance():
         event.reference_price = Decimal("1")  # type: ignore[misc]
 
 
-def test_direct_event_cannot_claim_trigger_without_crossing_liquidation_price():
+def test_direct_event_cannot_claim_trigger_without_crossing_liquidation_price() -> None:
     with pytest.raises(LiquidationEventValidationError):
         FuturesLiquidationTriggerEvent(
             account_id="account-1",

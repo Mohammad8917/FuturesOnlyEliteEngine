@@ -39,7 +39,7 @@ def test_leverage_is_exact_and_within_explicit_bounds() -> None:
         market=Market.CRYPTO,
         instrument=_instrument(),
         leverage_unit=LeverageUnit.RATIO,
-        leverage=Decimal("12.5"),
+        leverage =Decimal("12.5"),
         minimum_leverage=Decimal("1"),
         maximum_leverage=Decimal("20"),
     )
@@ -56,7 +56,7 @@ def test_leverage_applies_to_all_supported_markets_and_families(
         market=market,
         instrument=_instrument(market, family),
         leverage_unit=LeverageUnit.RATIO,
-        leverage=Decimal("2"),
+        leverage =Decimal("2"),
         minimum_leverage=Decimal("1"),
         maximum_leverage=Decimal("5"),
     )
@@ -73,7 +73,7 @@ def test_invalid_leverage_fails_closed(leverage: Decimal) -> None:
             market=Market.CRYPTO,
             instrument=_instrument(),
             leverage_unit=LeverageUnit.RATIO,
-            leverage=leverage,
+            leverage =leverage,
             minimum_leverage=Decimal("1"),
             maximum_leverage=Decimal("20"),
         )
@@ -98,7 +98,7 @@ def test_invalid_contract_bounds_fail_closed(minimum: Decimal, maximum: Decimal)
             market=Market.CRYPTO,
             instrument=_instrument(),
             leverage_unit=LeverageUnit.RATIO,
-            leverage=Decimal("2"),
+            leverage =Decimal("2"),
             minimum_leverage=minimum,
             maximum_leverage=maximum,
         )
@@ -110,7 +110,7 @@ def test_reversed_bounds_fail_closed() -> None:
             market=Market.CRYPTO,
             instrument=_instrument(),
             leverage_unit=LeverageUnit.RATIO,
-            leverage=Decimal("2"),
+            leverage =Decimal("2"),
             minimum_leverage=Decimal("10"),
             maximum_leverage=Decimal("5"),
         )
@@ -126,7 +126,7 @@ def test_leverage_outside_explicit_bounds_fails_closed(leverage: Decimal) -> Non
             market=Market.CRYPTO,
             instrument=_instrument(),
             leverage_unit=LeverageUnit.RATIO,
-            leverage=leverage,
+            leverage =leverage,
             minimum_leverage=Decimal("1"),
             maximum_leverage=Decimal("20"),
         )
@@ -138,7 +138,7 @@ def test_market_mismatch_fails_closed() -> None:
             market=Market.FOREX,
             instrument=_instrument(Market.CRYPTO),
             leverage_unit=LeverageUnit.RATIO,
-            leverage=Decimal("2"),
+            leverage =Decimal("2"),
             minimum_leverage=Decimal("1"),
             maximum_leverage=Decimal("20"),
         )
@@ -149,8 +149,8 @@ def test_non_ratio_unit_fails_closed() -> None:
         FuturesLeverageSpecification(
             market=Market.CRYPTO,
             instrument=_instrument(),
-            leverage_unit="RATIO",
-            leverage=Decimal("2"),
+            leverage_unit="RATIO",  # type: ignore[arg-type]
+            leverage =Decimal("2"),
             minimum_leverage=Decimal("1"),
             maximum_leverage=Decimal("20"),
         )
@@ -161,10 +161,10 @@ def test_decimal_conversion_is_exact_and_immutable() -> None:
         market=Market.CRYPTO,
         instrument=_instrument(),
         leverage_unit=LeverageUnit.RATIO,
-        leverage="12.500",
-        minimum_leverage="1",
-        maximum_leverage="20",
+        leverage="12.500",  # type: ignore[arg-type]
+        minimum_leverage="1",  # type: ignore[arg-type]
+        maximum_leverage="20",  # type: ignore[arg-type]
     )
     assert spec.leverage == Decimal("12.500")
     with pytest.raises((AttributeError, TypeError)):
-        spec.leverage = Decimal("5")
+        spec.leverage = Decimal("5")  # type: ignore[misc]
