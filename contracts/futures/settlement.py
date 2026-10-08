@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
+from typing import cast
 
 from .instrument import CanonicalFuturesSymbol, InstrumentValidationError, Market
 
@@ -24,7 +25,7 @@ class SettlementUnit(StrEnum):
     ASSET = "ASSET"
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     if not isinstance(value, str):
         raise SettlementValidationError(f"{field} must be an asset symbol")
     value = value.strip().upper()
@@ -67,11 +68,11 @@ class FuturesSettlementSpecification:
     conversion_rate: Decimal | None = None
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(cast(object, self.market), Market):
             raise SettlementValidationError("market must be a supported Futures market")
-        if not isinstance(self.symbol, CanonicalFuturesSymbol):
+        if not isinstance(cast(object, self.symbol), CanonicalFuturesSymbol):
             raise SettlementValidationError("symbol must be CanonicalFuturesSymbol")
-        if not isinstance(self.settlement_unit, SettlementUnit):
+        if not isinstance(cast(object, self.settlement_unit), SettlementUnit):
             raise SettlementValidationError("settlement_unit must be ASSET")
 
         settlement_asset = _asset(self.settlement_asset, "settlement_asset")
