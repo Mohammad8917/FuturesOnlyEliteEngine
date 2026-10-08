@@ -527,3 +527,12 @@ The exposure/position-valuation contract is complete on implementation SHA `dc94
 ## Phase 1 next-unit semantic gate — liquidation price and liquidation constraints
 
 Owner must remain the Futures domain/contract boundary. The next contract must distinguish deterministic liquidation-price constraints from liquidation-event execution. It must define explicit inputs/outputs and denomination, Linear/Inverse formulas, CRYPTO/FOREX/GOLD scope, exact Decimal/no implicit rounding, provenance/freshness, fail-closed behavior, allowed dependencies, meaningful tests, CI, and same-SHA evidence. It must consume instrument, multiplier, margin, leverage, maintenance margin, position side/mode, price/quantity, funding, PnL, and exposure semantics without redefining them. Exchange-specific liquidation, mark-price, fee, funding, tier, settlement, and account-state defaults remain outside the canonical domain boundary.
+
+
+## Phase 1 liquidation-price constraint closure evidence
+
+Liquidation-price and liquidation-constraint semantics are COMPLETE on implementation SHA `b8b65b721fcae5720d5cf430c979700516d8c10a`, merged to main as `c18a99d58b8b8dc904250fce38d738eee3bd9bd6`. The contract and tests are closed with explicit Linear/Inverse formulas, denomination, exact Decimal arithmetic, fail-closed denominator/direction constraints, and no exchange-specific trigger/execution semantics.
+
+## Phase 1 next-unit semantic gate — liquidation event and trigger semantics
+
+The next canonical contract must own deterministic trigger-condition semantics only. It must define explicit reference-price provenance/freshness, LONG/SHORT and ONE_WAY/HEDGE trigger direction, state inputs/outputs, Linear/Inverse and CRYPTO/FOREX/GOLD applicability, exact numeric/rounding behavior, stale/ambiguous failure semantics, idempotency/ordering/concurrency, meaningful tests, CI, and same-SHA evidence. It must consume the closed liquidation-price, exposure, PnL, margin, maintenance, position, and price/quantity contracts without redefining them. Forced execution, order placement, account mutation, network, SDK, persistence, and exchange-specific trigger/mark-price/tier/fee/funding defaults remain outside.

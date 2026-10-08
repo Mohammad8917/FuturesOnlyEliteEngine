@@ -634,3 +634,34 @@ Before implementation, the next unit must freeze one explicit owner and define:
 11. same-SHA evidence before cursor advance.
 
 No exchange-specific liquidation formula, fee/funding treatment, tier/default, mark-price, rounding, or account-state assumption may be guessed into the canonical contract.
+
+
+## Phase 1 liquidation-price constraint closure evidence
+
+Liquidation-price and liquidation-constraint semantics are COMPLETE on implementation merge SHA `c18a99d58b8b8dc904250fce38d738eee3bd9bd6`.
+
+Evidence on the implementation lineage:
+- production: `contracts/futures/liquidation.py`;
+- tests: `tests/contracts/liquidation_contract_test.py`;
+- exports: `contracts/futures/__init__.py`;
+- CI: `.github/workflows/phase1-domain-contracts.yml`;
+- Phase 1 Domain Contracts: green on implementation SHA `b8b65b721fcae5720d5cf430c979700516d8c10a` and again on merge SHA `c18a99d58b8b8dc904250fce38d738eee3bd9bd6`;
+- G01 Dependency Architecture: green on implementation SHA `b8b65b721fcae5720d5cf430c979700516d8c10a` and merge lineage;
+- the contract preserves explicit Linear/Inverse formulas, denomination, exact Decimal arithmetic, fail-closed direction/denominator constraints, and no exchange-specific trigger/mark-price/fee/funding/tier behavior.
+
+## Phase 1 next-unit semantic gate — liquidation event and trigger semantics
+
+Before implementation, the next unit must freeze one explicit owner and define:
+1. liquidation event versus liquidation-price constraint meaning and lifecycle boundary;
+2. trigger/reference price source and explicit provenance/freshness;
+3. trigger direction for LONG/SHORT and ONE_WAY/HEDGE without inventing a third side/mode;
+4. required position, account/margin, maintenance, liquidation-price, and state inputs/outputs;
+5. Linear/Inverse and CRYPTO/FOREX/GOLD applicability;
+6. interaction with all closed contracts without redefining them;
+7. exact numeric and precision/rounding behavior;
+8. invalid, missing, stale, contradictory, unsupported, or ambiguous trigger state behavior;
+9. allowed/forbidden dependencies and ownership of account mutation/execution;
+10. idempotency, ordering, concurrency, and fail-closed behavior for an event boundary;
+11. meaningful tests, CI enforcement, and same-SHA evidence.
+
+The canonical contract may define deterministic trigger semantics but must not implement exchange transport, liquidation execution, forced-order placement, account mutation, or exchange-specific mark-price/tier/fee/funding defaults.

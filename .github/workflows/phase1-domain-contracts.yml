@@ -1,4 +1,5 @@
 name: Phase 1 Domain Contracts
+# Same-SHA gate anchor: architecture documentation closure commits must rerun contract CI.
 
 on:
   push:

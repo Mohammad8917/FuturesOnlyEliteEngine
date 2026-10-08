@@ -531,3 +531,12 @@ Exposure/position valuation closed on implementation SHA `dc9461a562426e02af3fc3
 ## Phase 1 next-unit dependency gate — liquidation price and liquidation constraints
 
 The liquidation-price contract remains domain-safe and may consume only canonical domain/contract facts. Network, exchange SDK, persistence, runtime configuration, scheduler, account mutation, and exchange transport are forbidden. It must not redefine multiplier, margin, leverage, maintenance margin, side/mode, PnL, funding, price/quantity, or exposure. Linear/Inverse formulas, exact Decimal arithmetic, explicit provenance/freshness, fail-closed ambiguity handling, meaningful tests, CI, and same-SHA evidence are mandatory. Exchange-specific liquidation formulas, mark-price rules, tiers, fees, funding, settlement, and defaults cannot be guessed into the domain contract.
+
+
+## Phase 1 liquidation-price constraint closure evidence
+
+Liquidation-price constraints are COMPLETE on implementation SHA `b8b65b721fcae5720d5cf430c979700516d8c10a`, merged as `c18a99d58b8b8dc904250fce38d738eee3bd9bd6`. Phase 1 and G01 evidence is green on the implementation/merge lineage. The contract has no network, SDK, persistence, runtime configuration, scheduler, account mutation, or exchange transport dependency.
+
+## Phase 1 next-unit dependency gate — liquidation event and trigger semantics
+
+Trigger evaluation may depend only on canonical domain/contract facts and explicit reference-price provenance/freshness. It must not depend on exchange SDKs, network I/O, persistence, runtime configuration, scheduling, forced-order placement, or account mutation. It must not redefine liquidation price, exposure, PnL, margin, maintenance, side/mode, or price/quantity semantics. Idempotency, ordering, concurrency, fail-closed ambiguity handling, meaningful tests, CI, and same-SHA evidence are mandatory. Exchange-specific mark-price/trigger/tier/fee/funding behavior remains at infrastructure boundaries.
