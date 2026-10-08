@@ -77,6 +77,11 @@ class CanonicalFuturesSymbol:
     expiry: date | None = None
 
     def __post_init__(self) -> None:
+        if not isinstance(self.contract_family, ContractFamily):
+            raise InstrumentValidationError(
+                "contract_family must be LINEAR or INVERSE"
+            )
+
         base = _asset(self.base_asset, "base_asset")
         quote = _asset(self.quote_asset, "quote_asset")
         settlement = _asset(self.settlement_asset, "settlement_asset")
