@@ -25,11 +25,11 @@ class QuantityUnit(StrEnum):
     CONTRACTS = "CONTRACTS"
 
 
-def _decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(typing.cast(object, value), bool):
+def _decimal(value: object, field: str) -> Decimal:
+    if isinstance(value, bool):
         raise ContractSpecificationValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
+        result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise ContractSpecificationValidationError(
             f"{field} must be an exact Decimal value"
@@ -39,7 +39,7 @@ def _decimal(value: Decimal | int | str, field: str) -> Decimal:
     return result
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
+def _positive_decimal(value: object, field: str) -> Decimal:
     result = _decimal(value, field)
     if result <= 0:
         raise ContractSpecificationValidationError(f"{field} must be greater than zero")
