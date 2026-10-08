@@ -46,11 +46,11 @@ class FuturesExposureSpecification:
     symbol: CanonicalFuturesSymbol
 
     def __post_init__(self) -> None:
-        if not isinstance(market, Market):
+        if not isinstance(self.market, Market):
             raise ExposureValidationError("market must be a supported Futures market")
-        if not isinstance(symbol, CanonicalFuturesSymbol):
+        if not isinstance(self.symbol, CanonicalFuturesSymbol):
             raise ExposureValidationError("symbol must be CanonicalFuturesSymbol")
-        if symbol.contract_family not in (ContractFamily.LINEAR, ContractFamily.INVERSE):
+        if self.symbol.contract_family not in (ContractFamily.LINEAR, ContractFamily.INVERSE):
             raise ExposureValidationError("unsupported contract family")
         object.__setattr__(self, "market", market)
         object.__setattr__(self, "symbol", symbol)
