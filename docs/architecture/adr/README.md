@@ -436,3 +436,12 @@ Exposure and position valuation is COMPLETE on implementation SHA `dc9461a562426
 ## Phase 1 next-unit ADR gate — liquidation price and liquidation constraints
 
 No architecture change is proposed for the next unit. The authorized liquidation-price contract must remain within the frozen architecture and explicitly separate deterministic liquidation-price constraints from liquidation-event execution. It must define owner, formulas, inputs/outputs, denomination, Linear/Inverse and market applicability, exact numeric/rounding rules, provenance/freshness, failure semantics, dependencies, tests, CI, and same-SHA evidence. Exchange-specific defaults must not be guessed into the canonical boundary; any actual architecture change must follow the ADR procedure before implementation.
+
+
+## Phase 1 liquidation-price constraint closure evidence
+
+Liquidation-price constraints are COMPLETE on implementation SHA `b8b65b721fcae5720d5cf430c979700516d8c10a`, merged as `c18a99d58b8b8dc904250fce38d738eee3bd9bd6`. No architecture change was proposed. The canonical contract remains domain-only, exact Decimal, explicit denomination, Linear/Inverse, fail-closed, and free of exchange-specific execution behavior.
+
+## Phase 1 next-unit ADR gate — liquidation event and trigger semantics
+
+No architecture change is proposed. The next contract must preserve the distinction between a deterministic trigger condition and liquidation execution. It must explicitly define provenance/freshness, side/mode semantics, state lifecycle, idempotency/ordering/concurrency, dependencies, tests, CI, and same-SHA evidence. Any architecture change must use the ADR process before implementation. Exchange-specific mark-price/trigger/tier/fee/funding behavior must remain outside the canonical domain contract.
