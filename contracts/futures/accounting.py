@@ -122,28 +122,28 @@ class FuturesAccountingJournal:
 
     @property
     def asset_balances(self) -> dict[str, Decimal]:
-        return {
-            asset: debit - credit
-            for asset in set(
-                entry.asset for entry in self.entries
-            )
-            for debit, credit in [
+        balances: dict[str, Decimal] = {}
+        for asset in {entry.asset for entry in self.entries}:
+            debit = sum(
                 (
-                    sum(
-                        entry.amount
-                        for entry in self.entries
-                        if entry.asset == asset
-                        and entry.direction is AccountingDirection.DEBIT
-                    ),
-                    sum(
-                        entry.amount
-                        for entry in self.entries
-                        if entry.asset == asset
-                        and entry.direction is AccountingDirection.CREDIT
-                    ),
-                )
-            ]
-        }
+                    entry.amount
+                    for entry in self.entries
+                    if entry.asset == asset
+                    and entry.direction is AccountingDirection.DEBIT
+                ),
+                start=Decimal("0"),
+            )
+            credit = sum(
+                (
+                    entry.amount
+                    for entry in self.entries
+                    if entry.asset == asset
+                    and entry.direction is AccountingDirection.CREDIT
+                ),
+                start=Decimal("0"),
+            )
+            balances[asset] = debit - credit
+        return balances
 
 
 @dataclass(frozen=True, slots=True)
