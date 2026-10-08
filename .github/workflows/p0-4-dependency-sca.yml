@@ -42,7 +42,6 @@ jobs:
           -r requirements-ci.txt
           -r requirements-security.txt
           -r requirements-sast.txt
-          -r requirements-sast.txt
 
       - name: Audit direct and transitive Python dependencies
         run: >-
@@ -51,3 +50,4 @@ jobs:
           --desc
           -r requirements-ci.txt
           -r requirements-security.txt
+          -r requirements-sast.txt
