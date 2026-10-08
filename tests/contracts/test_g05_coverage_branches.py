@@ -516,6 +516,8 @@ def test_liquidation_event_sequence_and_input_validation():
         spec.evaluate(**{**event_kwargs(), "reference_price_source": ""})
     with pytest.raises(LiquidationEventValidationError):
         spec.evaluate(**{**event_kwargs(), "max_age": timedelta(0)})
+    with pytest.raises(LiquidationEventValidationError):
+        spec.evaluate(**{**event_kwargs(), "quantity": "not-a-decimal"})
 
 
 def test_liquidation_event_class_invariants_and_evaluation_validation():
