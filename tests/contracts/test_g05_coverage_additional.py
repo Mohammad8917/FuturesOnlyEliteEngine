@@ -349,7 +349,7 @@ def test_margin_extra_validation_branches():
 
 
 def liquidation_args(family: ContractFamily = ContractFamily.LINEAR, side: PositionSide = PositionSide.LONG) -> LiquidationArgs:
-    return dict(
+    return cast(LiquidationArgs, dict(
         contract=contract(family), quantity=Decimal("1"),
         entry_price=Decimal("100"), margin_amount=Decimal("2000"),
         margin_denomination=(
@@ -358,11 +358,11 @@ def liquidation_args(family: ContractFamily = ContractFamily.LINEAR, side: Posit
             else LiquidationDenomination.BASE
         ),
         maintenance_margin_ratio=Decimal("0.1"), position_side=side,
-    )
+    ))
 
 
 def event_args() -> LiquidationEventArgs:
-    return dict(
+    return cast(LiquidationEventArgs, dict(
         account_id="a", position_id="p", event_id="e", causation_id="c",
         state_version=1, contract_family=ContractFamily.LINEAR,
         position_mode=PositionMode.ONE_WAY, position_side=PositionSide.LONG,
@@ -373,7 +373,7 @@ def event_args() -> LiquidationEventArgs:
         observed_at=datetime(2026, 1, 1, tzinfo=UTC),
         as_of=datetime(2026, 1, 1, 1, tzinfo=UTC),
         max_age=timedelta(hours=2), previous_event_sequence=1, event_sequence=1,
-    )
+    ))
 
 
 def test_liquidation_extra_validation_branches():
@@ -381,15 +381,15 @@ def test_liquidation_extra_validation_branches():
     with pytest.raises(LiquidationValidationError):
         linear.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "quantity": True}))
     with pytest.raises(LiquidationValidationError):
-        linear.liquidation_price(**{**liquidation_args(), "contract": "bad"})
+        linear.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "contract": "bad"}))
     with pytest.raises(LiquidationValidationError):
-        linear.liquidation_price(**{**liquidation_args(), "maintenance_margin_ratio": Decimal("0")})
+        linear.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "maintenance_margin_ratio": Decimal("0")}))
     with pytest.raises(LiquidationValidationError):
-        linear.liquidation_price(**{**liquidation_args(), "position_side": "LONG"})
+        linear.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "position_side": "LONG"}))
     with pytest.raises(LiquidationValidationError):
-        linear.liquidation_price(**{**liquidation_args(), "margin_denomination": LiquidationDenomination.BASE})
+        linear.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "margin_denomination": LiquidationDenomination.BASE}))
     with pytest.raises(LiquidationValidationError):
-        linear.liquidation_price(**{**liquidation_args(), "margin_amount": Decimal("10000")})
+        linear.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "margin_amount": Decimal("10000")}))
     short = linear.liquidation_price(**liquidation_args(side=PositionSide.SHORT))
     assert short > Decimal("100")
 
@@ -688,13 +688,13 @@ def test_g05_remaining_validation_and_boundary_branches():
 
     liquidation = FuturesLiquidationSpecification(Market.CRYPTO, symbol())
     with pytest.raises(LiquidationValidationError):
-        liquidation.liquidation_price(**{**liquidation_args(), "entry_price": "bad"})
+        liquidation.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "entry_price": "bad"}))
     with pytest.raises(LiquidationValidationError):
-        liquidation.liquidation_price(**{**liquidation_args(), "maintenance_margin_ratio": "bad"})
+        liquidation.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "maintenance_margin_ratio": "bad"}))
     with pytest.raises(LiquidationValidationError):
-        liquidation.liquidation_price(**{**liquidation_args(), "margin_denomination": "QUOTE"})
+        liquidation.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "margin_denomination": "QUOTE"}))
     with pytest.raises(LiquidationValidationError):
-        liquidation.liquidation_price(**{**liquidation_args(), "margin_amount": Decimal("-1")})
+        liquidation.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "margin_amount": Decimal("-1")}))
 
     with pytest.raises(FundingValidationError):
         funding_spec().validate_freshness(as_of=datetime(2026, 1, 1, tzinfo=UTC), max_age=timedelta(0))
@@ -728,22 +728,22 @@ def test_g05_close_remaining_contract_validation_paths():
 
     liquidation = FuturesLiquidationSpecification(Market.CRYPTO, symbol())
     with pytest.raises(LiquidationValidationError):
-        liquidation.liquidation_price(**{**liquidation_args(), "contract": object()})
+        liquidation.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "contract": object()}))
     with pytest.raises(LiquidationValidationError):
-        liquidation.liquidation_price(**{**liquidation_args(), "position_side": "LONG"})
+        liquidation.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "position_side": "LONG"}))
     with pytest.raises(LiquidationValidationError):
-        liquidation.liquidation_price(**{**liquidation_args(), "margin_denomination": LiquidationDenomination.BASE})
+        liquidation.liquidation_price(**cast(LiquidationArgs, {**liquidation_args(), "margin_denomination": LiquidationDenomination.BASE}))
 
     with pytest.raises(LiquidationEventValidationError):
-        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**{**event_args(), "margin_denomination": LiquidationDenomination.BASE})
+        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**cast(LiquidationEventArgs, {**event_args(), "margin_denomination": LiquidationDenomination.BASE}))
     with pytest.raises(LiquidationEventValidationError):
-        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**{**event_args(), "maintenance_margin_ratio": Decimal("1")})
+        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**cast(LiquidationEventArgs, {**event_args(), "maintenance_margin_ratio": Decimal("1")}))
     with pytest.raises(LiquidationEventValidationError):
-        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**{**event_args(), "reference_price_source": ""})
+        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**cast(LiquidationEventArgs, {**event_args(), "reference_price_source": ""}))
     with pytest.raises(LiquidationEventValidationError):
-        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**{**event_args(), "max_age": timedelta(0)})
+        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**cast(LiquidationEventArgs, {**event_args(), "max_age": timedelta(0)}))
     with pytest.raises(LiquidationEventValidationError):
-        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**{**event_args(), "as_of": datetime(2025,1,1,tzinfo=UTC)})
+        FuturesLiquidationTriggerSpecification(Market.CRYPTO, symbol()).evaluate(**cast(LiquidationEventArgs, {**event_args(), "as_of": datetime(2025,1,1,tzinfo=UTC)}))
 
     settlement = FuturesSettlementSpecification(Market.CRYPTO, inst.symbol, SettlementUnit.ASSET, "USD", "USD")
     with pytest.raises(SettlementValidationError):
@@ -771,7 +771,7 @@ def test_g05_close_remaining_contract_validation_paths():
 
     with pytest.raises(LiquidationValidationError):
         liquidation.liquidation_price(
-            **{**liquidation_args(), "margin_amount": Decimal("100")}
+            **cast(LiquidationArgs, {**liquidation_args(), "margin_amount": Decimal("100")})
         )
     with pytest.raises(LiquidationValidationError):
         liquidation.liquidation_price(
