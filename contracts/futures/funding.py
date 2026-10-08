@@ -130,7 +130,7 @@ class FuturesFundingSpecification:
 
     def validate_freshness(self, *, as_of: datetime, max_age: timedelta) -> None:
         current = _utc(as_of, "as_of")
-        if not isinstance(max_age, timedelta) or max_age <= timedelta(0):
+        if max_age <= timedelta(0):
             raise FundingValidationError("max_age must be positive")
         if current < self.observed_at or current - self.observed_at > max_age:
             raise FundingValidationError(
@@ -148,13 +148,14 @@ class FuturesFundingSpecification:
         if self.funding_rate == 0:
             return None
 
-        payment = amount * abs(self.funding_rate)
+        rate = cast(Decimal, self.funding_rate)
+        payment = amount * abs(rate)
         if not payment.is_finite() or payment <= 0:
             raise FundingValidationError("funding payment is invalid")
 
         payer = (
             position_side
-            if self.funding_rate > 0
+            if rate > 0
             else (
                 PositionSide.SHORT
                 if position_side is PositionSide.LONG
