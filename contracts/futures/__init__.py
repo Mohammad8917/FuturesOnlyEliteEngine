@@ -18,6 +18,17 @@ from .initial_margin import (
     InitialMarginUnit,
     InitialMarginValidationError,
 )
+
+from .position_side import (
+    PositionSide,
+    PositionSideValidationError,
+    validate_position_side,
+)
+from .position_mode import (
+    FuturesPositionModeSpecification,
+    PositionMode,
+    PositionModeValidationError,
+)
 from .instrument import (
     CanonicalFuturesSymbol,
     ContractFamily,
@@ -50,6 +61,12 @@ __all__ = [
     "FuturesInitialMarginSpecification",
     "InitialMarginUnit",
     "InitialMarginValidationError",
+    "PositionSide",
+    "PositionSideValidationError",
+    "validate_position_side",
+    "FuturesPositionModeSpecification",
+    "PositionMode",
+    "PositionModeValidationError",
     "SettlementValidationError",
     "QuantityUnit",
 ]
