@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-LAYER_ALIASES = {
+LAYER_ALIASES: dict[str, set[str]] = {
     "domain": {"domain"},
     "contracts": {"contracts"},
     "application": {"application"},
@@ -22,7 +22,7 @@ LAYER_ALIASES = {
     "observability": {"observability", "notification", "notifications"},
 }
 
-ALLOWED = {
+ALLOWED: dict[str, set[str]] = {
     "domain": {"contracts"},
     "contracts": set(),
     "application": {"domain", "contracts"},
@@ -38,7 +38,7 @@ ALLOWED = {
     "observability": {"contracts"},
 }
 
-FORBIDDEN_IMPORTS = {
+FORBIDDEN_IMPORTS: dict[str, set[str]] = {
     "domain": {
         "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
         "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
@@ -52,13 +52,13 @@ FORBIDDEN_IMPORTS = {
     "observability": {"ccxt", "binance"},
 }
 
-SPOT_TOKENS = {"spot", "spotmarket", "spotorder", "spotprovider"}
-ORDER_CALLS = {
+SPOT_TOKENS: set[str] = {"spot", "spotmarket", "spotorder", "spotprovider"}
+ORDER_CALLS: set[str] = {
     "create_order", "submit_order", "place_order", "send_order",
     "cancel_order", "replace_order",
 }
-HTTP_CALLS = {"request", "get", "post", "put", "patch", "delete"}
-EXCLUDED = {".git", ".venv", "venv", "__pycache__"}
+HTTP_CALLS: set[str] = {"request", "get", "post", "put", "patch", "delete"}
+EXCLUDED: set[str] = {".git", ".venv", "venv", "__pycache__"}
 
 
 def _layer_for(path: Path, root: Path) -> str | None:
@@ -108,7 +108,7 @@ def _import_layer(path: Path, root: Path, module: str, level: int) -> str | None
 
 
 def _imports(tree: ast.AST) -> list[tuple[str, int]]:
-    result = []
+    result: list[tuple[str, int]] = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             result.extend((a.name, 0) for a in node.names)
@@ -164,7 +164,8 @@ def validate(root: Path = ROOT) -> list[str]:
                 errors.add(f"{module_name}: domain imports exchange infrastructure: {imported}")
 
             if layer == "risk" and any(
-                token in imported.lower() for token in ("execution", "exchange", "order", "ccxt", "binance")
+                token in imported.lower()
+                for token in ("execution", "exchange", "order", "ccxt", "binance")
             ):
                 errors.add(f"{module_name}: risk imports execution/order authority: {imported}")
 
