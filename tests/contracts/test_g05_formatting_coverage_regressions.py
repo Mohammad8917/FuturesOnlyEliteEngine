@@ -28,6 +28,7 @@ from contracts.futures.instrument import (
     FuturesInstrumentIdentity,
     Market,
 )
+from contracts.futures.margin import FuturesMarginSpecification, MarginUnit, MarginValidationError
 from contracts.futures.liquidation import (
     FuturesLiquidationSpecification,
     LiquidationValidationError,
@@ -200,3 +201,23 @@ def test_settlement_rejects_missing_rate_after_internal_state_corruption() -> No
 
     with pytest.raises(SettlementValidationError):
         settlement.settle_amount(Decimal("1"))
+
+
+def test_margin_rejects_missing_rate_after_internal_state_corruption() -> None:
+    instrument = FuturesInstrumentIdentity.create(
+        market=Market.CRYPTO,
+        symbol=make_symbol(),
+        margin_asset="USD",
+    )
+    margin = FuturesMarginSpecification(
+        market=Market.CRYPTO,
+        instrument=instrument,
+        margin_unit=MarginUnit.ASSET,
+        margin_asset="USD",
+        source_asset="EUR",
+        conversion_rate=Decimal("2"),
+    )
+    object.__setattr__(margin, "conversion_rate", None)
+
+    with pytest.raises(MarginValidationError):
+        margin.to_margin_amount(Decimal("1"))
