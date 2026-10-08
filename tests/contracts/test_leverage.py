@@ -65,7 +65,7 @@ def test_leverage_applies_to_all_supported_markets_and_families(
 
 @pytest.mark.parametrize(
     "leverage",
-    [Decimal("0"), Decimal("-1"), Decimal("NaN"), Decimal("Infinity")],
+    [0.1, True, Decimal("0"), Decimal("-1"), Decimal("NaN"), Decimal("Infinity")],
 )
 def test_invalid_leverage_fails_closed(leverage: Decimal) -> None:
     with pytest.raises(LeverageValidationError):
@@ -82,6 +82,8 @@ def test_invalid_leverage_fails_closed(leverage: Decimal) -> None:
 @pytest.mark.parametrize(
     "minimum,maximum",
     [
+        (0.1, Decimal("20")),
+        (True, Decimal("20")),
         (Decimal("0"), Decimal("20")),
         (Decimal("-1"), Decimal("20")),
         (Decimal("1"), Decimal("0")),
