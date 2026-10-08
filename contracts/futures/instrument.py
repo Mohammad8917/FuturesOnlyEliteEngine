@@ -48,7 +48,7 @@ class InstrumentStatus(StrEnum):
 
 
 def _asset(value: object, field: str) -> str:
-    if not isinstance(value, str):
+    if not isinstance(cast(object, value), str):
         raise InstrumentValidationError(f"{field} must be a string")
     normalized = value.strip().upper()
     if not _ASSET_RE.fullmatch(normalized):
@@ -202,7 +202,7 @@ class FuturesInstrumentIdentity:
         margin_asset: str,
         status: InstrumentStatus = InstrumentStatus.ACTIVE,
     ) -> "FuturesInstrumentIdentity":
-        if not isinstance(instrument_id, str) or not _INSTRUMENT_ID_RE.fullmatch(instrument_id):
+        if not isinstance(cast(object, instrument_id), str) or not _INSTRUMENT_ID_RE.fullmatch(instrument_id):
             raise InstrumentValidationError("invalid canonical Futures instrument_id")
 
         _, market_text, symbol_text = instrument_id.split("|", 2)
