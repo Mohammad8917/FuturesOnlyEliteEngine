@@ -578,3 +578,26 @@ Before implementation, the next unit must freeze one explicit owner and define:
 11. same-SHA evidence before the cursor advances.
 
 No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounting default may be guessed into the canonical contract.
+
+## Phase 1 exposure / position valuation semantic lock
+
+The active Phase 1 unit is exposure and position valuation semantics. This is a canonical Futures domain/contract boundary and remains distinct from PnL, margin, liquidation, accounting, execution, and exchange transport.
+
+Frozen baseline:
+- owner: Futures domain/contract boundary;
+- exposure means explicit economic magnitude and optional signed directional quantity represented by an existing position; valuation means expressing that position at an explicit reference price in an explicitly named denomination;
+- gross base exposure is positive magnitude: Linear = quantity × multiplier; Inverse = (quantity × multiplier) ÷ price;
+- gross quote notional/value at an explicit price is: Linear = quantity × multiplier × price; Inverse = quantity × multiplier;
+- LONG/SHORT affects signed directional exposure only; gross exposure/value remains non-negative and does not encode side;
+- quantity is explicit CONTRACTS and must be positive finite exact Decimal; multiplier and prices are positive finite exact Decimal values; bool and binary floating-point inputs are rejected;
+- valuation outputs explicitly identify BASE or QUOTE denomination; no denomination is inferred;
+- reference price requires non-empty provenance and aware UTC observation timestamp; freshness requires explicit UTC as_of and positive max_age, with no hidden clock or threshold;
+- no implicit rounding, quantization, tick-size, lot-size, precision, or exchange-specific mark-price convention;
+- applies to CRYPTO, FOREX, GOLD Futures and Linear/Inverse;
+- consumes prior instrument, multiplier, price/quantity, position side/mode, funding and PnL contracts without redefining them;
+- PnL remains owner of profit/loss formulas; exposure/valuation excludes PnL, fees, funding transfers, margin, settlement, liquidation, and accounting unless explicitly represented by those contracts;
+- no network, exchange SDK, persistence, runtime configuration, scheduler, account mutation, or exchange-specific transport dependency;
+- invalid, missing, stale, contradictory, unsupported, non-finite, zero, negative, or ambiguous critical state fails closed;
+- production: contracts/futures/exposure.py; tests: tests/contracts/exposure_contract_test.py; CI: .github/workflows/phase1-domain-contracts.yml;
+- meaningful tests, CI enforcement, and same-SHA evidence are mandatory before cursor advance;
+- no threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening is permitted.

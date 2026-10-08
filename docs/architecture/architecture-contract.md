@@ -514,3 +514,7 @@ Before implementation, the next unit must freeze one explicit owner and define:
 11. same-SHA evidence before the cursor advances.
 
 No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounting default may be guessed into the canonical contract.
+
+## Phase 1 exposure / position valuation semantic lock
+
+Owner: Futures domain/contract boundary. Exposure and valuation are separate meanings. Linear gross base exposure = quantity × multiplier; Inverse gross base exposure = (quantity × multiplier) ÷ price. Linear quote value = quantity × multiplier × explicit valuation price; Inverse quote value = quantity × multiplier. Gross values are non-negative; LONG/SHORT supplies signed directional exposure only. Quantity is CONTRACTS and all financial inputs are exact finite positive Decimal values; bool/binary float inputs fail closed. Valuation denomination is explicit BASE or QUOTE with no implicit rounding. Reference price requires explicit provenance and aware UTC observation time; freshness requires explicit UTC as_of and positive max_age. Applies to CRYPTO/FOREX/GOLD and Linear/Inverse. It consumes prior contracts without redefining them and excludes PnL, fees, funding, margin, settlement, liquidation, and accounting. No network/SDK/persistence/runtime configuration/account mutation/exchange transport dependency. Invalid, missing, stale, contradictory, unsupported, or ambiguous critical state fails closed. Production/test/CI boundaries and same-SHA evidence are mandatory; no threshold or test weakening is permitted.

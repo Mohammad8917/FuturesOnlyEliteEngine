@@ -518,3 +518,7 @@ Before implementation, the next unit must freeze one explicit owner and define:
 11. same-SHA evidence before the cursor advances.
 
 No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounting default may be guessed into the canonical contract.
+
+## Phase 1 exposure / position valuation dependency lock
+
+Exposure/position valuation is a domain-safe canonical contract. It may depend only on existing domain/contract facts such as instrument identity, multiplier/contract specification, price/quantity, and explicit position side. It must not depend on exchange SDKs, network I/O, persistence, runtime configuration, scheduling, account mutation, or exchange transport. Linear/Inverse formulas remain explicit: base exposure is quantity × multiplier for Linear and quantity × multiplier ÷ price for Inverse; quote value is quantity × multiplier × price for Linear and quantity × multiplier for Inverse. Valuation requires explicit denomination, reference provenance, and aware UTC observation/freshness. PnL/funding/margin/settlement/accounting are not redefined or silently included. Invalid, stale, contradictory, unsupported, or ambiguous critical state fails closed. Same-SHA CI evidence is mandatory and no dependency or quality gate may be weakened.

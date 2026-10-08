@@ -423,3 +423,7 @@ Before implementation, the next unit must freeze one explicit owner and define:
 11. same-SHA evidence before the cursor advances.
 
 No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounting default may be guessed into the canonical contract.
+
+## Phase 1 exposure / position valuation semantic lock
+
+No architecture change is proposed. The exposure/position-valuation unit is an authorized Phase 1 contract under the frozen architecture. Owner is the Futures domain/contract boundary. Linear base exposure = quantity × multiplier and quote value = quantity × multiplier × explicit price; Inverse base exposure = quantity × multiplier ÷ price and quote value = quantity × multiplier. Gross magnitude is non-negative; LONG/SHORT supplies signed direction. Inputs are explicit CONTRACTS and exact finite Decimal values. Valuation requires explicit BASE/QUOTE denomination, reference provenance, and aware UTC observation/freshness. Prior contracts are consumed without redefinition; PnL, funding, margin, settlement, liquidation, accounting, execution, exchange transport and I/O remain outside. Invalid/stale/contradictory/unsupported/ambiguous critical state fails closed. No exchange-specific default, threshold reduction, test weakening, skip/xfail, or dependency weakening is permitted. Production, test, CI and same-SHA evidence are required for closure.
