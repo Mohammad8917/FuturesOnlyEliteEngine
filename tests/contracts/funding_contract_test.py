@@ -3,8 +3,6 @@ from decimal import Decimal
 
 import pytest
 
-from typing import cast
-
 from contracts.futures.funding import (
     FundingRateUnit,
     FundingSignConvention,
@@ -101,7 +99,7 @@ def test_zero_rate_is_valid_but_creates_no_transfer():
 )
 def test_binary_float_bool_and_nonfinite_rate_are_rejected(value: object) -> None:
     with pytest.raises(FundingValidationError):
-        funding(rate=value)
+        funding(rate=value)  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize("value", [True, False, 0, -1, 0.0, None, Decimal("NaN")])
