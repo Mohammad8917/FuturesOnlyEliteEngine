@@ -122,7 +122,9 @@ def test_pnl_constructor_rejects_invalid_typed_boundaries() -> None:
     symbol = make_symbol()
 
     with pytest.raises(PnLValidationError):
-        FuturesPnLSpecification(cast(Market, "invalid"), symbol, PnLUnit.REALIZED_OR_UNREALIZED)
+        FuturesPnLSpecification(
+            cast(Market, "invalid"), symbol, PnLUnit.REALIZED_OR_UNREALIZED
+        )
     with pytest.raises(PnLValidationError):
         FuturesPnLSpecification(
             Market.CRYPTO,
