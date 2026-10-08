@@ -93,7 +93,7 @@ def evaluate(
         previous_event_sequence=previous_sequence,
         event_sequence=event_sequence,
     )
-    values.update(cast(EvaluationArgs, overrides))
+    values.update(overrides)
     return spec.evaluate(**cast(EvaluationArgs, values))
 
 
@@ -165,7 +165,7 @@ def test_short_trigger_is_upward_and_not_triggered_below_liquidation() -> None:
 )
 def test_missing_provenance_or_identity_fails_closed(field: str) -> None:
     with pytest.raises(LiquidationEventValidationError):
-        evaluate(**cast(EvaluationArgs, {field: ""}))
+        evaluate(**{field: ""})  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize(
@@ -183,7 +183,7 @@ def test_missing_provenance_or_identity_fails_closed(field: str) -> None:
 )
 def test_numeric_boundaries_reject_bool_float_and_invalid_values(field: str, value: object) -> None:
     with pytest.raises(LiquidationEventValidationError):
-        evaluate(**cast(EvaluationArgs, {field: value}))
+        evaluate(**{field: value})  # type: ignore[arg-type]
 
 
 def test_freshness_and_utc_are_fail_closed() -> None:
