@@ -3,7 +3,7 @@
 These tests only exercise existing production semantics; no coverage
 configuration or production behavior is changed.
 """
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from typing import TypedDict, cast
 
@@ -177,13 +177,13 @@ def contract(family: ContractFamily = ContractFamily.LINEAR) -> FuturesContractS
     )
 
 
-def funding_spec(rate: Decimal = Decimal("0.1")) -> FuturesFundingSpecification:
+def funding_spec(rate: object = Decimal("0.1")) -> FuturesFundingSpecification:
     return FuturesFundingSpecification(
         market=Market.CRYPTO,
         symbol=symbol(),
         funding_rate_unit=FundingRateUnit.INTERVAL_RATE,
         funding_sign_convention=FundingSignConvention.POSITIVE_LONG_PAYS,
-        funding_rate=rate,
+        funding_rate=cast(Decimal, rate),
         interval_start=datetime(2026, 1, 1, tzinfo=UTC),
         interval_end=datetime(2026, 1, 1, 2, tzinfo=UTC),
         rate_source="source",
@@ -244,21 +244,21 @@ def test_contract_validation_and_inverse_calculation_branches():
 
 def test_instrument_asset_and_identity_validation_branches():
     with pytest.raises(InstrumentValidationError):
-        CanonicalFuturesSymbol(1, "USD", ContractFamily.LINEAR, "USD")
+        CanonicalFuturesSymbol(cast(str, 1), "USD", ContractFamily.LINEAR, "USD")
     with pytest.raises(InstrumentValidationError):
         CanonicalFuturesSymbol("SPOT", "USD", ContractFamily.LINEAR, "USD")
     with pytest.raises(InstrumentValidationError):
         CanonicalFuturesSymbol("BTC", "BTC", ContractFamily.LINEAR, "USD")
     with pytest.raises(InstrumentValidationError):
-        CanonicalFuturesSymbol("BTC", "USD", ContractFamily.LINEAR, "USD", expiry="20270101")
+        CanonicalFuturesSymbol("BTC", "USD", ContractFamily.LINEAR, "USD", expiry=cast(date, "20270101"))
     with pytest.raises(InstrumentValidationError):
         FuturesInstrumentIdentity(
-            "CRYPTO", symbol(), "USD", InstrumentStatus.ACTIVE
+            cast(Market, "CRYPTO"), symbol(), "USD", InstrumentStatus.ACTIVE
         )
     with pytest.raises(InstrumentValidationError):
-        FuturesInstrumentIdentity(Market.CRYPTO, "bad", "USD")
+        FuturesInstrumentIdentity(Market.CRYPTO, cast(CanonicalFuturesSymbol, "bad"), "USD")
     with pytest.raises(InstrumentValidationError):
-        FuturesInstrumentIdentity(Market.CRYPTO, symbol(), "USD", "ACTIVE")
+        FuturesInstrumentIdentity(Market.CRYPTO, symbol(), "USD", cast(InstrumentStatus, "ACTIVE"))
 
 
 def test_exposure_validation_and_freshness_branches():
@@ -272,16 +272,16 @@ def test_exposure_validation_and_freshness_branches():
         spec.base_exposure(contract=contract(ContractFamily.INVERSE), quantity=1, price=10)
     with pytest.raises(ExposureValidationError):
         spec.signed_base_exposure(
-            contract=c, quantity=1, price=10, position_side="LONG"
+            contract=c, quantity=1, price=10, position_side=cast(PositionSide, "LONG")
         )
     with pytest.raises(ExposureValidationError):
         spec.signed_quote_value(
-            contract=c, quantity=1, reference_price=10, position_side="LONG"
+            contract=c, quantity=1, reference_price=10, position_side=cast(PositionSide, "LONG")
         )
     with pytest.raises(ExposureValidationError):
         spec.value(
             contract=c, quantity=1, reference_price=10,
-            denomination="BASE", valuation_source="x",
+            denomination=cast(ExposureDenomination, "BASE"), valuation_source="x",
             observed_at=datetime(2026, 1, 1, tzinfo=UTC),
         )
     with pytest.raises(ExposureValidationError):
@@ -315,7 +315,7 @@ def test_funding_validation_and_zero_rate_branches():
     with pytest.raises(FundingValidationError):
         FundingPayment(PositionSide.LONG, PositionSide.LONG, Decimal("1"), "USD")
     with pytest.raises(FundingValidationError):
-        FundingPayment("LONG", PositionSide.SHORT, Decimal("1"), "USD")
+        FundingPayment(cast(PositionSide, "LONG"), PositionSide.SHORT, Decimal("1"), "USD")
     with pytest.raises(FundingValidationError):
         FundingPayment(PositionSide.LONG, PositionSide.SHORT, Decimal("0"), "USD")
     assert funding_spec(Decimal("0")).calculate_payment(
@@ -335,16 +335,16 @@ def test_margin_initial_maintenance_and_leverage_error_branches():
     for value in [True, object()]:
         with pytest.raises(InitialMarginValidationError):
             FuturesInitialMarginSpecification(
-                Market.CRYPTO, inst, InitialMarginUnit.RATIO, value, "USD"
+                Market.CRYPTO, inst, InitialMarginUnit.RATIO, cast(Decimal, value), "USD"
             )
         with pytest.raises(MaintenanceMarginValidationError):
             FuturesMaintenanceMarginSpecification(
-                Market.CRYPTO, inst, MaintenanceMarginUnit.RATIO, value, "USD"
+                Market.CRYPTO, inst, MaintenanceMarginUnit.RATIO, cast(Decimal, value), "USD"
             )
         with pytest.raises(LeverageValidationError):
             FuturesLeverageSpecification(
                 Market.CRYPTO, inst, LeverageUnit.RATIO,
-                value, Decimal("1"), Decimal("5")
+                cast(Decimal, value), Decimal("1"), Decimal("5")
             )
 
 
@@ -360,7 +360,7 @@ def test_margin_extra_validation_branches():
         )
     with pytest.raises(MarginValidationError):
         FuturesMarginSpecification(
-            Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "EUR", True
+            Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "EUR", cast(Decimal, True)
         )
     same = FuturesMarginSpecification(
         Market.CRYPTO, inst, MarginUnit.ASSET, "USD", "USD"
@@ -437,15 +437,15 @@ def test_liquidation_event_more_validation_branches():
         ("max_age", timedelta(0)),
     ]:
         with pytest.raises(LiquidationEventValidationError):
-            spec.evaluate(**{**kwargs, field: value})
+            spec.evaluate(**cast(LiquidationEventArgs, {**kwargs, field: value}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**kwargs, "contract_family": ContractFamily.INVERSE})
+        spec.evaluate(**cast(LiquidationEventArgs, {**kwargs, "contract_family": ContractFamily.INVERSE}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**kwargs, "margin_denomination": LiquidationDenomination.BASE})
+        spec.evaluate(**cast(LiquidationEventArgs, {**kwargs, "margin_denomination": LiquidationDenomination.BASE}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**kwargs, "reference_price": Decimal("70"), "event_sequence": 1})
+        spec.evaluate(**cast(LiquidationEventArgs, {**kwargs, "reference_price": Decimal("70"), "event_sequence": 1}))
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**kwargs, "as_of": datetime(2025, 12, 31, tzinfo=UTC)})
+        spec.evaluate(**cast(LiquidationEventArgs, {**kwargs, "as_of": datetime(2025, 12, 31, tzinfo=UTC)}))
     result = spec.evaluate(**kwargs)
     assert result.trigger is LiquidationTrigger.TRIGGERED
     assert result.event is not None
@@ -477,7 +477,7 @@ def test_liquidation_event_dataclass_validation_and_evaluation():
         ("max_age", timedelta(0)),
     ]:
         with pytest.raises((LiquidationEventValidationError, ValueError)):
-            FuturesLiquidationTriggerEvent(**{**data, field: value})
+            FuturesLiquidationTriggerEvent(**cast(dict[str, object], {**data, field: value}))
     with pytest.raises(LiquidationEventValidationError):
         FuturesLiquidationTriggerEvaluation("bad", None)
     with pytest.raises(LiquidationEventValidationError):
@@ -533,7 +533,7 @@ def test_price_quantity_and_settlement_branches():
         )
     with pytest.raises(SettlementValidationError):
         FuturesSettlementSpecification(
-            Market.CRYPTO, symbol(), SettlementUnit.ASSET, "USD", "EUR", True
+            Market.CRYPTO, symbol(), SettlementUnit.ASSET, "USD", "EUR", cast(Decimal, True)
         )
 
 
@@ -782,7 +782,7 @@ def test_g05_close_remaining_contract_validation_paths():
         settlement_accounting.transfer(journal_id="j", causation_id="c", state_version=0, sequence=0, account_id="a", settlement_counterparty_account_id="b", source_amount=Decimal("1"), source_asset="EUR")
 
     with pytest.raises(FundingValidationError):
-        funding_spec().calculate_payment(notional=Decimal("10"), position_side="LONG")
+        funding_spec().calculate_payment(notional=Decimal("10"), position_side=cast(PositionSide, "LONG"))
 
     # Cover remaining valid boundary semantics without changing production behavior.
     with pytest.raises(InstrumentValidationError):
