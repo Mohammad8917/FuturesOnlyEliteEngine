@@ -268,3 +268,13 @@ Initial margin is the next authorized Phase 1 unit. It must explicitly define fo
 Production boundary: `contracts/futures/initial_margin.py`.
 Test boundary: `tests/contracts/test_initial_margin.py`.
 CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
+
+## 10.11 Phase 1 execution cursor — maintenance margin
+
+Initial margin semantics are COMPLETE with same-SHA evidence on main merge SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`.
+
+**Current cursor:** maintenance margin semantics.
+
+The next authorized unit must follow the full implementation-unit protocol and explicitly define maintenance-margin ownership, inputs, outputs, denomination, precision, Linear/Inverse applicability, CRYPTO/FOREX/GOLD applicability, tier/rate/amount semantics where applicable, failure behavior, test boundary, CI enforcement, and same-SHA evidence.
+
+No maintenance-margin formula may be inferred from leverage or copied from an exchange without an explicit canonical contract.
