@@ -83,12 +83,11 @@ class CanonicalFuturesSymbol:
 
         if base == quote:
             raise InstrumentValidationError("base_asset and quote_asset must differ")
-        if base == settlement and self.contract_family is ContractFamily.LINEAR:
-            raise InstrumentValidationError(
-                "Linear settlement must be explicit and cannot equal base asset"
-            )
-        if self.expiry is not None and not isinstance(self.expiry, date):
-            raise InstrumentValidationError("expiry must be a date or None")
+        if self.expiry is not None and (
+            not isinstance(self.expiry, date)
+            or self.expiry.__class__ is not date
+        ):
+            raise InstrumentValidationError("expiry must be an exact date or None")
 
         object.__setattr__(self, "base_asset", base)
         object.__setattr__(self, "quote_asset", quote)
@@ -138,39 +137,32 @@ class CanonicalFuturesSymbol:
 
 @dataclass(frozen=True, slots=True)
 class FuturesInstrumentIdentity:
-    """Validated, stable identity for a Futures instrument.
+    """Stable, exchange-independent identity for a Futures instrument.
 
-    The identity is derived only from canonical Futures semantics and market
-    scope. Exchange-specific symbols are deliberately excluded.
+    Identity contains only immutable identity semantics. Lifecycle status,
+    margin, leverage, contract size, and other economic terms belong to their
+    owning contracts and are intentionally excluded from this value object.
     """
 
-    instrument_id: str
     market: Market
     symbol: CanonicalFuturesSymbol
-    margin_asset: str
-    status: InstrumentStatus = InstrumentStatus.ACTIVE
 
     def __post_init__(self) -> None:
         if not isinstance(self.market, Market):
             raise InstrumentValidationError("market must be a supported Futures market")
         if not isinstance(self.symbol, CanonicalFuturesSymbol):
             raise InstrumentValidationError("symbol must be CanonicalFuturesSymbol")
-        if not isinstance(self.status, InstrumentStatus):
-            raise InstrumentValidationError("status must be a known instrument status")
 
-        margin = _asset(self.margin_asset, "margin_asset")
-        expected_id = self.build_id(self.market, self.symbol)
-        if self.instrument_id != expected_id:
-            raise InstrumentValidationError(
-                "instrument_id must equal the deterministic canonical Futures identity"
-            )
-
-        object.__setattr__(self, "margin_asset", margin)
+    @property
+    def instrument_id(self) -> str:
+        return self.build_id(self.market, self.symbol)
 
     @staticmethod
     def build_id(market: Market, symbol: CanonicalFuturesSymbol) -> str:
         if not isinstance(market, Market):
             raise InstrumentValidationError("market must be a supported Futures market")
+        if not isinstance(symbol, CanonicalFuturesSymbol):
+            raise InstrumentValidationError("symbol must be CanonicalFuturesSymbol")
         return f"FUTURES|{market.value}|{symbol.as_text()}"
 
     @classmethod
@@ -179,34 +171,16 @@ class FuturesInstrumentIdentity:
         *,
         market: Market,
         symbol: CanonicalFuturesSymbol,
-        margin_asset: str,
-        status: InstrumentStatus = InstrumentStatus.ACTIVE,
     ) -> "FuturesInstrumentIdentity":
-        return cls(
-            instrument_id=cls.build_id(market, symbol),
-            market=market,
-            symbol=symbol,
-            margin_asset=margin_asset,
-            status=status,
-        )
+        return cls(market=market, symbol=symbol)
 
     @classmethod
-    def parse_id(
-        cls,
-        instrument_id: str,
-        *,
-        margin_asset: str,
-        status: InstrumentStatus = InstrumentStatus.ACTIVE,
-    ) -> "FuturesInstrumentIdentity":
+    def parse_id(cls, instrument_id: str) -> "FuturesInstrumentIdentity":
         if not isinstance(instrument_id, str) or not _INSTRUMENT_ID_RE.fullmatch(instrument_id):
             raise InstrumentValidationError("invalid canonical Futures instrument_id")
 
         _, market_text, symbol_text = instrument_id.split("|", 2)
-        market = Market(market_text)
-        symbol = CanonicalFuturesSymbol.parse(symbol_text)
         return cls.create(
-            market=market,
-            symbol=symbol,
-            margin_asset=margin_asset,
-            status=status,
+            market=Market(market_text),
+            symbol=CanonicalFuturesSymbol.parse(symbol_text),
         )
