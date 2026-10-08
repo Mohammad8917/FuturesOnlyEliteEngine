@@ -8,6 +8,8 @@ risk policy, or position sizing.
 
 from __future__ import annotations
 
+import typing
+
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
@@ -26,10 +28,10 @@ class LeverageUnit(StrEnum):
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
         raise LeverageValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(value, Decimal) else Decimal(str(value))
+        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise LeverageValidationError(f"{field} must be an exact Decimal value") from exc
     if not result.is_finite() or result <= 0:
@@ -57,15 +59,15 @@ class FuturesLeverageSpecification:
     maximum_leverage: Decimal
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise LeverageValidationError("market must be a supported Futures market")
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(typing.cast(object, self.instrument), FuturesInstrumentIdentity):
             raise LeverageValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
         if self.instrument.market is not self.market:
             raise LeverageValidationError("market must match the instrument identity")
-        if not isinstance(self.leverage_unit, LeverageUnit):
+        if not isinstance(typing.cast(object, self.leverage_unit), LeverageUnit):
             raise LeverageValidationError("leverage_unit must be RATIO")
 
         leverage = _positive_decimal(self.leverage, "leverage")
