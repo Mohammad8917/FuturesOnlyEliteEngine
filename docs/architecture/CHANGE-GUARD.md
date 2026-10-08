@@ -82,3 +82,8 @@ Cross-journal idempotency and durable sequence enforcement remain downstream per
 ## Phase 1 completeness correction
 
 The Phase 1 completeness audit recognizes `position_side.py` and `position_mode.py` as separate production boundaries covered by the combined position-side/mode contract test. Gate thresholds remain immutable: G05 >= 98% and G08 >= 90%.
+
+
+## CI action pin closure
+
+The Phase 1/G01/Architecture Invariants workflows pin `actions/setup-python` to the verified `v5.6.0` commit `a26af69be951a213d495a4c3e4e4022e16d87065`. Any future action-pin change requires the same strict CI verification; no floating action reference is permitted.
