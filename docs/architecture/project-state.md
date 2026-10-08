@@ -608,3 +608,6 @@ Cross-journal idempotency and durable sequence enforcement remain downstream per
 ## Phase 1 final completeness audit gate
 
 Accounting/settlement-accounting is the last minimum Futures domain contract listed by the authoritative Phase 1 contract set. The next action is governance/evidence reconciliation only: verify every required contract has production implementation, meaningful tests, current CI evidence, and aligned ownership/failure semantics across all eight architecture documents. No Phase 2+ production implementation is authorized before that audit closes.
+
+
+- CI hardening alignment note: G01, Architecture Invariants, and Phase 1 Domain Contracts use the same deterministic Python 3.13 CI dependency lock and hardened execution controls. Same-SHA verification remains mandatory before this state is treated as final evidence.
