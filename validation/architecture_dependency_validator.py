@@ -22,7 +22,7 @@ LAYER_ALIASES = {
     "observability": {"observability", "notification", "notifications"},
 }
 
-ALLOWED = {
+ALLOWED: dict[str, set[str]] = {
     "domain": {"contracts"},
     "contracts": set(),
     "application": {"domain", "contracts"},
@@ -230,7 +230,7 @@ def validate(root: Path = ROOT) -> list[str]:
                             errors.add(f"{module_name}: forbidden futures=False switch")
                     for keyword_arg, default in zip(node.args.kwonlyargs, node.args.kw_defaults):
                         if (
-                            argument.arg == "futures"
+                            keyword_arg.arg == "futures"
                             and isinstance(default, ast.Constant)
                             and default.value is False
                         ):
