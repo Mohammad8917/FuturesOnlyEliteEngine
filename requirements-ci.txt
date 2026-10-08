@@ -1,3 +1,4 @@
 # G01 CI dependency lock
 # Runtime/domain dependencies are intentionally excluded from this CI-only lock.
 pytest==8.4.2
+pytest-cov==6.2.1
