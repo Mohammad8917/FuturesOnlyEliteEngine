@@ -839,3 +839,12 @@ No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounti
 ## Phase 1 exposure / position valuation semantic lock
 
 The authorized Phase 1 unit is exposure and position valuation. Exit criteria are frozen: explicit Futures-domain owner; separate exposure versus valuation meaning; explicit Linear/Inverse formulas and BASE/QUOTE denomination; CRYPTO/FOREX/GOLD coverage; exact Decimal/no implicit rounding; explicit reference-price provenance and UTC freshness; consumption rather than redefinition of prior contracts; no exchange-specific defaults; fail-closed invalid/stale/contradictory/unsupported/ambiguous state; domain-safe dependency boundary; meaningful tests; CI enforcement; and same-SHA evidence. Gross exposure/value is non-negative, while LONG/SHORT supplies signed direction. No threshold reduction, skip/xfail, assertion weakening, or dependency-boundary weakening is allowed.
+
+
+## Phase 1 exposure / position valuation closure evidence
+
+Exposure and position valuation is COMPLETE on implementation SHA `dc9461a562426e02af3fc3585beed917940da049`, merged to main as `953c69ee2335cda62d0729f5b7f0bb53f6b2a080`. The implementation passed Phase 1 Domain Contracts, G01 Dependency Architecture, and Architecture Invariants on the same implementation SHA.
+
+## Phase 1 next-unit governance gate — liquidation price and liquidation constraints
+
+The next authorized Phase 1 unit is liquidation price and liquidation constraints. Entry requires an explicit semantic lock across ownership, lifecycle, inputs/outputs, denomination, Linear/Inverse formulas, market applicability, interactions with all closed contracts, exact Decimal/no rounding, provenance/freshness, fail-closed behavior, dependency boundaries, meaningful tests, CI, and same-SHA evidence. No exchange-specific liquidation/mark-price/tier/fee/funding/settlement default may be introduced. No threshold, test, skip/xfail, or dependency weakening is allowed.
