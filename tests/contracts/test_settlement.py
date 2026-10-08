@@ -116,6 +116,20 @@ def test_invalid_conversion_rate_fails_closed(rate: Decimal) -> None:
         )
 
 
+@pytest.mark.parametrize("amount", [1, "1", 1.0, True])
+def test_non_decimal_amount_fails_closed(amount: object) -> None:
+    spec = FuturesSettlementSpecification(
+        market=Market.CRYPTO,
+        symbol=_symbol(),
+        settlement_unit=SettlementUnit.ASSET,
+        settlement_asset="usdt",
+        source_asset="usdt",
+    )
+
+    with pytest.raises(SettlementValidationError):
+        spec.settle_amount(amount)  # type: ignore[arg-type]
+
+
 def test_non_positive_amount_fails_closed() -> None:
     spec = FuturesSettlementSpecification(
         market=Market.CRYPTO,
