@@ -19,6 +19,7 @@
   "reportUntypedNamedTuple": "error",
   "reportUnusedImport": "error",
   "reportUnusedVariable": "error",
+  "reportUnnecessaryIsInstance": "none",
   "reportDuplicateImport": "error",
   "reportIncompatibleMethodOverride": "error",
   "reportGeneralTypeIssues": "error",
