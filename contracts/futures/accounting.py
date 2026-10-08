@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
+from typing import cast
 
 from .instrument import FuturesInstrumentIdentity, Market
 
@@ -33,20 +34,20 @@ def _decimal(value: Decimal, field: str, *, positive: bool = False) -> Decimal:
     return value
 
 
-def _text(value: str, field: str) -> str:
+def _text(value: object, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise AccountingValidationError(f"{field} must be non-empty")
     return value.strip()
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     asset = _text(value, field).upper()
     if asset.startswith("SPOT") or not asset.replace("_", "").isalnum():
         raise AccountingValidationError(f"{field} is invalid")
     return asset
 
 
-def _sequence(value: int, field: str) -> int:
+def _sequence(value: object, field: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise AccountingValidationError(f"{field} must be a non-negative integer")
     return value
@@ -73,11 +74,11 @@ class FuturesLedgerEntry:
         _sequence(self.state_version, "state_version")
         _sequence(self.sequence, "sequence")
         _text(self.account_id, "account_id")
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(cast(object, self.instrument), FuturesInstrumentIdentity):
             raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
         _text(self.ledger_account, "ledger_account")
         _asset(self.asset, "asset")
-        if not isinstance(self.direction, AccountingDirection):
+        if not isinstance(cast(object, self.direction), AccountingDirection):
             raise AccountingValidationError("direction must be DEBIT or CREDIT")
         _decimal(self.amount, "amount", positive=True)
 
@@ -154,9 +155,9 @@ class FuturesAccountingSpecification:
     instrument: FuturesInstrumentIdentity
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(cast(object, self.market), Market):
             raise AccountingValidationError("market must be a supported Futures market")
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(cast(object, self.instrument), FuturesInstrumentIdentity):
             raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
         if self.instrument.market is not self.market:
             raise AccountingValidationError("market must match instrument")
