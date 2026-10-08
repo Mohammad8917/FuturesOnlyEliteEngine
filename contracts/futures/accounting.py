@@ -24,7 +24,7 @@ class AccountingDirection(StrEnum):
     CREDIT = "CREDIT"
 
 
-def _decimal(value: Decimal, field: str, *, positive: bool = False) -> Decimal:
+def _decimal(value: object, field: str, *, positive: bool = False) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, Decimal):
         raise AccountingValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite():
