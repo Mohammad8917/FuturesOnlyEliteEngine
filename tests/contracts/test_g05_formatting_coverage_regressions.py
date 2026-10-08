@@ -46,6 +46,7 @@ from contracts.futures.settlement_accounting import (
 from contracts.futures.settlement import (
     FuturesSettlementSpecification,
     SettlementUnit,
+    SettlementValidationError,
 )
 
 
@@ -184,3 +185,18 @@ def test_settlement_accounting_rejects_market_mismatch() -> None:
 
     with pytest.raises(AccountingValidationError):
         FuturesSettlementAccountingSpecification(Market.FOREX, instrument, settlement)
+
+
+def test_settlement_rejects_missing_rate_after_internal_state_corruption() -> None:
+    settlement = FuturesSettlementSpecification(
+        market=Market.CRYPTO,
+        symbol=make_symbol(),
+        settlement_unit=SettlementUnit.ASSET,
+        settlement_asset="USD",
+        source_asset="EUR",
+        conversion_rate=Decimal("2"),
+    )
+    object.__setattr__(settlement, "conversion_rate", None)
+
+    with pytest.raises(SettlementValidationError):
+        settlement.settle_amount(Decimal("1"))
