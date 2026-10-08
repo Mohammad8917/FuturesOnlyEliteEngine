@@ -367,9 +367,9 @@ def test_liquidation_event_more_validation_branches():
     with pytest.raises(LiquidationEventValidationError):
         spec.evaluate(**{**kwargs, "margin_denomination": LiquidationDenomination.BASE})
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**kwargs, "reference_price": Decimal("90"), "event_sequence": 1})
+        spec.evaluate(**{**kwargs, "reference_price": Decimal("70"), "event_sequence": 1})
     with pytest.raises(LiquidationEventValidationError):
-        spec.evaluate(**{**kwargs, "as_of": datetime(2026, 1, 1, tzinfo=UTC)})
+        spec.evaluate(**{**kwargs, "as_of": datetime(2025, 12, 31, tzinfo=UTC)})
     result = spec.evaluate(**kwargs)
     assert result.trigger is LiquidationTrigger.TRIGGERED
     assert result.event is not None
