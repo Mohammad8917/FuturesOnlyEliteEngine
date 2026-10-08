@@ -8,6 +8,8 @@ or exchange-specific margin rules.
 
 from __future__ import annotations
 
+import typing
+
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
@@ -26,10 +28,10 @@ class InitialMarginUnit(StrEnum):
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
         raise InitialMarginValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(value, Decimal) else Decimal(str(value))
+        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise InitialMarginValidationError(
             f"{field} must be an exact Decimal value"
@@ -42,7 +44,7 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
 
 
 def _asset(value: str, field: str) -> str:
-    if not isinstance(value, str):
+    if not isinstance(typing.cast(object, value), str):
         raise InitialMarginValidationError(f"{field} must be an asset symbol")
     normalized = value.strip().upper()
     if not normalized or normalized.startswith("SPOT"):
@@ -72,11 +74,11 @@ class FuturesInitialMarginSpecification:
     notional_asset: str
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise InitialMarginValidationError(
                 "market must be a supported Futures market"
             )
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(typing.cast(object, self.instrument), FuturesInstrumentIdentity):
             raise InitialMarginValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
@@ -84,7 +86,7 @@ class FuturesInitialMarginSpecification:
             raise InitialMarginValidationError(
                 "market must match the instrument identity"
             )
-        if not isinstance(self.initial_margin_unit, InitialMarginUnit):
+        if not isinstance(typing.cast(object, self.initial_margin_unit), InitialMarginUnit):
             raise InitialMarginValidationError(
                 "initial_margin_unit must be RATIO"
             )
