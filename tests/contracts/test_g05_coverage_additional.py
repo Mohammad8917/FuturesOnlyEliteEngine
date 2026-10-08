@@ -326,6 +326,21 @@ def liquidation_args(family=ContractFamily.LINEAR, side=PositionSide.LONG):
     )
 
 
+def event_args():
+    return dict(
+        account_id="a", position_id="p", event_id="e", causation_id="c",
+        state_version=1, contract_family=ContractFamily.LINEAR,
+        position_mode=PositionMode.ONE_WAY, position_side=PositionSide.LONG,
+        quantity=Decimal("1"), entry_price=Decimal("100"), margin_amount=Decimal("20"),
+        margin_denomination=LiquidationDenomination.QUOTE,
+        maintenance_margin_ratio=Decimal("0.1"), liquidation_price=Decimal("80"),
+        reference_price=Decimal("75"), reference_price_source="mark",
+        observed_at=datetime(2026, 1, 1, tzinfo=UTC),
+        as_of=datetime(2026, 1, 1, 1, tzinfo=UTC),
+        max_age=timedelta(hours=2), previous_event_sequence=1, event_sequence=1,
+    )
+
+
 def test_liquidation_extra_validation_branches():
     linear = FuturesLiquidationSpecification(Market.CRYPTO, symbol())
     with pytest.raises(LiquidationValidationError):
