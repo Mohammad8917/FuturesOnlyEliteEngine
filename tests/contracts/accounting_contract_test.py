@@ -1,18 +1,9 @@
 """Contract tests for canonical Futures accounting semantics."""
 
 from decimal import Decimal
+from typing import TypedDict, cast
 
 import pytest
-
-class RealizedPnLArgs(TypedDict):
-    journal_id: str
-    causation_id: str
-    state_version: int
-    sequence: int
-    account_id: str
-    pnl_amount: Decimal
-    denomination: str
-
 
 from contracts.futures.accounting import (
     AccountingDirection,
@@ -31,6 +22,16 @@ from contracts.futures.settlement import FuturesSettlementSpecification, Settlem
 from contracts.futures.settlement_accounting import (
     FuturesSettlementAccountingSpecification,
 )
+
+
+class RealizedPnLArgs(TypedDict):
+    journal_id: str
+    causation_id: str
+    state_version: int
+    sequence: int
+    account_id: str
+    pnl_amount: Decimal
+    denomination: str
 
 
 def instrument(family: ContractFamily = ContractFamily.LINEAR) -> FuturesInstrumentIdentity:
