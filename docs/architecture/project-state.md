@@ -24,7 +24,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Last verified SHA: `5affea424d4ca6907c1ebc9b63797e35b8f535af` — G01 Dependency Architecture (`37839180000`) and G04 Architecture Boundary Enforcement (`37839180011`) are green on this exact main merge SHA.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 — Domain Contracts.
 - Active work: Phase 1 Domain Contracts — Phase 1 final completeness/evidence audit are CLOSED. G05 — achieve and evidence the immutable `>= 98%` coverage requirement without excluding meaningful production code, weakening tests, or changing thresholds.
-- Blocked work: Phase 2+ production implementation and any gate skip/weakening remain blocked until the current gate sequence is resolved according to the roadmap.
+- Blocked work: Phase 2+ production implementation remains blocked until the current gate sequence is resolved according to the roadmap. Any gate skip/weakening remains forbidden.
 - Next authorized action: G05 coverage implementation/audit.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, add exclusions/ignores solely to obtain green, or skip the first incomplete gate.
 
