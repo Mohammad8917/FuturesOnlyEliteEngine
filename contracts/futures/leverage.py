@@ -27,11 +27,11 @@ class LeverageUnit(StrEnum):
     RATIO = "RATIO"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
+def _positive_decimal(value: object, field: str) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise LeverageValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
+        result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise LeverageValidationError(f"{field} must be an exact Decimal value") from exc
     if not result.is_finite() or result <= 0:
