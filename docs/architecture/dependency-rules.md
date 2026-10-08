@@ -184,10 +184,31 @@ Leverage configuration must be explicit, validated, provenance-aware, and fail c
 
 ## Phase 1 initial margin dependency boundary
 
-The initial-margin contract owns only initial-margin requirement semantics and explicit formula inputs. It may consume canonical Futures instrument identity and explicit market vocabulary.
+Initial-margin semantics are owned by the Futures domain/contract boundary. The contract owns only the deterministic initial-margin requirement calculation and validation of its explicit inputs.
 
-Required inputs are explicit: canonical instrument identity; matching market; leverage unit RATIO; requested leverage; positive minimum leverage; positive maximum leverage.
+Required inputs are explicit:
+- canonical Futures instrument identity;
+- matching market;
+- positive finite exact Decimal notional;
+- positive finite exact Decimal initial-margin ratio.
 
-Forbidden dependencies remain exchange SDKs, network I/O, persistence, runtime configuration, clocks, notifications, hidden exchange defaults, account state, margin calculation, risk policy, position sizing, and liquidation logic.
+The notional input is consumed as an already-canonicalized valuation from the multiplier/contract-specification boundary. The initial-margin contract must not redefine Linear/Inverse notional or infer it from raw exchange metadata.
 
-No caller may omit bounds and rely on an exchange or runtime default. The domain contract fails closed instead.
+Allowed dependencies:
+- canonical Futures instrument/domain vocabulary;
+- immutable value objects;
+- deterministic standard-library Decimal arithmetic.
+
+Forbidden dependencies:
+- exchange SDKs or transports;
+- network I/O;
+- persistence;
+- runtime configuration;
+- clocks or scheduling;
+- notifications;
+- account state;
+- leverage inference;
+- maintenance margin, liquidation, risk, or position-sizing policy;
+- exchange-specific collateral defaults.
+
+The contract computes only `initial_margin_amount = notional × initial_margin_ratio`, preserves the notional denomination, performs no implicit conversion or rounding, and fails closed on invalid or ambiguous inputs.
