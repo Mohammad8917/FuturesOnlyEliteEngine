@@ -109,9 +109,9 @@ class FuturesMaintenanceMarginSpecification:
         object.__setattr__(self, "notional_asset", notional_asset)
 
     @property
-    def symbol(self) -> str:
+    def symbol(self) -> CanonicalFuturesSymbol:
         """Return the canonical Futures symbol."""
-        return self.instrument.symbol.as_text()
+        return self.instrument.symbol
 
     def calculate(self, notional: Decimal | int | str) -> Decimal:
         """Calculate maintenance margin in the notional's denomination."""
