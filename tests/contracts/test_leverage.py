@@ -167,4 +167,4 @@ def test_decimal_conversion_is_exact_and_immutable() -> None:
     )
     assert spec.leverage == Decimal("12.500")
     with pytest.raises((AttributeError, TypeError)):
-        spec.leverage = Decimal("5")
+        setattr(spec, "leverage", Decimal("5"))
