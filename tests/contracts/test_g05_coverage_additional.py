@@ -564,8 +564,10 @@ def test_g05_targeted_validation_and_calculation_branches():
         FuturesLiquidationSpecification(Market.CRYPTO, "bad")
     with pytest.raises(LiquidationValidationError):
         inverse.liquidation_price(
-            **liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
-            margin_denomination=LiquidationDenomination.QUOTE,
+            **{
+                **liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
+                "margin_denomination": LiquidationDenomination.QUOTE,
+            }
         )
 
     with pytest.raises(LiquidationEventValidationError):
