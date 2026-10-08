@@ -5,8 +5,9 @@ for margin amounts. It does not calculate initial/maintenance margin,
 leverage, liquidation, risk limits, or exchange-specific collateral policy.
 """
 
-import typing
 from __future__ import annotations
+
+import typing
 
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
@@ -31,7 +32,7 @@ class MarginUnit(StrEnum):
 
 
 def _asset(value: str, field: str) -> str:
-    if not isinstance(typing.cast(object, value), str):
+    if not isinstance(value, str):
         raise MarginValidationError(f"{field} must be an asset symbol")
     value = value.strip().upper()
     if not value or value.startswith("SPOT") or not value.replace("_", "").isalnum():
@@ -39,11 +40,11 @@ def _asset(value: str, field: str) -> str:
     return value
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(typing.cast(object, value), bool):
+def _positive_decimal(value: object, field: str) -> Decimal:
+    if isinstance(value, bool):
         raise MarginValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
+        result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise MarginValidationError(f"{field} must be an exact Decimal value") from exc
     if not result.is_finite() or result <= 0:
