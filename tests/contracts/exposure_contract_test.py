@@ -35,7 +35,7 @@ def make_contract(market: Market, family: ContractFamily) -> FuturesContractSpec
 
 @pytest.mark.parametrize("market", list(Market))
 @pytest.mark.parametrize("family", list(ContractFamily))
-def test_scope_is_explicit_for_all_markets_and_families(market, family):
+def test_scope_is_explicit_for_all_markets_and_families(market: Market, family: ContractFamily) -> None:
     specification = FuturesExposureSpecification(market, make_symbol(market, family))
     assert specification.market is market
     assert specification.symbol.contract_family is family
@@ -102,7 +102,7 @@ def test_explicit_denomination_and_reference_provenance():
 
 
 @pytest.mark.parametrize("value", [True, False, 0, -1, 0.1, float("nan"), Decimal("NaN")])
-def test_financial_inputs_fail_closed(value):
+def test_financial_inputs_fail_closed(value: object) -> None:
     contract = make_contract(Market.CRYPTO, ContractFamily.LINEAR)
     specification = FuturesExposureSpecification(Market.CRYPTO, contract.symbol)
 
