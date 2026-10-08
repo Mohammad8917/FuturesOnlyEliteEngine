@@ -543,3 +543,38 @@ Frozen baseline:
 - CI boundary: .github/workflows/phase1-domain-contracts.yml;
 - meaningful tests, CI enforcement, and same-SHA evidence are mandatory before the cursor advances;
 - no threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening is permitted.
+
+## Phase 1 PnL closure evidence
+
+Realized PnL and unrealized PnL semantics are COMPLETE on main merge SHA `70f319231a758768e18eb951383aa17ed1fe080f`.
+
+Evidence on the exact merge SHA:
+- production boundary: `contracts/futures/pnl.py`;
+- test boundary: `tests/contracts/pnl_contract_test.py`;
+- export boundary: `contracts/futures/__init__.py`;
+- Phase 1 Domain Contracts CI: green;
+- Architecture Invariants CI: green;
+- G01 Dependency Architecture CI: green.
+
+The frozen contract explicitly separates realized closing/offset PnL from unrealized valuation PnL, preserves Linear QUOTE and Inverse BASE denomination, uses explicit LONG/SHORT sign semantics, exact Decimal arithmetic, zero-PnL validity, valuation provenance/freshness, and excludes fees/funding/settlement/accounting from PnL unless explicitly represented by their own contracts. No exchange-specific PnL convention was guessed.
+
+No threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening was used.
+
+The next authorized Phase 1 unit is **exposure and position valuation semantics**.
+
+## Phase 1 next-unit semantic gate — exposure and position valuation
+
+Before implementation, the next unit must freeze one explicit owner and define:
+1. exposure versus valuation meaning and lifecycle boundary;
+2. required position inputs, quantities, prices, multipliers, outputs, units, and denominations;
+3. Linear/Inverse formulas without collapsing their financial meaning;
+4. CRYPTO/FOREX/GOLD applicability;
+5. interaction with instrument, multiplier, settlement, margin, leverage, price/quantity, funding, PnL, position side/mode, and accounting without redefining them;
+6. exact numeric representation and precision/rounding behavior;
+7. reference-price provenance and freshness where valuation is used;
+8. invalid, missing, stale, contradictory, unsupported, or ambiguous state behavior;
+9. allowed and forbidden dependencies;
+10. meaningful tests and CI enforcement;
+11. same-SHA evidence before the cursor advances.
+
+No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounting default may be guessed into the canonical contract.
