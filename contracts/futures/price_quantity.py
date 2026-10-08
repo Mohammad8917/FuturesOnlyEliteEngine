@@ -1,6 +1,7 @@
 """Canonical Futures price, quantity, denomination, precision and rounding semantics."""
-import typing
 from __future__ import annotations
+
+import typing
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
@@ -12,9 +13,9 @@ class PriceUnit(StrEnum): QUOTE_PER_BASE = "QUOTE_PER_BASE"
 class PrecisionPolicy(StrEnum): EXACT = "EXACT"
 class RoundingPolicy(StrEnum): NONE = "NONE"
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)): raise PriceQuantityValidationError(field + " must be an exact Decimal value")
-    try: result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
+def _positive_decimal(value: object, field: str) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)): raise PriceQuantityValidationError(field + " must be an exact Decimal value")
+    try: result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc: raise PriceQuantityValidationError(field + " must be an exact Decimal value") from exc
     if not result.is_finite() or result <= 0: raise PriceQuantityValidationError(field + " must be finite and greater than zero")
     return result
