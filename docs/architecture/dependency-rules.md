@@ -270,3 +270,27 @@ The frozen contract remains:
 - no threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening.
 
 The next authorized Phase 1 unit is **position side and position mode semantics**. No Phase 2+ production implementation is authorized before the preceding Phase 1 exit criteria are evidenced.
+
+
+## Phase 1 position side / position mode semantic lock
+
+Maintenance-margin semantics are closed. The next Phase 1 unit is position side and position mode semantics.
+
+Frozen baseline:
+- owner: Futures domain/contract boundary;
+- position side vocabulary: explicit LONG or SHORT only;
+- position mode vocabulary: explicit ONE_WAY or HEDGE only;
+- both are immutable, exchange-independent boundary vocabulary;
+- ONE_WAY means one net position side at a time; HEDGE permits independently addressed LONG and SHORT positions;
+- BOTH, NET, Spot, or implicit third states are rejected by the canonical contract;
+- mode and side must be explicitly supplied; neither may be inferred from exchange/account state, order payloads, leverage, margin, or strategy behavior;
+- exact financial calculation is not performed by this vocabulary contract;
+- applicable to CRYPTO Futures, FOREX Futures, and GOLD Futures, and to Linear and Inverse Futures;
+- no network, exchange SDK, persistence, runtime configuration, clock, notification, or account mutation dependency;
+- invalid, missing, contradictory, unsupported, or ambiguous values fail closed;
+- exchange-specific mapping may translate external mode/side representations only at infrastructure boundaries and may not redefine canonical meaning;
+- meaningful contract tests, CI enforcement, and same-SHA evidence are required before the cursor advances.
+
+Production boundaries: contracts/futures/position_side.py, contracts/futures/position_mode.py.
+Test boundary: tests/contracts/test_position_side_mode.py.
+CI boundary: .github/workflows/phase1-domain-contracts.yml.
