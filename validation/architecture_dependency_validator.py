@@ -47,9 +47,18 @@ FORBIDDEN_IMPORTS = {
         "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
         "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
     },
-    "risk": {"requests", "httpx", "aiohttp", "ccxt", "binance"},
-    "analysis": {"requests", "httpx", "aiohttp", "ccxt", "binance"},
-    "observability": {"ccxt", "binance"},
+    "application": {
+        "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
+        "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
+    },
+    "risk": {
+        "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
+        "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
+    },
+    "analysis": {
+        "requests", "httpx", "aiohttp", "sqlalchemy", "psycopg", "redis",
+        "boto3", "kafka", "pika", "dotenv", "fastapi", "flask", "ccxt", "binance",
+    },
 }
 
 SPOT_TOKENS = {"spot", "spotmarket", "spotorder", "spotprovider"}
@@ -58,6 +67,11 @@ ORDER_CALLS = {
     "cancel_order", "replace_order",
 }
 HTTP_CALLS = {"request", "get", "post", "put", "patch", "delete"}
+HTTP_RECEIVER_NAMES = {"client", "session", "http", "transport"}
+NON_EXECUTION_ORDER_LAYERS = {
+    "domain", "contracts", "application", "risk", "analysis", "market_data",
+}
+NON_IO_LAYERS = {"domain", "risk", "analysis"}
 EXCLUDED = {".git", ".venv", "venv", "__pycache__"}
 
 
@@ -108,7 +122,7 @@ def _import_layer(path: Path, root: Path, module: str, level: int) -> str | None
 
 
 def _imports(tree: ast.AST) -> list[tuple[str, int]]:
-    result = []
+    result: list[tuple[str, int]] = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             result.extend((a.name, 0) for a in node.names)
@@ -118,13 +132,25 @@ def _imports(tree: ast.AST) -> list[tuple[str, int]]:
 
 
 def _forbidden_root(module: str, roots: set[str]) -> bool:
-    root = module.split(".", 1)[0].lower()
-    return root in roots
+    return module.split(".", 1)[0].lower() in roots
 
 
 def _spot(value: str) -> bool:
     normalized = value.lower().replace("_", "").replace("-", "")
     return normalized in SPOT_TOKENS or normalized.startswith("spot")
+
+
+def _is_stdlib_import(module: str) -> bool:
+    return module.split(".", 1)[0] in sys.stdlib_module_names
+
+
+def _call_receiver_name(node: ast.Attribute) -> str | None:
+    receiver = node.value
+    if isinstance(receiver, ast.Name):
+        return receiver.id.lower()
+    if isinstance(receiver, ast.Attribute):
+        return receiver.attr.lower()
+    return None
 
 
 def validate(root: Path = ROOT) -> list[str]:
@@ -144,6 +170,13 @@ def validate(root: Path = ROOT) -> list[str]:
 
         for imported, level in _imports(tree):
             target_layer = _import_layer(path, root, imported, level)
+
+            if level and _resolve_relative(path, root, level, imported) is None:
+                errors.add(
+                    f"{module_name}: unresolved relative import: "
+                    f"{'.' * level}{imported}"
+                )
+
             if target_layer is not None and target_layer != layer:
                 graph[layer].add(target_layer)
                 if target_layer not in ALLOWED[layer]:
@@ -155,7 +188,15 @@ def validate(root: Path = ROOT) -> list[str]:
             if level == 0 and _forbidden_root(imported, FORBIDDEN_IMPORTS.get(layer, set())):
                 errors.add(f"{module_name}: forbidden external dependency: {imported}")
 
-            if layer in {"domain", "contracts"} and _spot(imported):
+            if layer in {"domain", "contracts"} and level == 0 and not _is_stdlib_import(imported):
+                root_name = imported.split(".", 1)[0]
+                known_internal = any(root_name in aliases for aliases in LAYER_ALIASES.values())
+                if not known_internal:
+                    errors.add(
+                        f"{module_name}: non-stdlib external dependency in {layer}: {imported}"
+                    )
+
+            if layer in LAYER_ALIASES and _spot(imported):
                 errors.add(f"{module_name}: forbidden Spot dependency: {imported}")
 
             if layer == "domain" and imported.lower().startswith(
@@ -164,7 +205,8 @@ def validate(root: Path = ROOT) -> list[str]:
                 errors.add(f"{module_name}: domain imports exchange infrastructure: {imported}")
 
             if layer == "risk" and any(
-                token in imported.lower() for token in ("execution", "exchange", "order", "ccxt", "binance")
+                token in imported.lower()
+                for token in ("execution", "exchange", "order", "ccxt", "binance")
             ):
                 errors.add(f"{module_name}: risk imports execution/order authority: {imported}")
 
@@ -172,30 +214,42 @@ def validate(root: Path = ROOT) -> list[str]:
                 errors.add(f"{module_name}: analysis imports execution: {imported}")
 
         for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                positional = list(node.args.posonlyargs) + list(node.args.args)
-                defaults = [None] * (len(positional) - len(node.args.defaults)) + list(node.args.defaults)
-                for argument, default in zip(positional, defaults):
-                    if (
-                        argument.arg == "futures"
-                        and isinstance(default, ast.Constant)
-                        and default.value is False
-                    ):
-                        errors.add(f"{module_name}: forbidden futures=False switch")
-                for keyword_arg, default in zip(node.args.kwonlyargs, node.args.kw_defaults):
-                    if (
-                        keyword_arg.arg == "futures"
-                        and isinstance(default, ast.Constant)
-                        and default.value is False
-                    ):
-                        errors.add(f"{module_name}: forbidden futures=False switch")
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                if _spot(node.name):
+                    errors.add(f"{module_name}: forbidden Spot symbol/reference: {node.name}")
+
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    positional = list(node.args.posonlyargs) + list(node.args.args)
+                    defaults = [None] * (len(positional) - len(node.args.defaults)) + list(node.args.defaults)
+                    for argument, default in zip(positional, defaults):
+                        if (
+                            argument.arg == "futures"
+                            and isinstance(default, ast.Constant)
+                            and default.value is False
+                        ):
+                            errors.add(f"{module_name}: forbidden futures=False switch")
+                    for keyword_arg, default in zip(node.args.kwonlyargs, node.args.kw_defaults):
+                        if (
+                            argument.arg == "futures"
+                            and isinstance(default, ast.Constant)
+                            and default.value is False
+                        ):
+                            errors.add(f"{module_name}: forbidden futures=False switch")
 
             if isinstance(node, ast.Call):
                 if isinstance(node.func, ast.Attribute):
-                    if node.func.attr in ORDER_CALLS and layer in {"domain", "risk", "analysis", "market_data"}:
-                        errors.add(f"{module_name}: forbidden order call in {layer}: {node.func.attr}")
-                    if node.func.attr in HTTP_CALLS and layer in {"domain", "risk", "analysis"}:
-                        errors.add(f"{module_name}: forbidden HTTP call in {layer}: {node.func.attr}")
+                    if node.func.attr in ORDER_CALLS and layer in NON_EXECUTION_ORDER_LAYERS:
+                        errors.add(
+                            f"{module_name}: forbidden order call in {layer}: {node.func.attr}"
+                        )
+                    if (
+                        node.func.attr in HTTP_CALLS
+                        and layer in NON_IO_LAYERS
+                        and _call_receiver_name(node.func) in HTTP_RECEIVER_NAMES
+                    ):
+                        errors.add(
+                            f"{module_name}: forbidden HTTP call in {layer}: {node.func.attr}"
+                        )
                 for keyword in node.keywords:
                     if keyword.arg == "futures" and isinstance(keyword.value, ast.Constant):
                         if keyword.value.value is False:
