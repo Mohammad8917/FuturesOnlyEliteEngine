@@ -468,3 +468,40 @@ Frozen baseline:
 - CI boundary: `.github/workflows/phase1-domain-contracts.yml`;
 - meaningful tests, CI enforcement, and same-SHA evidence are mandatory before the Phase 1 cursor may advance;
 - no threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening is permitted.
+
+
+## Phase 1 funding closure evidence
+
+Funding-rate value, interval, provenance/freshness, and funding calculation semantics are COMPLETE on main merge SHA `1744bc33db9678cfbf9ef57a5a1bb7e15b3acbaa`.
+
+Evidence on the exact merge SHA:
+- production boundary: `contracts/futures/funding.py`;
+- test boundary: `tests/contracts/funding_contract_test.py`;
+- export boundary: `contracts/futures/__init__.py`;
+- Phase 1 Domain Contracts CI: green;
+- Architecture Invariants CI: green;
+- G01 Dependency Architecture CI: green.
+
+The frozen contract is explicit `INTERVAL_RATE` funding, canonical `POSITIVE_LONG_PAYS` sign semantics, explicit UTC interval, exact Decimal arithmetic, explicit provenance/freshness, deterministic denomination-preserving transfer semantics, valid zero-rate/no-transfer behavior, CRYPTO/FOREX/GOLD and Linear/Inverse applicability, and fail-closed invalid/stale/ambiguous critical state. Exchange-specific funding behavior remains outside the canonical domain boundary.
+
+No threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening was used.
+
+The next authorized Phase 1 unit is **realized PnL and unrealized PnL semantics**.
+
+## Phase 1 next-unit semantic gate — realized and unrealized PnL
+
+Before implementation, the next unit must freeze one explicit owner and define:
+1. realized versus unrealized PnL meaning and lifecycle boundary;
+2. required inputs, outputs, units, and denominations;
+3. Linear/Inverse formulas without collapsing their financial meaning;
+4. CRYPTO/FOREX/GOLD applicability;
+5. interaction with canonical instrument, multiplier, settlement, margin, leverage, price/quantity, funding, position side/mode, and accounting boundaries without redefining them;
+6. exact numeric representation and precision/rounding behavior;
+7. realized/unrealized state transition semantics and what events make PnL realized;
+8. valuation/reference-price provenance and freshness where applicable;
+9. invalid, missing, stale, contradictory, unsupported, or ambiguous state behavior;
+10. allowed and forbidden dependencies;
+11. meaningful tests and CI enforcement;
+12. same-SHA evidence before the cursor advances.
+
+No exchange-specific PnL formula, fee treatment, mark-price convention, settlement behavior, rounding rule, or accounting default may be guessed into the canonical contract.
