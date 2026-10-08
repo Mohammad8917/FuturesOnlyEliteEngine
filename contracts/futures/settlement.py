@@ -36,7 +36,7 @@ def _asset(value: object, field: str) -> str:
     return value
 
 
-def _positive_decimal(value: Decimal, field: str) -> Decimal:
+def _positive_decimal(value: object, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, Decimal):
         raise SettlementValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite() or value <= 0:
