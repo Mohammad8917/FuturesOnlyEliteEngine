@@ -55,6 +55,34 @@ jobs:
             --cov-fail-under=98 \
             tests/contracts
 
+      - name: Independently enforce the 98 percent coverage floor
+        if: always()
+        env:
+          PYTHONPATH: .
+        run: |
+          python - <<'PY'
+          import sys
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          report = Path("coverage.xml")
+          if not report.is_file():
+              print("G05 FAIL: coverage.xml was not produced")
+              sys.exit(1)
+          try:
+              root = ET.parse(report).getroot()
+              line_rate = float(root.attrib["line-rate"])
+          except (ET.ParseError, KeyError, ValueError) as exc:
+              print(f"G05 FAIL: invalid coverage report: {exc}")
+              sys.exit(1)
+          percentage = line_rate * 100
+          print(f"G05 independently measured line coverage: {percentage:.2f}%")
+          if percentage < 98.0:
+              print("G05 FAIL: official coverage must be >= 98.00%")
+              sys.exit(1)
+          print("G05 PASS: coverage is >= 98.00%")
+          PY
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
