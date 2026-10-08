@@ -26,11 +26,13 @@ def test_zero_pnl() -> None:
     assert spec(ContractFamily.LINEAR).calculate_unrealized(quantity=Decimal("1"),multiplier=Decimal("1"),entry_price=Decimal("100"),valuation_price=Decimal("100"),position_side=PositionSide.LONG,valuation_source="synthetic",observed_at=datetime(2026,1,1,12,tzinfo=UTC))==Decimal("0")
 @pytest.mark.parametrize("v",[True,False,0,-1,0.1,float("nan"),Decimal("NaN")])
 def test_invalid(v: object) -> None:
-    with pytest.raises(PnLValidationError): spec(ContractFamily.LINEAR).calculate_realized(quantity=v,multiplier=Decimal("1")  # type: ignore[arg-type],entry_price=Decimal("100"),exit_price=Decimal("101"),position_side=PositionSide.LONG)
+    with pytest.raises(PnLValidationError): spec(ContractFamily.LINEAR).calculate_realized(quantity=v,  # type: ignore[arg-type]
+        multiplier=Decimal("1"),
+        entry_price=Decimal("100"),exit_price=Decimal("101"),position_side=PositionSide.LONG)
 def test_utc_source_and_freshness() -> None:
     with pytest.raises(PnLValidationError): spec(ContractFamily.LINEAR).calculate_unrealized(quantity=Decimal("1"),multiplier=Decimal("1"),entry_price=Decimal("100"),valuation_price=Decimal("101"),position_side=PositionSide.LONG,valuation_source="",observed_at=datetime(2026,1,1,12))
     s=spec(ContractFamily.LINEAR); s.validate_valuation_freshness(as_of=datetime(2026,1,1,12,30,tzinfo=UTC),observed_at=datetime(2026,1,1,12,tzinfo=UTC),max_age=timedelta(hours=1))
     with pytest.raises(PnLValidationError): s.validate_valuation_freshness(as_of=datetime(2026,1,1,14,tzinfo=UTC),observed_at=datetime(2026,1,1,12,tzinfo=UTC),max_age=timedelta(hours=1))
 def test_immutable() -> None:
     s=spec(ContractFamily.LINEAR)
-    with pytest.raises(AttributeError): s.pnl_unit=PnLUnit.REALIZED_OR_UNREALIZED
+    with pytest.raises(AttributeError): s.pnl_unit=PnLUnit.REALIZED_OR_UNREALIZED  # type: ignore[misc]
