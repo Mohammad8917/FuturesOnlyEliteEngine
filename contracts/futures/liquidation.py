@@ -21,11 +21,11 @@ class LiquidationDenomination(StrEnum):
     QUOTE = "QUOTE"
 
 
-def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
+def _positive_decimal(value: object, field: str) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
         raise LiquidationValidationError(f"{field} must be an exact Decimal value")
     try:
-        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
+        result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise LiquidationValidationError(
             f"{field} must be an exact Decimal value"
