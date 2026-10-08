@@ -31,7 +31,7 @@ class MarginUnit(StrEnum):
     ASSET = "ASSET"
 
 
-def _asset(value: str, field: str) -> str:
+def _asset(value: object, field: str) -> str:
     if not isinstance(value, str):
         raise MarginValidationError(f"{field} must be an asset symbol")
     value = value.strip().upper()
