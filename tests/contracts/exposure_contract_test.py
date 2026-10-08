@@ -198,4 +198,4 @@ def test_specification_is_immutable():
         Market.CRYPTO, make_symbol(Market.CRYPTO, ContractFamily.LINEAR)
     )
     with pytest.raises(AttributeError):
-        specification.market = Market.GOLD
+        setattr(specification, "market", Market.GOLD)
