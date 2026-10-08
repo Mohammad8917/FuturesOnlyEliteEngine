@@ -1,0 +1,2 @@
+# P0-4 SCA toolchain lock
+pip-audit==2.10.1
