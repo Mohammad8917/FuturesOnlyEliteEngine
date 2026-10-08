@@ -575,3 +575,12 @@ No exchange-specific exposure, mark-price, valuation, rounding, fee, or accounti
 ## Phase 1 exposure / position valuation semantic lock
 
 Ownership is the Futures domain/contract boundary. Exposure is explicit position economic magnitude; valuation is explicit expression at a reference price. Linear base exposure = quantity × multiplier; Inverse base exposure = (quantity × multiplier) ÷ price. Linear quote value = quantity × multiplier × reference price; Inverse quote value = quantity × multiplier. LONG/SHORT only supplies signed direction; gross magnitude stays non-negative. Quantity is CONTRACTS and financial inputs are exact finite Decimal; bool/binary float fail closed. Valuation denomination is explicit BASE or QUOTE. Reference-price provenance and aware UTC observation are mandatory; freshness uses explicit UTC as_of and positive max_age. Applies to all three Futures markets and both families. Prior contracts are consumed, not redefined; PnL, funding, fees, margin, settlement, liquidation, accounting, execution, network, SDK, persistence, runtime config and account mutation remain outside. Invalid/stale/contradictory/unsupported/ambiguous critical state fails closed. Same-SHA CI evidence is required.
+
+
+## Phase 1 exposure / position valuation closure evidence
+
+Exposure and position valuation is COMPLETE on implementation SHA `dc9461a562426e02af3fc3585beed917940da049`; merged to main as `953c69ee2335cda62d0729f5b7f0bb53f6b2a080`. The domain contract, meaningful tests, CI enforcement, and same-SHA Phase 1/G01/Architecture evidence are closed.
+
+## Phase 1 next-unit ownership gate — liquidation price and liquidation constraints
+
+Owner: Futures domain/contract boundary for deterministic liquidation-price semantics and constraints. Execution/account mutation/liquidation events remain outside. The contract must explicitly consume prior position, multiplier, margin, leverage, maintenance-margin, price/quantity, side/mode, funding, PnL, and exposure facts without redefining them; define Linear/Inverse formulas, all three markets, exact Decimal/no rounding, provenance/freshness, fail-closed state, and domain-safe dependencies. Exchange transport, SDK, network, account mutation, exchange-specific mark-price/tier/fee/funding/settlement defaults are forbidden. Meaningful tests, CI, and same-SHA evidence are mandatory.
