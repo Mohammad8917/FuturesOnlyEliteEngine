@@ -147,7 +147,7 @@ def test_financial_boundaries_reject_bool_float_and_invalid_decimal(field: str, 
         pnl_amount=Decimal("1"),
         denomination="USD",
     )
-    kwargs[field] = value
+    kwargs[field] = cast(str | int | Decimal, value)
     with pytest.raises(AccountingValidationError):
         accounting().realized_pnl(**cast(dict[str, object], kwargs))  # type: ignore[arg-type]
 
