@@ -38,10 +38,18 @@ class FuturesPnLSpecification:
         if not isinstance(cast(object, self.pnl_unit), PnLUnit): raise PnLValidationError("pnl_unit must be explicit")
 
     @property
-    def denomination(self):
+    def denomination(self) -> PnLDenomination:
         return PnLDenomination.QUOTE if self.symbol.contract_family is ContractFamily.LINEAR else PnLDenomination.BASE
 
-    def _calculate(\n        self,\n        *,\n        quantity: Decimal | int | str,\n        multiplier: Decimal | int | str,\n        entry_price: Decimal | int | str,\n        reference_price: Decimal | int | str,\n        position_side: PositionSide,\n    ) -> Decimal:
+    def _calculate(
+        self,
+        *,
+        quantity: Decimal | int | str,
+        multiplier: Decimal | int | str,
+        entry_price: Decimal | int | str,
+        reference_price: Decimal | int | str,
+        position_side: PositionSide,
+    ) -> Decimal:
         qty = _positive_decimal(quantity, "quantity"); mult = _positive_decimal(multiplier, "contract_multiplier")
         entry = _positive_decimal(entry_price, "entry_price"); reference = _positive_decimal(reference_price, "reference_price")
         if not isinstance(cast(object, position_side), PositionSide): raise PnLValidationError("position_side must be explicit")
@@ -54,16 +62,40 @@ class FuturesPnLSpecification:
         if not result.is_finite(): raise PnLValidationError("PnL result is non-finite")
         return result
 
-    def calculate_realized(\n        self,\n        *,\n        quantity: Decimal | int | str,\n        multiplier: Decimal | int | str,\n        entry_price: Decimal | int | str,\n        exit_price: Decimal | int | str,\n        position_side: PositionSide,\n    ) -> Decimal:
+    def calculate_realized(
+        self,
+        *,
+        quantity: Decimal | int | str,
+        multiplier: Decimal | int | str,
+        entry_price: Decimal | int | str,
+        exit_price: Decimal | int | str,
+        position_side: PositionSide,
+    ) -> Decimal:
         return self._calculate(quantity=quantity, multiplier=multiplier, entry_price=entry_price, reference_price=exit_price, position_side=position_side)
 
-    def calculate_unrealized(\n        self,\n        *,\n        quantity: Decimal | int | str,\n        multiplier: Decimal | int | str,\n        entry_price: Decimal | int | str,\n        valuation_price: Decimal | int | str,\n        position_side: PositionSide,\n        valuation_source: str,\n        observed_at: datetime,\n    ) -> Decimal:
-        source = valuation_source.strip() if isinstance(valuation_source, str) else ""
+    def calculate_unrealized(
+        self,
+        *,
+        quantity: Decimal | int | str,
+        multiplier: Decimal | int | str,
+        entry_price: Decimal | int | str,
+        valuation_price: Decimal | int | str,
+        position_side: PositionSide,
+        valuation_source: str,
+        observed_at: datetime,
+    ) -> Decimal:
+        source = valuation_source.strip() if isinstance(cast(object, valuation_source), str) else ""
         if not source: raise PnLValidationError("valuation_source must be explicit")
         _utc(observed_at, "observed_at")
         return self._calculate(quantity=quantity, multiplier=multiplier, entry_price=entry_price, reference_price=valuation_price, position_side=position_side)
 
-    def validate_valuation_freshness(\n        self,\n        *,\n        as_of: datetime,\n        observed_at: datetime,\n        max_age: timedelta,\n    ) -> None:
+    def validate_valuation_freshness(
+        self,
+        *,
+        as_of: datetime,
+        observed_at: datetime,
+        max_age: timedelta,
+    ) -> None:
         current = _utc(as_of, "as_of"); observed = _utc(observed_at, "observed_at")
-        if not isinstance(max_age, timedelta) or max_age <= timedelta(0): raise PnLValidationError("max_age must be positive")
+        if not isinstance(cast(object, max_age), timedelta) or max_age <= timedelta(0): raise PnLValidationError("max_age must be positive")
         if current < observed or current - observed > max_age: raise PnLValidationError("valuation is stale or time ordering is invalid")
