@@ -22,7 +22,6 @@ from contracts.futures.contract_specification import (
     QuantityUnit,
 )
 from contracts.futures.exposure import (
-    ExposureDenomination,
     ExposureValidationError,
     FuturesExposureSpecification,
 )
