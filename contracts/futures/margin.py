@@ -110,7 +110,7 @@ class FuturesMarginSpecification:
 
     @property
     def symbol(self) -> CanonicalFuturesSymbol:
-        return self.instrument.symbol.as_text()
+        return self.instrument.symbol
 
     @property
     def conversion_required(self) -> bool:
