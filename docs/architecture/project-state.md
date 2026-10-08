@@ -208,3 +208,16 @@ Test boundary: `tests/contracts/test_initial_margin.py`.
 CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
 
 No cursor advance is authorized until production implementation, contract tests, CI enforcement, and same-SHA evidence are green.
+
+## Phase 1 cursor transition — initial margin closed
+
+- Initial margin semantics: COMPLETE — production implementation, contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on same SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`.
+- Active work: Phase 1 Domain Contracts — maintenance margin semantics.
+- Next authorized action: define and implement the explicit maintenance-margin contract without inferring exchange-specific tiers, rates, or amounts.
+- Forbidden action: do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, weaken tests/gates, lower G05/G08, or skip the first incomplete phase/gate.
+
+## Phase 1 current cursor — maintenance margin
+
+Current cursor: **maintenance margin semantics**.
+
+The next unit must first freeze explicit ownership, inputs, outputs, denomination, precision, applicability, tier/rate/amount semantics where applicable, and fail-closed behavior before production implementation.
