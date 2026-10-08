@@ -611,3 +611,6 @@ Accounting/settlement-accounting is the last minimum Futures domain contract lis
 
 
 - CI hardening alignment note: G01, Architecture Invariants, and Phase 1 Domain Contracts use the same deterministic Python 3.13 CI dependency lock and hardened execution controls. Same-SHA verification remains mandatory before this state is treated as final evidence.
+
+
+- Final CI hardening evidence anchor: checkout credential persistence is disabled (`persist-credentials: false`) across the Phase 1/G01/Architecture Invariants workflows; final same-SHA rerun is required.
