@@ -42,3 +42,5 @@ jobs:
 # Gate-chain alignment: architecture, dependency, and domain evidence share one commit.
 
 # Same-SHA trigger anchor: liquidation-trigger contract closure verification.
+
+# Final same-SHA trigger anchor: liquidation-trigger verification after export repair.
