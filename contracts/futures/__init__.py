@@ -19,6 +19,7 @@ from .initial_margin import (
     InitialMarginValidationError,
 )
 from .pnl import FuturesPnLSpecification, PnLDenomination, PnLUnit, PnLValidationError
+from .exposure import ExposureDenomination, ExposureValidationError, FuturesExposureSpecification
 from .funding import (
     FundingPayment,
     FundingRateUnit,
@@ -65,6 +66,9 @@ __all__ = [
     "FuturesInitialMarginSpecification",
     "FuturesFundingSpecification",
     "FuturesPnLSpecification",
+    "FuturesExposureSpecification",
+    "ExposureDenomination",
+    "ExposureValidationError",
     "PnLDenomination",
     "PnLUnit",
     "PnLValidationError",
