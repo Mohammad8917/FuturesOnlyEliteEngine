@@ -46,7 +46,6 @@ def test_contract_is_explicit_across_markets_and_families(family, market):
     spec = FuturesFundingSpecification(
         market=market,
         symbol=CanonicalFuturesSymbol(
-            market=market,
             base_asset="BTC",
             quote_asset="USD",
             settlement_asset="USD",
