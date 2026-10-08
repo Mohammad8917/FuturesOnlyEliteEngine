@@ -495,3 +495,95 @@ def test_settlement_accounting_same_and_cross_asset_success():
     assert cross_journal.asset_balances == {
         "EUR": Decimal("0"), "USD": Decimal("0")
     }
+
+
+def test_g05_targeted_validation_and_calculation_branches():
+    with pytest.raises(ContractSpecificationValidationError):
+        FuturesContractSpecification(
+            market=Market.CRYPTO, symbol=symbol(),
+            quantity_unit=QuantityUnit.CONTRACTS,
+            contract_multiplier="not-a-decimal", price_quote_asset="USD",
+        )
+
+    exposure = FuturesExposureSpecification(Market.CRYPTO, symbol())
+    with pytest.raises(ExposureValidationError):
+        exposure.base_exposure(contract=contract(), quantity="not-a-decimal", price=10)
+    with pytest.raises(ExposureValidationError):
+        exposure.quote_value(contract=contract(), quantity=1, reference_price=0)
+    assert exposure.quote_value(
+        contract=contract(), quantity=2, reference_price=10
+    ) == Decimal("2000")
+    assert exposure.value(
+        contract=contract(), quantity=2, reference_price=10,
+        denomination=ExposureDenomination.QUOTE, valuation_source="mark",
+        observed_at=datetime(2026, 1, 1, tzinfo=UTC),
+    ) == Decimal("2000")
+    with pytest.raises(ExposureValidationError):
+        FuturesExposureSpecification("bad", symbol())
+    with pytest.raises(ExposureValidationError):
+        FuturesExposureSpecification(Market.CRYPTO, "bad")
+    with pytest.raises(ExposureValidationError):
+        exposure.validate_reference_freshness(
+            as_of=datetime(2026, 1, 1, 1, tzinfo=UTC),
+            observed_at=datetime(2026, 1, 1, tzinfo=UTC),
+            max_age=timedelta(0),
+        )
+
+    with pytest.raises(FundingValidationError):
+        funding_spec("not-a-rate")
+    with pytest.raises(FundingValidationError):
+        FundingPayment(
+            PositionSide.LONG, PositionSide.SHORT, Decimal("1"), ""
+        )
+    with pytest.raises(FundingValidationError):
+        FuturesFundingSpecification(
+            market=Market.CRYPTO, symbol=symbol(),
+            funding_rate_unit=FundingRateUnit.INTERVAL_RATE,
+            funding_sign_convention=FundingSignConvention.POSITIVE_LONG_PAYS,
+            funding_rate=Decimal("0.1"),
+            interval_start=datetime(2026, 1, 1, tzinfo=UTC),
+            interval_end=datetime(2026, 1, 1, tzinfo=UTC),
+            rate_source="source", observed_at=datetime(2026, 1, 1, tzinfo=UTC),
+            notional_denomination="USD",
+        )
+
+    inverse = FuturesLiquidationSpecification(Market.CRYPTO, symbol(ContractFamily.INVERSE))
+    inverse_short = inverse.liquidation_price(
+        **liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
+        margin_amount=Decimal("0.1"),
+    )
+    assert inverse_short == Decimal("100")
+    with pytest.raises(LiquidationValidationError):
+        inverse.liquidation_price(
+            **liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
+            margin_amount=Decimal("0.9"),
+        )
+    with pytest.raises(LiquidationValidationError):
+        FuturesLiquidationSpecification("bad", symbol())
+    with pytest.raises(LiquidationValidationError):
+        FuturesLiquidationSpecification(Market.CRYPTO, "bad")
+    with pytest.raises(LiquidationValidationError):
+        inverse.liquidation_price(
+            **liquidation_args(ContractFamily.INVERSE, PositionSide.SHORT),
+            margin_denomination=LiquidationDenomination.QUOTE,
+        )
+
+    with pytest.raises(LiquidationEventValidationError):
+        FuturesLiquidationTriggerSpecification("bad", symbol())
+    with pytest.raises(LiquidationEventValidationError):
+        FuturesLiquidationTriggerSpecification(
+            Market.CRYPTO, symbol(ContractFamily.INVERSE)
+        ).evaluate(
+            account_id="a", position_id="p", event_id="e", causation_id="c",
+            state_version=1, contract_family=ContractFamily.INVERSE,
+            position_mode=PositionMode.ONE_WAY, position_side=PositionSide.SHORT,
+            quantity=1, entry_price=100, margin_amount=1,
+            margin_denomination=LiquidationDenomination.BASE,
+            maintenance_margin_ratio=Decimal("0.1"),
+            liquidation_price=Decimal("120"), reference_price=Decimal("130"),
+            reference_price_source="mark",
+            observed_at=datetime(2026, 1, 1, tzinfo=UTC),
+            as_of=datetime(2026, 1, 1, 1, tzinfo=UTC),
+            max_age=timedelta(hours=2),
+            previous_event_sequence=1, event_sequence=2,
+        )
