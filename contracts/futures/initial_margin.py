@@ -103,7 +103,7 @@ class FuturesInitialMarginSpecification:
         """Return the canonical Futures symbol."""
         return self.instrument.symbol.as_text()
 
-    def calculate(self, notional: Decimal | int | str) -> Decimal -> Decimal:
+    def calculate(self, notional: Decimal | int | str) -> Decimal:
         """Calculate initial margin in the notional's explicit denomination."""
         value = _positive_decimal(notional, "notional")
         return value * self.initial_margin_ratio
