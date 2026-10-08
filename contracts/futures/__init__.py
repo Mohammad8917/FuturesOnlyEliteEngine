@@ -1,10 +1,3 @@
-from .price_quantity import (
-    FuturesPriceQuantitySpecification,
-    PrecisionPolicy,
-    PriceQuantityValidationError,
-    PriceUnit,
-    RoundingPolicy,
-)
 """Canonical Futures domain boundary contracts."""
 
 from .contract_specification import (
@@ -25,7 +18,13 @@ from .initial_margin import (
     InitialMarginUnit,
     InitialMarginValidationError,
 )
-
+from .funding import (
+    FundingPayment,
+    FundingRateUnit,
+    FundingSignConvention,
+    FundingValidationError,
+    FuturesFundingSpecification,
+)
 from .position_side import (
     PositionSide,
     PositionSideValidationError,
@@ -44,6 +43,13 @@ from .instrument import (
     InstrumentValidationError,
     Market,
 )
+from .price_quantity import (
+    FuturesPriceQuantitySpecification,
+    PrecisionPolicy,
+    PriceQuantityValidationError,
+    PriceUnit,
+    RoundingPolicy,
+)
 
 __all__ = [
     "CanonicalFuturesSymbol",
@@ -54,6 +60,10 @@ __all__ = [
     "FuturesSettlementSpecification",
     "FuturesMarginSpecification",
     "FuturesLeverageSpecification",
+    "FuturesMaintenanceMarginSpecification",
+    "FuturesInitialMarginSpecification",
+    "FuturesFundingSpecification",
+    "FundingPayment",
     "InstrumentStatus",
     "InstrumentValidationError",
     "Market",
@@ -62,12 +72,13 @@ __all__ = [
     "MarginValidationError",
     "LeverageUnit",
     "LeverageValidationError",
-    "FuturesMaintenanceMarginSpecification",
     "MaintenanceMarginUnit",
     "MaintenanceMarginValidationError",
-    "FuturesInitialMarginSpecification",
     "InitialMarginUnit",
     "InitialMarginValidationError",
+    "FundingRateUnit",
+    "FundingSignConvention",
+    "FundingValidationError",
     "PositionSide",
     "PositionSideValidationError",
     "validate_position_side",
