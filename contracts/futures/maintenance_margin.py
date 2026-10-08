@@ -6,6 +6,7 @@ notional. It does not infer leverage, liquidation, risk policy, account
 state, exchange tiers, or exchange-specific defaults.
 """
 
+import typing
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -26,12 +27,12 @@ class MaintenanceMarginUnit(StrEnum):
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+    if isinstance(typing.cast(object, value), bool) or not isinstance(typing.cast(object, value), (Decimal, int, str)):
         raise MaintenanceMarginValidationError(
             f"{field} must be an exact Decimal value"
         )
     try:
-        result = value if isinstance(value, Decimal) else Decimal(str(value))
+        result = value if isinstance(typing.cast(object, value), Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise MaintenanceMarginValidationError(
             f"{field} must be an exact Decimal value"
@@ -44,7 +45,7 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
 
 
 def _asset(value: str, field: str) -> str:
-    if not isinstance(value, str):
+    if not isinstance(typing.cast(object, value), str):
         raise MaintenanceMarginValidationError(
             f"{field} must be an asset symbol"
         )
@@ -80,11 +81,11 @@ class FuturesMaintenanceMarginSpecification:
     notional_asset: str
 
     def __post_init__(self) -> None:
-        if not isinstance(self.market, Market):
+        if not isinstance(typing.cast(object, self.market), Market):
             raise MaintenanceMarginValidationError(
                 "market must be a supported Futures market"
             )
-        if not isinstance(self.instrument, FuturesInstrumentIdentity):
+        if not isinstance(typing.cast(object, self.instrument), FuturesInstrumentIdentity):
             raise MaintenanceMarginValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
@@ -92,8 +93,7 @@ class FuturesMaintenanceMarginSpecification:
             raise MaintenanceMarginValidationError(
                 "market must match the instrument identity"
             )
-        if not isinstance(
-            self.maintenance_margin_unit, MaintenanceMarginUnit
+        if not isinstance(typing.cast(object, self.maintenance_margin_unit), MaintenanceMarginUnit
         ):
             raise MaintenanceMarginValidationError(
                 "maintenance_margin_unit must be RATIO"
