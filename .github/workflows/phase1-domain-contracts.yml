@@ -9,6 +9,7 @@ on:
     paths:
       - "contracts/**"
       - "tests/contracts/**"
+      - "requirements-ci.txt"
       - ".github/workflows/phase1-domain-contracts.yml"
       - "docs/architecture/**"
   pull_request:
