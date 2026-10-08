@@ -31,7 +31,9 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
-        raise LeverageValidationError(f"{field} must be an exact Decimal value") from exc
+        raise LeverageValidationError(
+            f"{field} must be an exact Decimal value"
+        ) from exc
     if not result.is_finite() or result <= 0:
         raise LeverageValidationError(f"{field} must be finite and greater than zero")
     return result

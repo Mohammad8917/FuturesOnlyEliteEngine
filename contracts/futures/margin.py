@@ -75,9 +75,7 @@ class FuturesMarginSpecification:
         if not isinstance(self.market, Market):
             raise MarginValidationError("market must be a supported Futures market")
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise MarginValidationError(
-                "instrument must be FuturesInstrumentIdentity"
-            )
+            raise MarginValidationError("instrument must be FuturesInstrumentIdentity")
         if self.instrument.market is not self.market:
             raise MarginValidationError("market must match the instrument identity")
         if not isinstance(self.margin_unit, MarginUnit):

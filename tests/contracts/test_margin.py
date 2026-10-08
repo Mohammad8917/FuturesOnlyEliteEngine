@@ -113,7 +113,9 @@ def test_market_mismatch_fails_closed() -> None:
         )
 
 
-@pytest.mark.parametrize("rate", [Decimal("0"), Decimal("-1"), Decimal("NaN"), Decimal("Infinity")])
+@pytest.mark.parametrize(
+    "rate", [Decimal("0"), Decimal("-1"), Decimal("NaN"), Decimal("Infinity")]
+)
 def test_invalid_conversion_rate_fails_closed(rate: Decimal) -> None:
     with pytest.raises(MarginValidationError):
         FuturesMarginSpecification(

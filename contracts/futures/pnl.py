@@ -92,9 +92,7 @@ class FuturesPnLSpecification:
         if self.symbol.contract_family is ContractFamily.LINEAR:
             raw = qty * mult * (reference - entry)
         elif self.symbol.contract_family is ContractFamily.INVERSE:
-            raw = qty * mult * (
-                (Decimal("1") / entry) - (Decimal("1") / reference)
-            )
+            raw = qty * mult * ((Decimal("1") / entry) - (Decimal("1") / reference))
         else:
             raise PnLValidationError("unsupported contract family")
 
@@ -155,6 +153,4 @@ class FuturesPnLSpecification:
         if not isinstance(max_age, timedelta) or max_age <= timedelta(0):
             raise PnLValidationError("max_age must be positive")
         if current < observed or current - observed > max_age:
-            raise PnLValidationError(
-                "valuation is stale or time ordering is invalid"
-            )
+            raise PnLValidationError("valuation is stale or time ordering is invalid")

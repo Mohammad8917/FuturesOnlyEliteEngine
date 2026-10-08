@@ -1,4 +1,5 @@
 """Canonical Futures funding-rate semantics."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -62,7 +63,9 @@ class FundingPayment:
             or not isinstance(self.receiver, PositionSide)
             or self.payer is self.receiver
         ):
-            raise FundingValidationError("payer and receiver must be distinct explicit sides")
+            raise FundingValidationError(
+                "payer and receiver must be distinct explicit sides"
+            )
         if (
             not isinstance(self.amount, Decimal)
             or not self.amount.is_finite()
@@ -170,7 +173,9 @@ class FuturesFundingSpecification:
                 else PositionSide.LONG
             )
         )
-        receiver = PositionSide.SHORT if payer is PositionSide.LONG else PositionSide.LONG
+        receiver = (
+            PositionSide.SHORT if payer is PositionSide.LONG else PositionSide.LONG
+        )
         return FundingPayment(
             payer,
             receiver,

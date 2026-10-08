@@ -51,7 +51,9 @@ def evaluate(
         position_side=side,
         quantity=Decimal("2"),
         entry_price=Decimal("50"),
-        margin_amount=Decimal("900") if family is ContractFamily.LINEAR else Decimal("1"),
+        margin_amount=Decimal("900")
+        if family is ContractFamily.LINEAR
+        else Decimal("1"),
         margin_denomination=(
             LiquidationDenomination.QUOTE
             if family is ContractFamily.LINEAR

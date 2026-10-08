@@ -63,8 +63,12 @@ def test_linear_realized_pnl_respects_long_and_short() -> None:
         "entry_price": Decimal("100"),
         "exit_price": Decimal("120"),
     }
-    assert spec.calculate_realized(**common, position_side=PositionSide.LONG) == Decimal("0.2")
-    assert spec.calculate_realized(**common, position_side=PositionSide.SHORT) == Decimal("-0.2")
+    assert spec.calculate_realized(
+        **common, position_side=PositionSide.LONG
+    ) == Decimal("0.2")
+    assert spec.calculate_realized(
+        **common, position_side=PositionSide.SHORT
+    ) == Decimal("-0.2")
 
 
 def test_inverse_realized_pnl_respects_long_and_short() -> None:
@@ -75,8 +79,12 @@ def test_inverse_realized_pnl_respects_long_and_short() -> None:
         "entry_price": Decimal("100"),
         "exit_price": Decimal("200"),
     }
-    assert spec.calculate_realized(**common, position_side=PositionSide.LONG) == Decimal("5")
-    assert spec.calculate_realized(**common, position_side=PositionSide.SHORT) == Decimal("-5")
+    assert spec.calculate_realized(
+        **common, position_side=PositionSide.LONG
+    ) == Decimal("5")
+    assert spec.calculate_realized(
+        **common, position_side=PositionSide.SHORT
+    ) == Decimal("-5")
 
 
 def test_unrealized_pnl_preserves_decimal_input_precision() -> None:

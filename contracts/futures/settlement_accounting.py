@@ -52,7 +52,9 @@ class FuturesSettlementAccountingSpecification:
         if not isinstance(self.market, Market):
             raise AccountingValidationError("market must be a supported Futures market")
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
         if self.instrument.market is not self.market:
             raise AccountingValidationError("market must match instrument")
         if not isinstance(self.settlement, FuturesSettlementSpecification):
@@ -83,9 +85,7 @@ class FuturesSettlementAccountingSpecification:
             "settlement_counterparty_account_id",
         )
         if account == counterparty:
-            raise AccountingValidationError(
-                "settlement counterparty must be distinct"
-            )
+            raise AccountingValidationError("settlement counterparty must be distinct")
         _sequence(state_version, "state_version")
         start = _sequence(sequence, "sequence")
         source_value = _decimal(source_amount, "source_amount")

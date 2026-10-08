@@ -1,4 +1,5 @@
 """Canonical Futures liquidation-trigger event semantics."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -43,25 +44,19 @@ def _utc(value: datetime, field: str) -> datetime:
         or value.tzinfo is None
         or value.utcoffset() != timedelta(0)
     ):
-        raise LiquidationEventValidationError(
-            f"{field} must be an aware UTC datetime"
-        )
+        raise LiquidationEventValidationError(f"{field} must be an aware UTC datetime")
     return value
 
 
 def _identifier(value: str, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
-        raise LiquidationEventValidationError(
-            f"{field} must be a non-empty identifier"
-        )
+        raise LiquidationEventValidationError(f"{field} must be a non-empty identifier")
     return value.strip()
 
 
 def _non_negative_integer(value: int, field: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
-        raise LiquidationEventValidationError(
-            f"{field} must be a non-negative integer"
-        )
+        raise LiquidationEventValidationError(f"{field} must be a non-negative integer")
     return value
 
 
@@ -141,9 +136,7 @@ class FuturesLiquidationTriggerSpecification:
                 "position_mode must be ONE_WAY or HEDGE"
             )
         if not isinstance(position_side, PositionSide):
-            raise LiquidationEventValidationError(
-                "position_side must be LONG or SHORT"
-            )
+            raise LiquidationEventValidationError("position_side must be LONG or SHORT")
         try:
             FuturesPositionModeSpecification(position_mode).accepts(position_side)
         except ValueError as exc:
@@ -152,9 +145,7 @@ class FuturesLiquidationTriggerSpecification:
         qty = _positive_decimal(quantity, "quantity")
         entry = _positive_decimal(entry_price, "entry_price")
         margin = _positive_decimal(margin_amount, "margin_amount")
-        mmr = _positive_decimal(
-            maintenance_margin_ratio, "maintenance_margin_ratio"
-        )
+        mmr = _positive_decimal(maintenance_margin_ratio, "maintenance_margin_ratio")
         liquidation = _positive_decimal(liquidation_price, "liquidation_price")
         reference = _positive_decimal(reference_price, "reference_price")
 
@@ -291,9 +282,7 @@ class FuturesLiquidationTriggerEvent:
                 "position_mode must be ONE_WAY or HEDGE"
             )
         if not isinstance(self.position_side, PositionSide):
-            raise LiquidationEventValidationError(
-                "position_side must be LONG or SHORT"
-            )
+            raise LiquidationEventValidationError("position_side must be LONG or SHORT")
         FuturesPositionModeSpecification(self.position_mode).accepts(self.position_side)
         _positive_decimal(self.quantity, "quantity")
         entry = _positive_decimal(self.entry_price, "entry_price")
@@ -328,9 +317,7 @@ class FuturesLiquidationTriggerEvent:
             raise LiquidationEventValidationError(
                 "short liquidation price must be above entry price"
             )
-        if (
-            self.position_side is PositionSide.LONG and reference > liquidation
-        ) or (
+        if (self.position_side is PositionSide.LONG and reference > liquidation) or (
             self.position_side is PositionSide.SHORT and reference < liquidation
         ):
             raise LiquidationEventValidationError(
@@ -361,10 +348,7 @@ class FuturesLiquidationTriggerEvaluation:
             raise LiquidationEventValidationError(
                 "triggered evaluation must contain an event"
             )
-        if (
-            self.trigger is LiquidationTrigger.NOT_TRIGGERED
-            and self.event is not None
-        ):
+        if self.trigger is LiquidationTrigger.NOT_TRIGGERED and self.event is not None:
             raise LiquidationEventValidationError(
                 "non-triggered evaluation must not contain an event"
             )

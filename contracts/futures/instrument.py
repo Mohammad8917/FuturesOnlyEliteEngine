@@ -78,9 +78,7 @@ class CanonicalFuturesSymbol:
 
     def __post_init__(self) -> None:
         if not isinstance(self.contract_family, ContractFamily):
-            raise InstrumentValidationError(
-                "contract_family must be LINEAR or INVERSE"
-            )
+            raise InstrumentValidationError("contract_family must be LINEAR or INVERSE")
 
         base = _asset(self.base_asset, "base_asset")
         quote = _asset(self.quote_asset, "quote_asset")
@@ -89,8 +87,7 @@ class CanonicalFuturesSymbol:
         if base == quote:
             raise InstrumentValidationError("base_asset and quote_asset must differ")
         if self.expiry is not None and (
-            not isinstance(self.expiry, date)
-            or self.expiry.__class__ is not date
+            not isinstance(self.expiry, date) or self.expiry.__class__ is not date
         ):
             raise InstrumentValidationError("expiry must be an exact date or None")
 
@@ -163,7 +160,9 @@ class FuturesInstrumentIdentity:
         if not isinstance(self.status, InstrumentStatus):
             raise InstrumentValidationError("status must be a known instrument status")
 
-        object.__setattr__(self, "margin_asset", _asset(self.margin_asset, "margin_asset"))
+        object.__setattr__(
+            self, "margin_asset", _asset(self.margin_asset, "margin_asset")
+        )
 
     @property
     def instrument_id(self) -> str:
@@ -201,7 +200,9 @@ class FuturesInstrumentIdentity:
         margin_asset: str,
         status: InstrumentStatus = InstrumentStatus.ACTIVE,
     ) -> "FuturesInstrumentIdentity":
-        if not isinstance(instrument_id, str) or not _INSTRUMENT_ID_RE.fullmatch(instrument_id):
+        if not isinstance(instrument_id, str) or not _INSTRUMENT_ID_RE.fullmatch(
+            instrument_id
+        ):
             raise InstrumentValidationError("invalid canonical Futures instrument_id")
 
         _, market_text, symbol_text = instrument_id.split("|", 2)

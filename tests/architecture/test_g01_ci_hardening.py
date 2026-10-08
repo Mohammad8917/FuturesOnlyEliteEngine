@@ -9,7 +9,7 @@ def test_g01_ci_has_strict_reproducibility_and_execution_controls() -> None:
     lock = Path("requirements-ci.txt").read_text(encoding="utf-8")
 
     required_fragments = (
-        'workflow_dispatch:',
+        "workflow_dispatch:",
         "concurrency:",
         "cancel-in-progress: true",
         "permissions:",

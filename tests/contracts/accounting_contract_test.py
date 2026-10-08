@@ -170,7 +170,9 @@ def test_linear_and_inverse_remain_explicit_in_journal_identity():
         denomination="USD",
     )
     assert linear.entries[0].instrument.symbol.contract_family is ContractFamily.LINEAR
-    assert inverse.entries[0].instrument.symbol.contract_family is ContractFamily.INVERSE
+    assert (
+        inverse.entries[0].instrument.symbol.contract_family is ContractFamily.INVERSE
+    )
 
 
 def settlement_spec(source_asset):

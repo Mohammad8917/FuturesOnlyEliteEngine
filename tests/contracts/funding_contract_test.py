@@ -87,10 +87,13 @@ def test_negative_rate_reverses_payer():
 
 
 def test_zero_rate_is_valid_but_creates_no_transfer():
-    assert funding(rate=Decimal("0")).calculate_payment(
-        notional=Decimal("1000"),
-        position_side=PositionSide.LONG,
-    ) is None
+    assert (
+        funding(rate=Decimal("0")).calculate_payment(
+            notional=Decimal("1000"),
+            position_side=PositionSide.LONG,
+        )
+        is None
+    )
 
 
 @pytest.mark.parametrize(

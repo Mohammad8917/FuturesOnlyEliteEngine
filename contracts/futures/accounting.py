@@ -74,7 +74,9 @@ class FuturesLedgerEntry:
         _sequence(self.sequence, "sequence")
         _text(self.account_id, "account_id")
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
         _text(self.ledger_account, "ledger_account")
         _asset(self.asset, "asset")
         if not isinstance(self.direction, AccountingDirection):
@@ -117,8 +119,12 @@ class FuturesAccountingJournal:
             totals[entry.asset] = totals.get(entry.asset, Decimal("0")) + entry.amount
 
         for asset in set(debit_totals) | set(credit_totals):
-            if debit_totals.get(asset, Decimal("0")) != credit_totals.get(asset, Decimal("0")):
-                raise AccountingValidationError(f"journal is unbalanced for asset {asset}")
+            if debit_totals.get(asset, Decimal("0")) != credit_totals.get(
+                asset, Decimal("0")
+            ):
+                raise AccountingValidationError(
+                    f"journal is unbalanced for asset {asset}"
+                )
 
     @property
     def asset_balances(self) -> dict[str, Decimal]:
@@ -157,7 +163,9 @@ class FuturesAccountingSpecification:
         if not isinstance(self.market, Market):
             raise AccountingValidationError("market must be a supported Futures market")
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
         if self.instrument.market is not self.market:
             raise AccountingValidationError("market must match instrument")
 

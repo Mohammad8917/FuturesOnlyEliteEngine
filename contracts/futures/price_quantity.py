@@ -28,9 +28,7 @@ class RoundingPolicy(StrEnum):
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
-        raise PriceQuantityValidationError(
-            f"{field} must be an exact Decimal value"
-        )
+        raise PriceQuantityValidationError(f"{field} must be an exact Decimal value")
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
@@ -62,9 +60,7 @@ class FuturesPriceQuantitySpecification:
                 "market must be a supported Futures market"
             )
         if not isinstance(self.symbol, CanonicalFuturesSymbol):
-            raise PriceQuantityValidationError(
-                "symbol must be CanonicalFuturesSymbol"
-            )
+            raise PriceQuantityValidationError("symbol must be CanonicalFuturesSymbol")
         if self.symbol.contract_family not in (
             ContractFamily.LINEAR,
             ContractFamily.INVERSE,

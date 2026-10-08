@@ -19,10 +19,7 @@ def test_phase_control_documents_are_consistent() -> None:
     dependencies = _read("dependency-rules.md")
     change_guard = _read("CHANGE-GUARD.md")
 
-    assert (
-        "The current project state is Phase 1 — Domain Contracts."
-        in master_index
-    )
+    assert "The current project state is Phase 1 — Domain Contracts." in master_index
     assert (
         "Phase 0 — Architecture Baseline / Governance Final Audit is CLOSED"
         in master_index
@@ -30,22 +27,34 @@ def test_phase_control_documents_are_consistent() -> None:
     assert "Phase 1 is authorized." in master_index
     assert "Phase 2+ remains blocked" in master_index
 
-    assert "**Phase 0 status:** CLOSED — Phase 1 Domain Contracts authorized." in roadmap
+    assert (
+        "**Phase 0 status:** CLOSED — Phase 1 Domain Contracts authorized." in roadmap
+    )
     assert "Phase 1 Domain Contracts is authorized." in roadmap
     assert "Phase 2+ remains blocked" in roadmap
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
     assert "- Current gate: G05 — Coverage" in state
+    assert "- Implementation phase authorized: YES — Phase 1 Domain Contracts" in state
     assert (
-        "- Implementation phase authorized: YES — Phase 1 Domain Contracts"
+        "- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit"
         in state
     )
-    assert "- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit" in state
     assert "- Active work: Phase 1 Domain Contracts" in state
 
-    assert "Production implementation remains blocked until the Phase 0 exit criteria" not in master_index
+    assert (
+        "Production implementation remains blocked until the Phase 0 exit criteria"
+        not in master_index
+    )
 
-    authoritative_markers = ("Futures-only", "CRYPTO", "FOREX", "GOLD", "Linear", "Inverse")
+    authoritative_markers = (
+        "Futures-only",
+        "CRYPTO",
+        "FOREX",
+        "GOLD",
+        "Linear",
+        "Inverse",
+    )
     for marker in authoritative_markers:
         assert marker in invariants
         assert marker in contract
@@ -85,8 +94,14 @@ def test_phase_control_documents_are_consistent() -> None:
         assert requirement in responsibility
         assert requirement in contract
 
-    assert "No Phase 2+ implementation may be used to conceal an incomplete Phase 1 contract." in master_index
-    assert "No production implementation should precede a clearly owned contract." in contract
+    assert (
+        "No Phase 2+ implementation may be used to conceal an incomplete Phase 1 contract."
+        in master_index
+    )
+    assert (
+        "No production implementation should precede a clearly owned contract."
+        in contract
+    )
     assert "Phase 1 Domain Contracts" in roadmap
     assert "Phase 1 — Domain Contracts" in state
 
