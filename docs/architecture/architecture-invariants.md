@@ -556,3 +556,38 @@ Frozen baseline:
 Production boundaries: contracts/futures/position_side.py, contracts/futures/position_mode.py.
 Test boundary: tests/contracts/test_position_side_mode.py.
 CI boundary: .github/workflows/phase1-domain-contracts.yml.
+
+
+## Phase 1 position side / position mode closure evidence
+
+Position side and position mode semantics are COMPLETE on main merge SHA `6731c6c80d4d31c4bb180dbb2d343de76537971a`.
+
+Evidence on the exact merge SHA:
+- production boundaries: `contracts/futures/position_side.py`, `contracts/futures/position_mode.py`;
+- test boundary: `tests/contracts/test_position_side_mode.py`;
+- Phase 1 Domain Contracts CI: green;
+- Architecture Invariants CI: green;
+- G01 Dependency Architecture CI: green.
+
+The frozen contract remains explicit LONG/SHORT side vocabulary and ONE_WAY/HEDGE mode semantics, with no exchange/account inference, no Spot semantics, no hidden defaults, and fail-closed invalid or ambiguous values.
+
+The next authorized Phase 1 unit is **price, quantity, monetary units, denomination, precision, and rounding semantics**. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
+
+
+## Phase 1 next-unit semantic gate — price / quantity / monetary units
+
+The next unit must first freeze one explicit primary owner and define:
+1. price and quantity units;
+2. monetary denomination and quote/base/settlement relationships;
+3. exact numeric representation;
+4. precision and rounding/quantization semantics;
+5. Linear/Inverse applicability;
+6. CRYPTO/FOREX/GOLD applicability;
+7. interaction with the already-closed multiplier, settlement, margin, leverage, initial-margin, maintenance-margin, and position side/mode contracts without redefining them;
+8. missing, invalid, contradictory, stale, unsupported, or ambiguous input behavior;
+9. allowed and forbidden dependencies;
+10. meaningful tests;
+11. CI enforcement;
+12. same-SHA evidence.
+
+No exchange-specific precision, tick size, lot size, rounding mode, or default may be guessed into the canonical contract.
