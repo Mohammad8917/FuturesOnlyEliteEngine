@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
@@ -37,20 +38,22 @@ def _utc(value: datetime, field: str) -> datetime:
     return value
 
 
+@dataclass(frozen=True, slots=True)
 class FuturesExposureSpecification:
-    """Immutable-by-contract exposure and position valuation boundary."""
+    """Immutable exposure and position valuation boundary."""
 
-    __slots__ = ("market", "symbol")
+    market: Market
+    symbol: CanonicalFuturesSymbol
 
-    def __init__(self, market: Market, symbol: CanonicalFuturesSymbol) -> None:
+    def __post_init__(self) -> None:
         if not isinstance(market, Market):
             raise ExposureValidationError("market must be a supported Futures market")
         if not isinstance(symbol, CanonicalFuturesSymbol):
             raise ExposureValidationError("symbol must be CanonicalFuturesSymbol")
         if symbol.contract_family not in (ContractFamily.LINEAR, ContractFamily.INVERSE):
             raise ExposureValidationError("unsupported contract family")
-        self.market = market
-        self.symbol = symbol
+        object.__setattr__(self, "market", market)
+        object.__setattr__(self, "symbol", symbol)
 
     def _validate_contract(
         self, contract: FuturesContractSpecification
@@ -132,7 +135,7 @@ class FuturesExposureSpecification:
         source = valuation_source.strip() if isinstance(valuation_source, str) else ""
         if not source:
             raise ExposureValidationError("valuation_source must be explicit")
-        observed = _utc(observed_at, "observed_at")
+        _utc(observed_at, "observed_at")
         price = _positive_decimal(reference_price, "reference_price")
         if denomination is ExposureDenomination.BASE:
             return self.base_exposure(contract=contract, quantity=quantity, price=price)
