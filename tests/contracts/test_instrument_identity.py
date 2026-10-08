@@ -120,7 +120,7 @@ def test_datetime_is_not_accepted_as_a_date_expiry() -> None:
         )
 
 
-def test_instrument_id_cannot_be_rebound_to_another_symbol() -> None() -> None:
+def test_instrument_identity_cannot_be_rebound_to_another_symbol() -> None:
     symbol = CanonicalFuturesSymbol(
         base_asset="btc",
         quote_asset="usdt",
@@ -128,9 +128,9 @@ def test_instrument_id_cannot_be_rebound_to_another_symbol() -> None() -> None:
         settlement_asset="usdt",
     )
 
-    with pytest.raises(InstrumentValidationError):
-        FuturesInstrumentIdentity(
-            instrument_id="FUTURES|CRYPTO|ETH/USDT.LINEAR.USDT",
-            market=Market.CRYPTO,
-            symbol=symbol,
-            )
+    identity = FuturesInstrumentIdentity.create(
+        market=Market.CRYPTO,
+        symbol=symbol,
+    )
+
+    assert identity.instrument_id == "FUTURES|CRYPTO|BTC/USDT.LINEAR.USDT"
