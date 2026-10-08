@@ -48,7 +48,7 @@ class InstrumentStatus(StrEnum):
 
 
 def _asset(value: object, field: str) -> str:
-    if not isinstance(cast(object, value), str):
+    if not isinstance(value, str):
         raise InstrumentValidationError(f"{field} must be a string")
     normalized = value.strip().upper()
     if not _ASSET_RE.fullmatch(normalized):
@@ -110,7 +110,7 @@ class CanonicalFuturesSymbol:
 
     @classmethod
     def parse(cls, value: str) -> "CanonicalFuturesSymbol":
-        if not isinstance(value, str):
+        if not isinstance(cast(object, value), str):
             raise InstrumentValidationError("canonical symbol must be a string")
         normalized = value.strip().upper()
         match = _CANONICAL_RE.fullmatch(normalized)
