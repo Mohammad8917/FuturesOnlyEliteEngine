@@ -574,7 +574,7 @@ def test_liquidation_event_trigger_and_non_trigger_paths():
     ("account_id", ""), ("position_id", ""), ("event_id", ""), ("causation_id", ""),
     ("state_version", -1), ("previous_event_sequence", -1), ("event_sequence", -1),
 ])
-def test_liquidation_event_identifier_validation(field, value):
+def test_liquidation_event_identifier_validation(field: str, value: object) -> None:
     kwargs = event_kwargs()
     kwargs[field] = value
     with pytest.raises(LiquidationEventValidationError):
@@ -645,9 +645,9 @@ def test_settlement_and_settlement_accounting_remaining_branches():
         same.settle_amount(cast(Decimal, 0))
     accounting = FuturesSettlementAccountingSpecification(Market.CRYPTO, inst, same)
     with pytest.raises(AccountingValidationError):
-        FuturesSettlementAccountingSpecification("bad", inst, same)
+        FuturesSettlementAccountingSpecification(cast(Market, "bad"), inst, same)
     with pytest.raises(AccountingValidationError):
-        FuturesSettlementAccountingSpecification(Market.CRYPTO, "bad", same)
+        FuturesSettlementAccountingSpecification(Market.CRYPTO, cast(FuturesInstrumentIdentity, "bad"), same)
     with pytest.raises(AccountingValidationError):
         FuturesSettlementAccountingSpecification(Market.CRYPTO, inst, cast(FuturesSettlementSpecification, "bad"))
     with pytest.raises(AccountingValidationError):
