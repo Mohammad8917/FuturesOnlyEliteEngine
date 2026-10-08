@@ -135,13 +135,13 @@ def test_decimal_inputs_are_exact_and_immutable() -> None:
         market=Market.CRYPTO,
         instrument=_instrument(),
         initial_margin_unit=InitialMarginUnit.RATIO,
-        initial_margin_ratio ="0.1250"  # type: ignore[arg-type],
+        initial_margin_ratio="0.1250",  # type: ignore[arg-type]
         notional_asset="usdt",
     )
     assert spec.initial_margin_ratio == Decimal("0.1250")
     assert spec.notional_asset == "USDT"
     with pytest.raises((AttributeError, TypeError)):
-        spec.initial_margin_ratio =  # type: ignore[misc] Decimal("0.2")
+        spec.initial_margin_ratio = Decimal("0.2")  # type: ignore[misc]
 
 
 def test_initial_margin_does_not_depend_on_leverage() -> None:
