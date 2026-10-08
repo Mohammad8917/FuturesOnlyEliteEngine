@@ -27,8 +27,9 @@ def test_g01_ci_has_strict_reproducibility_and_execution_controls() -> None:
     for fragment in required_fragments:
         assert fragment in content
 
-    assert "pytest==8.4.2" in lock.splitlines()
+    assert "pytest==9.0.3" in lock.splitlines()
     assert "ruff==0.14.0" in lock.splitlines()
+    assert "pyright==1.1.414" in lock.splitlines()
     assert "python -m ruff check ." in content
     assert "python -m ruff format --check ." in content
 
