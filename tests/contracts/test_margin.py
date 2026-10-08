@@ -159,3 +159,29 @@ def test_non_positive_amount_fails_closed() -> None:
     )
     with pytest.raises(MarginValidationError):
         spec.to_margin_amount(Decimal("0"))
+
+
+@pytest.mark.parametrize("rate", [0.1, 1.0, True])
+def test_binary_float_and_bool_conversion_rates_fail_closed(rate: object) -> None:
+    with pytest.raises(MarginValidationError):
+        FuturesMarginSpecification(
+            market=Market.CRYPTO,
+            instrument=_instrument("usdt"),
+            margin_unit=MarginUnit.ASSET,
+            margin_asset="usdt",
+            source_asset="usd",
+            conversion_rate=rate,  # type: ignore[arg-type]
+        )
+
+
+@pytest.mark.parametrize("amount", [0.1, 1.0, True])
+def test_binary_float_and_bool_margin_amounts_fail_closed(amount: object) -> None:
+    spec = FuturesMarginSpecification(
+        market=Market.CRYPTO,
+        instrument=_instrument("usdt"),
+        margin_unit=MarginUnit.ASSET,
+        margin_asset="usdt",
+        source_asset="usdt",
+    )
+    with pytest.raises(MarginValidationError):
+        spec.to_margin_amount(amount)  # type: ignore[arg-type]
