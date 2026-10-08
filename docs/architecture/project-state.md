@@ -391,3 +391,30 @@ The next unit must first freeze one explicit owner and define:
 12. same-SHA evidence.
 
 No exchange-specific funding interval, rate source, sign convention, or rounding rule may be guessed into the canonical contract.
+
+
+## Phase 1 funding semantic lock
+
+The active Phase 1 unit is funding-rate value, interval, provenance/freshness, and funding calculation semantics. This is a canonical Futures domain/contract boundary, not an exchange implementation.
+
+Frozen baseline:
+- owner: Futures domain/contract boundary;
+- funding-rate unit: explicit `INTERVAL_RATE`, a dimensionless rate applied to one explicit funding interval;
+- sign convention: explicit project vocabulary `POSITIVE_LONG_PAYS`: positive funding makes the explicit LONG side the payer and SHORT the receiver; negative funding reverses payer/receiver;
+- interval: explicit aware-UTC start and end with strictly positive duration; no default interval is inferred;
+- calculation input: an explicit positive finite notional already supplied by the canonical financial boundary; this contract does not recompute multiplier, price, quantity, settlement, margin, or exposure;
+- calculation output: a deterministic funding transfer in the explicit notional denomination; payment amount is `abs(notional × funding_rate)`;
+- zero funding rate is valid semantic data and produces no transfer;
+- exact finite Decimal representation is mandatory; bool, binary floating-point, non-finite, invalid, or ambiguous financial values fail closed; no implicit rounding or quantization is introduced;
+- applicability: CRYPTO, FOREX, and GOLD Futures; Linear and Inverse contract families;
+- provenance: a non-empty explicit rate source and UTC observation timestamp are mandatory;
+- freshness: stale observations and invalid time ordering fail closed; freshness requires an explicit UTC `as_of` and positive `max_age`; no hidden clock or age threshold exists;
+- position side is consumed from the already-closed canonical LONG/SHORT vocabulary; position mode is not redefined here;
+- prior multiplier, settlement, margin, leverage, initial-margin, maintenance-margin, and price/quantity contracts are consumed without redefinition;
+- exchange-specific funding interval, external sign conventions, rate sources, rounding rules, transport, SDK behavior, scheduler behavior, persistence, runtime configuration, account mutation, and payment execution are outside this canonical boundary;
+- exchange adapters may normalize their external funding semantics into this canonical vocabulary only at the infrastructure boundary and may not silently redefine canonical meaning;
+- production boundary: `contracts/futures/funding.py`;
+- test boundary: `tests/contracts/funding_contract_test.py`;
+- CI boundary: `.github/workflows/phase1-domain-contracts.yml`;
+- meaningful tests, CI enforcement, and same-SHA evidence are mandatory before the Phase 1 cursor may advance;
+- no threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening is permitted.
