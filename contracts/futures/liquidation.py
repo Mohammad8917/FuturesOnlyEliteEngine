@@ -61,7 +61,7 @@ class FuturesLiquidationSpecification:
     def _validate_contract(
         self, contract: FuturesContractSpecification
     ) -> FuturesContractSpecification:
-        if not isinstance(contract, FuturesContractSpecification):
+        if not isinstance(cast(object, contract), FuturesContractSpecification):
             raise LiquidationValidationError(
                 "contract must be FuturesContractSpecification"
             )
