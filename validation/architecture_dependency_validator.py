@@ -223,7 +223,7 @@ def validate(root: Path = ROOT) -> list[str]:
                     defaults = [None] * (len(positional) - len(node.args.defaults)) + list(node.args.defaults)
                     for argument, default in zip(positional, defaults):
                         if (
-                            argument.arg == "futures"
+                            keyword_arg.arg == "futures"
                             and isinstance(default, ast.Constant)
                             and default.value is False
                         ):
