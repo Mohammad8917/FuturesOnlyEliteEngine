@@ -111,4 +111,4 @@ def test_precision_and_rounding_are_explicit_and_immutable() -> None:
     assert spec.precision_policy is PrecisionPolicy.EXACT
     assert spec.rounding_policy is RoundingPolicy.NONE
     with pytest.raises((AttributeError, TypeError)):
-        object.__setattr__(spec, "rounding_policy", RoundingPolicy.NONE)
+        spec.rounding_policy = RoundingPolicy.NONE  # type: ignore[misc]
