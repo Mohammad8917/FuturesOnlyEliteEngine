@@ -107,5 +107,8 @@ class FuturesSettlementSpecification:
         value = _positive_decimal(amount, "amount")
         if not self.conversion_required:
             return value
-        assert self.conversion_rate is not None
+        if self.conversion_rate is None:
+            raise SettlementValidationError(
+                "conversion_rate invariant is missing for cross-asset settlement"
+            )
         return value * self.conversion_rate
