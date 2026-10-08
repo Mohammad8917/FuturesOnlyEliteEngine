@@ -111,3 +111,15 @@ The approved semantic boundary is:
 - applicability is CRYPTO/FOREX/GOLD and Linear/Inverse.
 
 Any future proposal to derive initial margin from leverage, redefine the ratio, change the formula, move ownership across dependency boundaries, introduce hidden defaults, or change fail-closed behavior is an Architecture Change Candidate and must use the ADR process before implementation.
+
+## Phase 1 initial margin closure
+
+Initial-margin semantics are closed on main with same-SHA evidence at merge SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`. The Phase 1 cursor now advances to maintenance margin semantics.
+
+Any future semantic change to initial-margin ratio meaning, formula, denomination, ownership, or fail-closed behavior remains subject to the ADR process.
+
+## Phase 1 maintenance margin cursor rule
+
+Maintenance margin is the next authorized Phase 1 implementation unit. Before implementation, its ownership, formula inputs, denomination, precision, applicability, and tier/rate/amount semantics where applicable must be explicitly frozen.
+
+Any proposal to redefine maintenance-margin ownership, introduce hidden exchange defaults, silently couple maintenance margin to leverage, change Linear/Inverse financial meaning, or move dependencies across architectural boundaries is an Architecture Change Candidate and must use the ADR process before implementation.
