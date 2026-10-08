@@ -21,11 +21,11 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: Phase 1 Domain Contracts
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: `8c3b8ecc1e1cec8e179b88a54f766a411e7e7211`; G01 Dependency Architecture, Architecture Invariants, and Phase 1 Domain Contracts are all green on this exact SHA. Any subsequent state-document commit must itself be re-verified before it can become the next last-verified SHA.
+- Last verified SHA: `f0915668d8677e185490634bd781bd8b68f9c357`; G01 Dependency Architecture (`37812236679`), Architecture Invariants (`37812236804`), and Phase 1 Domain Contracts (`37812236765`) are all green on this exact SHA. This is the current same-SHA Phase 1 evidence anchor.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit
-- Active work: Phase 1 Domain Contracts — all minimum canonical Futures financial contracts through accounting/settlement-accounting are implemented; the remaining authorized action is the Phase 1 final completeness/evidence audit before Phase 2 can be considered.
+- Active work: Phase 1 Domain Contracts — implementation and final completeness/evidence audit are CLOSED on the verified SHA.
 - Blocked work: Phase 2+ production implementation remains blocked until each preceding phase exit criteria is evidenced.
-- Next authorized action: perform the Phase 1 final completeness/evidence audit across all eight authoritative architecture documents, canonical contracts, tests, CI, dependency boundaries, and same-SHA evidence. Phase 2+ production work remains blocked until this audit closes.
+- Next authorized action: G02 entry review/announcement. No G02 production coding begins until the required pre-entry announcement and explicit authorization are obtained.
 - Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, or skip the first incomplete phase/gate
 
 ## Required state fields for every update
@@ -624,6 +624,6 @@ The shared CI dependency lock `requirements-ci.txt` is an authoritative G01/Phas
 
 All Phase 1 sections below **Current authoritative state** are immutable historical transition/evidence records. Any historical wording such as “current cursor”, “next authorized unit”, or “active work” in those records describes the state at that recorded transition and is not a live authorization. Only **Current authoritative state** controls the present session. A phase/gate transition is valid only after the current repository evidence and same-SHA CI requirements are re-established.
 
-## Final Phase 1 evidence reconciliation — current candidate 1df286fa
+## Final Phase 1 evidence reconciliation — VERIFIED
 
-The repository HEAD is `1df286fa2cd65c786f677886789db5ff4a0ebfe2`. Phase 1 completeness is closed at the contract/governance level, and this commit contains only the fail-closed canonical Futures contract-family enforcement plus its regression test. The final evidence state must be established on one exact SHA across G01 Dependency Architecture, Architecture Invariants, and Phase 1 Domain Contracts before Phase 1 is declared fully verified.
+Phase 1 final completeness and same-SHA evidence are VERIFIED on `f0915668d8677e185490634bd781bd8b68f9c357`. G01=`37812236679`, Architecture Invariants=`37812236804`, and Phase 1 Domain Contracts=`37812236765` are completed successfully on that exact HEAD. No Phase 2+ production implementation is authorized until the G02 entry control is explicitly satisfied.
