@@ -472,3 +472,11 @@ Test boundary: `tests/contracts/test_initial_margin.py`.
 CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
 
 The Phase 1 cursor remains here until production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence are all green.
+
+## 8.1.9 Phase 1 cursor after initial margin closure
+
+Initial margin semantics are COMPLETE on main merge SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`: production implementation, meaningful contract tests, Phase 1 CI, Architecture Invariants CI, and G01 CI are green on the same SHA.
+
+The next incomplete Phase 1 production contract is **maintenance margin semantics**. It must explicitly define its ownership, formula inputs, denomination, precision, Linear/Inverse applicability, market applicability, tier/rate/amount semantics where applicable, and fail-closed behavior before implementation.
+
+The initial-margin contract remains independently owned and must not be redefined by maintenance-margin logic.
