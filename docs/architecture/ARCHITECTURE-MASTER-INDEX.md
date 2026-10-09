@@ -139,7 +139,7 @@ Phase 1 is complete only when every required contract has a production implement
 
 ## 10.2 Phase 1 execution cursor
 
-**Current cursor:** Phase 1 candidate audit is closed on SHA `f7c9a4af23ffbed83b7dc99227639a4378841e80`; PR #35 owner review/merge is pending, then main same-SHA verification. Phase 2+ remains blocked until that governance step is complete.
+**Current cursor:** Phase 1 candidate completeness/evidence audit is closed on the latest verified candidate snapshot recorded in `docs/architecture/project-state.md` → `Current authoritative state`; PR #35 owner review/merge is pending, followed by same-SHA verification on `main`. Phase 2+ remains blocked until that governance step is complete. Do not treat a historical SHA in this index as current evidence.
 
 The instrument identity and canonical Futures symbol unit is evidenced complete on the current main lineage. The next incomplete authorized Phase 1 unit must be completed through the full implementation-unit path:
 
