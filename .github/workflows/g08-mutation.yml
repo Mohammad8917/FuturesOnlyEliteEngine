@@ -38,6 +38,7 @@ jobs:
         run: |
           rm -rf mutants .mutmut-cache
           mutmut run
+          mutmut results
           mutmut export-cicd-stats
 
       - name: Enforce the immutable 90 percent mutation floor
