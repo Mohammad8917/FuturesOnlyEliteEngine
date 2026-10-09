@@ -98,9 +98,23 @@ def _test_weakening_markers(path: Path) -> list[str]:
             if node.func.id == "getattr" and len(node.args) >= 2:
                 target = node.args[0]
                 marker = node.args[1]
-                if (
+                target_path = _dotted_name(target)
+                is_pytest_marker_target = (
                     isinstance(target, ast.Name)
                     and target.id in pytest_aliases | mark_aliases
+                ) or (
+                    target_path is not None
+                    and (
+                        target_path in mark_aliases
+                        or target_path in pytest_aliases
+                        or (
+                            target_path.split(".", maxsplit=1)[0] in pytest_aliases
+                            and target_path.split(".", maxsplit=1)[1:] == ["mark"]
+                        )
+                    )
+                )
+                if (
+                    is_pytest_marker_target
                     and isinstance(marker, ast.Constant)
                     and marker.value in FORBIDDEN_TEST_MARKERS
                 ):
@@ -143,3 +157,19 @@ def test_all_test_sources_contain_no_pytest_skip_or_xfail_apis():
         "G03 test weakening APIs are forbidden throughout the test tree:\n"
         + "\n".join(offenders)
     )
+
+
+def test_dynamic_getattr_cannot_hide_pytest_weakening_markers(tmp_path: Path):
+    source = tmp_path / "test_dynamic_marker.py"
+    source.write_text(
+        "import pytest as pt\\n"
+        "getattr(pt.mark, 'skip')\\n"
+        "getattr(pt, 'xfail')\\n",
+        encoding="utf-8",
+    )
+
+    offenders = _test_weakening_markers(source)
+
+    assert len(offenders) == 2
+    assert any("marker skip" in offender for offender in offenders)
+    assert any("marker xfail" in offender for offender in offenders)
