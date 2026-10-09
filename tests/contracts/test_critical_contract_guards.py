@@ -11,7 +11,7 @@ from contracts.futures.exposure import (
     FuturesExposureSpecification,
 )
 from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily, Market
-from contracts.futures.pnl import FuturesPnLSpecification, PnLUnit, PnLValidationError
+from domain.futures.pnl import FuturesPnLSpecification, PnLUnit, PnLValidationError
 from contracts.futures.price_quantity import (
     FuturesPriceQuantitySpecification,
     PrecisionPolicy,
