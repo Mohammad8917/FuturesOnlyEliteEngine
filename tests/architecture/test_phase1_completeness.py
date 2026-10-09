@@ -76,4 +76,7 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
         "Next authorized action: wait for and verify all applicable gates on the closure snapshot commit"
         in state
     )
-    assert "No all-gates same-SHA pass is claimed for the closure snapshot commit yet." in state
+    assert (
+        "No all-gates same-SHA pass is claimed for the closure snapshot commit yet."
+        in state
+    )
