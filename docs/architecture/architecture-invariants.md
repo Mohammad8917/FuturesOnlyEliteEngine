@@ -847,7 +847,7 @@ Evidence boundary:
 
 ## Phase 1 final completeness/evidence audit
 
-Accounting and settlement-accounting are the final minimum financial contract units in the Phase 1 contract set. The next authorized action is governance/evidence reconciliation across the eight authoritative architecture documents, canonical contracts, tests, dependency boundaries, and same-SHA CI evidence. Phase 2+ production implementation remains blocked until this audit closes.
+Historical transition record: at that recorded stage, accounting and settlement-accounting were identified as the final minimum financial contract units in the Phase 1 contract set, and the next action was governance/evidence reconciliation across the eight authoritative architecture documents, canonical contracts, tests, dependency boundaries, and same-SHA CI evidence. That candidate-branch audit is now recorded as closed in `docs/architecture/project-state.md`; PR #35 review/merge and exact-SHA verification on `main` remain outstanding. Phase 2+ production implementation remains blocked.
 
 
 ## Current-state authority and historical-transition control
