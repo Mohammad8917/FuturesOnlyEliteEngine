@@ -19,7 +19,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
-      - name: Reject any modification to the eight governing documents
+      - name: Reject modifications to the eight governing documents and the approved gate-applicability ADR
         shell: bash
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -32,6 +32,7 @@ jobs:
           git cat-file -e "${HEAD_SHA}^{commit}"
 
           protected_files=(
+            "docs/architecture/adr/ADR-0001-phase-scoped-gate-applicability.md"
             "docs/architecture/architecture-invariants.md"
             "docs/architecture/architecture-contract.md"
             "docs/architecture/dependency-rules.md"
@@ -52,10 +53,10 @@ jobs:
           done
 
           if (("${#violations[@]}" > 0)); then
-            printf '%s\n' "LOCK VIOLATION: the eight governing Source-of-Truth documents are immutable."
+            printf '%s\n' "LOCK VIOLATION: governing Source-of-Truth documents and approved gate-applicability ADR are immutable."
             printf 'Changed protected file: %s\n' "${violations[@]}"
             printf '%s\n' "Revert these document changes. This gate has no in-repository override."
             exit 1
           fi
 
-          printf '%s\n' "PASS: none of the eight governing Source-of-Truth documents was changed."
+          printf '%s\n' "PASS: no governing Source-of-Truth document or approved gate-applicability ADR was changed."
