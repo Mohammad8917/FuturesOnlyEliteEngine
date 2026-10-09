@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from domain.futures.contract_specification import FuturesContractSpecification
+from .contract_specification import FuturesContractSpecification
 from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily, Market
 from contracts.futures.position_side import PositionSide
 

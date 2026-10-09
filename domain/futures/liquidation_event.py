@@ -8,7 +8,7 @@ from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
 from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily, Market
-from domain.futures.liquidation import LiquidationDenomination
+from .liquidation import LiquidationDenomination
 from contracts.futures.position_mode import FuturesPositionModeSpecification, PositionMode
 from contracts.futures.position_side import PositionSide
 
