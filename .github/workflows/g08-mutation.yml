@@ -5,7 +5,7 @@ on:
     paths:
       - "contracts/**"
       - "tests/contracts/**"
-      - "setup.cfg"
+      - "pyproject.toml"
       - "requirements-ci.txt"
       - ".github/workflows/g08-mutation.yml"
   pull_request:
@@ -44,7 +44,7 @@ jobs:
       - name: Install pinned mutation and CI dependencies
         run: |
           python -m pip install --disable-pip-version-check --no-input -r requirements-ci.txt
-          python -m pip install --disable-pip-version-check --no-input mutmut==3.3.1
+          python -m pip install --disable-pip-version-check --no-input mutmut==3.5.0
 
       - name: Run full mutation campaign
         run: |
