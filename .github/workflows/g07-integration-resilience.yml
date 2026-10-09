@@ -2,25 +2,7 @@ name: G07 Integration and Resilience
 
 on:
   push:
-    paths:
-      - "application/**"
-      - "risk/**"
-      - "execution/**"
-      - "infrastructure/**"
-      - "adapters/**"
-      - "configuration/**"
-      - "tests/integration/**"
-      - "tests/resilience/**"
   pull_request:
-    paths:
-      - "application/**"
-      - "risk/**"
-      - "execution/**"
-      - "infrastructure/**"
-      - "adapters/**"
-      - "configuration/**"
-      - "tests/integration/**"
-      - "tests/resilience/**"
   workflow_dispatch:
 
 permissions:
