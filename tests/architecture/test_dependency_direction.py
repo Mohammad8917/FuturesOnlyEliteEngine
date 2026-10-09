@@ -59,7 +59,7 @@ def test_validator_rejects_execution_infrastructure_dependency(tmp_path: Path) -
     (tmp_path / "execution" / "__init__.py").write_text("", encoding="utf-8")
     (tmp_path / "infrastructure" / "__init__.py").write_text("", encoding="utf-8")
     (tmp_path / "execution" / "gateway.py").write_text(
-        "from infrastructure.exchange import ExchangeClient\\n",
+        "from infrastructure.exchange import ExchangeClient\n",
         encoding="utf-8",
     )
     (tmp_path / "infrastructure" / "exchange.py").write_text("", encoding="utf-8")
