@@ -4,6 +4,7 @@ import ast
 from pathlib import Path
 
 PRODUCTION = Path("contracts/futures")
+DOMAIN_PRODUCTION = Path("domain/futures")
 TESTS = Path("tests")
 
 # Some boundaries are intentionally tested together because their semantics are
@@ -11,22 +12,25 @@ TESTS = Path("tests")
 # settlement-accounting). This is explicit ownership, not filename heuristics.
 TEST_OWNERS = {
     "instrument": {"test_instrument_identity.py"},
-    "contract_specification": {"test_contract_specification.py"},
-    "settlement": {"test_settlement.py"},
-    "margin": {"test_margin.py"},
-    "leverage": {"test_leverage.py"},
-    "initial_margin": {"test_initial_margin.py"},
-    "maintenance_margin": {"test_maintenance_margin.py"},
     "position_side": {"test_position_side_mode.py"},
     "position_mode": {"test_position_side_mode.py"},
     "price_quantity": {"test_price_quantity.py"},
-    "funding": {"funding_contract_test.py"},
-    "pnl": {"pnl_contract_test.py"},
-    "exposure": {"exposure_contract_test.py"},
-    "liquidation": {"liquidation_contract_test.py"},
-    "liquidation_event": {"liquidation_event_contract_test.py"},
-    "accounting": {"accounting_contract_test.py"},
-    "settlement_accounting": {"accounting_contract_test.py"},
+}
+
+DOMAIN_TEST_OWNERS = {
+    "contract_specification": {"domain/futures/test_contract_specification.py"},
+    "settlement": {"domain/futures/test_settlement.py"},
+    "margin": {"domain/futures/test_margin.py"},
+    "leverage": {"domain/futures/test_leverage.py"},
+    "initial_margin": {"domain/futures/test_initial_margin.py"},
+    "maintenance_margin": {"domain/futures/test_maintenance_margin.py"},
+    "funding": {"domain/futures/funding_contract_test.py"},
+    "exposure": {"domain/futures/exposure_contract_test.py"},
+    "liquidation": {"domain/futures/liquidation_contract_test.py"},
+    "liquidation_event": {"domain/futures/liquidation_event_contract_test.py"},
+    "accounting": {"domain/futures/accounting_contract_test.py"},
+    "settlement_accounting": {"domain/futures/accounting_contract_test.py"},
+    "pnl": {"domain/futures/pnl_contract_test.py"},
 }
 
 FORBIDDEN_TEST_MARKERS = {"skip", "skipif", "xfail", "importorskip"}
@@ -142,6 +146,25 @@ def test_every_futures_contract_has_explicit_test_ownership():
             if not (TESTS / "contracts" / test_name).is_file()
         }
     )
+    domain_production = {
+        path.stem
+        for path in DOMAIN_PRODUCTION.glob("*.py")
+        if path.name != "__init__.py"
+    }
+    missing_domain_mapping = sorted(domain_production - DOMAIN_TEST_OWNERS.keys())
+    assert not missing_domain_mapping, (
+        f"Domain test ownership missing: {missing_domain_mapping}"
+    )
+    missing_domain_files = sorted(
+        name
+        for names in DOMAIN_TEST_OWNERS.values()
+        for name in names
+        if not (TESTS / name).is_file()
+    )
+    assert not missing_domain_files, (
+        f"Mapped domain test file is missing: {missing_domain_files}"
+    )
+
     assert not missing_files, (
         f"G03 mapped contract test file is missing: {missing_files}"
     )
@@ -171,3 +194,44 @@ def test_dynamic_getattr_cannot_hide_pytest_weakening_markers(tmp_path: Path):
     assert len(offenders) == 2
     assert any("marker skip" in offender for offender in offenders)
     assert any("marker xfail" in offender for offender in offenders)
+
+
+FINANCIAL_DOMAIN_MODULES = {
+    "accounting",
+    "contract_specification",
+    "exposure",
+    "funding",
+    "initial_margin",
+    "leverage",
+    "liquidation",
+    "liquidation_event",
+    "maintenance_margin",
+    "margin",
+    "pnl",
+    "settlement",
+    "settlement_accounting",
+}
+
+
+def test_financial_calculation_ownership_matches_architecture():
+    """Keep pure Futures financial semantics in domain, not boundary contracts."""
+    domain_modules = {
+        path.stem
+        for path in DOMAIN_PRODUCTION.glob("*.py")
+        if path.name != "__init__.py"
+    }
+    contract_modules = {
+        path.stem for path in PRODUCTION.glob("*.py") if path.name != "__init__.py"
+    }
+
+    missing_domain_owners = sorted(FINANCIAL_DOMAIN_MODULES - domain_modules)
+    misplaced_contract_owners = sorted(FINANCIAL_DOMAIN_MODULES & contract_modules)
+
+    assert not missing_domain_owners, (
+        "Financial semantics lack their declared domain/futures owner: "
+        f"{missing_domain_owners}"
+    )
+    assert not misplaced_contract_owners, (
+        "Financial calculation modules must not be owned by contracts/futures: "
+        f"{misplaced_contract_owners}"
+    )

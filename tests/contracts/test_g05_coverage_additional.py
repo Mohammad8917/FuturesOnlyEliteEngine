@@ -9,31 +9,31 @@ from decimal import Decimal
 
 import pytest
 
-from contracts.futures.accounting import (
+from domain.futures.accounting import (
     AccountingDirection,
     AccountingValidationError,
     FuturesAccountingJournal,
     FuturesAccountingSpecification,
     FuturesLedgerEntry,
 )
-from contracts.futures.contract_specification import (
+from domain.futures.contract_specification import (
     ContractSpecificationValidationError,
     FuturesContractSpecification,
     QuantityUnit,
 )
-from contracts.futures.exposure import (
+from domain.futures.exposure import (
     ExposureDenomination,
     ExposureValidationError,
     FuturesExposureSpecification,
 )
-from contracts.futures.funding import (
+from domain.futures.funding import (
     FundingRateUnit,
     FundingSignConvention,
     FundingValidationError,
     FundingPayment,
     FuturesFundingSpecification,
 )
-from contracts.futures.initial_margin import (
+from domain.futures.initial_margin import (
     FuturesInitialMarginSpecification,
     InitialMarginUnit,
     InitialMarginValidationError,
@@ -46,34 +46,34 @@ from contracts.futures.instrument import (
     InstrumentValidationError,
     Market,
 )
-from contracts.futures.leverage import (
+from domain.futures.leverage import (
     FuturesLeverageSpecification,
     LeverageUnit,
     LeverageValidationError,
 )
-from contracts.futures.liquidation import (
+from domain.futures.liquidation import (
     FuturesLiquidationSpecification,
     LiquidationDenomination,
     LiquidationValidationError,
 )
-from contracts.futures.liquidation_event import (
+from domain.futures.liquidation_event import (
     FuturesLiquidationTriggerEvent,
     FuturesLiquidationTriggerEvaluation,
     FuturesLiquidationTriggerSpecification,
     LiquidationEventValidationError,
     LiquidationTrigger,
 )
-from contracts.futures.maintenance_margin import (
+from domain.futures.maintenance_margin import (
     FuturesMaintenanceMarginSpecification,
     MaintenanceMarginUnit,
     MaintenanceMarginValidationError,
 )
-from contracts.futures.margin import (
+from domain.futures.margin import (
     FuturesMarginSpecification,
     MarginUnit,
     MarginValidationError,
 )
-from contracts.futures.pnl import (
+from domain.futures.pnl import (
     FuturesPnLSpecification,
     PnLUnit,
     PnLValidationError,
@@ -87,12 +87,12 @@ from contracts.futures.price_quantity import (
     PriceUnit,
     RoundingPolicy,
 )
-from contracts.futures.settlement import (
+from domain.futures.settlement import (
     FuturesSettlementSpecification,
     SettlementUnit,
     SettlementValidationError,
 )
-from contracts.futures.settlement_accounting import (
+from domain.futures.settlement_accounting import (
     FuturesSettlementAccountingSpecification,
 )
 

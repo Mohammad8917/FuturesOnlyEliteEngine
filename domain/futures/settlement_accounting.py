@@ -16,7 +16,7 @@ from .accounting import (
     FuturesAccountingJournal,
     FuturesLedgerEntry,
 )
-from .instrument import FuturesInstrumentIdentity, Market
+from contracts.futures.instrument import FuturesInstrumentIdentity, Market
 from .settlement import FuturesSettlementSpecification
 
 

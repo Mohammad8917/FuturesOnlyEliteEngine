@@ -7,8 +7,8 @@ from decimal import Decimal
 import pytest
 
 from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily, Market
-from contracts.futures.liquidation import LiquidationDenomination
-from contracts.futures.liquidation_event import (
+from domain.futures.liquidation import LiquidationDenomination
+from domain.futures.liquidation_event import (
     FuturesLiquidationTriggerEvent,
     FuturesLiquidationTriggerSpecification,
     LiquidationEventValidationError,

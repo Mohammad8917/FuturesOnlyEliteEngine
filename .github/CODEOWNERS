@@ -2,4 +2,18 @@
 
 # Architecture and governance require explicit owner review.
 docs/architecture/** @Mohammad8917
+
+# Immutable Source-of-Truth lock enforcement is itself owner-controlled.
 .github/CODEOWNERS @Mohammad8917
+.github/workflows/source-of-truth-lock.yml @Mohammad8917
+
+# The eight governing documents and approved gate-applicability ADR are immutable; edits fail CI.
+docs/architecture/adr/ADR-0001-phase-scoped-gate-applicability.md @Mohammad8917
+docs/architecture/architecture-invariants.md @Mohammad8917
+docs/architecture/architecture-contract.md @Mohammad8917
+docs/architecture/dependency-rules.md @Mohammad8917
+docs/architecture/futures-responsibility-map.md @Mohammad8917
+docs/architecture/ARCHITECTURE-MASTER-INDEX.md @Mohammad8917
+docs/architecture/master-roadmap-and-governance.md @Mohammad8917
+docs/architecture/project-state.md @Mohammad8917
+docs/architecture/CHANGE-GUARD.md @Mohammad8917

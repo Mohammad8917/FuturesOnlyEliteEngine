@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import pytest
 
-from contracts.futures import (
+from domain.futures import (
     CanonicalFuturesSymbol,
     ContractFamily,
     FuturesInitialMarginSpecification,

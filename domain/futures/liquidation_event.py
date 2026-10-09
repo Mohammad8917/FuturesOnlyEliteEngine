@@ -7,10 +7,17 @@ from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from .instrument import CanonicalFuturesSymbol, ContractFamily, Market
+from contracts.futures.instrument import (
+    CanonicalFuturesSymbol,
+    ContractFamily,
+    Market,
+)
 from .liquidation import LiquidationDenomination
-from .position_mode import FuturesPositionModeSpecification, PositionMode
-from .position_side import PositionSide
+from contracts.futures.position_mode import (
+    FuturesPositionModeSpecification,
+    PositionMode,
+)
+from contracts.futures.position_side import PositionSide
 
 
 class LiquidationEventValidationError(ValueError):

@@ -197,8 +197,9 @@ def test_g05_coverage_floor_has_independent_fail_closed_guard() -> None:
     workflow = (ROOT / ".github" / "workflows" / "g05-coverage.yml").read_text(
         encoding="utf-8"
     )
-    assert "--cov=contracts/futures" in workflow
-    assert workflow.count("--cov=") == 1
+    assert "--cov=contracts.futures" in workflow
+    assert "--cov=domain.futures" in workflow
+    assert workflow.count("--cov=") == 2
     assert "--cov-fail-under=98" in workflow
 
     guard_start = workflow.index(

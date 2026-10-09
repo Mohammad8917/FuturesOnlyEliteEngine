@@ -2,12 +2,12 @@ from decimal import Decimal
 
 import pytest
 
-from contracts.futures.contract_specification import (
+from domain.futures.contract_specification import (
     FuturesContractSpecification,
     QuantityUnit,
 )
 from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily, Market
-from contracts.futures.liquidation import (
+from domain.futures.liquidation import (
     FuturesLiquidationSpecification,
     LiquidationDenomination,
     LiquidationValidationError,

@@ -11,7 +11,11 @@ from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
 
-from .instrument import ContractFamily, FuturesInstrumentIdentity, Market
+from contracts.futures.instrument import (
+    ContractFamily,
+    FuturesInstrumentIdentity,
+    Market,
+)
 
 
 class AccountingValidationError(ValueError):

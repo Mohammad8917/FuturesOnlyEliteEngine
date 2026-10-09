@@ -1,4 +1,4 @@
-"""Contract tests for exact realized and unrealized Futures PnL semantics."""
+"""Domain tests for exact realized and unrealized Futures PnL semantics."""
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -6,7 +6,7 @@ from decimal import Decimal
 import pytest
 
 from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily, Market
-from contracts.futures.pnl import (
+from domain.futures.pnl import (
     FuturesPnLSpecification,
     PnLDenomination,
     PnLUnit,

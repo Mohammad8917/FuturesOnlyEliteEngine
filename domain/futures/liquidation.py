@@ -7,8 +7,8 @@ from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
 from .contract_specification import FuturesContractSpecification
-from .instrument import CanonicalFuturesSymbol, ContractFamily, Market
-from .position_side import PositionSide
+from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily, Market
+from contracts.futures.position_side import PositionSide
 
 
 class LiquidationValidationError(ValueError):

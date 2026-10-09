@@ -5,13 +5,13 @@ from decimal import Decimal
 
 import pytest
 
-from contracts.futures.contract_specification import QuantityUnit
-from contracts.futures.exposure import (
+from contracts.futures.price_quantity import QuantityUnit
+from domain.futures.exposure import (
     ExposureValidationError,
     FuturesExposureSpecification,
 )
 from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily, Market
-from contracts.futures.pnl import FuturesPnLSpecification, PnLUnit, PnLValidationError
+from domain.futures.pnl import FuturesPnLSpecification, PnLUnit, PnLValidationError
 from contracts.futures.price_quantity import (
     FuturesPriceQuantitySpecification,
     PrecisionPolicy,

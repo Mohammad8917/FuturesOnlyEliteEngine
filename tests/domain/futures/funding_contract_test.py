@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import pytest
 
-from contracts.futures.funding import (
+from domain.futures.funding import (
     FundingRateUnit,
     FundingSignConvention,
     FundingValidationError,
