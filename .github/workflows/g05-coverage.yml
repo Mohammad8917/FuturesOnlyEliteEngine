@@ -45,38 +45,7 @@ jobs:
 
       - name: Independently enforce the 98 percent coverage floor
         if: always()
-        env:
-          PYTHONPATH: .
-        run: |
-          python - <<'PY'
-          import sys
-          import xml.etree.ElementTree as ET
-          from pathlib import Path
-
-          report = Path("coverage.xml")
-          if not report.is_file():
-              print("G05 FAIL: coverage.xml was not produced")
-              sys.exit(1)
-          try:
-              root = ET.parse(report).getroot()
-              lines_covered = int(root.attrib["lines-covered"])
-              lines_valid = int(root.attrib["lines-valid"])
-          except (ET.ParseError, KeyError, ValueError) as exc:
-              print(f"G05 FAIL: invalid coverage report: {exc}")
-              sys.exit(1)
-          if lines_valid <= 0 or lines_covered < 0 or lines_covered > lines_valid:
-              print("G05 FAIL: coverage report has invalid line counts")
-              sys.exit(1)
-          percentage = (lines_covered / lines_valid) * 100
-          print(
-              f"G05 independently measured exact line coverage: "
-              f"{lines_covered}/{lines_valid} = {percentage:.6f}%"
-          )
-          if percentage < 98.0:
-              print("G05 FAIL: official coverage must be >= 98.00%")
-              sys.exit(1)
-          print("G05 PASS: coverage is >= 98.00%")
-          PY
+        run: python scripts/verify_g05_coverage.py
 
       - name: Upload coverage report
         if: always()

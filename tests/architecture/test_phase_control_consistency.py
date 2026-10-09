@@ -185,6 +185,7 @@ def test_g05_coverage_floor_has_independent_fail_closed_guard() -> None:
         encoding="utf-8"
     )
     assert "--cov=contracts/futures" in workflow
+    assert workflow.count("--cov=") == 1
     assert "--cov-fail-under=98" in workflow
 
     guard_start = workflow.index(
@@ -194,10 +195,5 @@ def test_g05_coverage_floor_has_independent_fail_closed_guard() -> None:
     guard = workflow[guard_start:upload_start]
 
     assert "if: always()" in guard
-    assert "ET.parse(report).getroot()" in guard
-    assert 'root.attrib["lines-covered"]' in guard
-    assert 'root.attrib["lines-valid"]' in guard
-    assert "lines_valid <= 0" in guard
-    assert "if percentage < 98.0:" in guard
-    assert "G05 FAIL: official coverage must be >= 98.00%" in guard
-    assert "sys.exit(1)" in guard
+    assert "python scripts/verify_g05_coverage.py" in guard
+    assert "continue-on-error" not in guard
