@@ -53,12 +53,13 @@ def test_phase_control_documents_are_consistent() -> None:
         "- Active work: the historical G05 false-green correction and strengthened independent XML guard are implemented in PR #35"
         in state
     )
-    assert "P0 issue #37 requires an owner-approved Decimal arithmetic ADR" in state
+    assert "P0 issue #37 remains open" in state
+    assert "requires an owner-approved ADR" in state
     assert (
         "P1 issue #38 tracks financial-calculation placement versus the declared domain/futures ownership"
         in state
     )
-    assert "its regression tests are now executed by the G05 workflow" in state
+    assert "Nine regression tests for the guard passed in the G05 workflow" in state
     assert (
         "Platform protection for `main` is confirmed disabled; see issue #36." in state
     )
