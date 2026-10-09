@@ -77,6 +77,18 @@ Required tests: no renewal on resend/duplicate; renewals only after successful f
 
 Review signal schema, strategy/application ownership, market-data freshness, clock/timezone, Risk Gate, execution intent, idempotency/reconciliation, audit ports, and Persian notification formatting. Add tests for each Hybrid branch, exactly-one selection, ambiguous conditions failing closed, required Persian fields, expiry boundary, resends, duplicate/concurrent attempts, analytical-signal non-executability, stale data, and Risk rejection.
 
+## Duplicate-signal suppression and invalidation announcements
+
+Duplicate prevention and explicit invalidation announcements are mandatory lifecycle behavior, not optional notification enhancements.
+
+- Treat the immutable signal ID as the primary idempotency key. Re-delivery, Telegram/email retry, replayed market events, and concurrent processing of the same signal must not create a second logical signal, a second renewal, or a duplicate execution intent.
+- Where a genuinely new signal is generated for the same instrument and direction, do not silently deduplicate it by symbol alone. Apply an explicit, deterministic equivalence/supersession policy using validated signal identity and material setup fields; if equivalence cannot be determined safely, fail closed from automatic execution and record the reason. A new signal must not silently revive or overwrite a cancelled, invalidated, or expired signal.
+- Persist the lifecycle transition and its unique event/idempotency key before attempting notification delivery. Notification retry must resend the same event, not create a new invalidation event or mutate signal state.
+- Whenever a signal becomes invalid, expired, or cancelled—including failed reassessment, Risk rejection, or exhaustion of the third renewal—the system must emit an explicit invalidation announcement through the configured notification output, with at least: Persian status **«سیگنال باطل شد»**, immutable signal ID, instrument, direction, invalidation timestamp (UTC), precise reason, and renewal count. Do not announce a signal as invalidated before the state transition is durably accepted; if delivery fails, retain a retryable delivery record and surface delivery failure without restoring signal validity.
+- Late delivery of an invalidation notice must never re-enable the signal. Every consumer must evaluate the authoritative lifecycle state, not trust notification order or message presence.
+- If notification delivery cannot be confirmed, keep the signal invalidated and record/report the notification failure. Notification failure must never permit execution or cause the invalidation to be rolled back.
+- Tests must cover duplicate and concurrent signal creation, repeated delivery, same-ID retries, similar-but-distinct signals, invalidation notice content, notification retries/failure, out-of-order notices, and proof that invalidated/expired signals can never create execution intents.
+
 ## Contract impact analysis — repository baseline
 
 Inspection baseline: `main` tree SHA `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2` (2026-10-09). This is a repository-tree inspection, not a claim that the feature is implemented or that CI is green.
