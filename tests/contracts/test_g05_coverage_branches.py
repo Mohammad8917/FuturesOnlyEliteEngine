@@ -71,7 +71,7 @@ from contracts.futures.maintenance_margin import (
     MaintenanceMarginUnit,
     MaintenanceMarginValidationError,
 )
-from contracts.futures.pnl import (
+from domain.futures.pnl import (
     FuturesPnLSpecification,
     PnLDenomination,
     PnLUnit,
