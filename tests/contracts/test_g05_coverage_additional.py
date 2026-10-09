@@ -73,7 +73,7 @@ from contracts.futures.margin import (
     MarginUnit,
     MarginValidationError,
 )
-from contracts.futures.pnl import (
+from domain.futures.pnl import (
     FuturesPnLSpecification,
     PnLUnit,
     PnLValidationError,
