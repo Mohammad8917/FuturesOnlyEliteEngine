@@ -14,8 +14,9 @@ This is project state, not the architectural contract. Architectural rules remai
 - Markets and contract families: CRYPTO Futures, FOREX Futures, GOLD Futures; Linear and Inverse Futures.
 - Operational Spot: FORBIDDEN. No Spot operational path or fallback.
 - Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit closed on the last verified candidate snapshot; merge-to-main verification remains outstanding.
-- Current gate: PR #35 requires genuine repository-owner review, authorized merge, then verification of all applicable gates on the exact resulting `main` SHA.
-- Authorized implementation: Phase 1 candidate hardening only while PR #35 remains open. Phase 2+ production implementation remains blocked until the owner-review/merge gate and same-SHA main verification pass.
+- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit
+- Current gate: PR #35 owner review/merge and main-branch same-SHA verification
+- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until PR #35 is reviewed/merged and `main` is verified on the exact resulting SHA. While PR #35 remains open, only Phase 1 candidate hardening is authorized.
 - PR: [#35 — Harden Futures-only contracts and enforce G01–G08 quality gates](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/35), branch `hardening/eight-rules-conformance`.
 - Candidate HEAD checked before this state refresh: `3df0db9a5e0e2676fdf79b9f0114f350040d136d`.
 - Base/main SHA at the time of this check: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`.
@@ -34,8 +35,8 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current repository scope is canonical Futures contracts, validation, tests, architecture documentation, and CI. Fifteen exchange adapters, live/automated operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
 - Branch-protection/ruleset enforcement remains UNVERIFIED because the connected GitHub API returned 403. The repository owner must verify the platform settings; API access failure does not prove that protection is absent.
 - Review state at this check: no submitted PR #35 reviews. Do not fabricate approval or merge without the required owner review.
-- Active work: keep the candidate PR evidence and architecture state aligned; obtain genuine owner review; after authorized merge, rerun/inspect all applicable checks on one exact `main` SHA and fix the G05 false-green before considering Phase 2 entry.
-- Blocked work: Phase 2+ production implementation, claiming G07 complete, claiming production readiness, and treating candidate CI as proof that `main` is fixed.
+- Active work: owner review/merge of PR #35; keep candidate evidence aligned and, after authorized merge, rerun applicable checks on one exact `main` SHA and fix the G05 false-green before considering Phase 2 entry.
+- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged and `main` is verified on one exact SHA; claiming G07 complete or production readiness; treating candidate CI as proof that `main` is fixed.
 - Forbidden: direct-main changes, architecture redesign without an actual violation and approved ADR, Spot fallback, hard-coded secrets/configuration, binary-float financial inputs, implicit rounding, skipped/xfail tests, threshold reductions, coverage exclusions/suppressions solely to pass, and gate/review bypasses.
 - Required regression-contract compatibility: G08 measured 94.91% (317 killed / 334 non-skipped mutants) on the prior verified candidate; G05 independently calculates exact line coverage from XML counts and must remain fail-closed at >= 98%.
 - Next authorized action: owner review/merge PR #35 after the current snapshot checks are green; do not merge without genuine owner review. After authorized merge, verify the resulting `main` SHA and resolve the historical G05 false-green before evaluating Phase 2 entry.
