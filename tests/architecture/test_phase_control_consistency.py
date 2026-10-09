@@ -179,9 +179,7 @@ def test_g07_phase_applicability_is_explicit_and_fail_closed() -> None:
     assert "if: needs.applicability.outputs.operational_scope == 'true'" in workflow
     assert "Phase 1 Domain Contracts only" in state
     assert "Phase 2+ production implementation remains blocked" in state
-    assert (
-        "Exact-SHA evidence for the last checked candidate" in state
-    )
+    assert "Exact-SHA evidence for the last checked candidate" in state
 
 
 def test_g05_coverage_floor_has_independent_fail_closed_guard() -> None:
