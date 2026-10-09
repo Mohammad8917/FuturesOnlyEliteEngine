@@ -4,6 +4,7 @@ import ast
 from pathlib import Path
 
 PRODUCTION = Path("contracts/futures")
+DOMAIN_PRODUCTION = Path("domain/futures")
 TESTS = Path("tests")
 
 # Some boundaries are intentionally tested together because their semantics are
@@ -21,13 +22,14 @@ TEST_OWNERS = {
     "position_mode": {"test_position_side_mode.py"},
     "price_quantity": {"test_price_quantity.py"},
     "funding": {"funding_contract_test.py"},
-    "pnl": {"pnl_contract_test.py"},
     "exposure": {"exposure_contract_test.py"},
     "liquidation": {"liquidation_contract_test.py"},
     "liquidation_event": {"liquidation_event_contract_test.py"},
     "accounting": {"accounting_contract_test.py"},
     "settlement_accounting": {"accounting_contract_test.py"},
 }
+
+DOMAIN_TEST_OWNERS = {"pnl": {"domain/futures/pnl_contract_test.py"}}
 
 FORBIDDEN_TEST_MARKERS = {"skip", "skipif", "xfail", "importorskip"}
 
@@ -142,6 +144,10 @@ def test_every_futures_contract_has_explicit_test_ownership():
             if not (TESTS / "contracts" / test_name).is_file()
         }
     )
+    domain_production = {path.stem for path in DOMAIN_PRODUCTION.glob("*.py") if path.name != "__init__.py"}
+    assert domain_production <= DOMAIN_TEST_OWNERS.keys(), f"Domain test ownership missing: {sorted(domain_production - DOMAIN_TEST_OWNERS.keys())}"
+    assert all((TESTS / name).is_file() for names in DOMAIN_TEST_OWNERS.values() for name in names), "Mapped domain test file is missing"
+
     assert not missing_files, (
         f"G03 mapped contract test file is missing: {missing_files}"
     )
