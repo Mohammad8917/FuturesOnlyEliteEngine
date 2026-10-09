@@ -39,6 +39,22 @@ jobs:
           rm -rf mutants .mutmut-cache
           mutmut run
           mutmut results
+          for mutant in \
+            contracts.futures.liquidation.x__positive_decimal__mutmut_1 \
+            contracts.futures.liquidation.x__positive_decimal__mutmut_3 \
+            contracts.futures.price_quantity.x__positive_decimal__mutmut_7 \
+            contracts.futures.position_side.x_validate_position_side__mutmut_2 \
+            contracts.futures.funding.x__decimal__mutmut_1 \
+            contracts.futures.funding.x__utc__mutmut_1 \
+            contracts.futures.instrument.x__asset__mutmut_2 \
+            contracts.futures.margin.x__asset__mutmut_2 \
+            contracts.futures.liquidation_event.x__identifier__mutmut_4 \
+            contracts.futures.liquidation_event.x__non_negative_integer__mutmut_2 \
+            contracts.futures.settlement_accounting.x__sequence__mutmut_1 \
+            contracts.futures.accounting.x__text__mutmut_4; do
+            echo "=== MUTANT DIAGNOSTIC: ${mutant} ==="
+            mutmut show "${mutant}" || true
+          done
           mutmut export-cicd-stats
 
       - name: Enforce the immutable 90 percent mutation floor
