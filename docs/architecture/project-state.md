@@ -16,7 +16,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Required markets: CRYPTO Futures, FOREX Futures, GOLD Futures
 - Required contract families: Linear Futures and Inverse Futures
 - Operational Spot: FORBIDDEN; no Spot fallback or operational Spot path
-- Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit CLOSED on candidate SHA `f7c9a4af23ffbed83b7dc99227639a4378841e80`; this state snapshot commit requires its own CI verification
+- Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit closed on the last verified candidate snapshot (see Candidate evidence baseline)
 - Current gate: PR #35 owner review/merge and main-branch same-SHA verification
 - Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation until PR #35 is reviewed/merged and main is verified
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit
@@ -33,7 +33,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - G08: a valid run on SHA `eb803314cf66b46b9924ed0ad9f97a844c02314c` scored 64.07% and failed. Stronger validation-helper tests raised the score to 94.91% (317/334) on SHA `f7c9a4af23ffbed83b7dc99227639a4378841e80`; this meets the 90% floor.
 - Present repository scope: canonical Futures contracts, validation, tests, architecture documents, and CI workflows. Fifteen exchange adapters, operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
 - Branch protection/ruleset status: GitHub API access returned 403 during this audit, so enforcement could not be confirmed. This is not evidence that protection is absent; the repository owner must verify required reviews and status checks.
-- Active work: owner review/merge of PR #35, then verification of the resulting main SHA. This state snapshot commit must rerun all applicable gates; any failure reopens the audit.
+- Active work: owner review/merge of PR #35, then verification of the resulting main SHA. Live Actions checks on the current HEAD are authoritative; any failed applicable gate reopens the audit.
 - Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged and main is verified on one exact SHA. G07 becomes applicable when operational layers or integration/resilience tests change.
 - Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative; the SHA listed above is the last verified candidate snapshot. Never infer green from this document alone.
 - Next authorized action: owner review/merge PR #35 after the current snapshot checks are green; then verify all applicable gates on the resulting main SHA. Only after main is verified may Phase 2 entry be evaluated.
