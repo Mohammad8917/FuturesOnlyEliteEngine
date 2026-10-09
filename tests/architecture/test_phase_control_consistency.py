@@ -34,7 +34,10 @@ def test_phase_control_documents_are_consistent() -> None:
     assert "Phase 2+ remains blocked" in roadmap
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
-    assert "- Current gate: same-SHA closure snapshot verification and PR #35 review/merge" in state
+    assert (
+        "- Current gate: same-SHA closure snapshot verification and PR #35 review/merge"
+        in state
+    )
     assert (
         "- Implementation phase authorized: YES — Phase 1 Domain Contracts only"
         in state
@@ -43,9 +46,18 @@ def test_phase_control_documents_are_consistent() -> None:
         "- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit"
         in state
     )
-    assert "- Active work: verify all applicable gates on the closure snapshot SHA" in state
-    assert "- Blocked work: Phase 2+ production implementation until the closure snapshot passes" in state
-    assert "No all-gates same-SHA pass is claimed for the closure snapshot commit yet." in state
+    assert (
+        "- Active work: verify all applicable gates on the closure snapshot SHA"
+        in state
+    )
+    assert (
+        "- Blocked work: Phase 2+ production implementation until the closure snapshot passes"
+        in state
+    )
+    assert (
+        "No all-gates same-SHA pass is claimed for the closure snapshot commit yet."
+        in state
+    )
 
     assert (
         "Production implementation remains blocked until the Phase 0 exit criteria"

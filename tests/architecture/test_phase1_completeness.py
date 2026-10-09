@@ -72,5 +72,8 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     assert "final completeness/evidence audit CLOSURE SNAPSHOT PENDING" in state
     assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
     assert "G05 independently calculates exact line coverage from XML counts" in state
-    assert "Next authorized action: wait for and verify all applicable gates on the closure snapshot commit" in state
+    assert (
+        "Next authorized action: wait for and verify all applicable gates on the closure snapshot commit"
+        in state
+    )
     assert "No all-gates same-SHA pass is claimed for the closure snapshot commit yet." in state
