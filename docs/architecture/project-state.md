@@ -18,7 +18,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Operational Spot: FORBIDDEN; no Spot fallback or operational Spot path
 - Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit IN PROGRESS
 - Current gate: G06 Security + G08 Mutation verification, followed by same-SHA gate reconciliation
-- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation until the final audit is explicitly closed
+- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until the final audit is explicitly closed
 - Current HEAD: refresh from GitHub; this document's SHA is a snapshot/evidence reference, never an authority over live repository HEAD
 - Main baseline SHA: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`
 - Main baseline evidence: G01, G03, G04, G05, Phase 1, and Architecture Invariants jobs completed successfully on that SHA. However, the G05 log for run `37850090486` prints `FAIL Required test coverage of 98% not reached. Total coverage: 97.83%` while the job conclusion is success. Therefore that main-branch G05 result is NOT acceptable evidence and must not be treated as a valid pass.
