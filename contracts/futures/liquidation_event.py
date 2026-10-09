@@ -23,7 +23,7 @@ class LiquidationTrigger(StrEnum):
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+    if type(value) not in (Decimal, int, str):
         raise LiquidationEventValidationError(f"{field} must be an exact Decimal value")
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
@@ -55,7 +55,7 @@ def _identifier(value: str, field: str) -> str:
 
 
 def _non_negative_integer(value: int, field: str) -> int:
-    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+    if type(value) is not int or value < 0:
         raise LiquidationEventValidationError(f"{field} must be a non-negative integer")
     return value
 

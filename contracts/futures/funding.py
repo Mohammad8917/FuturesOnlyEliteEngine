@@ -29,7 +29,7 @@ def _decimal(
     *,
     positive: bool = False,
 ) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+    if type(value) not in (Decimal, int, str):
         raise FundingValidationError(f"{field} must be an exact Decimal value")
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))

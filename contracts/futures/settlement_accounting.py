@@ -27,7 +27,7 @@ def _text(value: str, field: str) -> str:
 
 
 def _decimal(value: Decimal, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, Decimal):
+    if type(value) is not Decimal:
         raise AccountingValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite() or value <= 0:
         raise AccountingValidationError(f"{field} must be finite and greater than zero")
@@ -35,7 +35,7 @@ def _decimal(value: Decimal, field: str) -> Decimal:
 
 
 def _sequence(value: int, field: str) -> int:
-    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+    if type(value) is not int or value < 0:
         raise AccountingValidationError(f"{field} must be a non-negative integer")
     return value
 

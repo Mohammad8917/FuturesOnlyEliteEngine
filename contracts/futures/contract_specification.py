@@ -29,7 +29,7 @@ class QuantityUnit(StrEnum):
 
 
 def _decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+    if type(value) not in (Decimal, int, str):
         raise ContractSpecificationValidationError(
             f"{field} must be an exact Decimal value"
         )
