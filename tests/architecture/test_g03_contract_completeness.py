@@ -162,7 +162,7 @@ def test_all_test_sources_contain_no_pytest_skip_or_xfail_apis():
 def test_dynamic_getattr_cannot_hide_pytest_weakening_markers(tmp_path: Path):
     source = tmp_path / "test_dynamic_marker.py"
     source.write_text(
-        "import pytest as pt\\ngetattr(pt.mark, 'skip')\\ngetattr(pt, 'xfail')\\n",
+        "import pytest as pt\ngetattr(pt.mark, 'skip')\ngetattr(pt, 'xfail')\n",
         encoding="utf-8",
     )
 
