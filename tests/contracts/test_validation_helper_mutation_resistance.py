@@ -66,7 +66,7 @@ from contracts.futures.margin import (
     _asset as margin_asset,
     _positive_decimal as margin_positive_decimal,
 )
-from contracts.futures.pnl import (
+from domain.futures.pnl import (
     PnLValidationError,
     _positive_decimal as pnl_positive_decimal,
     _utc as pnl_utc,
