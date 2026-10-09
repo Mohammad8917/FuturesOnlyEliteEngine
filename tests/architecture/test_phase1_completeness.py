@@ -4,7 +4,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 ARCH = ROOT / "docs" / "architecture"
 CONTRACTS = ROOT / "contracts" / "futures"
+DOMAIN = ROOT / "domain" / "futures"
 TESTS = ROOT / "tests" / "contracts"
+DOMAIN_TESTS = ROOT / "tests" / "domain" / "futures"
 
 SOURCE_OF_TRUTH = (
     "architecture-invariants.md",
@@ -45,9 +47,11 @@ def test_phase1_has_production_and_test_boundaries() -> None:
     missing = []
     for production_names, test_name in PHASE1_BOUNDARIES:
         for production_name in production_names:
-            if not (CONTRACTS / f"{production_name}.py").is_file():
+            production_root = DOMAIN if production_name == "pnl" else CONTRACTS
+            if not (production_root / f"{production_name}.py").is_file():
                 missing.append(f"production:{production_name}.py")
-        if not (TESTS / test_name).is_file():
+        test_root = DOMAIN_TESTS if test_name == "pnl_contract_test.py" else TESTS
+        if not (test_root / test_name).is_file():
             missing.append(f"test:{test_name}")
     assert not missing, f"Incomplete Phase 1 boundaries: {missing}"
 
