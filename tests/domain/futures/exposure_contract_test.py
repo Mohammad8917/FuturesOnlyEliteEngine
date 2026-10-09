@@ -3,11 +3,11 @@ from decimal import Decimal
 
 import pytest
 
-from contracts.futures.contract_specification import (
+from domain.futures.contract_specification import (
     FuturesContractSpecification,
     QuantityUnit,
 )
-from contracts.futures.exposure import (
+from domain.futures.exposure import (
     ExposureDenomination,
     ExposureValidationError,
     FuturesExposureSpecification,

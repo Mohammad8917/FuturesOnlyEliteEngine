@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import pytest
 
-from contracts.futures.accounting import (
+from domain.futures.accounting import (
     AccountingDirection,
     AccountingValidationError,
     FuturesAccountingJournal,
@@ -17,8 +17,8 @@ from contracts.futures.instrument import (
     FuturesInstrumentIdentity,
     Market,
 )
-from contracts.futures.settlement import FuturesSettlementSpecification, SettlementUnit
-from contracts.futures.settlement_accounting import (
+from domain.futures.settlement import FuturesSettlementSpecification, SettlementUnit
+from domain.futures.settlement_accounting import (
     FuturesSettlementAccountingSpecification,
 )
 
