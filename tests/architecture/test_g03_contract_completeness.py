@@ -67,9 +67,7 @@ def _test_weakening_markers(path: Path) -> list[str]:
                 and dotted.startswith("pytest.")
                 and node.attr in FORBIDDEN_TEST_MARKERS
             ):
-                offenders.append(
-                    f"{path}:{node.lineno}: references {dotted}"
-                )
+                offenders.append(f"{path}:{node.lineno}: references {dotted}")
         elif isinstance(node, ast.Name) and node.id in FORBIDDEN_TEST_MARKERS:
             # Catch direct imports aliased to the same local identifier.
             if any(
