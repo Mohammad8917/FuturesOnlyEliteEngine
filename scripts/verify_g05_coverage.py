@@ -22,20 +22,37 @@ def main() -> int:
 
         # Require the structural metadata emitted by coverage.py. A syntactically
         # valid but truncated/root-only XML document is not evidence of coverage.
-        required_attributes = ("version", "timestamp", "line-rate", "lines-covered", "lines-valid")
+        required_attributes = (
+            "version",
+            "timestamp",
+            "line-rate",
+            "lines-covered",
+            "lines-valid",
+        )
         missing = [name for name in required_attributes if name not in root.attrib]
         if missing:
-            print(f"G05 FAIL: coverage report is incomplete; missing attributes: {', '.join(missing)}")
+            print(
+                "G05 FAIL: coverage report is incomplete; missing attributes: "
+                f"{', '.join(missing)}"
+            )
             return 1
 
         sources = root.find("sources")
         packages = root.find("packages")
         if sources is None or packages is None:
-            print("G05 FAIL: coverage report is incomplete; <sources> and <packages> are required")
+            print(
+                "G05 FAIL: coverage report is incomplete; "
+                "<sources> and <packages> are required"
+            )
             return 1
         classes = packages.findall(".//class")
-        if not classes or any(not item.get("filename", "").strip() for item in classes):
-            print("G05 FAIL: coverage report is incomplete; at least one class with a filename is required")
+        if not classes or any(
+            not item.get("filename", "").strip() for item in classes
+        ):
+            print(
+                "G05 FAIL: coverage report is incomplete; "
+                "at least one class with a filename is required"
+            )
             return 1
 
         lines_covered = int(root.attrib["lines-covered"])
