@@ -47,9 +47,7 @@ def main() -> int:
             return 1
 
         classes = packages.findall(".//class")
-        if not classes or any(
-            not item.get("filename", "").strip() for item in classes
-        ):
+        if not classes or any(not item.get("filename", "").strip() for item in classes):
             print(
                 "G05 FAIL: coverage report is incomplete; "
                 "at least one class with a filename is required"
@@ -69,7 +67,9 @@ def main() -> int:
             line_number = int(line.attrib["number"])
             hits = int(line.attrib["hits"])
             if line_number <= 0 or hits < 0:
-                print("G05 FAIL: coverage report contains invalid class-level line data")
+                print(
+                    "G05 FAIL: coverage report contains invalid class-level line data"
+                )
                 return 1
             if hits > 0:
                 covered_from_classes += 1
