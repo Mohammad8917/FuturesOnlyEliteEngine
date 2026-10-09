@@ -49,7 +49,30 @@ Provide a clear, localized menu with at least these entries:
 9. **Credentials & account connection** (masked status only; admin-only register/verify/rotate/revoke workflow; never display a secret);
 10. **Positions & orders** (read-only view and reconciliation status; any cancel/close action must be a separate explicitly authorized and confirmed operation);
 11. **Emergency pause** (global, per-market, and per-user pause; pausing blocks new automated intents and does not silently liquidate positions);
-12. **Allocation settings** (admin-authorized per-user allocation percentage and a clear preview of the resulting cap before saving).
+12. **Allocation settings** (admin-authorized per-user allocation percentage and a clear preview of the resulting cap before saving);
+13. **Signals** (view candidate signals, validity/expiry, selected entry candidate, invalidation reason, and whether a signal is analytical or executable; viewing never authorizes an order);
+14. **Pending approvals** (review/approve/reject user activation, credential registration, allocation changes, and other privileged requests; approval is bound to the exact request version);
+15. **Notifications** (per-user preferences for informational alerts, trade lifecycle, invalidation, risk pause, and system incidents; delivery failure never changes trading state);
+16. **Reconciliation & incidents** (show mismatches between internal and exchange state, unresolved incidents, and recovery status; unresolved critical mismatch blocks new entries);
+17. **Reports** (daily/weekly realized and unrealized PnL, fees/funding, drawdown, allocation utilization, rejected-order reasons, and export of privacy-safe reports);
+18. **System settings** (view-only operational configuration, current policy version, maintenance state, and last successful backup/state-persistence check; sensitive policy changes require confirmation and audit);
+19. **Access & security** (authorized roles, active sessions where supported, recent access events, credential age/status, and revoke-access workflow);
+20. **Help / command guide** (explain each control, prerequisites, and why trading may be blocked; no help action may change state).
+
+#### Menu safety and usability requirements
+
+- Keep the main menu compact; place advanced views under grouped submenus (Users, Capital & Risk, Trading, Operations, Security, Reports) rather than showing every action at the top level.
+- **Read-only by default:** balances, positions, orders, PnL, health, signals, audit, and reconciliation views are read-only. State-changing operations must be visibly distinguished.
+- **Two-step confirmation** for global enable, user activation, credential binding/replacement, allocation changes, capacity changes, and any order cancellation/position close action. The confirmation must display the target user/account, market, action, and relevant limits; stale confirmations must be rejected.
+- **No one-tap destructive trading action:** never add a menu button that silently market-closes all positions or cancels all orders. If emergency close/cancel functionality is later approved, it needs separate explicit authorization, a clear scope preview, a second confirmation, idempotency, and an audit record.
+- **Trading readiness checklist:** before enabling automation, show each required component as READY / NOT READY / UNKNOWN, active markets, eligible-user count, balance freshness, exchange/account readiness, risk gate, reconciliation, and audit persistence. Any required UNKNOWN/NOT READY means the enable action is rejected.
+- **Per-user privacy:** each ordinary user sees only their own balances, positions, orders, reports, signals relevant to them, and credential status. Only the owner can see cross-user summaries; even owner views must mask secrets.
+- **Useful blocked-state explanations:** explain a blocked order with a stable reason code and safe human-readable text (for example: balance below USD 20 eligibility floor, stale balance, allocation cap, exchange minimum not met, stale market data, risk limit, account mismatch, or global/market/user switch OFF). Do not expose secrets or internal sensitive data.
+- **No arbitrary command execution:** no shell, Python, SQL, arbitrary URL fetch, or free-form API command through Telegram. Administrative actions must map to typed, allow-listed application commands.
+- **Rate limiting and anti-replay:** limit sensitive callbacks, bind each callback to actor + target + state version + expiry, and reject duplicate, expired, malformed, or out-of-order requests.
+- **Recovery and maintenance:** provide a maintenance/read-only mode and show the last known persisted-control-state timestamp. Restart or uncertain recovery defaults to global OFF; recovery must not automatically resume trading without explicit owner confirmation.
+- **Audit integrity:** record who performed what action, target, before/after values, UTC time, outcome, correlation ID, and policy version. Never log API secrets, full credential payloads, or unnecessary personal data.
+- **Reports are not a source of execution authority:** reports, notifications, signals, and dashboard buttons cannot bypass the approved Risk → Execution path.
 
 The market toggles are independent: any non-empty combination of the three markets may be selected. Spot is never an available market. Linear/Inverse contract handling remains governed by the existing Futures architecture and explicit instrument metadata.
 
