@@ -35,7 +35,9 @@ def test_phase_control_documents_are_consistent() -> None:
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
     assert (
-        "- Current gate: PR #35 owner review/merge and main-branch same-SHA verification"
+        "- Current gate: resolve the Phase 1/G07 applicability contradiction through "
+        "owner-reviewed ADR proposal, then perform PR #35 owner review/authorized "
+        "merge and exact-resulting-SHA verification on `main`"
         in state
     )
     assert (
