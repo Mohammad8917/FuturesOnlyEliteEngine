@@ -194,3 +194,46 @@ def test_dynamic_getattr_cannot_hide_pytest_weakening_markers(tmp_path: Path):
     assert len(offenders) == 2
     assert any("marker skip" in offender for offender in offenders)
     assert any("marker xfail" in offender for offender in offenders)
+
+FINANCIAL_DOMAIN_MODULES = {
+    "accounting",
+    "contract_specification",
+    "exposure",
+    "funding",
+    "initial_margin",
+    "leverage",
+    "liquidation",
+    "liquidation_event",
+    "maintenance_margin",
+    "margin",
+    "pnl",
+    "settlement",
+    "settlement_accounting",
+}
+
+
+def test_financial_calculation_ownership_matches_architecture():
+    """Keep pure Futures financial semantics in domain, not boundary contracts."""
+    domain_modules = {
+        path.stem
+        for path in DOMAIN_PRODUCTION.glob("*.py")
+        if path.name != "__init__.py"
+    }
+    contract_modules = {
+        path.stem
+        for path in PRODUCTION.glob("*.py")
+        if path.name != "__init__.py"
+    }
+
+    missing_domain_owners = sorted(FINANCIAL_DOMAIN_MODULES - domain_modules)
+    misplaced_contract_owners = sorted(FINANCIAL_DOMAIN_MODULES & contract_modules)
+
+    assert not missing_domain_owners, (
+        "Financial semantics lack their declared domain/futures owner: "
+        f"{missing_domain_owners}"
+    )
+    assert not misplaced_contract_owners, (
+        "Financial calculation modules must not be owned by contracts/futures: "
+        f"{misplaced_contract_owners}"
+    )
+
