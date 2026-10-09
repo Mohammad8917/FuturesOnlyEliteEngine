@@ -175,4 +175,6 @@ def test_g07_phase_applicability_is_explicit_and_fail_closed() -> None:
     assert "if: needs.applicability.outputs.operational_scope == 'true'" in workflow
     assert "Phase 1 Domain Contracts only" in state
     assert "Phase 2+ production implementation remains blocked" in state
-    assert "Last verified candidate evidence before this synchronization is SHA" in state
+    assert (
+        "Last verified candidate evidence before this synchronization is SHA" in state
+    )
