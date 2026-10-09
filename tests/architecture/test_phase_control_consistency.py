@@ -34,13 +34,18 @@ def test_phase_control_documents_are_consistent() -> None:
     assert "Phase 2+ remains blocked" in roadmap
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
-    assert "- Current gate: G05 — Coverage" in state
-    assert "- Implementation phase authorized: YES — Phase 1 Domain Contracts" in state
+    assert "- Current gate: G06 Security + G08 Mutation verification" in state
+    assert (
+        "- Implementation phase authorized: YES — Phase 1 Domain Contracts only"
+        in state
+    )
     assert (
         "- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit"
         in state
     )
-    assert "- Active work: Phase 1 Domain Contracts" in state
+    assert "- Active work: close G06/G08" in state
+    assert "- Blocked work: Phase 2+ production implementation" in state
+    assert "No all-gates same-SHA pass is claimed yet." in state
 
     assert (
         "Production implementation remains blocked until the Phase 0 exit criteria"

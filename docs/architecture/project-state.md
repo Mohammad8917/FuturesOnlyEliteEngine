@@ -18,7 +18,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Operational Spot: FORBIDDEN; no Spot fallback or operational Spot path
 - Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit IN PROGRESS
 - Current gate: G06 Security + G08 Mutation verification, followed by same-SHA gate reconciliation
-- Implementation phase authorized: NO — Phase 2+ production implementation remains blocked until the final audit is explicitly closed
+- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation until the final audit is explicitly closed
 - Current HEAD: refresh from GitHub; this document's SHA is a snapshot/evidence reference, never an authority over live repository HEAD
 - Main baseline SHA: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`
 - Main baseline evidence: G01, G03, G04, G05, Phase 1, and Architecture Invariants jobs completed successfully on that SHA. However, the G05 log for run `37850090486` prints `FAIL Required test coverage of 98% not reached. Total coverage: 97.83%` while the job conclusion is success. Therefore that main-branch G05 result is NOT acceptable evidence and must not be treated as a valid pass.
@@ -31,6 +31,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - G07: fail-closed integration/resilience workflow is defined and is intentionally path-triggered for operational-layer changes. It is NOT a completed integration gate because operational layers and integration/resilience test suites do not yet exist.
 - G08: mutation workflow is defined with an immutable 90% floor; the current final SHA must produce a complete mutation report and pass that floor. Earlier attempts failed due unsupported runner/configuration and do not count as evidence.
 - Present repository scope: canonical Futures contracts, validation, tests, architecture documents, and CI workflows. The following required production paths are absent: `domain/`, `application/`, `shared/`, `risk/`, `execution/`, `infrastructure/`, `adapters/`, and `configuration/`. Fifteen exchange adapters, operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
+- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation boundaries exist, but the final completeness/evidence audit is NOT CLOSED.
 - Active work: close G06/G08, verify all applicable gates on one exact candidate SHA, reconcile the eight Source-of-Truth documents, and record truthful same-SHA evidence.
 - Blocked work: Phase 2+ production implementation until the current Phase 1 completeness/evidence audit is explicitly closed; G07 remains blocked until operational layers and tests are implemented.
 - Next authorized action: fix any remaining G06/G08 findings without suppressions; then run all applicable CI gates on the final candidate SHA and reconcile project state. Only after that may Phase 2 entry be evaluated.
