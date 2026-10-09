@@ -49,9 +49,11 @@ def test_phase_control_documents_are_consistent() -> None:
         in state
     )
     assert (
-        "- Active work: G05 false-green correction and independent XML-threshold guard "
-        "are in PR #35; verify all applicable CI on the exact current candidate SHA; "
-        "PR #35 remains open and unmerged pending independent review." in state
+        "- Active work: G05 false-green correction and independent XML-threshold guard, "
+        "including malformed/wrong-root XML rejection, are in PR #35; verify all applicable "
+        "CI on the exact current candidate SHA; PR #35 remains open and unmerged pending "
+        "independent review. Platform protection for `main` is confirmed disabled; see issue #36."
+        in state
     )
     assert (
         "- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged"
