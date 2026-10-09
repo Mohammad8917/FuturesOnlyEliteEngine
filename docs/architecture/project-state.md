@@ -16,26 +16,27 @@ This is project state, not the architectural contract. Architectural rules remai
 - Required markets: CRYPTO Futures, FOREX Futures, GOLD Futures
 - Required contract families: Linear Futures and Inverse Futures
 - Operational Spot: FORBIDDEN; no Spot fallback or operational Spot path
-- Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit CLOSURE SNAPSHOT PENDING
-- Current gate: same-SHA closure snapshot verification and PR #35 review/merge
-- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until the closure snapshot is green and PR #35 is reviewed/merged
-- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation is complete, but the final closure snapshot remains pending.
+- Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit CLOSED on candidate SHA `f7c9a4af23ffbed83b7dc99227639a4378841e80`; this state snapshot commit requires its own CI verification
+- Current gate: PR #35 owner review/merge and main-branch same-SHA verification
+- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation until PR #35 is reviewed/merged and main is verified
+- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit
 - Current HEAD: refresh from GitHub; this document's SHA is a snapshot/evidence reference, never an authority over live repository HEAD
 - Main baseline SHA: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`
 - Main baseline evidence: G01, G03, G04, G05, Phase 1, and Architecture Invariants jobs completed successfully on that SHA. However, the G05 log for run `37850090486` prints `FAIL Required test coverage of 98% not reached. Total coverage: 97.83%` while the job conclusion is success. Therefore that main-branch G05 result is NOT acceptable evidence and must not be treated as a valid pass.
 - Audit candidate: PR #35, branch `hardening/eight-rules-conformance`; refresh its HEAD before relying on any SHA.
-- Candidate evidence baseline: on SHA `0aa7bb8def2918a8d2ec293d2671bfe93651b7c0`, G01, G02, G03, G04, G05, G06, G08, Phase 1, and Architecture Invariants all completed successfully on the same exact SHA. G05 remains at or above the immutable 98% floor; G08 measured 94.91% (317 killed / 334 non-skipped mutants), above the immutable 90% floor. This is candidate-branch evidence, not main-branch evidence.
-- G01: Ruff lint/format and dependency-architecture checks are enforced and passed on the candidate evidence SHA.
+- Candidate evidence baseline: on SHA `f7c9a4af23ffbed83b7dc99227639a4378841e80`, G01, G02, G03, G04, G05, G06, G08, Phase 1, and Architecture Invariants all completed successfully on the same exact SHA. G05 remained at or above the immutable 98% floor; G08 measured 94.91% (317 killed / 334 non-skipped mutants), above the immutable 90% floor.
+- G01: Ruff lint/format and dependency-architecture checks passed on the candidate evidence SHA.
 - G02: strict Pyright passed on the candidate evidence SHA for production `contracts/` and `validation/`. Runtime guards remain required; only the `reportUnnecessaryIsInstance` style diagnostic is disabled because static annotations do not replace runtime input validation. All type-safety diagnostics remain errors.
 - G03/G04/G05/Phase 1/Architecture Invariants: passed on the candidate evidence SHA. G05 independently calculates exact line coverage from XML counts and fails below 98%; it does not trust rounded `line-rate`.
 - G06: dependency audit, Bandit, and tracked-file secret scan passed on the candidate evidence SHA. The workflow runs on every repository change.
-- G07: the fail-closed integration/resilience workflow is defined and path-triggered for operational-layer changes. It is NOT a completed integration gate because `application/`, `risk/`, `execution/`, `infrastructure/`, `adapters/`, `configuration/`, `tests/integration/`, and `tests/resilience/` do not yet exist. It must not be represented as green.
-- G08: a valid run on SHA `eb803314cf66b46b9924ed0ad9f97a844c02314c` scored 64.07% and failed. Stronger boundary tests raised the score to 94.91% (317/334) on SHA `0aa7bb8def2918a8d2ec293d2671bfe93651b7c0`; this meets the 90% floor. The closure snapshot commit must rerun G08 and remain >=90%.
-- Present repository scope: canonical Futures contracts, validation, tests, architecture documents, and CI workflows. The following required production paths are absent: `domain/`, `application/`, `shared/`, `risk/`, `execution/`, `infrastructure/`, `adapters/`, and `configuration/`. Fifteen exchange adapters, operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
-- Active work: verify all applicable gates on the closure snapshot SHA, then review/merge PR #35 and verify the resulting main SHA. The closure snapshot is not accepted until its own applicable checks are green.
-- No all-gates same-SHA pass is claimed for the closure snapshot commit yet. It must pass its own applicable CI checks before Phase 2.
-- Blocked work: Phase 2+ production implementation until the closure snapshot passes all applicable gates on one exact SHA and PR #35 is reviewed/merged. G07 becomes applicable when operational layers or integration/resilience tests change.
-- Next authorized action: wait for and verify all applicable gates on the closure snapshot commit; if green, complete PR #35 review/merge. Only after main is verified may Phase 2 entry be evaluated.
+- G07: the fail-closed integration/resilience workflow is defined and path-triggered for operational-layer changes. It is NOT a completed integration gate because `domain/`, `application/`, `shared/`, `risk/`, `execution/`, `infrastructure/`, `adapters/`, `configuration/`, `tests/integration/`, and `tests/resilience/` do not yet exist. It must not be represented as green.
+- G08: a valid run on SHA `eb803314cf66b46b9924ed0ad9f97a844c02314c` scored 64.07% and failed. Stronger validation-helper tests raised the score to 94.91% (317/334) on SHA `f7c9a4af23ffbed83b7dc99227639a4378841e80`; this meets the 90% floor.
+- Present repository scope: canonical Futures contracts, validation, tests, architecture documents, and CI workflows. Fifteen exchange adapters, operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
+- Branch protection/ruleset status: GitHub API access returned 403 during this audit, so enforcement could not be confirmed. This is not evidence that protection is absent; the repository owner must verify required reviews and status checks.
+- Active work: owner review/merge of PR #35, then verification of the resulting main SHA. This state snapshot commit must rerun all applicable gates; any failure reopens the audit.
+- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged and main is verified on one exact SHA. G07 becomes applicable when operational layers or integration/resilience tests change.
+- No all-gates same-SHA pass is claimed for this state snapshot commit yet; it must pass its own applicable CI checks before Phase 2.
+- Next authorized action: owner review/merge PR #35 after the current snapshot checks are green; then verify all applicable gates on the resulting main SHA. Only after main is verified may Phase 2 entry be evaluated.
 - Forbidden actions: no architecture redesign without an actual violation and approved ADR; no Spot operational path; no hardcoded secrets/configuration; no float financial inputs; no implicit rounding; no skipped/xfail tests; no threshold reduction; no exclusions or suppressions solely to obtain green; no gate bypass; no claim of production readiness before required layers and same-SHA evidence exist.
 
 ## Required state fields for every update

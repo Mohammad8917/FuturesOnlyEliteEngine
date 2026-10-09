@@ -46,12 +46,9 @@ def test_phase_control_documents_are_consistent() -> None:
         "- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit"
         in state
     )
+    assert "- Active work: owner review/merge of PR #35" in state
     assert (
-        "- Active work: verify all applicable gates on the closure snapshot SHA"
-        in state
-    )
-    assert (
-        "- Blocked work: Phase 2+ production implementation until the closure snapshot passes"
+        "- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged"
         in state
     )
     assert (
