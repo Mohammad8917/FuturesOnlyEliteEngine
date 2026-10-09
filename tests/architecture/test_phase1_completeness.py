@@ -76,7 +76,7 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
     assert "G05 independently calculates exact line coverage from XML counts" in state
     assert (
-        "Next authorized action: wait for and verify all applicable gates on the closure snapshot commit"
+        "Next authorized action: owner review/merge PR #35 after the current snapshot checks are green"
         in state
     )
     assert (
