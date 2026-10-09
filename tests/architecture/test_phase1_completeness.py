@@ -76,11 +76,9 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
     assert "G05 independently calculates exact line coverage from XML counts" in state
     assert "Next authorized action: implement and verify approved ADR-0001" in state
-    assert "G07: INCOMPLETE / NOT GREEN" in state
-    assert (
-        "No operational readiness is claimed."
-        in state
-    )
+    assert "G07 applicability: approved ADR-0001" in state
+    assert "NOT APPLICABLE (not passed)" in state
+    assert "No operational readiness is claimed." in state
     adr = (ARCH / "adr" / "ADR-0001-phase-scoped-gate-applicability.md").read_text(
         encoding="utf-8"
     )
