@@ -53,7 +53,7 @@ def test_phase_control_documents_are_consistent() -> None:
         in state
     )
     assert (
-        "follow-up audit also replaced a no-op contract-family branch test with explicit fail-closed assertions"
+        "A deeper financial-contract audit found that realized-PnL accounting did not enforce family-consistent denomination"
         in state
     )
     assert (
