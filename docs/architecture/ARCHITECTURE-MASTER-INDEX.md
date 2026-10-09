@@ -236,7 +236,7 @@ CI boundary: .github/workflows/phase1-domain-contracts.yml.
 
 The margin asset/margin semantics unit is evidenced complete on main merge SHA f2c30bf3da77f56b2dd2d9350af7bb1376f47797.
 
-Current cursor: leverage vocabulary and contract-level constraints.
+Historical cursor at that recorded stage (not live authorization): leverage vocabulary and contract-level constraints. Current authorization is controlled by `docs/architecture/project-state.md` → `Current authoritative state`.
 
 The leverage unit must explicitly define:
 - leverage representation and exact numeric semantics;
@@ -251,7 +251,7 @@ The leverage unit must explicitly define:
 
 ## 10.10 Phase 1 initial margin implementation contract
 
-Initial margin is the next authorized Phase 1 unit. It must explicitly define formula inputs, denomination, exact numeric semantics, applicability, ownership, validation, and fail-closed behavior.
+Historical transition record (not live authorization): initial margin was the next Phase 1 unit at that recorded stage. Its recorded requirements were formula inputs, denomination, exact numeric semantics, applicability, ownership, validation, and fail-closed behavior. Current authorization is controlled by `docs/architecture/project-state.md` → `Current authoritative state`.
 
 - owner: Futures domain/contract boundary;
 - unit: RATIO for the initial-margin requirement rate;
@@ -276,9 +276,9 @@ CI boundary: `.github/workflows/phase1-domain-contracts.yml`.
 
 Initial margin semantics are COMPLETE with same-SHA evidence on main merge SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`.
 
-**Current cursor:** maintenance margin semantics.
+Historical cursor at that recorded stage (not live authorization): maintenance margin semantics. Current authorization is controlled by `docs/architecture/project-state.md` → `Current authoritative state`.
 
-The next authorized unit must follow the full implementation-unit protocol and explicitly define maintenance-margin ownership, inputs, outputs, denomination, precision, Linear/Inverse applicability, CRYPTO/FOREX/GOLD applicability, tier/rate/amount semantics where applicable, failure behavior, test boundary, CI enforcement, and same-SHA evidence.
+Historical next-unit requirements (not live authorization): the maintenance-margin unit must follow the full implementation-unit protocol and explicitly define ownership, inputs, outputs, denomination, precision, Linear/Inverse applicability, CRYPTO/FOREX/GOLD applicability, tier/rate/amount semantics where applicable, failure behavior, test boundary, CI enforcement, and same-SHA evidence. Current authorization is controlled by `docs/architecture/project-state.md` → `Current authoritative state`.
 
 No maintenance-margin formula may be inferred from leverage or copied from an exchange without an explicit canonical contract.
 
