@@ -195,6 +195,7 @@ def test_dynamic_getattr_cannot_hide_pytest_weakening_markers(tmp_path: Path):
     assert any("marker skip" in offender for offender in offenders)
     assert any("marker xfail" in offender for offender in offenders)
 
+
 FINANCIAL_DOMAIN_MODULES = {
     "accounting",
     "contract_specification",
@@ -220,9 +221,7 @@ def test_financial_calculation_ownership_matches_architecture():
         if path.name != "__init__.py"
     }
     contract_modules = {
-        path.stem
-        for path in PRODUCTION.glob("*.py")
-        if path.name != "__init__.py"
+        path.stem for path in PRODUCTION.glob("*.py") if path.name != "__init__.py"
     }
 
     missing_domain_owners = sorted(FINANCIAL_DOMAIN_MODULES - domain_modules)
@@ -236,4 +235,3 @@ def test_financial_calculation_ownership_matches_architecture():
         "Financial calculation modules must not be owned by contracts/futures: "
         f"{misplaced_contract_owners}"
     )
-
