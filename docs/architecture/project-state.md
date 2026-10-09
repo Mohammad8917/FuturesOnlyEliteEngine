@@ -31,7 +31,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current repository scope is canonical Futures contracts, validation, tests, architecture documentation, and CI. Fifteen exchange adapters, live/automated operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
 - Branch-protection/ruleset enforcement remains UNVERIFIED because the connected GitHub API returned 403. The repository owner must verify platform settings; API access failure does not prove protection is absent.
 - Review state at last check: no submitted PR #35 reviews. PR metadata reports mergeable=true; owner review/approval is still outstanding. Do not fabricate approval or merge without required owner review.
-- Active work: genuine owner review and authorized merge of PR #35.
+- Active work: owner review/merge of PR #35 (owner review is still required; do not bypass governance).
 - Immediate active subtask: request/obtain the required owner review; after merge, verify all applicable gates on the exact resulting `main` SHA and resolve the historical G05 false-green.
 - Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged and `main` is verified on one exact SHA; claiming G07 complete or production readiness; treating candidate CI as proof that `main` is fixed.
 - Forbidden: direct-main changes, architecture redesign without an actual violation and approved ADR, Spot fallback, hard-coded secrets/configuration, binary-float financial inputs, implicit rounding, skipped/xfail tests, threshold reductions, coverage exclusions/suppressions solely to pass, and gate/review bypasses.
