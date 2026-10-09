@@ -49,8 +49,9 @@ def test_phase_control_documents_are_consistent() -> None:
         in state
     )
     assert (
-        "- Active work: implement the approved phase-scoped G07 applicability decision "
-        "through regression tests and CI; PR #35 remains open and unmerged." in state
+        "- Active work: implement and verify approved ADR-0001 applicability behavior "
+        "and regression tests; PR #35 remains open and unmerged pending required review."
+        in state
     )
     assert (
         "- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged"
