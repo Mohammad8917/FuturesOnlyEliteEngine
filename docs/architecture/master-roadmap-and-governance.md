@@ -860,7 +860,7 @@ The next authorized unit is liquidation event and trigger semantics. Entry requi
 
 ## Phase 1 accounting / settlement-accounting semantic lock
 
-The next authorized Phase 1 unit is **Futures accounting and settlement accounting semantics**.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **Futures accounting and settlement accounting semantics**. Current authorization is controlled exclusively by `docs/architecture/project-state.md` → `Current authoritative state`.
 
 Frozen baseline:
 - owner: Futures domain/contract boundary for deterministic accounting facts and settlement-accounting facts; application/infrastructure own persistence, external settlement transport, exchange mapping, and account mutation;
