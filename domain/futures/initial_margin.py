@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from .instrument import FuturesInstrumentIdentity, Market
+from contracts.futures.instrument import FuturesInstrumentIdentity, Market
 
 
 class InitialMarginValidationError(ValueError):
