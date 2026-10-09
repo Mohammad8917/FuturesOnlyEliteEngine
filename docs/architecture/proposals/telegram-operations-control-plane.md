@@ -10,7 +10,9 @@
 The owner requires all routine operational controls to be available from the Telegram menu, without requiring shell or source-code edits for these actions:
 - enable or disable automated trading globally;
 - independently enable or disable CRYPTO Futures, FOREX Futures, and GOLD Futures, allowing any non-empty combination (one, two, or all three markets);
-- add and remove users from the Telegram menu, with an owner-configurable active-user capacity and a hard system maximum of 1,000 active users (for example, capacity can be set to 2, 50, or 1,000);\n- connect each user's own exchange API credentials and isolate each user's account, balance, allocation, and execution;\n- configure a per-user allocation percentage so only a bounded portion of that user's funds is available to the bot, never silently allocating 100% of funds;
+- add and remove users from the Telegram menu, with an owner-configurable active-user capacity and a hard system maximum of 1,000 active users (for example, capacity can be set to 2, 50, or 1,000);
+- connect each user's own exchange API credentials and isolate each user's account, balance, allocation, and execution;
+- configure a per-user allocation percentage so only a bounded portion of that user's funds is available to the bot, never silently allocating 100% of funds;
 - check whether the bot is running and whether its critical components are healthy.
 
 This document records requirements only. It does not claim that Telegram, automated execution, user management, or health monitoring already exists.
@@ -37,7 +39,8 @@ Provide a clear, localized menu with at least these entries:
    - list current authorized users (privacy-safe identifiers only);
    - add a user;
    - remove/revoke a user;
-   - show current count and configured capacity, e.g. `N / capacity` (capacity adjustable in the menu, hard maximum 1,000);\n   - set the active-user capacity from 1 through 1,000, never above 1,000;
+   - show current count and configured capacity, e.g. `N / capacity` (capacity adjustable in the menu, hard maximum 1,000);
+   - set the active-user capacity from 1 through 1,000, never above 1,000;
 4. **Bot status / Health**
 5. **Audit / recent control changes** (read-only view, bounded and privacy-safe).
 
@@ -75,7 +78,7 @@ The market toggles are independent: any non-empty combination of the three marke
 - Credential onboarding must not echo or persist secrets in Telegram chat history, callback payloads, application logs, exception traces, or audit events. Use a secure entry mechanism, encrypt secrets at rest, restrict access, support revocation/rotation, and report only masked credential status.
 - A credential or account that is invalid, revoked, permission-inadequate, stale, or ambiguous fails closed for that user's new automated execution only; other users may continue only if their independent health and gates pass.
 
-### 3.4 Bot status and health
+### 3.5 Bot status and health
 
 The status screen must distinguish at least:
 - process/service liveness;
@@ -101,7 +104,11 @@ Mitigations required before implementation:
 - fail closed on unreadable/ambiguous state and never infer ON from defaults;
 - preserve Risk, Execution, reconciliation, and audit gates; Telegram cannot call exchange APIs directly;
 - do not claim health or readiness when required checks are unknown or stale;
-- rate-limit and bound user-management/control operations; never log secrets or unnecessary personal data;\n- isolate credential vault references, account identifiers, balance snapshots, orders, positions, allocation, and audit records per user;\n- enforce a configured allocation strictly below 100% of the selected funds basis and reject missing/unknown allocation state;\n- require no-withdrawal API permissions and secure credential rotation/revocation;\n- prevent one user's API credentials or account context from being used by any other user.
+- rate-limit and bound user-management/control operations; never log secrets or unnecessary personal data;
+- isolate credential vault references, account identifiers, balance snapshots, orders, positions, allocation, and audit records per user;
+- enforce a configured allocation strictly below 100% of the selected funds basis and reject missing/unknown allocation state;
+- require no-withdrawal API permissions and secure credential rotation/revocation;
+- prevent one user's API credentials or account context from being used by any other user.
 
 ## 5. Alternatives considered
 
@@ -128,7 +135,10 @@ Before implementation, define and test:
 - control-state contract and safe startup/recovery behavior;
 - independent market switches and the global switch's precedence;
 - server-side actor authorization and role policy;
-- configurable user-capacity boundaries (1, 2, 1,000, 1,001), count changes, reducing capacity below current active users, duplicate add, revoke, and persistence failure;\n- per-user credential isolation, credential rotation/revocation, missing/invalid permissions, secret redaction, and no cross-account reads/writes;\n- allocation boundaries (unset, zero, valid configured percentage, just below 100%, 100%, above 100%), stale balance, and allocation recalculation;\n- prove that no order can consume the full account funds or exceed the explicit per-user allocation ceiling, while all separate Risk gates remain mandatory;
+- configurable user-capacity boundaries (1, 2, 1,000, 1,001), count changes, reducing capacity below current active users, duplicate add, revoke, and persistence failure;
+- per-user credential isolation, credential rotation/revocation, missing/invalid permissions, secret redaction, and no cross-account reads/writes;
+- allocation boundaries (unset, zero, valid configured percentage, just below 100%, 100%, above 100%), stale balance, and allocation recalculation;
+- prove that no order can consume the full account funds or exceed the explicit per-user allocation ceiling, while all separate Risk gates remain mandatory;
 - callback replay, duplicate delivery, concurrency, stale callback, and unauthorized actor cases;
 - immediate prevention of new intents after disable/revoke, without implicit position liquidation or order cancellation;
 - health-state aggregation, stale/unknown components, per-market data freshness, and no test-order side effects;
@@ -139,10 +149,10 @@ Tests must not be skipped/xfail'd, thresholds lowered, or gates bypassed.
 
 ## 8. Unresolved decisions — do not guess
 
-1. Which Futures exchanges will be supported? Exchange-specific connectivity/readiness cannot be completed until the owner names them.
+1. Which Futures exchanges will be supported? Exchange-specific connectivity, API permission validation, and account-mode verification remain blocked until the owner names them.
 2. What is the exact authorization role model: owner-only administrator, additional administrators, and what ordinary authorized users may do?
-3. Does the 100-user cap count only active authorized users, or also pending invitations? Proposed default: active authorized users only, with pending invitations not yet permitted to trade.
-4. Should users be able to trade independently under their own exchange accounts, or are they authorized users of one owner-controlled account? This affects account isolation and must be decided before any multi-user execution design.
+3. Does configured capacity count only active authorized users, or also pending invitations? Proposed default: active users only; pending invitations cannot trade.
+4. What is the capital-allocation basis (available balance or equity), the maximum percentage strictly below 100%, and does it cap a capital pool or total concurrent exposure? These values must be explicitly selected and must never default to the full balance.
 5. What is the required confirmation flow for enabling global automation and for disabling it? Proposed safe default: confirm enable; allow disable immediately after server-side authorization.
 6. Which language(s) should the menu and health messages support? Proposed initial default: Persian.
 
