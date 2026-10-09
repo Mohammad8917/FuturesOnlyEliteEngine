@@ -179,6 +179,43 @@ def test_accounting_success_and_entry_type_branches():
     assert loss.asset_balances == {"USD": Decimal("0")}
 
 
+@pytest.mark.parametrize(
+    ("family", "valid_denomination", "invalid_denomination"),
+    [
+        (ContractFamily.LINEAR, "USD", "BTC"),
+        (ContractFamily.INVERSE, "BTC", "USD"),
+    ],
+)
+def test_realized_pnl_accounting_denomination_matches_contract_family(
+    family, valid_denomination, invalid_denomination
+):
+    spec = FuturesAccountingSpecification(Market.CRYPTO, instrument(family))
+    journal = spec.realized_pnl(
+        journal_id="pnl-valid",
+        causation_id="cause",
+        state_version=1,
+        sequence=1,
+        account_id="account",
+        pnl_amount=Decimal("1"),
+        denomination=valid_denomination,
+    )
+    assert {entry.asset for entry in journal.entries} == {valid_denomination}
+
+    with pytest.raises(
+        AccountingValidationError,
+        match="realized PnL denomination must match the contract-family PnL asset",
+    ):
+        spec.realized_pnl(
+            journal_id="pnl-invalid",
+            causation_id="cause",
+            state_version=1,
+            sequence=1,
+            account_id="account",
+            pnl_amount=Decimal("1"),
+            denomination=invalid_denomination,
+        )
+
+
 def test_contract_validation_and_inverse_calculation_branches():
     base = dict(
         market=Market.CRYPTO,

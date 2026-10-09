@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
 
-from .instrument import FuturesInstrumentIdentity, Market
+from .instrument import ContractFamily, FuturesInstrumentIdentity, Market
 
 
 class AccountingValidationError(ValueError):
@@ -228,6 +228,18 @@ class FuturesAccountingSpecification:
     ) -> FuturesAccountingJournal:
         """Account an explicit signed realized-PnL fact without recomputing it."""
         asset = _asset(denomination, "denomination")
+        family = self.instrument.symbol.contract_family
+        if family is ContractFamily.LINEAR:
+            expected_denomination = self.instrument.symbol.quote_asset
+        elif family is ContractFamily.INVERSE:
+            expected_denomination = self.instrument.symbol.base_asset
+        else:
+            raise AccountingValidationError("unsupported contract family")
+        if asset != expected_denomination:
+            raise AccountingValidationError(
+                "realized PnL denomination must match the contract-family PnL asset"
+            )
+
         value = _decimal(pnl_amount, "pnl_amount")
         if value == 0:
             raise AccountingValidationError(
