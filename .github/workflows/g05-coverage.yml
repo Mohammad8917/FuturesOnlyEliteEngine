@@ -41,10 +41,11 @@ jobs:
         run: |
           python -m pytest -q \
             --cov=contracts/futures \
+            --cov=domain/futures \
             --cov-report=term-missing:skip-covered \
             --cov-report=xml:coverage.xml \
             --cov-fail-under=98 \
-            tests/contracts
+            tests/contracts tests/domain
 
       - name: Independently enforce the 98 percent coverage floor
         if: always()
@@ -59,7 +60,7 @@ jobs:
           if-no-files-found: error
 
 # G05 is the immutable >=98% official coverage gate.
-# Coverage is measured against production Futures contract code; no source exclusions,
+# Coverage is measured against production Futures contract and domain code; no source exclusions,
 # omit rules, threshold reduction, skip/xfail, artificial tests, or assertion weakening
 # may be introduced to make the gate green.
 # G05 is independent from G03 contract completeness and G08 mutation >=90%.
