@@ -32,6 +32,9 @@ jobs:
       - name: Install test dependencies
         run: python -m pip install --disable-pip-version-check --no-input -r requirements-ci.txt
 
+      - name: Test fail-closed coverage XML guard
+        run: python -m pytest -q tests/architecture/test_g05_coverage_guard.py
+
       - name: Measure Futures contract coverage
         env:
           PYTHONPATH: .
