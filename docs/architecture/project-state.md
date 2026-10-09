@@ -20,17 +20,17 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: PR #35 owner review/merge and main-branch same-SHA verification
 - Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until PR #35 is reviewed/merged and main is verified
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit
-- Current HEAD: refresh from GitHub; this document's SHA is a snapshot/evidence reference, never an authority over live repository HEAD
+- Candidate branch HEAD verified during this snapshot: `f75e3500e41c313182df55425066f9fb11ee6906` (PR #35, checked against live GitHub Actions); `main` remains `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`. This is a dated evidence snapshot, not a substitute for refreshing live HEAD before any later transition.
 - Main baseline SHA: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`
 - Main baseline evidence: G01, G03, G04, G05, Phase 1, and Architecture Invariants jobs completed successfully on that SHA. However, the G05 log for run `37850090486` prints `FAIL Required test coverage of 98% not reached. Total coverage: 97.83%` while the job conclusion is success. Therefore that main-branch G05 result is NOT acceptable evidence and must not be treated as a valid pass.
 - Audit candidate: PR #35, branch `hardening/eight-rules-conformance`; refresh its HEAD before relying on any SHA.
-- Candidate evidence baseline: on SHA `f7c9a4af23ffbed83b7dc99227639a4378841e80`, G01, G02, G03, G04, G05, G06, G08, Phase 1, and Architecture Invariants all completed successfully on the same exact SHA. G05 remained at or above the immutable 98% floor; G08 measured 94.91% (317 killed / 334 non-skipped mutants), above the immutable 90% floor.
-- G01: Ruff lint/format and dependency-architecture checks passed on the candidate evidence SHA.
-- G02: strict Pyright passed on the candidate evidence SHA for production `contracts/` and `validation/`. Runtime guards remain required; only the `reportUnnecessaryIsInstance` style diagnostic is disabled because static annotations do not replace runtime input validation. All type-safety diagnostics remain errors.
-- G03/G04/G05/Phase 1/Architecture Invariants: passed on the candidate evidence SHA. G05 independently calculates exact line coverage from XML counts and fails below 98%; it does not trust rounded `line-rate`.
-- G06: dependency audit, Bandit, and tracked-file secret scan passed on the candidate evidence SHA. The workflow runs on every repository change.
+- Candidate evidence baseline refreshed: on exact PR #35 HEAD SHA `f75e3500e41c313182df55425066f9fb11ee6906`, push-event and pull-request-event runs for G01, G02, G03, G04, G05, G06, G08, Phase 1, and Architecture Invariants all completed successfully. G05 independently measured `1227/1252 = 98.003195%` (above the immutable >=98% floor); G08 measured `317 killed / 334 non-skipped mutants = 94.91%` (above the immutable >=90% floor). G07 is explicitly NOT complete/green because the operational layers and integration/resilience suites are absent.
+- G01: Ruff lint/format and dependency-architecture checks passed on candidate SHA `f75e3500e41c313182df55425066f9fb11ee6906`.
+- G02: strict Pyright passed on candidate SHA `f75e3500e41c313182df55425066f9fb11ee6906` for production `contracts/` and `validation/` (0 errors, 0 warnings, 0 informations). Runtime guards remain required; only the `reportUnnecessaryIsInstance` style diagnostic is disabled because static annotations do not replace runtime input validation. All type-safety diagnostics remain errors.
+- G03/G04/G05/Phase 1/Architecture Invariants: passed on candidate SHA `f75e3500e41c313182df55425066f9fb11ee6906`. G05 independently calculates exact line coverage from XML counts and fails below 98%; it does not trust rounded `line-rate`.
+- G06: dependency audit, Bandit, and tracked-file secret scan passed on candidate SHA `f75e3500e41c313182df55425066f9fb11ee6906`. The workflow runs on every repository change.
 - G07: the fail-closed integration/resilience workflow is defined and path-triggered for operational-layer changes. It is NOT a completed integration gate because `domain/`, `application/`, `shared/`, `risk/`, `execution/`, `infrastructure/`, `adapters/`, `configuration/`, `tests/integration/`, and `tests/resilience/` do not yet exist. It must not be represented as green.
-- G08: a valid run on SHA `eb803314cf66b46b9924ed0ad9f97a844c02314c` scored 64.07% and failed. Stronger validation-helper tests raised the score to 94.91% (317/334) on SHA `f7c9a4af23ffbed83b7dc99227639a4378841e80`; this meets the 90% floor.
+- G08: a valid earlier run on SHA `eb803314cf66b46b9924ed0ad9f97a844c02314c` scored 64.07% and failed. Stronger validation-helper tests raised the score to 94.91% (317/334) on the refreshed candidate SHA `f75e3500e41c313182df55425066f9fb11ee6906`; this meets the immutable 90% floor.
 - Present repository scope: canonical Futures contracts, validation, tests, architecture documents, and CI workflows. Fifteen exchange adapters, operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
 - Branch protection/ruleset status: GitHub API access returned 403 during this audit, so enforcement could not be confirmed. This is not evidence that protection is absent; the repository owner must verify required reviews and status checks.
 - Active work: owner review/merge of PR #35, then verification of the resulting main SHA. Live Actions checks on the current HEAD are authoritative; any failed applicable gate reopens the audit.
@@ -53,7 +53,7 @@ Whenever this file is updated, record:
 - forbidden actions
 - open architecture questions
 - open architecture questions: None identified in the bounded Phase 0 deep audit.
-- evidence references: main baseline G05 false-green log run `37850090486`; candidate G01/G02/G03/G04/G05/Phase 1/Architecture evidence SHA `914c17097993487522ab0a468c09620c387b7a63` is historical candidate evidence only; current branch SHA must be refreshed.
+- evidence references: main baseline G05 false-green log run `37850090486`; refreshed PR #35 candidate evidence SHA `f75e3500e41c313182df55425066f9fb11ee6906`; G05 run `37864412308` (`1227/1252 = 98.003195%`), G08 run `37864412277` (`317/334 = 94.91%`), G02 run `37864412315` (0 type errors). The current branch HEAD must still be refreshed before any later phase/gate transition.
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
 ## Phase 0 exit criteria
