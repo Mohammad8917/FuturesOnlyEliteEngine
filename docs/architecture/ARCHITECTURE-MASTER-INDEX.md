@@ -139,7 +139,7 @@ Phase 1 is complete only when every required contract has a production implement
 
 ## 10.2 Phase 1 execution cursor
 
-**Current cursor:** Phase 1 candidate completeness/evidence audit is closed on the latest verified candidate snapshot recorded in `docs/architecture/project-state.md` → `Current authoritative state`; PR #35 owner review/merge is pending, followed by same-SHA verification on `main`. Phase 2+ remains blocked until that governance step is complete. Do not treat a historical SHA in this index as current evidence.
+**Current cursor:** Phase 1 candidate completeness/evidence audit is closed on the latest verified candidate snapshot recorded in `docs/architecture/project-state.md` → `Current authoritative state`; PR #35 independent review/merge is pending, followed by same-SHA verification on `main`. Live branch metadata confirms `main` is unprotected (`protected=false`, status-check enforcement off); issue #36 tracks administrator action. Phase 2+ remains blocked until governance, platform protection, and exact-SHA verification are complete. Do not treat a historical SHA in this index as current evidence.
 
 The minimum Phase 1 canonical contract units have been implemented and the candidate-branch completeness/evidence audit is recorded as closed in the current authoritative project state. This is a candidate-branch result only: it does not establish that the same result is merged or verified on `main`. The active next step is the PR #35 owner-review/authorized-merge gate, followed by verification of applicable checks on the exact resulting `main` SHA and correction of the historical G05 false-green on `main`.
 

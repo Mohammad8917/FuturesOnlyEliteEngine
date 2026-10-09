@@ -44,7 +44,7 @@ The repository administrator must configure GitHub branch protection/rulesets fo
 8. Administrator bypass disabled where GitHub plan/settings permit it.
 9. Ruleset administration restricted to repository administrators.
 
-The repository is **not technically locked** until these platform controls are enabled and verified.
+The repository is **not technically locked** until these platform controls are enabled and verified. Live metadata on 2026-10-09 confirmed `main.protected=false`, `protection.enabled=false`, and required status-check enforcement `off`; the Rulesets API returned no rulesets. Treat this as a confirmed P0 defect, not an unknown state. Track and resolve it via [issue #36](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/issues/36), then re-read the live platform configuration before declaring lock.
 
 ## Phase 1 accounting / settlement-accounting semantic lock
 
