@@ -141,15 +141,17 @@ Phase 1 is complete only when every required contract has a production implement
 
 **Current cursor:** Phase 1 candidate completeness/evidence audit is closed on the latest verified candidate snapshot recorded in `docs/architecture/project-state.md` → `Current authoritative state`; PR #35 owner review/merge is pending, followed by same-SHA verification on `main`. Phase 2+ remains blocked until that governance step is complete. Do not treat a historical SHA in this index as current evidence.
 
-The instrument identity and canonical Futures symbol unit is evidenced complete on the current main lineage. The next incomplete authorized Phase 1 unit must be completed through the full implementation-unit path:
+The minimum Phase 1 canonical contract units have been implemented and the candidate-branch completeness/evidence audit is recorded as closed in the current authoritative project state. This is a candidate-branch result only: it does not establish that the same result is merged or verified on `main`. The active next step is the PR #35 owner-review/authorized-merge gate, followed by verification of applicable checks on the exact resulting `main` SHA and correction of the historical G05 false-green on `main`.
+
+The full implementation-unit evidence path remains mandatory for any newly authorized contract work:
 
 Responsibility → Owner → Inputs → Outputs → Units/Precision/UTC → Allowed Dependencies → Forbidden Dependencies → Linear/Inverse Applicability → Market Applicability → Failure Semantics → Test Boundary → Downstream Consumers → Implementation → Test → CI → Same-SHA Evidence.
 
-The cursor is not satisfied by documentation alone. Phase 1 remains incomplete until every canonical contract unit closes this evidence path.
+No new Phase 1 unit or Phase 2+ production implementation may be inferred from this index while the current project-state gate remains pending. Documentation alone is never evidence of implementation or CI success.
 
 ## 11. Current project control
 The current project state is Phase 1 — Domain Contracts. Phase 0 — Architecture Baseline / Governance Final Audit is CLOSED, and Phase 1 is authorized. Phase 2+ remains blocked until each preceding phase exit criteria is evidenced.
-The next action is always the first incomplete authorized item — never a redesign and never a downstream implementation.
+The next action must follow `docs/architecture/project-state.md` → `Current authoritative state`. At this snapshot it is owner review/authorized merge of PR #35 and exact-SHA verification on `main`, not another contract unit or Phase 2 implementation.
 
 Continue the map, not reinvent the map.
 
