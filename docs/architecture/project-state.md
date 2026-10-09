@@ -18,7 +18,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: PR #35 owner review/merge and main-branch same-SHA verification
 - Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until PR #35 is reviewed/merged and `main` is verified on the exact resulting SHA. While PR #35 remains open, only Phase 1 candidate hardening is authorized.
 - PR: [#35 — Harden Futures-only contracts and enforce G01–G08 quality gates](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/35), branch `hardening/eight-rules-conformance`.
-- Candidate PR HEAD checked before this state refresh: `481585d341b8aa34a4405e89eca9ddc48c5cac1f`.
+- Candidate PR HEAD checked before this state refresh: `ae04e48362663576108fc3b39ef1de5b98a894f2` (includes the active-cursor alignment in `ARCHITECTURE-MASTER-INDEX.md`; this new HEAD requires fresh CI).
 - Base/main SHA at the time of this check: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`.
 - Latest verified candidate evidence currently available before this state refresh: PR HEAD `481585d341b8aa34a4405e89eca9ddc48c5cac1f`; synthetic merge-test SHA `d6864a74186a50dd8151a4dcf9ca93e6091cc468`. The following applicable candidate checks completed successfully on that synthetic merge-test SHA:
   - G01: [run 37908114641](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114641)
