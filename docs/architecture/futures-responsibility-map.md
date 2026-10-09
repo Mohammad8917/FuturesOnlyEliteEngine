@@ -631,3 +631,12 @@ Cross-journal idempotency and durable sequence enforcement remain downstream per
 ## Current-state authority and historical-transition control
 
 Historical phase-unit entries in this document preserve chronology. Their earlier “active unit”, “next authorized unit”, or “next step” wording is not live authorization and must not override `docs/architecture/project-state.md` → `Current authoritative state`. The Phase 1 candidate completeness/evidence audit is recorded as closed on the candidate branch only; PR #35 owner review/authorized merge and exact-resulting-SHA verification on `main` remain pending. Phase 2+ production implementation stays blocked until those governance and `main` verification steps are complete and the historical G05 false-green is corrected. No gate skip, threshold reduction, test weakening, or Spot operational path is permitted.
+
+## Approved ADR-0001 — phase-scoped G07 applicability
+
+Approved ADR-0001 resolves G07 applicability without weakening its quality requirement:
+
+- While Phase 1 Domain Contracts only is explicitly authorized and no operational layer exists, operational G07 is **NOT APPLICABLE (not passed)**. A separate required applicability check validates this classification; the operational G07 job is skipped and must not be represented as green/passed or operational readiness.
+- If any operational layer or operational test scope appears, G07 becomes applicable and must fail closed until all required layers and meaningful `tests/integration/` and `tests/resilience/` suites exist and pass.
+- The applicability classifier is a required governance check, not a substitute for G07 evidence. No gate is deleted, threshold lowered, test weakened, or result relabeled.
+- G05 remains >= 98%; G08 remains >= 90%. Phase 2+ remains blocked until PR #35 review/authorized merge and exact-resulting-SHA verification on `main`, including correction of the historical G05 false-green.

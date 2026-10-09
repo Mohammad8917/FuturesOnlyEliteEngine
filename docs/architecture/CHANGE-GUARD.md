@@ -97,3 +97,12 @@ Historical phase-unit entries in this document preserve chronology. Their earlie
 ## Phase-scoped gate applicability hold — 2026-10-09
 
 On candidate SHA `458079b915cc6395f266675b13b4893b323cf55b`, G07 fails closed because later-phase production layers and integration/resilience suites are absent. This conflicts operationally with the rule that Phase 2+ is blocked until PR #35 merges, while the workflow runs G07 on every PR. Proposed ADR-0001 documents the unresolved applicability decision. No gate may be skipped or weakened, no placeholder implementation may be added, and no Phase 2+ work or merge authorization may be inferred until the owner reviews/reconfirms the proposal and the resulting same-SHA checks are verified.
+
+## Approved ADR-0001 — phase-scoped G07 applicability
+
+Approved ADR-0001 resolves G07 applicability without weakening its quality requirement:
+
+- While Phase 1 Domain Contracts only is explicitly authorized and no operational layer exists, operational G07 is **NOT APPLICABLE (not passed)**. A separate required applicability check validates this classification; the operational G07 job is skipped and must not be represented as green/passed or operational readiness.
+- If any operational layer or operational test scope appears, G07 becomes applicable and must fail closed until all required layers and meaningful `tests/integration/` and `tests/resilience/` suites exist and pass.
+- The applicability classifier is a required governance check, not a substitute for G07 evidence. No gate is deleted, threshold lowered, test weakened, or result relabeled.
+- G05 remains >= 98%; G08 remains >= 90%. Phase 2+ remains blocked until PR #35 review/authorized merge and exact-resulting-SHA verification on `main`, including correction of the historical G05 false-green.

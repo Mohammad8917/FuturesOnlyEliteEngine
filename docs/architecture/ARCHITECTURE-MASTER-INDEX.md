@@ -723,3 +723,12 @@ Historical phase-unit entries in this document preserve chronology. Their earlie
 ## Current gate applicability reconciliation — 2026-10-09
 
 PR #35 candidate HEAD `458079b915cc6395f266675b13b4893b323cf55b` has green Architecture Invariants, Phase 1, G01–G06, and G08 evidence; G07 is red because later-phase operational layers and integration/resilience suites are absent. Since Phase 2+ is blocked pending the PR #35 governance/merge step, the all-PR G07 workflow currently creates a phase-applicability conflict. Proposed ADR-0001 records the question for owner review; it is not approved and does not authorize skipping G07, placeholder code, merge, or Phase 2. Current authorization remains controlled by project-state.md.
+
+## Approved ADR-0001 — phase-scoped G07 applicability
+
+Approved ADR-0001 resolves G07 applicability without weakening its quality requirement:
+
+- While Phase 1 Domain Contracts only is explicitly authorized and no operational layer exists, operational G07 is **NOT APPLICABLE (not passed)**. A separate required applicability check validates this classification; the operational G07 job is skipped and must not be represented as green/passed or operational readiness.
+- If any operational layer or operational test scope appears, G07 becomes applicable and must fail closed until all required layers and meaningful `tests/integration/` and `tests/resilience/` suites exist and pass.
+- The applicability classifier is a required governance check, not a substitute for G07 evidence. No gate is deleted, threshold lowered, test weakened, or result relabeled.
+- G05 remains >= 98%; G08 remains >= 90%. Phase 2+ remains blocked until PR #35 review/authorized merge and exact-resulting-SHA verification on `main`, including correction of the historical G05 false-green.

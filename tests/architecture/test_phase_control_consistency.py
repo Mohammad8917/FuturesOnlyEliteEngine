@@ -35,8 +35,8 @@ def test_phase_control_documents_are_consistent() -> None:
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
     assert (
-        "- Current gate: resolve the Phase 1/G07 applicability contradiction through "
-        "owner-reviewed ADR proposal, then perform PR #35 owner review/authorized "
+        "- Current gate: implement approved ADR-0001 phase-scoped G07 applicability and verify checks through "
+        "same-SHA CI, then perform PR #35 required review/authorized "
         "merge and exact-resulting-SHA verification on `main`" in state
     )
     assert (
@@ -48,8 +48,8 @@ def test_phase_control_documents_are_consistent() -> None:
         in state
     )
     assert (
-        "- Active work: resolve the proposed phase-scoped G07 applicability decision "
-        "through required owner review; PR #35 remains open and unmerged." in state
+        "- Active work: implement the approved phase-scoped G07 applicability decision "
+        "through regression tests and CI; PR #35 remains open and unmerged." in state
     )
     assert (
         "- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged"
@@ -138,3 +138,16 @@ def test_phase_control_documents_are_consistent() -> None:
 
     assert "not technically locked" in change_guard
     assert "not the architectural contract" in state
+
+
+def test_g07_phase_applicability_is_explicit_and_fail_closed() -> None:
+    workflow = (ROOT / ".github" / "workflows" / "g07-integration-resilience.yml").read_text(encoding="utf-8")
+    adr = (ARCH / "adr" / "ADR-0001-phase-scoped-gate-applicability.md").read_text(encoding="utf-8")
+    state = _read("project-state.md")
+    assert "- **Status:** APPROVED" in adr
+    assert "NOT APPLICABLE (not passed)" in adr
+    assert "G07 NOT APPLICABLE" in workflow
+    assert "G07 has NOT passed" in workflow
+    assert "if: needs.applicability.outputs.operational_scope == 'true'" in workflow
+    assert "Phase 1 Domain Contracts only" in state
+    assert "Phase 2+ production implementation remains blocked" in state

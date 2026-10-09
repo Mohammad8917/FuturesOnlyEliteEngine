@@ -15,7 +15,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Operational Spot: FORBIDDEN. No Spot operational path or fallback.
 - Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit closed on the last verified candidate snapshot; merge-to-main verification remains outstanding.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit.
-- Current gate: resolve the Phase 1/G07 applicability contradiction through owner-reviewed ADR proposal, then perform PR #35 owner review/authorized merge and exact-resulting-SHA verification on `main`
+- Current gate: implement approved ADR-0001 phase-scoped G07 applicability, verify applicable checks on the exact candidate SHA, then perform required PR #35 review/authorized merge and exact-resulting-SHA verification on `main`
 - Implementation phase authorized: YES — Phase 1 Domain Contracts only
 - Phase 2+ production implementation remains blocked until PR #35 is reviewed/merged and `main` is verified on the exact resulting SHA, including resolution of the historical G05 false-green.
 - PR: [#35 — Harden Futures-only contracts and enforce G01–G08 quality gates](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/35), branch `hardening/eight-rules-conformance`.
@@ -25,17 +25,17 @@ This is project state, not the architectural contract. Architectural rules remai
 - The earlier PR-event green set on synthetic merge SHA `424a4d19c35ab18fc861562694f8c68c9d7a5ce3` is historical only and superseded. Current candidate `e5edf972df36d1f7684be138d9daaf05b3da6637` has fresh runs in progress/completing; a subsequent state update itself creates another SHA, so recheck the exact live HEAD before relying on any result.
 - G08 measured 94.91% (317 killed / 334 non-skipped mutants) on the last fully verified candidate; the 90% floor remains unchanged.
 - G05 independently calculates exact line coverage from XML counts and must fail closed below 98%.
-- G07: INCOMPLETE / NOT GREEN on candidate HEAD `458079b915cc6395f266675b13b4893b323cf55b`. The G07 workflow correctly refuses to claim integration/resilience readiness because `application/`, `risk/`, `execution/`, `infrastructure/`, `adapters/`, `configuration/`, `tests/integration/`, and `tests/resilience/` are absent. This creates an unresolved phase-applicability conflict: Phase 2+ production work is blocked until PR #35 merges, while the all-PR G07 workflow requires later-phase operational layers. Do not skip G07, create placeholders, or authorize Phase 2 by inference. Proposed ADR `docs/architecture/adr/ADR-0001-phase-scoped-gate-applicability.md` records the decision for owner review; it is PROPOSED, not approved.
+- G07 applicability: approved ADR-0001 permits Phase 1-only scope to classify operational G07 as NOT APPLICABLE (not passed) only when no operational layer exists and project-state explicitly authorizes Phase 1 only. A separate applicability check must report that G07 has NOT passed. If any operational layer/test scope appears, G07 becomes applicable and must fail closed until all required layers and meaningful integration/resilience tests pass. No operational readiness is claimed.
 - Main baseline: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`. Historical G05 run [37850090486](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37850090486) printed coverage failure at 97.83% while reporting job success. Treat this as a confirmed false-green defect; it remains unresolved on `main` until corrected and verified on the resulting main SHA.
 - Current repository scope is canonical Futures contracts, validation, tests, architecture documentation, and CI. Fifteen exchange adapters, live/automated operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
 - Branch-protection/ruleset enforcement remains UNVERIFIED because the connected GitHub API returned 403. The repository owner must verify platform settings; API access failure does not prove protection is absent.
 - Review state at last check: no submitted PR #35 reviews. PR metadata reports mergeable=true; owner review/approval is still outstanding. Do not fabricate approval or merge without required owner review.
-- Active work: resolve the proposed phase-scoped G07 applicability decision through required owner review; PR #35 remains open and unmerged.
-- Immediate active subtask: owner reviews/reconfirms ADR-0001; then follow its approved decision without weakening any gate. Only afterward proceed with PR #35 review/authorized merge and exact resulting `main` SHA verification, including the G05 historical false-green correction.
+- Active work: implement and verify approved ADR-0001 applicability behavior and regression tests; PR #35 remains open and unmerged pending required review.
+- Immediate active subtask: verify ADR-0001 workflow/test implementation on one exact candidate SHA; then obtain required PR #35 review/authorized merge and verify applicable checks on exact resulting `main` SHA, including the historical G05 false-green correction.
 - Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged and `main` is verified on one exact SHA; claiming G07 complete or production readiness; treating candidate CI as proof that `main` is fixed.
 - Forbidden: direct-main changes, architecture redesign without an actual violation and approved ADR, Spot fallback, hard-coded secrets/configuration, binary-float financial inputs, implicit rounding, skipped/xfail tests, threshold reductions, coverage exclusions/suppressions solely to pass, and gate/review bypasses.
 - Required quality floors remain immutable: G05 >= 98%; G08 >= 90%. On the last fully verified candidate `27fe85819a681574e167addd164365c93b452ebe`, G05 is 98.003195% and G08 is 94.91%.
-- Next authorized action: owner decision on proposed ADR-0001 because current G07 is red and gate applicability for a Phase 1 contract PR is not unambiguously specified. Do not merge or start Phase 2+ production implementation until governance is resolved. Then verify applicable gates on the exact resulting `main` SHA and resolve historical G05 false-green.
+- Next authorized action: finish implementation and same-SHA verification of approved ADR-0001 applicability handling; then required PR #35 review/authorized merge and exact resulting `main` verification. Phase 2+ remains blocked until those conditions and the historical G05 false-green correction are verified.
 - Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative. Historical/snapshot evidence alone never proves current HEAD is green.
 - Snapshot rule: old evidence references to `32f8baa0cdadc3d5d22602ad333a9f57906d07c0` and `27fe85819a681574e167addd164365c93b452ebe` are historical. Current candidate HEAD was `e5edf972df36d1f7684be138d9daaf05b3da6637` at this reconciliation; this state update creates a new HEAD and requires fresh GitHub Actions checks. Do not advance a phase based on historical or candidate-only evidence.
 
@@ -52,7 +52,7 @@ Whenever this file is updated, record:
 - next authorized action
 - forbidden actions
 - open architecture questions
-- open architecture questions: (1) Phase-scoped applicability of G07 to a Phase 1 Domain Contracts PR while Phase 2+ operational layers are explicitly blocked; see proposed ADR-0001. This is a current phase/gate governance ambiguity, not permission to skip G07 or lower standards.
+- Open architecture questions: none remain for the Phase 1/G07 applicability conflict; approved ADR-0001 governs it. Implementation, CI verification, PR review/merge, and exact-main-SHA verification remain outstanding.
 - evidence references: historical main G05 false-green run `37850090486`; last fully verified candidate before this state update `27fe85819a681574e167addd164365c93b452ebe`. The current state-file update creates a new HEAD, so refresh live HEAD and checks before treating the snapshot as current.
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
@@ -643,3 +643,12 @@ Phase 1 final completeness and same-SHA evidence are VERIFIED on pre-snapshot SH
 ## Current candidate evidence reconciliation — 2026-10-09
 
 The latest candidate HEAD before this reconciliation was `458079b915cc6395f266675b13b4893b323cf55b`. On that exact SHA, Architecture Invariants, Phase 1 Domain Contracts, G01, G02, G03, G04, G05, G06, and G08 passed; G05 independently measured `1227/1252 = 98.003195%`; G08 measured `317/334 = 94.91%` with zero timeouts. G07 failed closed because the production layers and integration/resilience suites listed above do not exist. Push evidence: G01 `37921911974`, G02 `37921911938`, G03 `37921912068`, G04 `37921911935`, G05 `37921911869`, G06 `37921911951`, G07 `37921912053`, G08 `37921912025`, Phase 1 `37921911857`, Architecture Invariants `37921911944`. These results are candidate-only and do not establish main-branch status. This state reconciliation creates a new HEAD; fresh same-SHA CI is mandatory.
+
+## Approved ADR-0001 — phase-scoped G07 applicability
+
+Approved ADR-0001 resolves G07 applicability without weakening its quality requirement:
+
+- While Phase 1 Domain Contracts only is explicitly authorized and no operational layer exists, operational G07 is **NOT APPLICABLE (not passed)**. A separate required applicability check validates this classification; the operational G07 job is skipped and must not be represented as green/passed or operational readiness.
+- If any operational layer or operational test scope appears, G07 becomes applicable and must fail closed until all required layers and meaningful `tests/integration/` and `tests/resilience/` suites exist and pass.
+- The applicability classifier is a required governance check, not a substitute for G07 evidence. No gate is deleted, threshold lowered, test weakened, or result relabeled.
+- G05 remains >= 98%; G08 remains >= 90%. Phase 2+ remains blocked until PR #35 review/authorized merge and exact-resulting-SHA verification on `main`, including correction of the historical G05 false-green.

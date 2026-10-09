@@ -75,22 +75,22 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     )
     assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
     assert "G05 independently calculates exact line coverage from XML counts" in state
-    assert "Next authorized action: owner decision on proposed ADR-0001" in state
+    assert "Next authorized action: implement and verify approved ADR-0001" in state
     assert "G07: INCOMPLETE / NOT GREEN" in state
     assert (
-        "Do not skip G07, create placeholders, or authorize Phase 2 by inference."
+        "No operational readiness is claimed."
         in state
     )
     adr = (ARCH / "adr" / "ADR-0001-phase-scoped-gate-applicability.md").read_text(
         encoding="utf-8"
     )
     assert (
-        "- **Status:** PROPOSED — owner review and explicit reconfirmation required"
+        "- **Status:** APPROVED — owner-directed decision on 2026-10-09; implementation and same-SHA verification pending"
         in adr
     )
     expected_adr_hold = (
         "No migration or workflow modification is authorized while this ADR is "
-        "PROPOSED."
+        "APPROVED."
     )
     assert expected_adr_hold in adr
     assert "No gate is silently skipped, relabeled green, weakened, or bypassed." in adr

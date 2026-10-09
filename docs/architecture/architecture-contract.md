@@ -589,6 +589,15 @@ Historical phase-unit entries in this document preserve chronology. Their earlie
 G02 uses strict Pyright mode and keeps type-safety diagnostics as errors. The `reportUnnecessaryIsInstance` style diagnostic alone is disabled because static annotations do not guarantee that untrusted Python callers obey those annotations at runtime; the explicit fail-closed runtime guards are required and covered by contract tests. This setting is not permission to remove runtime validation or suppress any other type diagnostic.
 
 
-## Current gate applicability finding — 2026-10-09
+## Approved phase-scoped G07 applicability — 2026-10-09
 
-The official G07 quality floor remains unchanged: integration/resilience and failure-path evidence is required for the applicable completed operational scope. Candidate SHA `458079b915cc6395f266675b13b4893b323cf55b` correctly fails G07 because the required operational layers and test suites are absent. The unresolved question is whether/how that release-readiness gate applies to the Phase 1 contract-only PR while Phase 2+ remains blocked pending merge-to-main governance. Proposed ADR-0001 records the question only; it is not approved and does not weaken G07, authorize a skip, or declare production readiness.
+Approved ADR-0001 resolves applicability without changing G07's quality floor. Phase 1-only scope may classify operational G07 as NOT APPLICABLE (not passed) only when no operational layers exist and project-state explicitly blocks Phase 2+. A separate applicability check must prove this classification; the operational G07 job remains skipped and is not green/passed. Any operational scope activates G07, which fails closed until all required layers and meaningful integration/resilience suites exist and pass. No production-readiness claim is permitted from a Phase 1 N/A classification.
+
+## Approved ADR-0001 — phase-scoped G07 applicability
+
+Approved ADR-0001 resolves G07 applicability without weakening its quality requirement:
+
+- While Phase 1 Domain Contracts only is explicitly authorized and no operational layer exists, operational G07 is **NOT APPLICABLE (not passed)**. A separate required applicability check validates this classification; the operational G07 job is skipped and must not be represented as green/passed or operational readiness.
+- If any operational layer or operational test scope appears, G07 becomes applicable and must fail closed until all required layers and meaningful `tests/integration/` and `tests/resilience/` suites exist and pass.
+- The applicability classifier is a required governance check, not a substitute for G07 evidence. No gate is deleted, threshold lowered, test weakened, or result relabeled.
+- G05 remains >= 98%; G08 remains >= 90%. Phase 2+ remains blocked until PR #35 review/authorized merge and exact-resulting-SHA verification on `main`, including correction of the historical G05 false-green.
