@@ -40,8 +40,8 @@ jobs:
           PYTHONPATH: .
         run: |
           python -m pytest -q \
-            --cov=contracts/futures \
-            --cov=domain/futures \
+            --cov=contracts.futures \
+            --cov=domain.futures \
             --cov-report=term-missing:skip-covered \
             --cov-report=xml:coverage.xml \
             --cov-fail-under=98 \
