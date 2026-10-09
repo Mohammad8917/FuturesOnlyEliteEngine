@@ -46,37 +46,68 @@ def _dotted_name(node: ast.AST) -> str | None:
 
 
 def _test_weakening_markers(path: Path) -> list[str]:
-    """Find common pytest skip/xfail APIs without matching explanatory strings."""
+    """Find pytest skip/xfail APIs, including common import and module aliases."""
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     except (OSError, SyntaxError, UnicodeDecodeError) as exc:
         return [f"{path}: cannot inspect test source: {exc}"]
 
     offenders: list[str] = []
+    pytest_aliases = {"pytest"}
+    mark_aliases = {"pytest.mark"}
+    imported_marker_aliases: set[str] = set()
+
     for node in ast.walk(tree):
-        if isinstance(node, ast.ImportFrom) and node.module == "pytest":
+        if isinstance(node, ast.Import):
             for alias in node.names:
+                if alias.name == "pytest":
+                    pytest_aliases.add(alias.asname or "pytest")
+        elif isinstance(node, ast.ImportFrom) and node.module == "pytest":
+            for alias in node.names:
+                local_name = alias.asname or alias.name
                 if alias.name in FORBIDDEN_TEST_MARKERS:
                     offenders.append(
                         f"{path}:{node.lineno}: imports pytest.{alias.name}"
                     )
-        elif isinstance(node, ast.Attribute):
+                    imported_marker_aliases.add(local_name)
+                elif alias.name == "mark":
+                    mark_aliases.add(local_name)
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Attribute):
             dotted = _dotted_name(node)
-            if (
-                dotted
-                and dotted.startswith("pytest.")
-                and node.attr in FORBIDDEN_TEST_MARKERS
-            ):
+            if dotted is None:
+                continue
+            root = dotted.split(".", maxsplit=1)[0]
+            is_pytest_module_api = (
+                root in pytest_aliases and node.attr in FORBIDDEN_TEST_MARKERS
+            )
+            is_pytest_mark_api = (
+                root in mark_aliases and node.attr in FORBIDDEN_TEST_MARKERS
+            )
+            if is_pytest_module_api or is_pytest_mark_api:
                 offenders.append(f"{path}:{node.lineno}: references {dotted}")
-        elif isinstance(node, ast.Name) and node.id in FORBIDDEN_TEST_MARKERS:
-            # Catch direct imports aliased to the same local identifier.
-            if any(
-                isinstance(parent, ast.ImportFrom)
-                and parent.module == "pytest"
-                and any(alias.name == node.id for alias in parent.names)
-                for parent in ast.walk(tree)
-            ):
-                offenders.append(f"{path}:{node.lineno}: references pytest.{node.id}")
+        elif isinstance(node, ast.Name) and node.id in imported_marker_aliases:
+            offenders.append(
+                f"{path}:{node.lineno}: references imported pytest marker "
+                f"alias {node.id}"
+            )
+        elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            # Also catch getattr(pytest_alias, "skip") and
+            # getattr(pytest_mark_alias, "skipif") style indirection.
+            if node.func.id == "getattr" and len(node.args) >= 2:
+                target = node.args[0]
+                marker = node.args[1]
+                if (
+                    isinstance(target, ast.Name)
+                    and target.id in pytest_aliases | mark_aliases
+                    and isinstance(marker, ast.Constant)
+                    and marker.value in FORBIDDEN_TEST_MARKERS
+                ):
+                    offenders.append(
+                        f"{path}:{node.lineno}: dynamically accesses pytest "
+                        f"marker {marker.value}"
+                    )
     return sorted(set(offenders))
 
 
