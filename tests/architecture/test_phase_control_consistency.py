@@ -141,8 +141,12 @@ def test_phase_control_documents_are_consistent() -> None:
 
 
 def test_g07_phase_applicability_is_explicit_and_fail_closed() -> None:
-    workflow = (ROOT / ".github" / "workflows" / "g07-integration-resilience.yml").read_text(encoding="utf-8")
-    adr = (ARCH / "adr" / "ADR-0001-phase-scoped-gate-applicability.md").read_text(encoding="utf-8")
+    workflow = (
+        ROOT / ".github" / "workflows" / "g07-integration-resilience.yml"
+    ).read_text(encoding="utf-8")
+    adr = (
+        ARCH / "adr" / "ADR-0001-phase-scoped-gate-applicability.md"
+    ).read_text(encoding="utf-8")
     state = _read("project-state.md")
     assert "- **Status:** APPROVED" in adr
     assert "NOT APPLICABLE (not passed)" in adr

@@ -88,11 +88,7 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
         "- **Status:** APPROVED — owner-directed decision on 2026-10-09; implementation and same-SHA verification pending"
         in adr
     )
-    expected_adr_hold = (
-        "No migration or workflow modification is authorized while this ADR is "
-        "APPROVED."
-    )
-    assert expected_adr_hold in adr
+    assert "Implementation is authorized under this approved decision" in adr
     assert "No gate is silently skipped, relabeled green, weakened, or bypassed." in adr
     for relative in (
         "ARCHITECTURE-MASTER-INDEX.md",
