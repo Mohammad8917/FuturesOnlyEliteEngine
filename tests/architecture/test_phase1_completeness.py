@@ -88,12 +88,8 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
         "- **Status:** PROPOSED — owner review and explicit reconfirmation required"
         in adr
     )
-    assert (
-        "No workflow modification is authorized while this ADR is PROPOSED." in adr
-    )
-    assert (
-        "No gate is silently skipped, relabeled green, weakened, or bypassed." in adr
-    )
+    assert "No workflow modification is authorized while this ADR is PROPOSED." in adr
+    assert "No gate is silently skipped, relabeled green, weakened, or bypassed." in adr
     for relative in (
         "ARCHITECTURE-MASTER-INDEX.md",
         "master-roadmap-and-governance.md",
