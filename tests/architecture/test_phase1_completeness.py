@@ -77,6 +77,6 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
         in state
     )
     assert (
-        "No all-gates same-SHA pass is claimed for the closure snapshot commit yet."
+        "Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative"
         in state
     )

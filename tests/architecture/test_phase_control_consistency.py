@@ -52,7 +52,7 @@ def test_phase_control_documents_are_consistent() -> None:
         in state
     )
     assert (
-        "No all-gates same-SHA pass is claimed for the closure snapshot commit yet."
+        "Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative"
         in state
     )
 
