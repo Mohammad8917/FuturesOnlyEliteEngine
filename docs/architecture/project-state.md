@@ -37,6 +37,9 @@ This is project state, not the architectural contract. Architectural rules remai
 - Active work: keep the candidate PR evidence and architecture state aligned; obtain genuine owner review; after authorized merge, rerun/inspect all applicable checks on one exact `main` SHA and fix the G05 false-green before considering Phase 2 entry.
 - Blocked work: Phase 2+ production implementation, claiming G07 complete, claiming production readiness, and treating candidate CI as proof that `main` is fixed.
 - Forbidden: direct-main changes, architecture redesign without an actual violation and approved ADR, Spot fallback, hard-coded secrets/configuration, binary-float financial inputs, implicit rounding, skipped/xfail tests, threshold reductions, coverage exclusions/suppressions solely to pass, and gate/review bypasses.
+- Required regression-contract compatibility: G08 measured 94.91% (317 killed / 334 non-skipped mutants) on the prior verified candidate; G05 independently calculates exact line coverage from XML counts and must remain fail-closed at >= 98%.
+- Next authorized action: owner review/merge PR #35 after the current snapshot checks are green; do not merge without genuine owner review. After authorized merge, verify the resulting `main` SHA and resolve the historical G05 false-green before evaluating Phase 2 entry.
+- Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative; historical/snapshot evidence alone never proves the current HEAD is green.
 - Snapshot rule: this entry records the candidate evidence available immediately before this file update. This commit changes the candidate SHA; live GitHub Actions checks for the resulting PR HEAD are authoritative. Do not advance a phase based on this snapshot alone.
 
 ## Required state fields for every update
