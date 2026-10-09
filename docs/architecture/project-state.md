@@ -15,7 +15,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Operational Spot: FORBIDDEN. No Spot operational path or fallback.
 - Current phase: Phase 1 — Domain Contracts; candidate completeness/evidence audit is complete for the reviewed PR candidate, but merge-to-main verification is still outstanding.
 - Current gate: PR #35 requires genuine repository-owner review, authorized merge, then verification of all applicable gates on the exact resulting `main` SHA.
-- Authorized implementation: Phase 1 candidate hardening only while PR #35 remains open. Phase 2+ production implementation is BLOCKED until the owner-review/merge gate and same-SHA main verification pass.
+- Authorized implementation: Phase 1 candidate hardening only while PR #35 remains open. Phase 2+ production implementation remains blocked until the owner-review/merge gate and same-SHA main verification pass.
 - PR: [#35 — Harden Futures-only contracts and enforce G01–G08 quality gates](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/35), branch `hardening/eight-rules-conformance`.
 - Candidate HEAD checked before this state refresh: `3df0db9a5e0e2676fdf79b9f0114f350040d136d`.
 - Base/main SHA at the time of this check: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`.
