@@ -12,24 +12,26 @@ TESTS = Path("tests")
 # settlement-accounting). This is explicit ownership, not filename heuristics.
 TEST_OWNERS = {
     "instrument": {"test_instrument_identity.py"},
-    "contract_specification": {"test_contract_specification.py"},
-    "settlement": {"test_settlement.py"},
-    "margin": {"test_margin.py"},
-    "leverage": {"test_leverage.py"},
-    "initial_margin": {"test_initial_margin.py"},
-    "maintenance_margin": {"test_maintenance_margin.py"},
     "position_side": {"test_position_side_mode.py"},
     "position_mode": {"test_position_side_mode.py"},
     "price_quantity": {"test_price_quantity.py"},
-    "funding": {"funding_contract_test.py"},
-    "exposure": {"exposure_contract_test.py"},
-    "liquidation": {"liquidation_contract_test.py"},
-    "liquidation_event": {"liquidation_event_contract_test.py"},
-    "accounting": {"accounting_contract_test.py"},
-    "settlement_accounting": {"accounting_contract_test.py"},
 }
 
-DOMAIN_TEST_OWNERS = {"pnl": {"domain/futures/pnl_contract_test.py"}}
+DOMAIN_TEST_OWNERS = {
+    "contract_specification": {"domain/futures/test_contract_specification.py"},
+    "settlement": {"domain/futures/test_settlement.py"},
+    "margin": {"domain/futures/test_margin.py"},
+    "leverage": {"domain/futures/test_leverage.py"},
+    "initial_margin": {"domain/futures/test_initial_margin.py"},
+    "maintenance_margin": {"domain/futures/test_maintenance_margin.py"},
+    "funding": {"domain/futures/funding_contract_test.py"},
+    "exposure": {"domain/futures/exposure_contract_test.py"},
+    "liquidation": {"domain/futures/liquidation_contract_test.py"},
+    "liquidation_event": {"domain/futures/liquidation_event_contract_test.py"},
+    "accounting": {"domain/futures/accounting_contract_test.py"},
+    "settlement_accounting": {"domain/futures/accounting_contract_test.py"},
+    "pnl": {"domain/futures/pnl_contract_test.py"},
+}
 
 FORBIDDEN_TEST_MARKERS = {"skip", "skipif", "xfail", "importorskip"}
 

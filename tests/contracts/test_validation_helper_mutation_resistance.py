@@ -10,29 +10,29 @@ from decimal import Decimal
 
 import pytest
 
-from contracts.futures.accounting import (
+from domain.futures.accounting import (
     AccountingValidationError,
     _asset as accounting_asset,
     _decimal as accounting_decimal,
     _sequence as accounting_sequence,
     _text as accounting_text,
 )
-from contracts.futures.contract_specification import (
+from domain.futures.contract_specification import (
     ContractSpecificationValidationError,
     _decimal as contract_decimal,
     _positive_decimal as contract_positive_decimal,
 )
-from contracts.futures.exposure import (
+from domain.futures.exposure import (
     ExposureValidationError,
     _positive_decimal as exposure_positive_decimal,
     _utc as exposure_utc,
 )
-from contracts.futures.funding import (
+from domain.futures.funding import (
     FundingValidationError,
     _decimal as funding_decimal,
     _utc as funding_utc,
 )
-from contracts.futures.initial_margin import (
+from domain.futures.initial_margin import (
     InitialMarginValidationError,
     _asset as initial_margin_asset,
     _positive_decimal as initial_margin_positive_decimal,
@@ -41,27 +41,27 @@ from contracts.futures.instrument import (
     InstrumentValidationError,
     _asset as instrument_asset,
 )
-from contracts.futures.leverage import (
+from domain.futures.leverage import (
     LeverageValidationError,
     _positive_decimal as leverage_positive_decimal,
 )
-from contracts.futures.liquidation import (
+from domain.futures.liquidation import (
     LiquidationValidationError,
     _positive_decimal as liquidation_positive_decimal,
 )
-from contracts.futures.liquidation_event import (
+from domain.futures.liquidation_event import (
     LiquidationEventValidationError,
     _identifier as liquidation_event_identifier,
     _non_negative_integer as liquidation_event_non_negative_integer,
     _positive_decimal as liquidation_event_positive_decimal,
     _utc as liquidation_event_utc,
 )
-from contracts.futures.maintenance_margin import (
+from domain.futures.maintenance_margin import (
     MaintenanceMarginValidationError,
     _asset as maintenance_margin_asset,
     _positive_decimal as maintenance_margin_positive_decimal,
 )
-from contracts.futures.margin import (
+from domain.futures.margin import (
     MarginValidationError,
     _asset as margin_asset,
     _positive_decimal as margin_positive_decimal,
@@ -80,12 +80,12 @@ from contracts.futures.price_quantity import (
     PriceQuantityValidationError,
     _positive_decimal as price_quantity_positive_decimal,
 )
-from contracts.futures.settlement import (
+from domain.futures.settlement import (
     SettlementValidationError,
     _asset as settlement_asset,
     _positive_decimal as settlement_positive_decimal,
 )
-from contracts.futures.settlement_accounting import (
+from domain.futures.settlement_accounting import (
     _decimal as settlement_accounting_decimal,
     _sequence as settlement_accounting_sequence,
     _text as settlement_accounting_text,

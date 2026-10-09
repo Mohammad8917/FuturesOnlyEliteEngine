@@ -47,10 +47,10 @@ def test_phase1_has_production_and_test_boundaries() -> None:
     missing = []
     for production_names, test_name in PHASE1_BOUNDARIES:
         for production_name in production_names:
-            production_root = DOMAIN if production_name == "pnl" else CONTRACTS
+            production_root = DOMAIN if production_name in ("contract_specification", "settlement", "margin", "leverage", "initial_margin", "maintenance_margin", "funding", "exposure", "liquidation", "liquidation_event", "accounting", "settlement_accounting", "pnl") else CONTRACTS
             if not (production_root / f"{production_name}.py").is_file():
                 missing.append(f"production:{production_name}.py")
-        test_root = DOMAIN_TESTS if test_name == "pnl_contract_test.py" else TESTS
+        test_root = DOMAIN_TESTS if test_name in ("test_contract_specification.py", "test_settlement.py", "test_margin.py", "test_leverage.py", "test_initial_margin.py", "test_maintenance_margin.py", "funding_contract_test.py", "exposure_contract_test.py", "liquidation_contract_test.py", "liquidation_event_contract_test.py", "accounting_contract_test.py", "accounting_contract_test.py", "pnl_contract_test.py") else TESTS
         if not (test_root / test_name).is_file():
             missing.append(f"test:{test_name}")
     assert not missing, f"Incomplete Phase 1 boundaries: {missing}"

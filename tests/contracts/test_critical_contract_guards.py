@@ -5,8 +5,8 @@ from decimal import Decimal
 
 import pytest
 
-from contracts.futures.contract_specification import QuantityUnit
-from contracts.futures.exposure import (
+from domain.futures.contract_specification import QuantityUnit
+from domain.futures.exposure import (
     ExposureValidationError,
     FuturesExposureSpecification,
 )
