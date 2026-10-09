@@ -77,6 +77,31 @@ Required tests: no renewal on resend/duplicate; renewals only after successful f
 
 Review signal schema, strategy/application ownership, market-data freshness, clock/timezone, Risk Gate, execution intent, idempotency/reconciliation, audit ports, and Persian notification formatting. Add tests for each Hybrid branch, exactly-one selection, ambiguous conditions failing closed, required Persian fields, expiry boundary, resends, duplicate/concurrent attempts, analytical-signal non-executability, stale data, and Risk rejection.
 
+## Contract impact analysis — repository baseline
+
+Inspection baseline: `main` tree SHA `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2` (2026-10-09). This is a repository-tree inspection, not a claim that the feature is implemented or that CI is green.
+
+### Existing architecture evidence
+
+- The current `main` tree contains `contracts/futures/`, its contract tests, and authoritative architecture/governance documents.
+- The inspected `main` tree does not currently contain dedicated `application/futures/`, strategy/analysis, risk, execution, market-data, infrastructure exchange-adapter, or notification/Telegram implementation paths. Therefore, ADR-0005 must not pretend existing signal lifecycle or renewal services are available.
+- `docs/architecture/futures-responsibility-map.md` assigns pure Futures semantics to domain, orchestration to application, policy decisions to risk, gated order lifecycle/reconciliation/audit to execution, external transport/mapping to infrastructure, and signal analysis to strategy/analysis. Notifications are outputs only.
+- `docs/architecture/dependency-rules.md` prohibits strategy from submitting orders, prevents infrastructure dependencies from entering domain, and blocks implementation where a responsibility lacks one primary owner.
+- `docs/architecture/architecture-contract.md` requires Telegram/email notifications to remain non-authoritative and requires exchange/environment/account-specific values to come from validated configuration rather than hard-coded defaults.
+
+### Required implementation sequence before exchange-specific integration
+
+1. Define a transport-neutral signal/lifecycle contract: original UTC issuance time, immutable signal ID, selected entry type and entry zone, initial expiry, renewal count, status/reason, and audit correlation. Keep Persian formatting in the notification/presentation boundary, not in financial-domain decisions.
+2. Define deterministic reassessment and lifecycle transitions in the appropriate application/strategy contracts. Reassessment must use fresh normalized market facts and explicit approved criteria; missing/stale/contradictory facts fail closed.
+3. Define risk-decision and execution-intent boundaries separately. Strategy may recommend/select one candidate but cannot submit an order; only a valid entry condition plus a fresh positive Risk decision can produce an execution intent.
+4. Specify idempotent renewal and expiry transitions: resend is not renewal; renewal count is bounded at three; all renewals retain the original ID; the final expired renewal invalidates the signal; concurrent attempts cannot renew twice.
+5. Add contract, state-transition, concurrency/idempotency, expiry-boundary, stale-data, Risk rejection, notification rendering, and architecture-boundary tests. Preserve existing tests and all gate thresholds.
+6. Only when implementing instrument resolution, exchange market-data adapters, tick/lot/contract metadata, supported product mapping, or order transport may exchange-specific assumptions be introduced. At that boundary, implementation is paused until the owner supplies the target exchange name(s) and authoritative Futures instrument/specification details. No exchange, symbol support, tick size, leverage limit, or contract behavior may be guessed.
+
+### Impact-analysis conclusion
+
+The policy is documented, but the current `main` repository baseline has no implementation paths for the signal lifecycle and orchestration responsibilities listed above. Proceed with transport-neutral contracts and tests only where they can be made consistent with the authoritative architecture. Do not create an exchange adapter, assume a provider, or claim executable/production readiness before the owner supplies exchange selection and specifications. This impact analysis does not amend any frozen source-of-truth document and does not substitute for same-SHA CI evidence.
+
 ## Approval record
 
 - Safe Entry and Risky Entry: requested by owner.
