@@ -62,7 +62,11 @@ def _test_weakening_markers(path: Path) -> list[str]:
                     )
         elif isinstance(node, ast.Attribute):
             dotted = _dotted_name(node)
-            if dotted and dotted.startswith("pytest.") and node.attr in FORBIDDEN_TEST_MARKERS:
+            if (
+                dotted
+                and dotted.startswith("pytest.")
+                and node.attr in FORBIDDEN_TEST_MARKERS
+            ):
                 offenders.append(
                     f"{path}:{node.lineno}: references {dotted}"
                 )
