@@ -49,8 +49,15 @@ def test_phase_control_documents_are_consistent() -> None:
         in state
     )
     assert (
-        "- Active work: the G05 false-green correction and independent XML-threshold guard are implemented in PR #35 and pass on candidate `dd89723a658287c76ceb5e917abe5cbd768d403b`; PR #35 remains open and unmerged pending independent review. Platform protection for `main` is confirmed disabled; see issue #36. The state-file edit now requires a fresh exact-SHA CI run."
+        "- Active work: the G05 false-green correction and independent XML-threshold guard are implemented in PR #35"
         in state
+    )
+    assert (
+        "follow-up audit also replaced a no-op contract-family branch test with explicit fail-closed assertions"
+        in state
+    )
+    assert (
+        "Platform protection for `main` is confirmed disabled; see issue #36." in state
     )
     assert (
         "- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged"
