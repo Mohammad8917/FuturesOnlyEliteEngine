@@ -176,8 +176,8 @@ def test_g07_phase_applicability_is_explicit_and_fail_closed() -> None:
     assert "main.protected=false" in state
     assert "issues/36" in state
     assert "main.protected=false" in change_guard
-    assert "issues/36" in master_index
-    assert "issues/36" in roadmap
+    assert "issue #36" in master_index
+    assert "issue #36" in roadmap
     assert "independent required review/approval is outstanding" in state
     assert "if: needs.applicability.outputs.operational_scope == 'true'" in workflow
     assert "Phase 1 Domain Contracts only" in state
