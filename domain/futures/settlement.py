@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
 
-from .instrument import CanonicalFuturesSymbol, InstrumentValidationError, Market
+from contracts.futures.instrument import CanonicalFuturesSymbol, InstrumentValidationError, Market
 
 
 class SettlementValidationError(InstrumentValidationError):

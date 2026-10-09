@@ -6,8 +6,13 @@ from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from .contract_specification import QuantityUnit
 from .instrument import CanonicalFuturesSymbol, ContractFamily, Market
+
+
+class QuantityUnit(StrEnum):
+    """Canonical Futures order/position quantity unit."""
+
+    CONTRACTS = "CONTRACTS"
 
 
 class PriceQuantityValidationError(ValueError):

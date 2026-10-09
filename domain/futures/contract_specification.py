@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
-from enum import StrEnum
 
+from contracts.futures.price_quantity import QuantityUnit
 from contracts.futures.instrument import (
     CanonicalFuturesSymbol,
     ContractFamily,
@@ -20,12 +20,6 @@ from contracts.futures.instrument import (
 
 class ContractSpecificationValidationError(InstrumentValidationError):
     """Raised when a Futures contract specification is invalid or ambiguous."""
-
-
-class QuantityUnit(StrEnum):
-    """Canonical order/position quantity unit."""
-
-    CONTRACTS = "CONTRACTS"
 
 
 def _decimal(value: Decimal | int | str, field: str) -> Decimal:

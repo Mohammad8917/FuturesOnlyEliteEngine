@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from .instrument import (
+from contracts.futures.instrument import (
     CanonicalFuturesSymbol,
     FuturesInstrumentIdentity,
     InstrumentValidationError,
