@@ -1,6 +1,6 @@
 # ADR-0001: Phase-Scoped G07 Gate Applicability
 
-- **Status:** APPROVED — owner-directed decision on 2026-10-09; implementation and same-SHA verification pending
+- **Status:** APPROVED — implemented in PR #35; candidate checks must be reverified on every new SHA; independent review/authorized merge and final `main` verification pending
 - **Date:** 2026-10-09
 - **Proposer:** AI-assisted repository audit; repository owner is the decision authority
 
