@@ -15,10 +15,16 @@ def _coverage_xml(
     include_packages: bool = True,
     include_class: bool = True,
 ) -> str:
+    evidence_valid = max(lines_valid, 1)
+    evidence_covered = min(max(lines_covered, 0), evidence_valid)
+    lines_xml = "".join(
+        f'<line number="{number}" hits="{1 if number <= evidence_covered else 0}" />'
+        for number in range(1, evidence_valid + 1)
+    )
     class_xml = (
         '<class name="contract.py" filename="contracts/futures/contract.py" '
         'line-rate="0.98" branch-rate="0" complexity="0"><methods />'
-        '<lines><line number="1" hits="1" /></lines></class>'
+        f"<lines>{lines_xml}</lines></class>"
         if include_class
         else ""
     )
@@ -148,5 +154,21 @@ def test_g05_guard_fails_closed_when_package_has_no_class_evidence(
     assert (
         "G05 FAIL: coverage report is incomplete; "
         "at least one class with a filename is required"
+        in result.stdout
+    )
+
+
+def test_g05_guard_fails_closed_when_root_totals_disagree_with_class_evidence(
+    tmp_path: Path,
+) -> None:
+    report = _coverage_xml().replace('lines-covered="98"', 'lines-covered="99"')
+    (tmp_path / "coverage.xml").write_text(report, encoding="utf-8")
+
+    result = _run_guard(tmp_path)
+
+    assert result.returncode != 0
+    assert (
+        "G05 FAIL: coverage report root totals do not match "
+        "class-level line evidence"
         in result.stdout
     )
