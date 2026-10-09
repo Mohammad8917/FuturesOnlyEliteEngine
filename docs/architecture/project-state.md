@@ -18,18 +18,18 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: PR #35 owner review/merge and main-branch same-SHA verification
 - Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until PR #35 is reviewed/merged and `main` is verified on the exact resulting SHA. While PR #35 remains open, only Phase 1 candidate hardening is authorized.
 - PR: [#35 — Harden Futures-only contracts and enforce G01–G08 quality gates](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/35), branch `hardening/eight-rules-conformance`.
-- Candidate HEAD checked before this state refresh: `e916c7370c26d9767af49fce3a117a8e83c0ce38`.
+- Candidate PR HEAD checked before this state refresh: `481585d341b8aa34a4405e89eca9ddc48c5cac1f`.
 - Base/main SHA at the time of this check: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`.
-- Latest applicable PR-event synthetic merge-test SHA checked: `0f53faf3493b1dbaafc3e5ff8eb3b9f3de377d9e`. All applicable candidate checks listed below completed successfully on this SHA:
-  - G01: [run 37908008744](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908008744)
-  - G02: [run 37908008882](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908008882)
-  - G03: [run 37908008627](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908008627) — 530 tests passed.
-  - G04: [run 37908008783](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908008783)
-  - G05: [run 37908008621](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908008621) — exact XML count 1227/1252 = 98.003195%, above the immutable 98% floor.
-  - G06: [run 37908008605](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908008605)
-  - G08: [run 37908008571](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908008571) — 317 killed / 334 non-skipped mutants = 94.91%, 0 timed out, above the immutable 90% floor.
-  - Phase 1 Domain Contracts: [run 37908008619](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908008619)
-  - Architecture Invariants: [run 37908008721](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908008721)
+- Latest verified candidate evidence currently available before this state refresh: PR HEAD `481585d341b8aa34a4405e89eca9ddc48c5cac1f`; synthetic merge-test SHA `d6864a74186a50dd8151a4dcf9ca93e6091cc468`. The following applicable candidate checks completed successfully on that synthetic merge-test SHA:
+  - G01: [run 37908114641](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114641)
+  - G02: [run 37908114649](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114649)
+  - G03: [run 37908114664](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114664) — successful.
+  - G04: [run 37908114721](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114721)
+  - G05: [run 37908114726](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114726) — exact XML count 1227/1252 = 98.003195%, above the immutable 98% floor.
+  - G06: [run 37908114705](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114705)
+  - G08: [run 37908114669](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114669) — 317 killed / 334 non-skipped mutants = 94.91%, 0 timed out, above the immutable 90% floor.
+  - Phase 1 Domain Contracts: [run 37908114702](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114702)
+  - Architecture Invariants: [run 37908114671](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114671)
 - G07: INCOMPLETE / NOT GREEN. Required operational layers and `tests/integration/` plus `tests/resilience/` are not yet present. Do not claim integration/resilience completion or production readiness.
 - Main baseline: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`. Historical G05 run [37850090486](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37850090486) printed coverage failure at 97.83% while reporting job success. Treat this as a confirmed false-green defect; it remains unresolved on `main` until corrected and verified on the resulting main SHA.
 - Current repository scope is canonical Futures contracts, validation, tests, architecture documentation, and CI. Fifteen exchange adapters, live/automated operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
