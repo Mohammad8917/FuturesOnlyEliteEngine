@@ -74,8 +74,7 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
     assert (
         "G05 independently calculates exact line coverage from XML root counts "
-        "and class-level line evidence"
-        in state
+        "and class-level line evidence" in state
     )
     assert (
         "Next authorized action: complete same-SHA verification for the new candidate created by this update"
