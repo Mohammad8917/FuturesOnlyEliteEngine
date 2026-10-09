@@ -13,35 +13,27 @@ This is project state, not the architectural contract. Architectural rules remai
 - Product target: Elite Futures-Only Professional Trading Engine; Python 3.13; Windows Server, Linux Server, and Windows Home/Desktop.
 - Markets and contract families: CRYPTO Futures, FOREX Futures, GOLD Futures; Linear and Inverse Futures.
 - Operational Spot: FORBIDDEN. No Spot operational path or fallback.
-- Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit closed on the last verified candidate snapshot; merge-to-main verification remains outstanding.
-- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit
-- Current gate: PR #35 owner review/merge and main-branch same-SHA verification
-- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until PR #35 is reviewed/merged and `main` is verified on the exact resulting SHA. While PR #35 remains open, only Phase 1 candidate hardening is authorized.
+- Current phase: Phase 1 — Domain Contracts; candidate-branch completeness/evidence audit recorded closed; PR review/merge and main verification remain outstanding.
+- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit.
+- Current gate: PR #35 owner review/authorized merge, then exact-resulting-SHA verification on `main`.
+- Implementation phase authorized: YES — Phase 1 candidate hardening only while PR #35 is open; NO — Phase 2+ production implementation until owner review/authorized merge and same-SHA `main` verification, including resolution of the historical G05 false-green.
 - PR: [#35 — Harden Futures-only contracts and enforce G01–G08 quality gates](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/35), branch `hardening/eight-rules-conformance`.
-- Candidate PR HEAD checked before this state refresh: `ae04e48362663576108fc3b39ef1de5b98a894f2` (includes the active-cursor alignment in `ARCHITECTURE-MASTER-INDEX.md`; this new HEAD requires fresh CI).
-- Base/main SHA at the time of this check: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`.
-- Latest verified candidate evidence currently available before this state refresh: PR HEAD `481585d341b8aa34a4405e89eca9ddc48c5cac1f`; synthetic merge-test SHA `d6864a74186a50dd8151a4dcf9ca93e6091cc468`. The following applicable candidate checks completed successfully on that synthetic merge-test SHA:
-  - G01: [run 37908114641](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114641)
-  - G02: [run 37908114649](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114649)
-  - G03: [run 37908114664](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114664) — successful.
-  - G04: [run 37908114721](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114721)
-  - G05: [run 37908114726](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114726) — exact XML count 1227/1252 = 98.003195%, above the immutable 98% floor.
-  - G06: [run 37908114705](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114705)
-  - G08: [run 37908114669](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114669) — 317 killed / 334 non-skipped mutants = 94.91%, 0 timed out, above the immutable 90% floor.
-  - Phase 1 Domain Contracts: [run 37908114702](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114702)
-  - Architecture Invariants: [run 37908114671](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37908114671)
+- Candidate HEAD immediately before this state update: `3a517ea47e9fb86879187d8f4ba3d791bb7158aa`. This state update itself creates a new HEAD and therefore requires fresh CI.
+- Base/main SHA last observed: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`.
+- Last fully verified candidate SHA: `061948a8f772b1a33056eca8e50bd1375d5d9272`. Its latest PR-event checks passed: [G01 run 37910655392](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37910655392), [G02 run 37910655371](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37910655371), [G03 run 37910655358](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37910655358), [G04 run 37910655375](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37910655375), [G05 run 37910655414](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37910655414) with exact XML coverage 1227/1252 = 98.003195%, [G06 run 37910655464](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37910655464), [G08 run 37910655369](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37910655369) with 317/334 = 94.91% and zero timeouts, [Phase 1 run 37910655430](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37910655430), and [Architecture Invariants run 37910655383](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37910655383).
+- Current candidate HEAD `3a517ea47e9fb86879187d8f4ba3d791bb7158aa` has fresh checks pending at the last poll: [G01 run 37911835307](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37911835307), [G02 run 37911835296](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37911835296), [G04 run 37911835208](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37911835208), [G05 run 37911835201](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37911835201), [G06 run 37911835305](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37911835305), [G08 run 37911835253](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37911835253), [Phase 1 run 37911835241](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37911835241), and [Architecture Invariants run 37911835226](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37911835226). G03 PR-event run had not appeared at this poll. Do not treat pending checks as green.
 - G07: INCOMPLETE / NOT GREEN. Required operational layers and `tests/integration/` plus `tests/resilience/` are not yet present. Do not claim integration/resilience completion or production readiness.
 - Main baseline: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`. Historical G05 run [37850090486](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37850090486) printed coverage failure at 97.83% while reporting job success. Treat this as a confirmed false-green defect; it remains unresolved on `main` until corrected and verified on the resulting main SHA.
 - Current repository scope is canonical Futures contracts, validation, tests, architecture documentation, and CI. Fifteen exchange adapters, live/automated operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
-- Branch-protection/ruleset enforcement remains UNVERIFIED because the connected GitHub API returned 403. The repository owner must verify the platform settings; API access failure does not prove that protection is absent.
-- Review state at this check: no submitted PR #35 reviews. Do not fabricate approval or merge without the required owner review.
-- Active work: owner review/merge of PR #35; keep candidate evidence aligned and, after authorized merge, rerun applicable checks on one exact `main` SHA and fix the G05 false-green before considering Phase 2 entry.
+- Branch-protection/ruleset enforcement remains UNVERIFIED because the connected GitHub API returned 403. The repository owner must verify platform settings; API access failure does not prove protection is absent.
+- Review state at last check: no submitted PR #35 reviews. PR mergeability was reported false while new checks were pending; recheck live PR metadata before making any mergeability claim. Do not fabricate approval or merge without required owner review.
+- Active work: verify fresh checks on the candidate HEAD created by this state update, reconcile any merge conflict/mergeability issue, obtain genuine owner review, then authorized merge and same-SHA `main` verification.
 - Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged and `main` is verified on one exact SHA; claiming G07 complete or production readiness; treating candidate CI as proof that `main` is fixed.
 - Forbidden: direct-main changes, architecture redesign without an actual violation and approved ADR, Spot fallback, hard-coded secrets/configuration, binary-float financial inputs, implicit rounding, skipped/xfail tests, threshold reductions, coverage exclusions/suppressions solely to pass, and gate/review bypasses.
-- Required regression-contract compatibility: G08 measured 94.91% (317 killed / 334 non-skipped mutants) on the prior verified candidate; G05 independently calculates exact line coverage from XML counts and must remain fail-closed at >= 98%.
-- Next authorized action: owner review/merge PR #35 after the current snapshot checks are green; do not merge without genuine owner review. After authorized merge, verify the resulting `main` SHA and resolve the historical G05 false-green before evaluating Phase 2 entry.
-- Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative; historical/snapshot evidence alone never proves the current HEAD is green.
-- Snapshot rule: this entry records the candidate evidence available immediately before this file update. This commit changes the candidate SHA; live GitHub Actions checks for the resulting PR HEAD are authoritative. Do not advance a phase based on this snapshot alone.
+- Required quality floors remain immutable: G05 >= 98%; G08 >= 90%. Latest verified candidate results were G05 98.003195% and G08 94.91%.
+- Next authorized action: fresh CI verification on the updated candidate, fix any real conflict/failure without weakening standards, then owner review/authorized merge. After merge, verify all applicable gates on exact `main` SHA and resolve historical G05 false-green before evaluating Phase 2.
+- Live gate authority: current branch HEAD and its GitHub Actions check-runs are authoritative; historical/snapshot evidence alone never proves current HEAD is green.
+- Snapshot rule: this entry records the candidate evidence immediately before this file update. This commit changes the candidate SHA; fresh GitHub Actions checks for the resulting PR HEAD are authoritative. Do not advance a phase based on this snapshot alone.
 
 ## Required state fields for every update
 
@@ -57,7 +49,7 @@ Whenever this file is updated, record:
 - forbidden actions
 - open architecture questions
 - open architecture questions: None identified in the bounded Phase 0 deep audit.
-- evidence references: main baseline G05 false-green log run `37850090486`; latest PR-event synthetic merge-test SHA `23419d07e592c5585b8b6002cf208e74ea2960ea`; G05 run `37905770245` (`1227/1252 = 98.003195%`), G08 run `37905770246` (`317/334 = 94.91%`), G02 run `37905770337` (success). Current PR HEAD at this snapshot: `bf3c1479c6bb054584d3c40923329ebbab1d6264`; synthetic merge-test SHA `23419d07e592c5585b8b6002cf208e74ea2960ea`. Refresh live HEAD and checks after every state-file update.
+- evidence references: historical main G05 false-green run `37850090486`; last fully verified candidate SHA `061948a8f772b1a33056eca8e50bd1375d5d9272`; current candidate immediately before this state update `3a517ea47e9fb86879187d8f4ba3d791bb7158aa` with fresh CI pending. Refresh live HEAD and checks after every state-file update.
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
 ## Phase 0 exit criteria
