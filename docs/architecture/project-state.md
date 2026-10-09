@@ -8,38 +8,36 @@ This is project state, not the architectural contract. Architectural rules remai
 
 ## Current authoritative state
 
-- Repository: Mohammad8917/FuturesOnlyEliteEngine
-- Default branch: main
-- Product target: Elite Futures-Only Professional Trading Engine
-- Python runtime target: 3.13
-- Deployment target: Windows Server, Linux Server, Windows Home/Desktop
-- Required markets: CRYPTO Futures, FOREX Futures, GOLD Futures
-- Required contract families: Linear Futures and Inverse Futures
-- Operational Spot: FORBIDDEN; no Spot fallback or operational Spot path
-- Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit closed on the last verified candidate snapshot (see Candidate evidence baseline)
-- Current gate: PR #35 owner review/merge and main-branch same-SHA verification
-- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until PR #35 is reviewed/merged and main is verified
-- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit
-- Latest fully verified candidate snapshot before this state refresh: PR HEAD `bf3c1479c6bb054584d3c40923329ebbab1d6264`; synthetic PR merge-test SHA `23419d07e592c5585b8b6002cf208e74ea2960ea`; base/main SHA `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`. On that candidate snapshot, G01 run `37905770291`, G02 `37905770337`, G03 `37905770255`, G04 `37905770376`, G05 `37905770245`, G06 `37905770282`, G08 `37905770246`, Phase 1 Domain Contracts `37905770256`, and Architecture Invariants `37905770251` completed successfully. G03 ran 530 tests successfully, including dynamic pytest skip/xfail alias regression coverage. G05 independently measured exact line coverage from XML counts: `1227/1252 = 98.003195%`; G08 measured 94.91% (317 killed / 334 non-skipped mutants), with 0 timed out. G07 remains incomplete and is not green because required operational layers and integration/resilience suites are absent. These are candidate PR checks only, not evidence that `main` is fixed. This state-file refresh creates a new candidate SHA; refresh the live PR HEAD and check-runs before any phase/gate transition.
-- Main baseline SHA: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`
-- Main baseline evidence: G01, G03, G04, G05, Phase 1, and Architecture Invariants jobs completed successfully on that SHA. However, the G05 log for run `37850090486` prints `FAIL Required test coverage of 98% not reached. Total coverage: 97.83%` while the job conclusion is success. Therefore that main-branch G05 result is NOT acceptable evidence and must not be treated as a valid pass.
-- Audit candidate: PR #35, branch `hardening/eight-rules-conformance`; refresh its HEAD before relying on any SHA.
-- Previous historical applicable PR-event evidence (superseded by the latest candidate snapshot above): synthetic merge-test SHA `1596b87dffb826c926b461a0ec7431ed2b6cbca1`, PR HEAD `dcc1f06af5f64ce54830ca6f31bfb87bd5008b72`, base/main SHA `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`. G01 run `37901862921`, G02 `37901863113`, G03 `37901863045`, G04 `37901862920`, G05 `37901863030`, G06 `37901862969`, G08 `37901863158`, Phase 1 `37901862935`, and Architecture Invariants `37901862968` completed successfully. G05 independently measured `1227/1252 = 98.003195%`; G08 measured `317 killed + 0 timed out / 334 non-skipped mutants = 94.91%`. G07 was not triggered for that PR change set and remains NOT complete/green because operational layers and integration/resilience suites are absent. This evidence applies only to that PR synthetic merge-test SHA, not `main`.
-- G01: Ruff lint/format and dependency-architecture checks passed on the latest fully verified PR synthetic merge-test SHA `23419d07e592c5585b8b6002cf208e74ea2960ea` (run `37905770291`).
-- G02: strict Pyright passed on the latest fully verified PR synthetic merge-test SHA `23419d07e592c5585b8b6002cf208e74ea2960ea` (run `37905770337`). Runtime guards remain required; only the `reportUnnecessaryIsInstance` style diagnostic is disabled because static annotations do not replace runtime input validation. All type-safety diagnostics remain errors.
-- G03: passed on the latest PR synthetic merge-test SHA `23419d07e592c5585b8b6002cf208e74ea2960ea` (run `37905770255`), including G03 contract-test completeness. G04: passed on the latest SHA (run `37905770376`). G05: passed on the latest SHA (run `37905770245`); the exact XML-count measurement was `1227/1252 = 98.003195%`, with a strict 98% floor. Phase 1 Domain Contracts (run `37905770256`) and Architecture Invariants (run `37905770251`) also passed on the latest synthetic merge-test SHA.
-- G06: passed on the latest PR synthetic merge-test SHA `23419d07e592c5585b8b6002cf208e74ea2960ea` (run `37905770282`); the workflow includes dependency audit, Bandit, tracked-file secret scanning, and current/history secret scanning.
-- G07: the fail-closed integration/resilience workflow is defined and path-triggered for operational-layer changes. It is NOT a completed integration gate because `domain/`, `application/`, `shared/`, `risk/`, `execution/`, `infrastructure/`, `adapters/`, `configuration/`, `tests/integration/`, and `tests/resilience/` do not yet exist. It must not be represented as green.
-- G05 evidence contract: G05 independently calculates exact line coverage from XML counts and fails below 98%; it does not trust rounded `line-rate`. This is a permanent evidence invariant, not a coverage-threshold change.
-- G08: the latest successful applicable PR synthetic merge-test SHA `23419d07e592c5585b8b6002cf208e74ea2960ea` (run `37905770246`) produced the exact evidence string: G08 measured 94.91% (317 killed / 334 non-skipped mutants). The detailed metric is 317 killed + 0 timed out out of 334 non-skipped mutants = 94.91%, above the immutable 90% floor. This is historical candidate evidence and must not be mistaken for a pass on a newer SHA; rerun G08 on the current candidate.
-- Present repository scope: canonical Futures contracts, validation, tests, architecture documents, and CI workflows. Fifteen exchange adapters, operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
-- Branch protection/ruleset status: GitHub API access returned 403 during this audit, so enforcement could not be confirmed. This is not evidence that protection is absent; the repository owner must verify required reviews and status checks.
-- Active work: owner review/merge of PR #35
-- Governance detail: merge only under CHANGE-GUARD and verify every applicable gate on the resulting main SHA. Latest completed PR-event checks passed on merge-test SHA `23419d07e592c5585b8b6002cf208e74ea2960ea` for PR HEAD `bf3c1479c6bb054584d3c40923329ebbab1d6264`; review query returned no submitted reviews. Live Actions checks are authoritative; any failed applicable gate reopens the audit.
-- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged and main is verified on one exact SHA. G07 becomes applicable when operational layers or integration/resilience tests change.
-- Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative; the SHA listed above is the last verified candidate snapshot. Never infer green from this document alone.
-- Next authorized action: owner review/merge PR #35 after the current snapshot checks are green, with the repository owner performing the required review under CHANGE-GUARD. Do not merge without that review. After authorized merge, verify the resulting main SHA and investigate/fix main G05 false-green (historical reported coverage 97.83%) before evaluating Phase 2 entry.
-- Forbidden actions: no architecture redesign without an actual violation and approved ADR; no Spot operational path; no hardcoded secrets/configuration; no float financial inputs; no implicit rounding; no skipped/xfail tests; no threshold reduction; no exclusions or suppressions solely to obtain green; no gate bypass; no claim of production readiness before required layers and same-SHA evidence exist.
+- Repository: `Mohammad8917/FuturesOnlyEliteEngine`
+- Default branch: `main`
+- Product target: Elite Futures-Only Professional Trading Engine; Python 3.13; Windows Server, Linux Server, and Windows Home/Desktop.
+- Markets and contract families: CRYPTO Futures, FOREX Futures, GOLD Futures; Linear and Inverse Futures.
+- Operational Spot: FORBIDDEN. No Spot operational path or fallback.
+- Current phase: Phase 1 — Domain Contracts; candidate completeness/evidence audit is complete for the reviewed PR candidate, but merge-to-main verification is still outstanding.
+- Current gate: PR #35 requires genuine repository-owner review, authorized merge, then verification of all applicable gates on the exact resulting `main` SHA.
+- Authorized implementation: Phase 1 candidate hardening only while PR #35 remains open. Phase 2+ production implementation is BLOCKED until the owner-review/merge gate and same-SHA main verification pass.
+- PR: [#35 — Harden Futures-only contracts and enforce G01–G08 quality gates](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/35), branch `hardening/eight-rules-conformance`.
+- Candidate HEAD checked before this state refresh: `3df0db9a5e0e2676fdf79b9f0114f350040d136d`.
+- Base/main SHA at the time of this check: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`.
+- Latest applicable PR-event synthetic merge-test SHA checked: `2efa6b6cf77d57521e555e85aefe3cfbbad81ee2`. Applicable completed checks on that candidate were successful:
+  - G01: [run 37906066369](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37906066369)
+  - G02: [run 37906066165](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37906066165)
+  - G03: [run 37906066186](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37906066186) — 530 tests passed.
+  - G04: [run 37906066171](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37906066171)
+  - G05: [run 37906066154](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37906066154) — exact XML count 1227/1252 = 98.003195%, above the immutable 98% floor.
+  - G06: [run 37906066177](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37906066177)
+  - G08: [run 37906066192](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37906066192) — 317 killed / 334 non-skipped mutants = 94.91%, 0 timed out, above the immutable 90% floor.
+  - Phase 1 Domain Contracts: [run 37906066163](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37906066163)
+  - Architecture Invariants: [run 37906066167](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37906066167)
+- G07: INCOMPLETE / NOT GREEN. Required operational layers and `tests/integration/` plus `tests/resilience/` are not yet present. Do not claim integration/resilience completion or production readiness.
+- Main baseline: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`. Historical G05 run [37850090486](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37850090486) printed coverage failure at 97.83% while reporting job success. Treat this as a confirmed false-green defect; it remains unresolved on `main` until corrected and verified on the resulting main SHA.
+- Current repository scope is canonical Futures contracts, validation, tests, architecture documentation, and CI. Fifteen exchange adapters, live/automated operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
+- Branch-protection/ruleset enforcement remains UNVERIFIED because the connected GitHub API returned 403. The repository owner must verify the platform settings; API access failure does not prove that protection is absent.
+- Review state at this check: no submitted PR #35 reviews. Do not fabricate approval or merge without the required owner review.
+- Active work: keep the candidate PR evidence and architecture state aligned; obtain genuine owner review; after authorized merge, rerun/inspect all applicable checks on one exact `main` SHA and fix the G05 false-green before considering Phase 2 entry.
+- Blocked work: Phase 2+ production implementation, claiming G07 complete, claiming production readiness, and treating candidate CI as proof that `main` is fixed.
+- Forbidden: direct-main changes, architecture redesign without an actual violation and approved ADR, Spot fallback, hard-coded secrets/configuration, binary-float financial inputs, implicit rounding, skipped/xfail tests, threshold reductions, coverage exclusions/suppressions solely to pass, and gate/review bypasses.
+- Snapshot rule: this entry records the candidate evidence available immediately before this file update. This commit changes the candidate SHA; live GitHub Actions checks for the resulting PR HEAD are authoritative. Do not advance a phase based on this snapshot alone.
 
 ## Required state fields for every update
 
