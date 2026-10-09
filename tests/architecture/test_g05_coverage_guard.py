@@ -60,3 +60,27 @@ def test_g05_guard_fails_closed_on_invalid_line_counts(tmp_path: Path) -> None:
 
     assert result.returncode != 0
     assert "G05 FAIL: coverage report has invalid line counts" in result.stdout
+
+
+def test_g05_guard_fails_closed_when_root_is_not_coverage(tmp_path: Path) -> None:
+    (tmp_path / "coverage.xml").write_text(
+        '<not-coverage lines-covered="100" lines-valid="100" />',
+        encoding="utf-8",
+    )
+
+    result = _run_guard(tmp_path)
+
+    assert result.returncode != 0
+    assert "G05 FAIL: coverage report root element must be <coverage>" in result.stdout
+
+
+def test_g05_guard_fails_closed_on_malformed_xml(tmp_path: Path) -> None:
+    (tmp_path / "coverage.xml").write_text(
+        '<coverage lines-covered="100" lines-valid="100"',
+        encoding="utf-8",
+    )
+
+    result = _run_guard(tmp_path)
+
+    assert result.returncode != 0
+    assert "G05 FAIL: invalid coverage report:" in result.stdout

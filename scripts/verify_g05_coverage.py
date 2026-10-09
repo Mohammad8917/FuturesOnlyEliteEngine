@@ -15,6 +15,9 @@ def main() -> int:
 
     try:
         root = ET.parse(report).getroot()
+        if root.tag != "coverage":
+            print("G05 FAIL: coverage report root element must be <coverage>")
+            return 1
         lines_covered = int(root.attrib["lines-covered"])
         lines_valid = int(root.attrib["lines-valid"])
     except (ET.ParseError, KeyError, ValueError) as exc:
