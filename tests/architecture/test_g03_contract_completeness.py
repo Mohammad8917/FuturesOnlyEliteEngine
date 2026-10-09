@@ -1,9 +1,10 @@
 """G03 guard: every production Futures contract boundary has explicit test ownership."""
 
+import ast
 from pathlib import Path
 
 PRODUCTION = Path("contracts/futures")
-TESTS = Path("tests/contracts")
+TESTS = Path("tests")
 
 # Some boundaries are intentionally tested together because their semantics are
 # inseparable at this phase (for example position side + mode and accounting +
@@ -28,6 +29,54 @@ TEST_OWNERS = {
     "settlement_accounting": {"accounting_contract_test.py"},
 }
 
+FORBIDDEN_TEST_MARKERS = {"skip", "skipif", "xfail", "importorskip"}
+
+
+def _dotted_name(node: ast.AST) -> str | None:
+    """Return a dotted attribute/name path for statically inspectable syntax."""
+    parts: list[str] = []
+    current = node
+    while isinstance(current, ast.Attribute):
+        parts.append(current.attr)
+        current = current.value
+    if isinstance(current, ast.Name):
+        parts.append(current.id)
+        return ".".join(reversed(parts))
+    return None
+
+
+def _test_weakening_markers(path: Path) -> list[str]:
+    """Find common pytest skip/xfail APIs without matching explanatory strings."""
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    except (OSError, SyntaxError, UnicodeDecodeError) as exc:
+        return [f"{path}: cannot inspect test source: {exc}"]
+
+    offenders: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == "pytest":
+            for alias in node.names:
+                if alias.name in FORBIDDEN_TEST_MARKERS:
+                    offenders.append(
+                        f"{path}:{node.lineno}: imports pytest.{alias.name}"
+                    )
+        elif isinstance(node, ast.Attribute):
+            dotted = _dotted_name(node)
+            if dotted and dotted.startswith("pytest.") and node.attr in FORBIDDEN_TEST_MARKERS:
+                offenders.append(
+                    f"{path}:{node.lineno}: references {dotted}"
+                )
+        elif isinstance(node, ast.Name) and node.id in FORBIDDEN_TEST_MARKERS:
+            # Catch direct imports aliased to the same local identifier.
+            if any(
+                isinstance(parent, ast.ImportFrom)
+                and parent.module == "pytest"
+                and any(alias.name == node.id for alias in parent.names)
+                for parent in ast.walk(tree)
+            ):
+                offenders.append(f"{path}:{node.lineno}: references pytest.{node.id}")
+    return sorted(set(offenders))
+
 
 def test_every_futures_contract_has_explicit_test_ownership():
     production = {
@@ -43,7 +92,7 @@ def test_every_futures_contract_has_explicit_test_ownership():
             test_name
             for names in TEST_OWNERS.values()
             for test_name in names
-            if not (TESTS / test_name).is_file()
+            if not (TESTS / "contracts" / test_name).is_file()
         }
     )
     assert not missing_files, (
@@ -51,14 +100,13 @@ def test_every_futures_contract_has_explicit_test_ownership():
     )
 
 
-def test_contract_test_tree_contains_no_explicit_skip_or_xfail_markers():
-    offenders = []
-    for path in TESTS.glob("*.py"):
-        text = path.read_text(encoding="utf-8")
-        if (
-            "pytest.skip(" in text
-            or "pytest.mark.skip" in text
-            or "pytest.mark.xfail" in text
-        ):
-            offenders.append(str(path))
-    assert not offenders, f"G03 test weakening markers detected: {offenders}"
+def test_all_test_sources_contain_no_pytest_skip_or_xfail_apis():
+    offenders = sorted(
+        offender
+        for path in TESTS.rglob("*.py")
+        for offender in _test_weakening_markers(path)
+    )
+    assert not offenders, (
+        "G03 test weakening APIs are forbidden throughout the test tree:\n"
+        + "\n".join(offenders)
+    )
