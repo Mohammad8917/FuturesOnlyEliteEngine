@@ -50,8 +50,9 @@ def test_phase_control_documents_are_consistent() -> None:
         in state
     )
     assert (
-        "- Active work: implement and verify approved ADR-0001 applicability behavior "
-        "and regression tests; PR #35 remains open and unmerged pending required review."
+        "- Active work: synchronize current governance state and validate all applicable "
+        "CI on the final candidate SHA; PR #35 remains open and unmerged pending "
+        "independent review."
         in state
     )
     assert (
