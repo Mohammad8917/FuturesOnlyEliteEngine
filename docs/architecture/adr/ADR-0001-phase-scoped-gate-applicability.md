@@ -20,7 +20,7 @@ The approved phase-scoped gate applicability contract preserves all of the follo
 - G07 remains mandatory for the operational/integration scope to which it applies and must be green before the corresponding phase/release is declared complete.
 - No gate is silently skipped, relabeled green, weakened, or bypassed.
 - Phase 1 PR merge criteria must be explicit and cannot require implementation of a later phase that is itself blocked by that merge.
-- A non-applicable phase gate must be explicitly classified as non-applicable by an approved governance rule; it must not be treated as a passing G07 result.
+- In Phase 1-only scope with no operational layers, G07 is **NOT APPLICABLE (not passed)**; the applicability classifier must explicitly say G07 has NOT passed, and the operational G07 job must remain skipped rather than green/passed.
 - Once operational layers enter scope, G07 must fail closed until meaningful integration/resilience tests and failure-path evidence pass.
 
 This ADR authorizes only the narrow applicability implementation below. It does not authorize a gate bypass, a false-green G07 result, production readiness claims, Phase 2+ implementation, or PR merge without required review.
