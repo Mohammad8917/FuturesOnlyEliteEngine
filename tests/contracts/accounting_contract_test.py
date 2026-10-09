@@ -39,6 +39,7 @@ def accounting(family=ContractFamily.LINEAR):
 
 @pytest.mark.parametrize("family", list(ContractFamily))
 def test_realized_pnl_accounts_signed_fact_without_recomputing(family):
+    denomination = "USD" if family is ContractFamily.LINEAR else "BTC"
     positive = accounting(family).realized_pnl(
         journal_id="j-profit",
         causation_id="pnl-1",
@@ -46,9 +47,9 @@ def test_realized_pnl_accounts_signed_fact_without_recomputing(family):
         sequence=10,
         account_id="acct",
         pnl_amount=Decimal("12.50"),
-        denomination="USD",
+        denomination=denomination,
     )
-    assert positive.asset_balances == {"USD": Decimal("0")}
+    assert positive.asset_balances == {denomination: Decimal("0")}
     assert positive.entries[0].direction is AccountingDirection.DEBIT
     assert positive.entries[1].direction is AccountingDirection.CREDIT
 
@@ -59,9 +60,9 @@ def test_realized_pnl_accounts_signed_fact_without_recomputing(family):
         sequence=20,
         account_id="acct",
         pnl_amount=Decimal("-7.25"),
-        denomination="USD",
+        denomination=denomination,
     )
-    assert negative.asset_balances == {"USD": Decimal("0")}
+    assert negative.asset_balances == {denomination: Decimal("0")}
     assert negative.entries[0].ledger_account == "FUTURES_REALIZED_PNL"
 
 
@@ -172,7 +173,7 @@ def test_linear_and_inverse_remain_explicit_in_journal_identity():
         sequence=1,
         account_id="acct",
         pnl_amount=Decimal("1"),
-        denomination="USD",
+        denomination="BTC",
     )
     assert linear.entries[0].instrument.symbol.contract_family is ContractFamily.LINEAR
     assert (

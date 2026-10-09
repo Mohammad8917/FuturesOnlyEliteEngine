@@ -13,7 +13,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Product target: Elite Futures-Only Professional Trading Engine; Python 3.13; Windows Server, Linux Server, and Windows Home/Desktop.
 - Markets and contract families: CRYPTO Futures, FOREX Futures, GOLD Futures; Linear and Inverse Futures.
 - Operational Spot: FORBIDDEN. No Spot operational path or fallback.
-- Current phase: Phase 1 — Domain Contracts; the latest follow-up audit and candidate checks passed on pre-synchronization SHA `9295b7f1c873a7189d81db2273890f524ad98b1`; merge-to-main verification remains outstanding.
+- Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit closed on the last verified candidate snapshot; a follow-up financial-contract audit is correcting a realized-PnL denomination mismatch before merge-to-main verification.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit.
 - Current gate: obtain required independent review and authorized merge of PR #35; then verify all applicable checks on the exact resulting `main` SHA, confirm the independent G05 XML coverage-floor guard is active, and have an administrator verify branch protection/rulesets
 - Implementation phase authorized: YES — Phase 1 Domain Contracts only
