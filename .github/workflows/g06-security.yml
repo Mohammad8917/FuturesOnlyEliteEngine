@@ -2,19 +2,7 @@ name: G06 Security and Supply Chain
 
 on:
   push:
-    paths:
-      - "contracts/**"
-      - "validation/**"
-      - "tests/**"
-      - "requirements-ci.txt"
-      - ".github/workflows/**"
   pull_request:
-    paths:
-      - "contracts/**"
-      - "validation/**"
-      - "tests/**"
-      - "requirements-ci.txt"
-      - ".github/workflows/**"
   workflow_dispatch:
 
 permissions:
