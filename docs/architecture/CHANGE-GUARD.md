@@ -92,3 +92,8 @@ The Phase 1/G01/Architecture Invariants workflows pin `actions/setup-python` to 
 ## Current-state authority and historical-transition control
 
 Historical phase-unit entries in this document preserve chronology. Their earlier “active unit”, “next authorized unit”, or “next step” wording is not live authorization and must not override `docs/architecture/project-state.md` → `Current authoritative state`. The Phase 1 candidate completeness/evidence audit is recorded as closed on the candidate branch only; PR #35 owner review/authorized merge and exact-resulting-SHA verification on `main` remain pending. Phase 2+ production implementation stays blocked until those governance and `main` verification steps are complete and the historical G05 false-green is corrected. No gate skip, threshold reduction, test weakening, or Spot operational path is permitted.
+
+
+## Phase-scoped gate applicability hold — 2026-10-09
+
+On candidate SHA `458079b915cc6395f266675b13b4893b323cf55b`, G07 fails closed because later-phase production layers and integration/resilience suites are absent. This conflicts operationally with the rule that Phase 2+ is blocked until PR #35 merges, while the workflow runs G07 on every PR. Proposed ADR-0001 documents the unresolved applicability decision. No gate may be skipped or weakened, no placeholder implementation may be added, and no Phase 2+ work or merge authorization may be inferred until the owner reviews/reconfirms the proposal and the resulting same-SHA checks are verified.

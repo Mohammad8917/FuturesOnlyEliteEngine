@@ -445,3 +445,8 @@ Liquidation-price constraints are COMPLETE on implementation SHA `b8b65b721fcae5
 ## Phase 1 next-unit ADR gate — liquidation event and trigger semantics
 
 No architecture change is proposed. The next contract must preserve the distinction between a deterministic trigger condition and liquidation execution. It must explicitly define provenance/freshness, side/mode semantics, state lifecycle, idempotency/ordering/concurrency, dependencies, tests, CI, and same-SHA evidence. Any architecture change must use the ADR process before implementation. Exchange-specific mark-price/trigger/tier/fee/funding behavior must remain outside the canonical domain contract.
+
+
+## Proposed ADR-0001 — phase-scoped G07 applicability
+
+`ADR-0001-phase-scoped-gate-applicability.md` is a **PROPOSED** decision to resolve the conflict between the all-PR G07 workflow requiring later-phase operational layers and the rule blocking Phase 2+ until PR #35 is reviewed/merged. It is not approval. No workflow applicability changes, gate skips, placeholder implementations, merges, or Phase 2+ production work are authorized by this proposal alone.

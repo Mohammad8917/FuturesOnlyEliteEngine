@@ -587,3 +587,8 @@ Historical phase-unit entries in this document preserve chronology. Their earlie
 ## G02 Runtime Boundary Guard Rationale
 
 G02 uses strict Pyright mode and keeps type-safety diagnostics as errors. The `reportUnnecessaryIsInstance` style diagnostic alone is disabled because static annotations do not guarantee that untrusted Python callers obey those annotations at runtime; the explicit fail-closed runtime guards are required and covered by contract tests. This setting is not permission to remove runtime validation or suppress any other type diagnostic.
+
+
+## Current gate applicability finding — 2026-10-09
+
+The official G07 quality floor remains unchanged: integration/resilience and failure-path evidence is required for the applicable completed operational scope. Candidate SHA `458079b915cc6395f266675b13b4893b323cf55b` correctly fails G07 because the required operational layers and test suites are absent. The unresolved question is whether/how that release-readiness gate applies to the Phase 1 contract-only PR while Phase 2+ remains blocked pending merge-to-main governance. Proposed ADR-0001 records the question only; it is not approved and does not weaken G07, authorize a skip, or declare production readiness.

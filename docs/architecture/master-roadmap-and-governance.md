@@ -899,3 +899,8 @@ Cross-journal idempotency and durable sequence enforcement remain downstream per
 ## Current-state authority and historical-transition control
 
 Historical phase-unit entries in this document preserve chronology. Their earlier “active unit”, “next authorized unit”, or “next step” wording is not live authorization and must not override `docs/architecture/project-state.md` → `Current authoritative state`. The Phase 1 candidate completeness/evidence audit is recorded as closed on the candidate branch only; PR #35 owner review/authorized merge and exact-resulting-SHA verification on `main` remain pending. Phase 2+ production implementation stays blocked until those governance and `main` verification steps are complete and the historical G05 false-green is corrected. No gate skip, threshold reduction, test weakening, or Spot operational path is permitted.
+
+
+## Phase-scoped G07 applicability — governance hold (2026-10-09)
+
+Current candidate evidence shows G07 failing closed because operational layers and integration/resilience tests belonging to later implementation phases are absent. Phase 2+ remains blocked until PR #35 is reviewed/merged and `main` is verified, so the present all-PR G07 enforcement creates an unresolved gate-applicability cycle. Do not solve this by skipping G07, adding placeholders, weakening checks, or starting Phase 2 early. Proposed ADR-0001 records the decision requiring owner review/reconfirmation. Until it is approved, gate applicability and merge authorization must not be guessed.
