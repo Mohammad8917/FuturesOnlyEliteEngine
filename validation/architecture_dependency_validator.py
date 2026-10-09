@@ -27,7 +27,7 @@ ALLOWED: dict[str, set[str]] = {
     "contracts": set(),
     "application": {"domain", "contracts"},
     "risk": {"domain", "contracts"},
-    "execution": {"contracts", "domain", "risk", "infrastructure"},
+    "execution": {"contracts", "domain", "risk"},
     "infrastructure": {
         "application",
         "contracts",
