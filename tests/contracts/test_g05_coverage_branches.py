@@ -160,10 +160,16 @@ def test_contract_decimal_validation_branches(value):
         )
 
 
-def test_contract_family_fallback_branch_is_fail_closed(monkeypatch):
+def test_contract_family_fallback_branch_is_fail_closed():
     spec = contract()
-    object.__setattr__(spec.symbol, "contract_family", object()) if False else None
-    assert spec.notional(quantity=1, price=2) == Decimal("200")
+    # Corrupt the frozen symbol only to exercise the defensive unsupported-family
+    # branch, which ordinary validated construction correctly makes unreachable.
+    object.__setattr__(spec.symbol, "contract_family", "UNSUPPORTED")
+
+    with pytest.raises(ContractSpecificationValidationError, match="unsupported contract family"):
+        spec.notional(quantity=1, price=2)
+    with pytest.raises(ContractSpecificationValidationError, match="unsupported contract family"):
+        spec.base_exposure(quantity=1, price=2)
 
 
 def test_accounting_entry_and_journal_validation_branches():
