@@ -1,0 +1,61 @@
+name: Immutable Source-of-Truth Guard
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  immutable-source-of-truth:
+    name: Immutable Source-of-Truth (no edits permitted)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact PR head and base history
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Reject any modification to the eight governing documents
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test -n "${BASE_SHA}"
+          test -n "${HEAD_SHA}"
+          git cat-file -e "${BASE_SHA}^{commit}"
+          git cat-file -e "${HEAD_SHA}^{commit}"
+
+          protected_files=(
+            "docs/architecture/architecture-invariants.md"
+            "docs/architecture/architecture-contract.md"
+            "docs/architecture/dependency-rules.md"
+            "docs/architecture/futures-responsibility-map.md"
+            "docs/architecture/ARCHITECTURE-MASTER-INDEX.md"
+            "docs/architecture/master-roadmap-and-governance.md"
+            "docs/architecture/project-state.md"
+            "docs/architecture/CHANGE-GUARD.md"
+          )
+
+          changed_files="$(git diff --name-only --no-renames "${BASE_SHA}" "${HEAD_SHA}")"
+          violations=()
+
+          for protected_file in "${protected_files[@]}"; do
+            if grep -Fqx -- "${protected_file}" <<< "${changed_files}"; then
+              violations+=("${protected_file}")
+            fi
+          done
+
+          if (("${#violations[@]}" > 0)); then
+            printf '%s\n' "LOCK VIOLATION: the eight governing Source-of-Truth documents are immutable."
+            printf 'Changed protected file: %s\n' "${violations[@]}"
+            printf '%s\n' "Revert these document changes. This gate has no in-repository override."
+            exit 1
+          fi
+
+          printf '%s\n' "PASS: none of the eight governing Source-of-Truth documents was changed."
