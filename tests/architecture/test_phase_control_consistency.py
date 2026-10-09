@@ -35,10 +35,11 @@ def test_phase_control_documents_are_consistent() -> None:
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
     assert (
-        "- Current gate: obtain required independent review and authorized merge of PR #35; "
-        "then verify all applicable checks on the exact resulting `main` SHA, confirm the "
-        "independent G05 XML coverage-floor guard is active, and have an administrator "
-        "verify branch protection/rulesets" in state
+        "- Current gate: resolve P0 issue #37 under an owner-approved ADR, reconcile the "
+        "financial-calculation ownership mismatch in issue #38, obtain required independent "
+        "review and authorized merge of PR #35, then verify all applicable checks on the exact "
+        "resulting `main` SHA and have an administrator enable/verify branch protection/rulesets"
+        in state
     )
     assert (
         "- Implementation phase authorized: YES — Phase 1 Domain Contracts only"
@@ -49,13 +50,15 @@ def test_phase_control_documents_are_consistent() -> None:
         in state
     )
     assert (
-        "- Active work: the G05 false-green correction and independent XML-threshold guard are implemented in PR #35"
+        "- Active work: the historical G05 false-green correction and strengthened independent XML guard are implemented in PR #35"
         in state
     )
+    assert "P0 issue #37 requires an owner-approved Decimal arithmetic ADR" in state
     assert (
-        "A deeper financial-contract audit found that realized-PnL accounting did not enforce family-consistent denomination"
+        "P1 issue #38 tracks financial-calculation placement versus the declared domain/futures ownership"
         in state
     )
+    assert "its regression tests are now executed by the G05 workflow" in state
     assert (
         "Platform protection for `main` is confirmed disabled; see issue #36." in state
     )
