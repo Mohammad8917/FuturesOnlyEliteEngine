@@ -35,9 +35,10 @@ def test_phase_control_documents_are_consistent() -> None:
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
     assert (
-        "- Current gate: implement approved ADR-0001 phase-scoped G07 applicability and verify checks through "
-        "same-SHA CI, then perform PR #35 required review/authorized "
-        "merge and exact-resulting-SHA verification on `main`" in state
+        "- Current gate: implement approved ADR-0001 phase-scoped G07 applicability, "
+        "verify applicable checks on the exact candidate SHA, then perform required "
+        "PR #35 review/authorized merge and exact-resulting-SHA verification on `main`"
+        in state
     )
     assert (
         "- Implementation phase authorized: YES — Phase 1 Domain Contracts only"
