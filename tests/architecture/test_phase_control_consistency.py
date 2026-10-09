@@ -35,9 +35,10 @@ def test_phase_control_documents_are_consistent() -> None:
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
     assert (
-        "- Current gate: implement approved ADR-0001 phase-scoped G07 applicability, "
-        "verify applicable checks on the exact candidate SHA, then perform required "
-        "PR #35 review/authorized merge and exact-resulting-SHA verification on `main`"
+        "- Current gate: finish same-SHA verification after this source-of-truth "
+        "synchronization, obtain required independent PR #35 review/authorized merge, "
+        "then verify all applicable checks on the exact resulting `main` SHA and "
+        "resolve the historical G05 false-green"
         in state
     )
     assert (
@@ -153,13 +154,25 @@ def test_g07_phase_applicability_is_explicit_and_fail_closed() -> None:
     assert "- **Status:** APPROVED" in adr
     assert "NOT APPLICABLE (not passed)" in adr
     assert "G07 NOT APPLICABLE" in workflow
-    assert "Phase 1-only/no operational scope means G07 NOT APPLICABLE (not passed)" in master_index
-    assert "Proposed ADR-0001 records the question for owner review; it is not approved" not in master_index
-    assert "Until it is approved, gate applicability and merge authorization must not be guessed" not in roadmap
+    assert "G07 has NOT passed" in workflow
+    master_index = _read("ARCHITECTURE-MASTER-INDEX.md")
+    roadmap = _read("master-roadmap-and-governance.md")
+    change_guard = _read("CHANGE-GUARD.md")
+    assert (
+        "Phase 1-only/no operational scope means G07 NOT APPLICABLE (not passed)"
+        in master_index
+    )
+    assert (
+        "Proposed ADR-0001 records the question for owner review; it is not approved"
+        not in master_index
+    )
+    assert (
+        "Until it is approved, gate applicability and merge authorization must not be guessed"
+        not in roadmap
+    )
     assert "owner reviews/reconfirms the proposal" not in change_guard
     assert "Technical lock status: UNVERIFIED" in state
     assert "independent required review/approval is outstanding" in state
-    assert "G07 has NOT passed" in workflow
     assert "if: needs.applicability.outputs.operational_scope == 'true'" in workflow
     assert "Phase 1 Domain Contracts only" in state
     assert "Phase 2+ production implementation remains blocked" in state
