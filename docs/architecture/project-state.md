@@ -30,7 +30,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current repository scope is canonical Futures contracts, validation, tests, architecture documentation, and CI. Fifteen exchange adapters, live/automated operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
 - Technical lock status: **CONFIRMED UNPROTECTED** (live repository branch metadata, 2026-10-09): `main.protected=false`, `protection.enabled=false`, required status-check enforcement `off`; repository Rulesets API returned an empty list. This supersedes the earlier inconclusive 403 observation. P0 tracking issue: [#36 — Enable and verify mandatory protection for main](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/issues/36). An administrator must configure and re-read the actual controls in `CHANGE-GUARD.md`; until then the repository is not technically locked.
 - Review state at last check: no submitted PR #35 reviews. PR metadata reports mergeable=true; independent required review/approval is outstanding. Do not fabricate approval or merge without required review.
-- Active work: the G05 false-green correction and independent XML-threshold guard are implemented in PR #35 and pass on candidate `0854618c716324097fc3a862aa58d6630fc88919`; PR #35 remains open and unmerged pending independent review. Platform protection for `main` is confirmed disabled; see issue #36. The state-file edit now requires a fresh exact-SHA CI run.
+- Active work: the G05 false-green correction and independent XML-threshold guard are implemented in PR #35 and passed on candidate `0854618c716324097fc3a862aa58d6630fc88919`; a follow-up audit also replaced a no-op contract-family branch test with explicit fail-closed assertions for both notional and base-exposure paths. That follow-up and this state synchronization require fresh exact-SHA CI. PR #35 remains open and unmerged pending independent review. Platform protection for `main` is confirmed disabled; see issue #36.
 - Immediate active subtask: verify all checks on the new exact HEAD created by this state update; obtain independent PR #35 review and authorized merge; then verify the exact resulting `main` SHA and confirm the historical G05 false-green is no longer reproducible under the independent XML threshold guard. An administrator must enable and verify main branch protection per issue #36 before claiming technical lock.
 - Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged and `main` is verified on one exact SHA; claiming G07 complete or production readiness; treating candidate CI as proof that `main` is fixed.
 - Forbidden: direct-main changes, architecture redesign without an actual violation and approved ADR, Spot fallback, hard-coded secrets/configuration, binary-float financial inputs, implicit rounding, skipped/xfail tests, threshold reductions, coverage exclusions/suppressions solely to pass, and gate/review bypasses.
@@ -53,7 +53,7 @@ Whenever this file is updated, record:
 - forbidden actions
 - open architecture questions
 - Open architecture questions: none remain for the Phase 1/G07 applicability conflict; approved ADR-0001 governs it. Implementation, CI verification, PR review/merge, and exact-main-SHA verification remain outstanding.
-- evidence references: historical main G05 false-green run `37850090486`; last fully checked candidate before this state update `dd89723a658287c76ceb5e917abe5cbd768d403b`; exact run IDs are listed in `Current authoritative state`. This state-file update creates a new HEAD, so refresh live HEAD and checks before treating this snapshot as current.
+- evidence references: historical main G05 false-green run `37850090486`; last fully checked candidate before this state update `0854618c716324097fc3a862aa58d6630fc88919`; exact run IDs are listed in `Current authoritative state`. This state-file update creates a new HEAD, so refresh live HEAD and checks before treating this snapshot as current.
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
 ## Phase 0 exit criteria
@@ -635,12 +635,12 @@ The shared CI dependency lock `requirements-ci.txt` is an authoritative G01/Phas
 
 All Phase 1 sections below **Current authoritative state** are immutable historical transition/evidence records. Any historical wording such as “current cursor”, “next authorized unit”, or “active work” in those records describes the state at that recorded transition and is not a live authorization. Only **Current authoritative state** controls the present session. A phase/gate transition is valid only after the current repository evidence and same-SHA CI requirements are re-established.
 
-## Final Phase 1 evidence reconciliation — VERIFIED
+## Historical Phase 1 evidence reconciliation — VERIFIED on pre-snapshot SHA
 
 Phase 1 final completeness and same-SHA evidence are VERIFIED on pre-snapshot SHA `b18a6ef85dfa1c8c1dfd20c55300412d81151140`. G01=`37814347213`, Architecture Invariants=`37814347249`, and Phase 1 Domain Contracts=`37814347420` are completed successfully on that exact SHA. The state snapshot commit is evidence-bearing and must trigger a fresh same-SHA verification before this state is treated as current. No Phase 2+ production implementation is authorized until the G02 entry control is explicitly satisfied.
 
 
-## Current candidate evidence reconciliation — 2026-10-09
+## Historical candidate evidence reconciliation — 2026-10-09 (superseded by Current authoritative state)
 
 The latest candidate HEAD before this reconciliation was `458079b915cc6395f266675b13b4893b323cf55b`. On that exact SHA, Architecture Invariants, Phase 1 Domain Contracts, G01, G02, G03, G04, G05, G06, and G08 passed; G05 independently measured `1227/1252 = 98.003195%`; G08 measured `317/334 = 94.91%` with zero timeouts. G07 failed closed because the production layers and integration/resilience suites listed above do not exist. Push evidence: G01 `37921911974`, G02 `37921911938`, G03 `37921912068`, G04 `37921911935`, G05 `37921911869`, G06 `37921911951`, G07 `37921912053`, G08 `37921912025`, Phase 1 `37921911857`, Architecture Invariants `37921911944`. These results are candidate-only and do not establish main-branch status. This state reconciliation creates a new HEAD; fresh same-SHA CI is mandatory.
 
