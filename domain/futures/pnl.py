@@ -7,8 +7,8 @@ from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from .instrument import CanonicalFuturesSymbol, ContractFamily, Market
-from .position_side import PositionSide
+from contracts.futures.instrument import CanonicalFuturesSymbol, ContractFamily, Market
+from contracts.futures.position_side import PositionSide
 
 
 class PnLValidationError(ValueError):
