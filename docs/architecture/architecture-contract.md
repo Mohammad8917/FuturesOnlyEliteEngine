@@ -582,3 +582,8 @@ Cross-journal idempotency and durable sequence enforcement remain downstream per
 ## Current-state authority and historical-transition control
 
 Historical phase-unit entries in this document preserve chronology. Their earlier “active unit”, “next authorized unit”, or “next step” wording is not live authorization and must not override `docs/architecture/project-state.md` → `Current authoritative state`. Phase 2+ production implementation remains blocked until the Phase 1 completeness/evidence audit is explicitly closed with current repository evidence. No gate skip, threshold reduction, test weakening, or Spot operational path is permitted.
+
+
+## G02 Runtime Boundary Guard Rationale
+
+G02 uses strict Pyright mode and keeps type-safety diagnostics as errors. The `reportUnnecessaryIsInstance` style diagnostic alone is disabled because static annotations do not guarantee that untrusted Python callers obey those annotations at runtime; the explicit fail-closed runtime guards are required and covered by contract tests. This setting is not permission to remove runtime validation or suppress any other type diagnostic.
