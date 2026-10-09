@@ -87,3 +87,8 @@ The Phase 1 completeness audit recognizes `position_side.py` and `position_mode.
 ## CI action pin closure
 
 The Phase 1/G01/Architecture Invariants workflows pin `actions/setup-python` to the verified `v5.6.0` commit `a26af69be951a213d495a4c3e4e4022e16d87065`. Any future action-pin change requires the same strict CI verification; no floating action reference is permitted.
+
+
+## Current-state authority and historical-transition control
+
+Historical phase-unit entries in this document preserve chronology. Their earlier “active unit”, “next authorized unit”, or “next step” wording is not live authorization and must not override `docs/architecture/project-state.md` → `Current authoritative state`. Phase 2+ production implementation remains blocked until the Phase 1 completeness/evidence audit is explicitly closed with current repository evidence. No gate skip, threshold reduction, test weakening, or Spot operational path is permitted.

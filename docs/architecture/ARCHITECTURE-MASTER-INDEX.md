@@ -711,3 +711,8 @@ Evidence boundary:
 - no threshold reduction, test weakening, skip/xfail, assertion removal, or dependency-boundary weakening.
 
 Cross-journal idempotency and durable sequence enforcement remain downstream persistence/reconciliation responsibilities; the canonical domain journal enforces immutable entry identity, explicit causation/version data, and monotonic sequence within each declared journal batch. Contradictory external outcomes remain divergence rather than success.
+
+
+## Current-state authority and historical-transition control
+
+Historical phase-unit entries in this document preserve chronology. Their earlier “active unit”, “next authorized unit”, or “next step” wording is not live authorization and must not override `docs/architecture/project-state.md` → `Current authoritative state`. Phase 2+ production implementation remains blocked until the Phase 1 completeness/evidence audit is explicitly closed with current repository evidence. No gate skip, threshold reduction, test weakening, or Spot operational path is permitted.

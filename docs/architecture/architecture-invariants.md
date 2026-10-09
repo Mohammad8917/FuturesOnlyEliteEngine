@@ -848,3 +848,8 @@ Evidence boundary:
 ## Phase 1 final completeness/evidence audit
 
 Accounting and settlement-accounting are the final minimum financial contract units in the Phase 1 contract set. The next authorized action is governance/evidence reconciliation across the eight authoritative architecture documents, canonical contracts, tests, dependency boundaries, and same-SHA CI evidence. Phase 2+ production implementation remains blocked until this audit closes.
+
+
+## Current-state authority and historical-transition control
+
+Historical phase-unit entries in this document preserve chronology. Their earlier “active unit”, “next authorized unit”, or “next step” wording is not live authorization and must not override `docs/architecture/project-state.md` → `Current authoritative state`. Phase 2+ production implementation remains blocked until the Phase 1 completeness/evidence audit is explicitly closed with current repository evidence. No gate skip, threshold reduction, test weakening, or Spot operational path is permitted.
