@@ -856,7 +856,7 @@ Liquidation-price constraints are COMPLETE on implementation SHA `b8b65b721fcae5
 
 ## Phase 1 next-unit governance gate — liquidation event and trigger semantics
 
-The next authorized unit is liquidation event and trigger semantics. Entry requires explicit ownership, trigger/reference provenance and freshness, side/mode semantics, required state, Linear/Inverse and three-market scope, exact Decimal/no implicit rounding, fail-closed stale/ambiguous behavior, idempotency/ordering/concurrency, dependency boundaries, meaningful tests, CI, and same-SHA evidence. The canonical contract must not implement forced execution, order placement, account mutation, exchange transport, or exchange-specific mark-price/tier/fee/funding defaults. No threshold reduction, skip/xfail, assertion weakening, or dependency weakening is permitted.
+Historical transition record (not live authorization): at that recorded stage, the next authorized unit was liquidation event and trigger semantics. Entry requires explicit ownership, trigger/reference provenance and freshness, side/mode semantics, required state, Linear/Inverse and three-market scope, exact Decimal/no implicit rounding, fail-closed stale/ambiguous behavior, idempotency/ordering/concurrency, dependency boundaries, meaningful tests, CI, and same-SHA evidence. The canonical contract must not implement forced execution, order placement, account mutation, exchange transport, or exchange-specific mark-price/tier/fee/funding defaults. No threshold reduction, skip/xfail, assertion weakening, or dependency weakening is permitted.
 
 ## Phase 1 accounting / settlement-accounting semantic lock
 
