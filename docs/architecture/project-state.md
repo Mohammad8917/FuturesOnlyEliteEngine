@@ -18,7 +18,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Operational Spot: FORBIDDEN; no Spot fallback or operational Spot path
 - Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit closed on the last verified candidate snapshot (see Candidate evidence baseline)
 - Current gate: PR #35 owner review/merge and main-branch same-SHA verification
-- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation until PR #35 is reviewed/merged and main is verified
+- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until PR #35 is reviewed/merged and main is verified
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit
 - Current HEAD: refresh from GitHub; this document's SHA is a snapshot/evidence reference, never an authority over live repository HEAD
 - Main baseline SHA: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`
