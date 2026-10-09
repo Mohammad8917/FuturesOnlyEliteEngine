@@ -166,9 +166,13 @@ def test_contract_family_fallback_branch_is_fail_closed():
     # branch, which ordinary validated construction correctly makes unreachable.
     object.__setattr__(spec.symbol, "contract_family", "UNSUPPORTED")
 
-    with pytest.raises(ContractSpecificationValidationError, match="unsupported contract family"):
+    with pytest.raises(
+        ContractSpecificationValidationError, match="unsupported contract family"
+    ):
         spec.notional(quantity=1, price=2)
-    with pytest.raises(ContractSpecificationValidationError, match="unsupported contract family"):
+    with pytest.raises(
+        ContractSpecificationValidationError, match="unsupported contract family"
+    ):
         spec.base_exposure(quantity=1, price=2)
 
 
