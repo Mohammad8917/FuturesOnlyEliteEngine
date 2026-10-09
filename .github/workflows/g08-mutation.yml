@@ -93,4 +93,4 @@ jobs:
           PY
 
       - name: Verify mutation runner did not modify source
-        run: git diff --exit-code -- contracts/futures
+        run: git diff --exit-code -- contracts/futures domain/futures
