@@ -58,7 +58,7 @@ The market toggles are independent: any non-empty combination of the three marke
 
 ### 3.3 Authorized-user management (configurable capacity, hard maximum 1,000)
 
-- Hard limit: at most 100 active authorized users; the 101st addition is rejected without partial state changes.
+- The owner can adjust active-user capacity from the Telegram menu; the hard system maximum is 1,000 active users. If capacity is 2, a third active user is rejected; if capacity is 1,000, user 1,001 is rejected. Capacity changes never remove existing users automatically; reducing capacity below the current active count is rejected until the owner explicitly removes users.
 - Add/remove operations must be authenticated, authorized, confirmed for destructive changes, audited, and idempotent.
 - Use stable Telegram numeric user IDs as identity; usernames/display names are mutable and must not be identity keys.
 - Unknown users cannot change switches or invoke trading controls.
