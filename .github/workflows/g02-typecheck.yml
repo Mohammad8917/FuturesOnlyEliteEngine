@@ -3,27 +3,7 @@ run-name: G02 Typecheck • ${{ github.event_name }} • ${{ github.sha }}
 
 on:
   push:
-    paths:
-      - "contracts/**"
-      - "validation/**"
-      - "tests/**"
-      - "pyrightconfig.json"
-      - "requirements-ci.txt"
-      - ".github/workflows/g02-typecheck.yml"
-      - ".github/workflows/g01-dependency-architecture.yml"
-      - ".github/workflows/architecture-invariants.yml"
-      - ".github/workflows/phase1-domain-contracts.yml"
   pull_request:
-    paths:
-      - "contracts/**"
-      - "validation/**"
-      - "tests/**"
-      - "pyrightconfig.json"
-      - "requirements-ci.txt"
-      - ".github/workflows/g02-typecheck.yml"
-      - ".github/workflows/g01-dependency-architecture.yml"
-      - ".github/workflows/architecture-invariants.yml"
-      - ".github/workflows/phase1-domain-contracts.yml"
   workflow_dispatch:
 
 concurrency:

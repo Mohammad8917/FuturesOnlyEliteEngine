@@ -3,53 +3,7 @@ run-name: G04 Architecture Boundary Enforcement • ${{ github.event_name }} •
 
 on:
   push:
-    paths:
-      - "validation/**"
-      - "tests/architecture/**"
-      - "contracts/**"
-      - "domain/**"
-      - "application/**"
-      - "risk/**"
-      - "execution/**"
-      - "infrastructure/**"
-      - "market/**"
-      - "market_data/**"
-      - "data/**"
-      - "analysis/**"
-      - "strategy/**"
-      - "configuration/**"
-      - "config/**"
-      - "security/**"
-      - "observability/**"
-      - "notification/**"
-      - "notifications/**"
-      - "docs/architecture/**"
-      - "requirements-ci.txt"
-      - ".github/workflows/g04-architecture-boundaries.yml"
   pull_request:
-    paths:
-      - "validation/**"
-      - "tests/architecture/**"
-      - "contracts/**"
-      - "domain/**"
-      - "application/**"
-      - "risk/**"
-      - "execution/**"
-      - "infrastructure/**"
-      - "market/**"
-      - "market_data/**"
-      - "data/**"
-      - "analysis/**"
-      - "strategy/**"
-      - "configuration/**"
-      - "config/**"
-      - "security/**"
-      - "observability/**"
-      - "notification/**"
-      - "notifications/**"
-      - "docs/architecture/**"
-      - "requirements-ci.txt"
-      - ".github/workflows/g04-architecture-boundaries.yml"
   workflow_dispatch:
 
 concurrency:

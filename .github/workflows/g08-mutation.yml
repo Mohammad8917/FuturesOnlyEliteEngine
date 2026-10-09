@@ -2,19 +2,7 @@ name: G08 Mutation Score
 
 on:
   push:
-    paths:
-      - "contracts/**"
-      - "tests/contracts/**"
-      - "setup.cfg"
-      - "requirements-ci.txt"
-      - ".github/workflows/g08-mutation.yml"
   pull_request:
-    paths:
-      - "contracts/**"
-      - "tests/contracts/**"
-      - "setup.cfg"
-      - "requirements-ci.txt"
-      - ".github/workflows/g08-mutation.yml"
   workflow_dispatch:
 
 permissions:

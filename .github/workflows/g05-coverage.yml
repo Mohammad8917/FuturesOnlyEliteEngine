@@ -2,19 +2,7 @@ name: G05 Coverage
 
 on:
   push:
-    paths:
-      - "contracts/**"
-      - "tests/**"
-      - "requirements-ci.txt"
-      - ".github/workflows/g05-coverage.yml"
-      - "docs/architecture/**"
   pull_request:
-    paths:
-      - "contracts/**"
-      - "tests/**"
-      - "requirements-ci.txt"
-      - ".github/workflows/g05-coverage.yml"
-      - "docs/architecture/**"
   workflow_dispatch:
 
 permissions:

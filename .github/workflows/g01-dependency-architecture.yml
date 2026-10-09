@@ -3,24 +3,7 @@ run-name: G01 Dependency Architecture • ${{ github.event_name }} • ${{ githu
 
 on:
   push:
-    paths:
-      - "validation/**"
-      - "contracts/**"
-      - "tests/architecture/**"
-      - "tests/contracts/**"
-      - "docs/architecture/**"
-      - "docs/architecture/project-state.md"
-      - "requirements-ci.txt"
-      - ".github/workflows/g01-dependency-architecture.yml"
   pull_request:
-    paths:
-      - "validation/**"
-      - "contracts/**"
-      - "tests/architecture/**"
-      - "tests/contracts/**"
-      - "docs/architecture/**"
-      - ".github/workflows/g01-dependency-architecture.yml"
-      - "requirements-ci.txt"
   workflow_dispatch:
 
 concurrency:

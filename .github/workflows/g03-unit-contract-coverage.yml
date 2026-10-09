@@ -2,21 +2,7 @@ name: G03 Unit Contract Coverage
 
 on:
   push:
-    paths:
-      - "contracts/**"
-      - "tests/contracts/**"
-      - "tests/architecture/test_g03_contract_completeness.py"
-      - "requirements-ci.txt"
-      - ".github/workflows/g03-unit-contract-coverage.yml"
-      - "docs/architecture/**"
   pull_request:
-    paths:
-      - "contracts/**"
-      - "tests/contracts/**"
-      - "tests/architecture/test_g03_contract_completeness.py"
-      - "requirements-ci.txt"
-      - ".github/workflows/g03-unit-contract-coverage.yml"
-      - "docs/architecture/**"
   workflow_dispatch:
 
 permissions:
