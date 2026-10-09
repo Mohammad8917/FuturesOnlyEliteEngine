@@ -49,8 +49,7 @@ def test_phase_control_documents_are_consistent() -> None:
     )
     assert (
         "- Active work: resolve the proposed phase-scoped G07 applicability decision "
-        "through required owner review; PR #35 remains open and unmerged."
-        in state
+        "through required owner review; PR #35 remains open and unmerged." in state
     )
     assert (
         "- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged"
