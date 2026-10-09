@@ -69,7 +69,7 @@ def test_phase1_is_futures_only_and_gates_remain_strict() -> None:
 def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     state = (ARCH / "project-state.md").read_text(encoding="utf-8")
     assert "Phase 2+ production implementation remains blocked" in state
-    assert "final completeness/evidence audit CLOSED on candidate SHA" in state
+    assert "final completeness/evidence audit closed on the last verified candidate snapshot" in state
     assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
     assert "G05 independently calculates exact line coverage from XML counts" in state
     assert (
