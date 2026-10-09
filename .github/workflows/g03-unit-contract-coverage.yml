@@ -38,7 +38,7 @@ jobs:
       - name: Run all Futures contract tests
         env:
           PYTHONPATH: .
-        run: python -m pytest -q tests/contracts
+        run: python -m pytest -q tests/contracts tests/domain
 
 # G03 is complete unit/contract coverage, not a percentage gate.
 # G05 owns the >=98% coverage threshold; G08 owns mutation >=90%.

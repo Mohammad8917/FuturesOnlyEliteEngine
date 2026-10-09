@@ -42,7 +42,7 @@ jobs:
       - name: Run Phase 1 contract tests
         env:
           PYTHONPATH: .
-        run: python -m pytest -q tests/contracts/test_instrument_identity.py tests/contracts/test_contract_specification.py tests/contracts/test_settlement.py tests/contracts/test_margin.py tests/contracts/test_leverage.py tests/contracts/test_initial_margin.py tests/contracts/test_maintenance_margin.py tests/contracts/test_position_side_mode.py tests/contracts/test_price_quantity.py tests/contracts/funding_contract_test.py tests/domain/futures/pnl_contract_test.py tests/contracts/exposure_contract_test.py tests/contracts/liquidation_contract_test.py tests/contracts/liquidation_event_contract_test.py tests/contracts/accounting_contract_test.py
+        run: python -m pytest -q tests/contracts/test_instrument_identity.py tests/domain/futures/test_contract_specification.py tests/domain/futures/test_settlement.py tests/domain/futures/test_margin.py tests/domain/futures/test_leverage.py tests/domain/futures/test_initial_margin.py tests/domain/futures/test_maintenance_margin.py tests/contracts/test_position_side_mode.py tests/contracts/test_price_quantity.py tests/domain/futures/funding_contract_test.py tests/domain/futures/pnl_contract_test.py tests/domain/futures/exposure_contract_test.py tests/domain/futures/liquidation_contract_test.py tests/domain/futures/liquidation_event_contract_test.py tests/domain/futures/accounting_contract_test.py
 
 # Same-SHA trigger anchor: liquidation-trigger contract closure verification.
 

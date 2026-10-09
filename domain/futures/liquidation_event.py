@@ -7,9 +7,16 @@ from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 
-from contracts.futures.instrument import (\n    CanonicalFuturesSymbol,\n    ContractFamily,\n    Market,\n)
+from contracts.futures.instrument import (
+    CanonicalFuturesSymbol,
+    ContractFamily,
+    Market,
+)
 from .liquidation import LiquidationDenomination
-from contracts.futures.position_mode import (\n    FuturesPositionModeSpecification,\n    PositionMode,\n)
+from contracts.futures.position_mode import (
+    FuturesPositionModeSpecification,
+    PositionMode,
+)
 from contracts.futures.position_side import PositionSide
 
 
