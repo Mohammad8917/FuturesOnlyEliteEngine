@@ -5,7 +5,7 @@ from decimal import Decimal
 
 import pytest
 
-from domain.futures.contract_specification import QuantityUnit
+from contracts.futures.price_quantity import QuantityUnit
 from domain.futures.exposure import (
     ExposureValidationError,
     FuturesExposureSpecification,
