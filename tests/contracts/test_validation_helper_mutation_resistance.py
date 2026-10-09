@@ -152,6 +152,16 @@ def test_positive_decimal_helpers_reject_binary_float_with_field_error(
 
 
 @pytest.mark.parametrize(("helper", "error"), POSITIVE_DECIMAL_HELPERS)
+def test_positive_decimal_helpers_report_malformed_numeric_text(
+    helper: object,
+    error: type[ValueError],
+) -> None:
+    with pytest.raises(error) as caught:
+        helper("not-a-decimal", "quantity")  # type: ignore[operator]
+    assert "quantity" in str(caught.value)
+
+
+@pytest.mark.parametrize(("helper", "error"), POSITIVE_DECIMAL_HELPERS)
 def test_positive_decimal_helpers_reject_zero_with_field_error(
     helper: object,
     error: type[ValueError],
@@ -192,6 +202,16 @@ def test_asset_helpers_normalize_and_reject_invalid_types_and_spot(
 
 
 @pytest.mark.parametrize(("helper", "error"), UTC_HELPERS)
+def test_utc_helpers_reject_non_datetime_runtime_values(
+    helper: object,
+    error: type[ValueError],
+) -> None:
+    with pytest.raises(error) as caught:
+        helper(object(), "observed_at")  # type: ignore[operator]
+    assert "observed_at" in str(caught.value)
+
+
+@pytest.mark.parametrize(("helper", "error"), UTC_HELPERS)
 def test_utc_helpers_reject_naive_and_non_utc_datetimes(
     helper: object,
     error: type[ValueError],
@@ -222,6 +242,16 @@ def test_decimal_helpers_reject_binary_float_with_field_error(
 ) -> None:
     with pytest.raises(error) as caught:
         helper(0.1, "amount")  # type: ignore[operator]
+    assert "amount" in str(caught.value)
+
+
+@pytest.mark.parametrize(("helper", "error"), DECIMAL_HELPERS)
+def test_decimal_helpers_report_malformed_numeric_text(
+    helper: object,
+    error: type[ValueError],
+) -> None:
+    with pytest.raises(error) as caught:
+        helper("not-a-decimal", "amount")  # type: ignore[operator]
     assert "amount" in str(caught.value)
 
 
@@ -265,6 +295,23 @@ def test_text_helpers_reject_empty_text_and_trim_valid_values(
         helper("   ", "account_id")  # type: ignore[operator]
     assert "account_id" in str(caught.value)
     assert helper(" account-1 ", "account_id") == "account-1"  # type: ignore[operator]
+
+
+@pytest.mark.parametrize(
+    ("helper", "error"),
+    [
+        (accounting_asset, AccountingValidationError),
+        (initial_margin_asset, InitialMarginValidationError),
+        (maintenance_margin_asset, MaintenanceMarginValidationError),
+        (margin_asset, MarginValidationError),
+        (settlement_asset, SettlementValidationError),
+    ],
+)
+def test_asset_helpers_preserve_supported_underscore_symbols(
+    helper: object,
+    error: type[ValueError],
+) -> None:
+    assert helper("USD_T", "asset") == "USD_T"  # type: ignore[operator]
 
 
 def test_liquidation_identifier_has_meaningful_fail_closed_diagnostic() -> None:
