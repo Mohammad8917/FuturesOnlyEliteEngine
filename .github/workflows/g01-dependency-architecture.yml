@@ -37,7 +37,7 @@ jobs:
         run: python -m ruff check .
 
       - name: Enforce Ruff formatting
-        run: python -m ruff format --check .
+        run: python -m ruff format --check --diff .
 
       - name: Run G01 CI hardening regression tests
         run: python -m pytest -q tests/architecture/test_g01_ci_hardening.py
