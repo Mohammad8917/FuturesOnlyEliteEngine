@@ -880,7 +880,7 @@ Frozen baseline:
 
 ## Phase 1 final completeness/evidence audit
 
-The accounting and settlement-accounting contract is the final minimum financial contract unit in the Phase 1 set. After same-SHA green evidence, the authorized next action is a bounded completeness audit across the eight authoritative architecture documents, production contract boundaries, contract tests, dependency rules, and CI. Phase 2+ production implementation remains blocked until the audit closes. No threshold reduction, test weakening, skip/xfail, assertion weakening, or dependency-boundary weakening is permitted.
+Historical transition record: the accounting and settlement-accounting contract was recorded as the final minimum financial contract unit in the Phase 1 set. At that recorded stage, the next action was a bounded completeness audit across the eight authoritative architecture documents, production contract boundaries, contract tests, dependency rules, and CI. The candidate-branch audit is now recorded as closed in `docs/architecture/project-state.md`; PR #35 review/merge and exact-SHA verification on `main` remain outstanding. Phase 2+ production implementation remains blocked. No threshold reduction, test weakening, skip/xfail, assertion weakening, or dependency-boundary weakening is permitted.
 
 
 ## Phase 1 accounting / settlement-accounting closure evidence
