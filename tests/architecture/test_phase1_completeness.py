@@ -84,7 +84,17 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
         encoding="utf-8"
     )
     assert "- **Status:** PROPOSED — owner review and explicit reconfirmation required" in adr
-    assert "No workflow applicability changes, gate skips, placeholder implementations" in adr
+    assert "No workflow modification is authorized while this ADR is PROPOSED." in adr
+    assert "No gate is silently skipped, relabeled green, weakened, or bypassed." in adr
+    for relative in (
+        "ARCHITECTURE-MASTER-INDEX.md",
+        "master-roadmap-and-governance.md",
+        "architecture-contract.md",
+        "CHANGE-GUARD.md",
+        "adr/README.md",
+    ):
+        linked_doc = (ARCH / relative).read_text(encoding="utf-8")
+        assert "ADR-0001" in linked_doc, f"{relative} is not aligned to the active governance finding"
     assert (
         "Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative"
         in state
