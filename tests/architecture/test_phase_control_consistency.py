@@ -194,7 +194,7 @@ def test_g05_coverage_floor_has_independent_fail_closed_guard() -> None:
     guard = workflow[guard_start:upload_start]
 
     assert "if: always()" in guard
-    assert 'ET.parse(report).getroot()' in guard
+    assert "ET.parse(report).getroot()" in guard
     assert 'root.attrib["lines-covered"]' in guard
     assert 'root.attrib["lines-valid"]' in guard
     assert "lines_valid <= 0" in guard

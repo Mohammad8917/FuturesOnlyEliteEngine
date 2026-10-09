@@ -76,7 +76,7 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
     assert "G05 independently calculates exact line coverage from XML counts" in state
     assert (
-        "Next authorized action: complete same-SHA verification for the synchronized candidate"
+        "Next authorized action: complete same-SHA verification for the current candidate"
         in state
     )
     assert "G07 applicability: approved ADR-0001" in state
@@ -86,7 +86,7 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
         encoding="utf-8"
     )
     assert (
-        "- **Status:** APPROVED — owner-directed decision on 2026-10-09; implementation and same-SHA verification pending"
+        "- **Status:** APPROVED — implemented in PR #35; candidate checks must be reverified on every new SHA; independent review/authorized merge and final `main` verification pending"
         in adr
     )
     assert "Implementation is authorized under this approved decision" in adr
