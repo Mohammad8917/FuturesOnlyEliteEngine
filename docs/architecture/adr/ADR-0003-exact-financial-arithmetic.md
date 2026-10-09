@@ -1,93 +1,125 @@
-# ADR-0003: Exact, Context-Independent Futures Financial Arithmetic
+# ADR-0003: Explicit Boundary Rounding for Futures Financial Arithmetic
 
-- **Status:** PROPOSED — not approved; no implementation authorized
+- **Status:** OWNER-SELECTED POLICY — boundary contract details remain open; implementation must not begin until those details are specified.
 - **Date:** 2026-10-09
-- **Proposer:** AI-assisted repository audit; repository owner is the decision authority
+- **Proposer:** AI-assisted repository audit
+- **Decision authority:** Repository owner
+- **Owner decision recorded:** 2026-10-09 — Option C, subject to the mandatory constraints below.
 
 ## 1. Problem
 
-The Phase 1 contract requires exact financial arithmetic and prohibits implicit rounding/quantization. Python `Decimal` arithmetic is affected by the active decimal context; division and operations exceeding the context precision can return rounded results. A non-terminating quotient such as 1/3 cannot be represented exactly as a finite decimal. The current contract types and calculation paths therefore need an explicitly governed policy, not an assumption that using `Decimal` alone guarantees exact arithmetic.
+The Phase 1 financial contract requires explicit precision and rounding semantics. Python `Decimal` alone does not guarantee context-independent exactness: division and operations exceeding the active context precision can round. An arbitrary increase to ambient precision does not solve non-terminating quotients and does not define a financial output contract.
 
-## 2. Current architecture
+## 2. Owner-selected decision
 
-The financial meaning of Linear and Inverse Futures, settlement/margin denomination, PnL, liquidation, exposure, and accounting is frozen by the approved source-of-truth documents. No formula, unit, owner, rounding boundary, or output contract may be changed silently. This ADR must be explicitly approved before implementation.
+The repository owner selected **Option C — explicit, owner-approved rounding boundaries**, with these constraints:
 
-## 3. Decision required from the repository owner
+1. Use `Decimal` arithmetic with a controlled working context of **`prec=28`**. Do not rely on a caller's ambient mutable Decimal context.
+2. Rounding is permitted **only at explicitly declared financial output boundaries**, initially:
+   - PnL;
+   - Funding payment;
+   - Margin ratio;
+   - Liquidation price.
+3. Each boundary must declare its output precision/scale, rounding mode, denomination/unit, and conversion semantics. These details are **not inferred** from exchange conventions.
+4. Risk and execution paths must **fail closed** when an input, calculation, or boundary result is invalid, unsupported, ambiguous, or cannot be produced under the approved boundary contract.
+5. `float` and built-in `round()` are prohibited in `domain/futures/`. Financial arithmetic must not convert through binary floating point.
+6. Linear and Inverse Futures formulas and denominations remain distinct. This ADR does not authorize formula changes.
+7. No other implicit rounding, quantization, truncation, or precision loss is permitted.
 
-Choose and explicitly approve one primary policy, including any narrowly scoped combination:
+## 3. Required clarification before implementation
 
-### Option A — Exact rational intermediate arithmetic
-Represent intermediate values as exact rational numbers (or equivalent integer numerator/denominator arithmetic), and define how/where results may be converted to the existing public Decimal contracts. This avoids context rounding in intermediate rational calculations, but requires a deliberate output-boundary policy and careful API compatibility analysis.
+The owner-selected policy is recorded, but it is **not yet sufficiently specified for safe implementation**. For each of the four named boundaries, the contract must state:
 
-### Option B — Decimal-only with fail-closed inexact operations
-Keep Decimal as the calculation representation and trap/detect every inexact or rounded operation, failing closed when a result cannot be represented exactly under the approved contract. This is simpler at boundaries but can reject mathematically valid financial inputs when an exact finite Decimal result does not exist.
+- the exact output scale or significant-digit precision;
+- the explicit rounding mode;
+- whether the boundary result is a public/API value, an internal risk value, or both;
+- how the rounded result is represented and consumed downstream;
+- what conditions must fail closed.
 
-### Option C — Explicit, owner-approved rounding boundaries
-Permit rounding only at explicitly specified, contractually justified boundaries, with the rounding mode, precision, denomination, and provenance declared in the contract. This option conflicts with any current invariant that prohibits such rounding unless the owner first approves the corresponding architecture/contract change through this ADR.
+The `prec=28` working context must not silently become permission to round arbitrary intermediate operations. The implementation must distinguish permitted boundary rounding from intermediate inexactness and must prove that behavior with tests. Where an intermediate operation cannot safely be represented before a declared boundary, the implementation must use a controlled approach or fail closed; it must not silently round.
 
-The owner must choose the policy and clarify whether exactness applies to all intermediate values, externally visible outputs, or both. No default is inferred from exchange conventions.
+**No developer may choose missing per-boundary modes or scales unilaterally.** The policy choice (Option C) is owner-approved; these remaining details are implementation blockers, not permission to choose defaults.
 
-## 4. Non-negotiable constraints for any approved option
+## 4. Non-negotiable constraints
 
 - No binary floating-point conversion in critical financial calculations.
 - No dependence on ambient mutable Decimal context for financial meaning.
-- No silent rounding, quantization, truncation, or precision loss.
-- Non-finite, invalid, unsupported, ambiguous, or unrepresentable critical results fail closed according to the approved policy.
-- Linear and Inverse formulas and denominations remain distinct and explicit.
-- Public contract compatibility and migration must be analyzed before implementation.
+- No implicit rounding, quantization, truncation, or precision loss outside the approved boundaries.
+- `float` and built-in `round()` are forbidden under `domain/futures/`.
+- Invalid, unsupported, ambiguous, or unsafe critical results fail closed in Risk/Execution.
+- Explicit units and denomination; no mixing of Linear and Inverse semantics.
 - Existing G05 >= 98%, G08 >= 90%, all tests, and all other gate strengths remain unchanged.
-- No production readiness or Phase 2 authorization follows merely from approving this ADR.
+- No production-readiness or Phase 2 authorization follows from this ADR.
 
 ## 5. Affected invariants and contracts
 
-- Exact monetary and contract calculations.
+- Exact monetary and contract arithmetic except for the expressly approved output boundaries.
 - Explicit units, denomination, precision, and rounding semantics.
 - Linear/Inverse formula separation.
-- Fail-closed behavior for untrusted or unrepresentable financial state.
-- Architecture-change governance and same-SHA evidence.
+- Fail-closed behavior for untrusted or unsafe financial state.
+- Architecture-change governance and same-SHA CI evidence.
 
 ## 6. Affected implementation surfaces
 
-Initial audit targets:
-- `contracts/futures/contract_specification.py`
-- `contracts/futures/pnl.py`
-- `contracts/futures/liquidation.py`
-- `contracts/futures/settlement.py`
-- `contracts/futures/funding.py`
-- `contracts/futures/initial_margin.py`
-- `contracts/futures/maintenance_margin.py`
-- `contracts/futures/margin.py`
-- `contracts/futures/accounting.py`
-- `contracts/futures/price_quantity.py`
-- corresponding financial contract tests and architecture/gate tests.
+Audit and implementation scope includes:
 
-This list is an audit scope, not authorization to modify these files.
+- `domain/futures/contract_specification.py`
+- `domain/futures/pnl.py`
+- `domain/futures/liquidation.py`
+- `domain/futures/settlement.py`
+- `domain/futures/funding.py`
+- `domain/futures/initial_margin.py`
+- `domain/futures/maintenance_margin.py`
+- `domain/futures/margin.py`
+- `domain/futures/accounting.py`
+- `contracts/futures/price_quantity.py`
+- corresponding financial contract tests, risk/execution boundaries, and architecture/gate tests.
+
+This list defines audit scope; it does not authorize unrelated formula, API, or architecture changes.
 
 ## 7. Alternatives considered
 
-- Assume Decimal is exact — rejected; context precision affects arithmetic.
-- Increase the global Decimal precision arbitrarily — rejected; this does not establish context-independent exactness and cannot make a non-terminating quotient finite.
-- Silently quantize to an exchange tick/precision — rejected; this would introduce financial policy without an approved contract.
-- Choose an explicit policy through this ADR before implementation — proposed.
+- Assume Decimal is exact — rejected.
+- Increase global Decimal precision arbitrarily — rejected.
+- Silently quantize to exchange tick/precision — rejected.
+- Explicit owner-approved rounding at named output boundaries — selected, subject to the outstanding boundary specifications above.
 
-## 8. Risk analysis
+## 8. Required regression tests
 
-Rational intermediate arithmetic may change types, performance, serialization, and downstream interfaces. Fail-closed Decimal arithmetic may reject calculations that previously returned approximate values. Explicit rounding boundaries can alter financial results and are prohibited unless precisely approved. Every selected policy needs adversarial tests for changed ambient context, high-precision operands, terminating/non-terminating division, overflow/exponent limits, Linear/Inverse PnL and liquidation, accounting balance, and output conversion.
+Before implementation can be considered complete, tests must cover:
+
+- changed ambient Decimal contexts and deterministic behavior;
+- `prec=28` working-context behavior;
+- high-precision operands and intermediate inexactness;
+- terminating and repeating quotients;
+- every named rounding boundary with its approved mode and output scale;
+- Linear and Inverse PnL/liquidation and denomination separation;
+- Funding, Margin ratio, settlement, and downstream accounting;
+- invalid and unrepresentable values failing closed in Risk/Execution;
+- static enforcement that `float` and built-in `round()` are absent from `domain/futures/`.
+
+No tests may be skipped/xfail'ed, exclusions added, thresholds reduced, or gates bypassed.
 
 ## 9. Migration and verification plan
 
-No implementation is authorized while this ADR is PROPOSED. After explicit owner approval/reconfirmation:
-1. update the governed source-of-truth documents and public contract expectations;
-2. implement the selected policy in a shared, narrowly owned arithmetic boundary without changing formula semantics;
-3. add regression/property tests for context independence and every affected financial path;
-4. run relevant unit/contract tests and all applicable CI gates;
-5. verify exact same-SHA G01–G08 applicability and results, preserving G05 >= 98% and G08 >= 90%;
-6. keep Phase 2+ blocked until all independent blockers and final-main requirements are resolved.
+1. Complete and approve the per-boundary precision, rounding-mode, denomination, and downstream representation contracts.
+2. Update governed source-of-truth contracts through the authorized architecture-change process; do not silently edit locked documents.
+3. Implement a narrow, shared arithmetic boundary and preserve formula/API semantics unless separately approved.
+4. Add the regression tests above.
+5. Run all relevant unit/contract tests and applicable CI gates.
+6. Verify exact same-SHA G01–G08 applicability/results, preserving G05 >= 98% and G08 >= 90%; operational G07 must not be represented as passed when skipped/not applicable.
+7. Keep Phase 2+, production readiness, and merge blocked until all independent blockers are resolved.
 
 ## 10. Rollback plan
 
-If the approved implementation changes financial meaning, violates compatibility, or cannot meet the exactness contract, stop the candidate and revert through the reviewed PR process. Never restore green CI by weakening tests, thresholds, or fail-closed behavior.
+If the implementation changes financial meaning, violates a frozen contract, rounds outside an approved boundary, depends on ambient context, or fails the required gates, stop and revert through the reviewed PR process. Never restore green CI by weakening tests, thresholds, or fail-closed behavior.
 
-## 11. Explicit approval / reconfirmation
+## 11. Approval record
 
-**Pending.** Repository owner must explicitly select the arithmetic policy and approve/reject this ADR before implementation. General authorization to continue the project does not select a financial arithmetic policy.
+- **Option C:** selected by repository owner on 2026-10-09.
+- **`Decimal` working context `prec=28`:** selected.
+- **Named rounding boundaries:** PnL, Funding payment, Margin ratio, Liquidation price.
+- **Fail-Closed Risk/Execution:** required.
+- **Ban `float` and built-in `round()` in `domain/futures/`:** required.
+- **Per-boundary output scales, rounding modes, and downstream representations:** pending explicit contract specification.
+- **Implementation authorization:** pending completion of the remaining boundary contracts and required governance updates.
