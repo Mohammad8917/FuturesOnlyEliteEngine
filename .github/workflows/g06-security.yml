@@ -42,7 +42,7 @@ jobs:
 
       - name: Scan tracked files for secrets
         run: |
-          detect-secrets scan --all-files > detect-secrets-report.json
+          detect-secrets scan > detect-secrets-report.json
           python - <<'PY'
           import json
           import sys
