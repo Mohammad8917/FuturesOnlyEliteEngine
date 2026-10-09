@@ -75,17 +75,25 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     )
     assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
     assert "G05 independently calculates exact line coverage from XML counts" in state
-    assert (
-        "Next authorized action: owner decision on proposed ADR-0001" in state
-    )
+    assert "Next authorized action: owner decision on proposed ADR-0001" in state
     assert "G07: INCOMPLETE / NOT GREEN" in state
-    assert "Do not skip G07, create placeholders, or authorize Phase 2 by inference." in state
+    assert (
+        "Do not skip G07, create placeholders, or authorize Phase 2 by inference."
+        in state
+    )
     adr = (ARCH / "adr" / "ADR-0001-phase-scoped-gate-applicability.md").read_text(
         encoding="utf-8"
     )
-    assert "- **Status:** PROPOSED — owner review and explicit reconfirmation required" in adr
-    assert "No workflow modification is authorized while this ADR is PROPOSED." in adr
-    assert "No gate is silently skipped, relabeled green, weakened, or bypassed." in adr
+    assert (
+        "- **Status:** PROPOSED — owner review and explicit reconfirmation required"
+        in adr
+    )
+    assert (
+        "No workflow modification is authorized while this ADR is PROPOSED." in adr
+    )
+    assert (
+        "No gate is silently skipped, relabeled green, weakened, or bypassed." in adr
+    )
     for relative in (
         "ARCHITECTURE-MASTER-INDEX.md",
         "master-roadmap-and-governance.md",
@@ -94,7 +102,9 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
         "adr/README.md",
     ):
         linked_doc = (ARCH / relative).read_text(encoding="utf-8")
-        assert "ADR-0001" in linked_doc, f"{relative} is not aligned to the active governance finding"
+        assert "ADR-0001" in linked_doc, (
+            f"{relative} is not aligned to the active governance finding"
+        )
     assert (
         "Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative"
         in state
