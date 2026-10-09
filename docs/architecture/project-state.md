@@ -19,6 +19,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit CLOSURE SNAPSHOT PENDING
 - Current gate: same-SHA closure snapshot verification and PR #35 review/merge
 - Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until the closure snapshot is green and PR #35 is reviewed/merged
+- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation is complete, but the final closure snapshot remains pending.
 - Current HEAD: refresh from GitHub; this document's SHA is a snapshot/evidence reference, never an authority over live repository HEAD
 - Main baseline SHA: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`
 - Main baseline evidence: G01, G03, G04, G05, Phase 1, and Architecture Invariants jobs completed successfully on that SHA. However, the G05 log for run `37850090486` prints `FAIL Required test coverage of 98% not reached. Total coverage: 97.83%` while the job conclusion is success. Therefore that main-branch G05 result is NOT acceptable evidence and must not be treated as a valid pass.
