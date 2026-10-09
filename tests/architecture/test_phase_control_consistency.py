@@ -35,10 +35,10 @@ def test_phase_control_documents_are_consistent() -> None:
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
     assert (
-        "- Current gate: finish same-SHA verification after this source-of-truth "
-        "synchronization, obtain required independent PR #35 review/authorized merge, "
-        "then verify all applicable checks on the exact resulting `main` SHA and "
-        "resolve the historical G05 false-green" in state
+        "- Current gate: obtain required independent review and authorized merge of PR #35; "
+        "then verify all applicable checks on the exact resulting `main` SHA, confirm the "
+        "independent G05 XML coverage-floor guard is active, and have an administrator "
+        "verify branch protection/rulesets" in state
     )
     assert (
         "- Implementation phase authorized: YES — Phase 1 Domain Contracts only"
@@ -49,9 +49,9 @@ def test_phase_control_documents_are_consistent() -> None:
         in state
     )
     assert (
-        "- Active work: synchronize current governance state and validate all applicable "
-        "CI on the final candidate SHA; PR #35 remains open and unmerged pending "
-        "independent review." in state
+        "- Active work: G05 false-green correction and independent XML-threshold guard "
+        "are in PR #35; verify all applicable CI on the exact current candidate SHA; "
+        "PR #35 remains open and unmerged pending independent review." in state
     )
     assert (
         "- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged"
