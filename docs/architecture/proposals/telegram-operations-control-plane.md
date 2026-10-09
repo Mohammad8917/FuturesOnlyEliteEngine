@@ -42,7 +42,14 @@ Provide a clear, localized menu with at least these entries:
    - show current count and configured capacity, e.g. `N / capacity` (capacity adjustable in the menu, hard maximum 1,000);
    - set the active-user capacity from 1 through 1,000, never above 1,000;
 4. **Bot status / Health**
-5. **Audit / recent control changes** (read-only view, bounded and privacy-safe).
+5. **Audit / recent control changes** (read-only view, bounded and privacy-safe);
+6. **Per-user trading controls** (admin can enable/disable an individual user's automation independently of global and market switches);
+7. **Account & capital** (verified Futures balance in USD-equivalent, available margin, configured allocation, used/reserved allocation, current exposure, and last successful refresh time);
+8. **Risk & limits** (read-only current per-trade/aggregate risk usage, daily-loss status, margin headroom, and reasons trading is blocked);
+9. **Credentials & account connection** (masked status only; admin-only register/verify/rotate/revoke workflow; never display a secret);
+10. **Positions & orders** (read-only view and reconciliation status; any cancel/close action must be a separate explicitly authorized and confirmed operation);
+11. **Emergency pause** (global, per-market, and per-user pause; pausing blocks new automated intents and does not silently liquidate positions);
+12. **Allocation settings** (admin-authorized per-user allocation percentage and a clear preview of the resulting cap before saving).
 
 The market toggles are independent: any non-empty combination of the three markets may be selected. Spot is never an available market. Linear/Inverse contract handling remains governed by the existing Futures architecture and explicit instrument metadata.
 
@@ -64,7 +71,7 @@ The market toggles are independent: any non-empty combination of the three marke
 - Unknown users cannot change switches or invoke trading controls.
 - Removing/revoking a user takes effect for future control requests and new automated intents associated with that user's authorization. It must not silently cancel or liquidate positions already open.
 - A failed persistence write must not report success or leave an ambiguous authorization state.
-- Do not expose API keys in ordinary chat messages, status screens, logs, or audit output. The menu must use a dedicated secure credential-entry/onboarding flow with explicit account ownership confirmation; secrets must be encrypted at rest, access-restricted, redacted from logs, and never retrievable in plaintext through the bot. Each user's credentials and exchange account context must be isolated from every other user. Require least-privilege API keys; withdrawals/transfers must not be permitted by the trading bot. Exact exchange permission checks depend on the exchanges the owner later selects.
+- Users provide their own exchange API credentials to the owner/admin, who manually registers them. **Do not collect API key/secret/passphrase in ordinary Telegram chat or callback data.** The Telegram menu should initiate an admin-only registration workflow, but the actual secret entry must occur in a dedicated access-controlled secret-entry interface/vault (or another separately approved secure channel) where chat history cannot retain the secret. The admin must verify account ownership and account label before binding the credential reference to the correct user. Encrypt secrets at rest, restrict access, redact logs/traces, and never display/retrieve secrets in plaintext through Telegram. Each user's credentials and exchange account context must be isolated. Require least-privilege API keys; withdrawal and transfer permissions must be absent. Where supported, restrict API keys to the production server's fixed IP. Exact permission checks depend on the exchanges the owner later selects.
 - Authorization policy must distinguish the owner/admin who can change global controls and the allowed users who may use approved trading functions. The precise role model is an unresolved decision and must be explicitly approved before implementation.
 
 ### 3.4 Per-user exchange account and capital allocation
@@ -77,6 +84,20 @@ The market toggles are independent: any non-empty combination of the three marke
 - Each user's API credential must use least privilege and must not allow withdrawals/transfers. Where supported, users should restrict keys by IP and other exchange-provided controls. Exchange-specific key permissions and account-mode verification remain blocked until the owner names the exchanges.
 - Credential onboarding must not echo or persist secrets in Telegram chat history, callback payloads, application logs, exception traces, or audit events. Use a secure entry mechanism, encrypt secrets at rest, restrict access, support revocation/rotation, and report only masked credential status.
 - A credential or account that is invalid, revoked, permission-inadequate, stale, or ambiguous fails closed for that user's new automated execution only; other users may continue only if their independent health and gates pass.
+
+#### Capital and risk policy defaults (owner-selected proposal)
+
+To resolve the general capital-policy questions conservatively without inventing exchange-specific rules, the proposed defaults are:
+- **Eligibility floor:** a user is not activated for automated trading unless the verified available Futures-margin balance is at least **USD 20 equivalent**. A balance below USD 20 equivalent is ineligible; an unknown, stale, unconvertible, or unverified balance is also ineligible. This is a system eligibility floor, not a claim that every exchange permits an order at USD 20.
+- **Allocation basis:** use the verified available balance of the selected Futures account/margin wallet, denominated in a canonical valuation currency (USD-equivalent only when a trustworthy conversion price is available). Do not use the full account-wide equity or unrelated Spot balances as implicitly available Futures capital. Risk checks must separately account for equity, unrealized PnL, margin used, maintenance margin, and open-order reservations.
+- **Allocation defaults:** default per-user allocation is **10%** of the verified eligible basis; administrator may configure a user-specific value, but the hard application ceiling is **50%**. Values must be greater than 0% and no greater than 50%; missing or invalid configuration blocks that user's new automated trades. These are policy caps, not a promise to deploy the full allocation.
+- **Exposure is separate:** allocation caps the capital budget assigned to this bot for the user; it is not the same as notional exposure. Notional exposure, leverage, margin, per-instrument limits, per-trade risk, and aggregate open risk require separate controls. No leverage value may be inferred from the allocation.
+- **Conservative risk defaults:** proposed initial maximum planned loss per trade is 0.5% of the user's allocated capital; aggregate planned loss across open positions and pending orders is capped at 2% of allocated capital; reaching a 3% daily loss from the configured daily baseline pauses new automated entries for that user until an authorized reset at the next configured risk period. These limits must be computed from verified stop-loss/risk semantics, include fees/funding/slippage buffers where estimable, and fail closed if a valid loss bound cannot be computed. They do not guarantee a maximum realized loss in gaps, outages, or liquidation events.
+- **Minimum order rules:** each order must satisfy the selected exchange's current Futures instrument filters, including minimum notional/quantity, tick size, lot step, contract multiplier, and account/margin mode. Some exchanges/instruments may enforce minimums around USD 5 or USD 10, but those are examples only: never hardcode them as universal rules. Read and validate authoritative exchange metadata once the owner selects the exchanges; if metadata is unavailable or stale, reject the order. The USD 20 user eligibility floor never overrides an exchange's minimum-order rule.
+- **No implicit full-balance trade:** the order-sizing and reservation path must prove that required margin plus fees/buffers fits within the user's bot allocation and exchange-available funds. If not, reject; never automatically raise allocation, leverage, or order size to force an order through.
+- **Capacity and invitations:** capacity counts active, approved users only. Pending invitations do not trade and do not consume active capacity until approved/activated; activation must re-check capacity and the USD 20 eligibility floor.
+- **Roles and language:** initial language is Persian. Only the owner role may change global automation, market toggles, user capacity, user registration/credential records, and global policy ceilings. Ordinary users may view only their own account status and request changes that require owner approval; they cannot toggle global controls or modify risk ceilings. Additional administrator roles require a separate explicit grant by the owner.
+- **Switch confirmations:** global ON requires a second confirmation showing active markets, number of eligible users, health readiness, and the fact that real orders may be submitted. Global OFF is immediate after server-side authorization. Per-market/per-user ON also requires confirmation and readiness checks; OFF/pause is immediate. No switch bypasses any risk or execution gate.
 
 ### 3.5 Bot status and health
 
@@ -137,7 +158,10 @@ Before implementation, define and test:
 - server-side actor authorization and role policy;
 - configurable user-capacity boundaries (1, 2, 1,000, 1,001), count changes, reducing capacity below current active users, duplicate add, revoke, and persistence failure;
 - per-user credential isolation, credential rotation/revocation, missing/invalid permissions, secret redaction, and no cross-account reads/writes;
-- allocation boundaries (unset, zero, valid configured percentage, just below 100%, 100%, above 100%), stale balance, and allocation recalculation;
+- allocation boundaries (unset, zero, default 10%, maximum 50%, above 50%, 100%), USD 20 eligibility boundary (below, exactly at, above), stale/unconvertible balance, and allocation recalculation;
+- risk boundaries (per-trade 0.5%, aggregate open risk 2%, daily loss pause at 3%), concurrent-order reservation, fees/funding/slippage buffers, and fail-closed behavior when risk cannot be bounded;
+- exchange instrument-filter validation for minimum notional/quantity, tick, lot step, contract multiplier, and stale/missing metadata; prove USD 20 eligibility does not bypass exchange-specific order minimums;
+- admin manual credential registration through the secure vault path, account-owner confirmation, permission verification, rotation/revocation, and proof secrets never enter Telegram messages, callbacks, logs, or audit records;
 - prove that no order can consume the full account funds or exceed the explicit per-user allocation ceiling, while all separate Risk gates remain mandatory;
 - callback replay, duplicate delivery, concurrency, stale callback, and unauthorized actor cases;
 - immediate prevention of new intents after disable/revoke, without implicit position liquidation or order cancellation;
@@ -147,16 +171,21 @@ Before implementation, define and test:
 
 Tests must not be skipped/xfail'd, thresholds lowered, or gates bypassed.
 
-## 8. Unresolved decisions — do not guess
+## 8. Resolved policy decisions and remaining exchange-specific dependency
 
-1. Which Futures exchanges will be supported? Exchange-specific connectivity, API permission validation, and account-mode verification remain blocked until the owner names them.
-2. What is the exact authorization role model: owner-only administrator, additional administrators, and what ordinary authorized users may do?
-3. Does configured capacity count only active authorized users, or also pending invitations? Proposed default: active users only; pending invitations cannot trade.
-4. What is the capital-allocation basis (available balance or equity), the maximum percentage strictly below 100%, and does it cap a capital pool or total concurrent exposure? These values must be explicitly selected and must never default to the full balance.
-5. What is the required confirmation flow for enabling global automation and for disabling it? Proposed safe default: confirm enable; allow disable immediately after server-side authorization.
-6. Which language(s) should the menu and health messages support? Proposed initial default: Persian.
+The following conservative defaults are selected for this proposal:
+1. **Capital basis:** verified available balance in the user's selected Futures margin account, converted to USD-equivalent only with a trustworthy, fresh conversion source; unrelated Spot balances are excluded.
+2. **Minimum eligibility balance:** at least USD 20 equivalent of verified available Futures-margin balance. Below USD 20, stale/unknown balances, or failed conversion means no automated activation/trading for that user.
+3. **Allocation:** default 10% per user; owner may configure individually; hard ceiling 50%; values above 50%, 100%, zero, missing, or invalid are rejected. Allocation budget and notional exposure are distinct.
+4. **Risk defaults:** planned risk per trade ≤0.5% of allocated capital; total planned open risk including pending orders ≤2%; a 3% daily loss from the configured baseline pauses new entries for that user. These limits do not guarantee maximum realized loss under gaps, liquidation, or infrastructure failure.
+5. **Capacity:** active approved users only; pending invitations do not consume capacity until activation, which re-checks capacity and eligibility.
+6. **Roles:** owner-only administrator initially; ordinary users cannot change global/market switches, capacity, credentials, or risk ceilings.
+7. **Confirmation:** global ON and per-market/per-user ON require explicit confirmation and a readiness summary; OFF/pause takes effect immediately after authorization.
+8. **Menu language:** Persian initially.
+9. **Credential entry:** user supplies their own credentials to the owner/admin, who manually registers them through a dedicated secure secret-entry interface/vault initiated by the Telegram admin menu. Secrets must not be sent/stored in ordinary Telegram chat or callback data.
+10. **Minimum order:** use current authoritative filters for each selected exchange and instrument; USD 5/USD 10 are not universal constants and must not be hardcoded. Every order must independently satisfy exchange minimum notional/quantity and all Futures contract filters.
 
-No exchange, account model, credentials workflow, trading permissions, or market-specific metadata may be inferred.
+Still unresolved because it cannot safely be inferred: **the exchange list and each exchange's actual Futures API permission model, instrument metadata, minimums, account mode, and supported market/contract types.** Implementation of exchange-specific validation remains paused until the owner provides the list. No specific exchange or instrument rules may be guessed.
 
 ## 9. Migration and rollback
 
