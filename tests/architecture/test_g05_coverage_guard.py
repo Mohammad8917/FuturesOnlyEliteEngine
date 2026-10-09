@@ -29,12 +29,13 @@ def _coverage_xml(
         if include_packages
         else ""
     )
+    line_rate = lines_covered / lines_valid if lines_valid else 0
     return (
         f'<coverage version="7.6.1" timestamp="1791500000" '
         f'lines-covered="{lines_covered}" lines-valid="{lines_valid}" '
-        f'line-rate="{lines_covered / lines_valid if lines_valid else 0}" '
-        f'branches-covered="0" branches-valid="0" branch-rate="0">'
-        f'<sources><source>.</source></sources>{packages_xml}</coverage>'
+        f'line-rate="{line_rate}" branches-covered="0" branches-valid="0" '
+        f'branch-rate="0"><sources><source>.</source></sources>'
+        f"{packages_xml}</coverage>"
     )
 
 
@@ -86,7 +87,10 @@ def test_g05_guard_fails_closed_on_invalid_line_counts(tmp_path: Path) -> None:
     result = _run_guard(tmp_path)
 
     assert result.returncode != 0
-    assert "G05 FAIL: coverage report has invalid metadata or line counts" in result.stdout
+    assert (
+        "G05 FAIL: coverage report has invalid metadata or line counts"
+        in result.stdout
+    )
 
 
 def test_g05_guard_fails_closed_when_root_is_not_coverage(tmp_path: Path) -> None:
@@ -123,10 +127,16 @@ def test_g05_guard_fails_closed_on_truncated_root_only_xml(tmp_path: Path) -> No
     result = _run_guard(tmp_path)
 
     assert result.returncode != 0
-    assert "G05 FAIL: coverage report is incomplete; <sources> and <packages> are required" in result.stdout
+    assert (
+        "G05 FAIL: coverage report is incomplete; "
+        "<sources> and <packages> are required"
+        in result.stdout
+    )
 
 
-def test_g05_guard_fails_closed_when_package_has_no_class_evidence(tmp_path: Path) -> None:
+def test_g05_guard_fails_closed_when_package_has_no_class_evidence(
+    tmp_path: Path,
+) -> None:
     (tmp_path / "coverage.xml").write_text(
         _coverage_xml(include_class=False),
         encoding="utf-8",
@@ -135,4 +145,8 @@ def test_g05_guard_fails_closed_when_package_has_no_class_evidence(tmp_path: Pat
     result = _run_guard(tmp_path)
 
     assert result.returncode != 0
-    assert "G05 FAIL: coverage report is incomplete; at least one class with a filename is required" in result.stdout
+    assert (
+        "G05 FAIL: coverage report is incomplete; "
+        "at least one class with a filename is required"
+        in result.stdout
+    )
