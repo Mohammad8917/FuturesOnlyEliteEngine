@@ -13,7 +13,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Product target: Elite Futures-Only Professional Trading Engine; Python 3.13; Windows Server, Linux Server, and Windows Home/Desktop.
 - Markets and contract families: CRYPTO Futures, FOREX Futures, GOLD Futures; Linear and Inverse Futures.
 - Operational Spot: FORBIDDEN. No Spot operational path or fallback.
-- Current phase: Phase 1 — Domain Contracts; candidate completeness/evidence audit is complete for the reviewed PR candidate, but merge-to-main verification is still outstanding.
+- Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit closed on the last verified candidate snapshot; merge-to-main verification remains outstanding.
 - Current gate: PR #35 requires genuine repository-owner review, authorized merge, then verification of all applicable gates on the exact resulting `main` SHA.
 - Authorized implementation: Phase 1 candidate hardening only while PR #35 remains open. Phase 2+ production implementation remains blocked until the owner-review/merge gate and same-SHA main verification pass.
 - PR: [#35 — Harden Futures-only contracts and enforce G01–G08 quality gates](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/35), branch `hardening/eight-rules-conformance`.
