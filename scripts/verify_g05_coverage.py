@@ -45,6 +45,7 @@ def main() -> int:
                 "<sources> and <packages> are required"
             )
             return 1
+
         classes = packages.findall(".//class")
         if not classes or any(
             not item.get("filename", "").strip() for item in classes
@@ -54,6 +55,24 @@ def main() -> int:
                 "at least one class with a filename is required"
             )
             return 1
+
+        line_nodes = packages.findall(".//line")
+        if not line_nodes:
+            print(
+                "G05 FAIL: coverage report is incomplete; "
+                "class-level executable-line evidence is required"
+            )
+            return 1
+
+        covered_from_classes = 0
+        for line in line_nodes:
+            line_number = int(line.attrib["number"])
+            hits = int(line.attrib["hits"])
+            if line_number <= 0 or hits < 0:
+                print("G05 FAIL: coverage report contains invalid class-level line data")
+                return 1
+            if hits > 0:
+                covered_from_classes += 1
 
         lines_covered = int(root.attrib["lines-covered"])
         lines_valid = int(root.attrib["lines-valid"])
@@ -75,7 +94,19 @@ def main() -> int:
         print("G05 FAIL: coverage report has invalid metadata or line counts")
         return 1
 
-    percentage = (lines_covered / lines_valid) * 100
+    calculated_rate = lines_covered / lines_valid
+    if (
+        len(line_nodes) != lines_valid
+        or covered_from_classes != lines_covered
+        or not math.isclose(reported_rate, calculated_rate, rel_tol=0, abs_tol=0.0001)
+    ):
+        print(
+            "G05 FAIL: coverage report root totals do not match "
+            "class-level line evidence"
+        )
+        return 1
+
+    percentage = calculated_rate * 100
     print(
         f"G05 independently measured exact line coverage: "
         f"{lines_covered}/{lines_valid} = {percentage:.6f}%"
