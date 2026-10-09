@@ -144,9 +144,24 @@ def test_every_futures_contract_has_explicit_test_ownership():
             if not (TESTS / "contracts" / test_name).is_file()
         }
     )
-    domain_production = {path.stem for path in DOMAIN_PRODUCTION.glob("*.py") if path.name != "__init__.py"}
-    assert domain_production <= DOMAIN_TEST_OWNERS.keys(), f"Domain test ownership missing: {sorted(domain_production - DOMAIN_TEST_OWNERS.keys())}"
-    assert all((TESTS / name).is_file() for names in DOMAIN_TEST_OWNERS.values() for name in names), "Mapped domain test file is missing"
+    domain_production = {
+        path.stem
+        for path in DOMAIN_PRODUCTION.glob("*.py")
+        if path.name != "__init__.py"
+    }
+    missing_domain_mapping = sorted(domain_production - DOMAIN_TEST_OWNERS.keys())
+    assert not missing_domain_mapping, (
+        f"Domain test ownership missing: {missing_domain_mapping}"
+    )
+    missing_domain_files = sorted(
+        name
+        for names in DOMAIN_TEST_OWNERS.values()
+        for name in names
+        if not (TESTS / name).is_file()
+    )
+    assert not missing_domain_files, (
+        f"Mapped domain test file is missing: {missing_domain_files}"
+    )
 
     assert not missing_files, (
         f"G03 mapped contract test file is missing: {missing_files}"
