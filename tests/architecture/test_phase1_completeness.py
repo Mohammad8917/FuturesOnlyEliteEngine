@@ -76,9 +76,15 @@ def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
     assert "G05 independently calculates exact line coverage from XML counts" in state
     assert (
-        "Next authorized action: owner review/merge PR #35 after the current snapshot checks are green"
-        in state
+        "Next authorized action: owner decision on proposed ADR-0001" in state
     )
+    assert "G07: INCOMPLETE / NOT GREEN" in state
+    assert "Do not skip G07, create placeholders, or authorize Phase 2 by inference." in state
+    adr = (ARCH / "adr" / "ADR-0001-phase-scoped-gate-applicability.md").read_text(
+        encoding="utf-8"
+    )
+    assert "- **Status:** PROPOSED — owner review and explicit reconfirmation required" in adr
+    assert "No workflow applicability changes, gate skips, placeholder implementations" in adr
     assert (
         "Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative"
         in state
