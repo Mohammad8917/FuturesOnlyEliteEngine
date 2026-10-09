@@ -35,7 +35,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Branch protection/ruleset status: GitHub API access returned 403 during this audit, so enforcement could not be confirmed. This is not evidence that protection is absent; the repository owner must verify required reviews and status checks.
 - Active work: owner review/merge of PR #35, then verification of the resulting main SHA. This state snapshot commit must rerun all applicable gates; any failure reopens the audit.
 - Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged and main is verified on one exact SHA. G07 becomes applicable when operational layers or integration/resilience tests change.
-- No all-gates same-SHA pass is claimed for this state snapshot commit yet; it must pass its own applicable CI checks before Phase 2.
+- No all-gates same-SHA pass is claimed for the closure snapshot commit yet. This state snapshot commit must pass its own applicable CI checks before Phase 2.
 - Next authorized action: owner review/merge PR #35 after the current snapshot checks are green; then verify all applicable gates on the resulting main SHA. Only after main is verified may Phase 2 entry be evaluated.
 - Forbidden actions: no architecture redesign without an actual violation and approved ADR; no Spot operational path; no hardcoded secrets/configuration; no float financial inputs; no implicit rounding; no skipped/xfail tests; no threshold reduction; no exclusions or suppressions solely to obtain green; no gate bypass; no claim of production readiness before required layers and same-SHA evidence exist.
 
