@@ -48,6 +48,21 @@ An executable signal must have one concrete selected entry type and selected pri
 — محمد
 ```
 
+## Entry-zone monitoring, reassessment, and bounded renewal
+
+If price has not reached the selected entry zone by the current expiry, do not immediately assume the setup is worthless and do not execute outside the zone. Reassess whether the trade remains valid using fresh market data and the already-approved, deterministic strategy/risk criteria.
+
+- If the setup remains valid, all required data are fresh, and the Risk Gate still passes, the system may renew the signal for one additional 20-minute validity window.
+- At most **three renewals** are allowed for one signal. The initial 20-minute window plus three approved renewals means a maximum total lifetime of 80 minutes from original issuance.
+- Each renewal must be an explicit, auditable lifecycle transition, increment a renewal counter (0–3), record reassessment time, new expiry, market-data timestamp, decision, and reason, and preserve the original signal ID. A resend or duplicate delivery is not a renewal and must never extend expiry.
+- If the setup is no longer worthwhile/valid, required criteria cannot be evaluated, data are stale or contradictory, or Risk rejects it, invalidate/cancel it immediately; do not consume a renewal to conceal a failed validation.
+- If price still has not reached the entry zone when the third renewal expires, invalidate the signal with a clear reason such as **«باطل شد — پس از ۳ تمدید، قیمت به محدوده ورود نرسید»**. No fourth renewal is permitted.
+- Renewal does not authorize chasing the market, silently moving the entry zone, changing stop-loss/take-profit/leverage, or placing an order outside the selected entry. Any material setup/price-level change requires a new signal ID and a fresh validation lifecycle.
+- A renewed signal remains non-executable until its selected entry conditions are actually satisfied and all freshness, schema, instrument, and Risk Gate checks pass. Analytical signals remain non-executable.
+- The 20-minute renewal interval and three-renewal cap are the owner-selected policy defaults. Any change requires explicit owner approval and corresponding contract/test updates.
+
+Required tests: no renewal on resend/duplicate; renewals only after successful fresh reassessment; exact 20-minute expiry boundaries; renewal counter bounds; immediate invalidation on failed reassessment/stale data/Risk rejection; final invalidation after the third renewal; no fourth renewal; stable ID and audit history; no entry-zone drift or execution outside the selected zone; concurrent renewal idempotency.
+
 ## Safety and implementation requirements
 
 - Validate freshness, timestamps, supported instrument, prices, leverage, and the Risk Gate independently of strategy selection.
