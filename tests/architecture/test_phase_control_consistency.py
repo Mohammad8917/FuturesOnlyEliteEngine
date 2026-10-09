@@ -37,8 +37,7 @@ def test_phase_control_documents_are_consistent() -> None:
     assert (
         "- Current gate: resolve the Phase 1/G07 applicability contradiction through "
         "owner-reviewed ADR proposal, then perform PR #35 owner review/authorized "
-        "merge and exact-resulting-SHA verification on `main`"
-        in state
+        "merge and exact-resulting-SHA verification on `main`" in state
     )
     assert (
         "- Implementation phase authorized: YES — Phase 1 Domain Contracts only"
@@ -48,7 +47,11 @@ def test_phase_control_documents_are_consistent() -> None:
         "- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit"
         in state
     )
-    assert "- Active work: owner review/merge of PR #35" in state
+    assert (
+        "- Active work: resolve the proposed phase-scoped G07 applicability decision "
+        "through required owner review; PR #35 remains open and unmerged."
+        in state
+    )
     assert (
         "- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged"
         in state
