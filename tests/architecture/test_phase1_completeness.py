@@ -69,7 +69,8 @@ def test_phase1_is_futures_only_and_gates_remain_strict() -> None:
 def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     state = (ARCH / "project-state.md").read_text(encoding="utf-8")
     assert "Phase 2+ production implementation remains blocked" in state
-    assert "final completeness/evidence audit IN PROGRESS" in state
-    assert "G05's immutable floor remains 98%" in state
-    assert "Next authorized action: fix any remaining G06/G08 findings" in state
-    assert "No all-gates same-SHA pass is claimed yet." in state
+    assert "final completeness/evidence audit CLOSURE SNAPSHOT PENDING" in state
+    assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
+    assert "G05 independently calculates exact line coverage from XML counts" in state
+    assert "Next authorized action: wait for and verify all applicable gates on the closure snapshot commit" in state
+    assert "No all-gates same-SHA pass is claimed for the closure snapshot commit yet." in state

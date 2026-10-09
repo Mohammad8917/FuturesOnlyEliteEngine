@@ -16,25 +16,24 @@ This is project state, not the architectural contract. Architectural rules remai
 - Required markets: CRYPTO Futures, FOREX Futures, GOLD Futures
 - Required contract families: Linear Futures and Inverse Futures
 - Operational Spot: FORBIDDEN; no Spot fallback or operational Spot path
-- Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit IN PROGRESS
-- Current gate: G06 Security + G08 Mutation verification, followed by same-SHA gate reconciliation
-- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until the final audit is explicitly closed
+- Current phase: Phase 1 — Domain Contracts; final completeness/evidence audit CLOSURE SNAPSHOT PENDING
+- Current gate: same-SHA closure snapshot verification and PR #35 review/merge
+- Implementation phase authorized: YES — Phase 1 Domain Contracts only; NO — Phase 2+ production implementation remains blocked until the closure snapshot is green and PR #35 is reviewed/merged
 - Current HEAD: refresh from GitHub; this document's SHA is a snapshot/evidence reference, never an authority over live repository HEAD
 - Main baseline SHA: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`
 - Main baseline evidence: G01, G03, G04, G05, Phase 1, and Architecture Invariants jobs completed successfully on that SHA. However, the G05 log for run `37850090486` prints `FAIL Required test coverage of 98% not reached. Total coverage: 97.83%` while the job conclusion is success. Therefore that main-branch G05 result is NOT acceptable evidence and must not be treated as a valid pass.
 - Audit candidate: PR #35, branch `hardening/eight-rules-conformance`; refresh its HEAD before relying on any SHA.
-- Candidate evidence baseline: G01, G02, G03, G04, G05, Phase 1, and Architecture Invariants were green together on SHA `914c17097993487522ab0a468c09620c387b7a63`. G06 and G08 were not green on that SHA. Later candidate commits corrected the security scan scope, removed production `assert` guards, and revised the mutation runner/configuration; those later commits require fresh evidence. No all-gates same-SHA pass is claimed yet.
-- G01: Ruff lint/format enforcement plus dependency architecture checks are implemented on the candidate branch; latest exact-SHA result must be refreshed after the final commit.
-- G02: strict Pyright is configured for production `contracts/` and `validation/`; latest exact-SHA result must be refreshed after the final commit.
-- G03/G04/G05/Phase 1/Architecture Invariants: candidate results were green on the evidence SHA above; the final candidate SHA still requires same-SHA verification. G05's immutable floor remains 98%; the independent XML check calculates `lines-covered / lines-valid` rather than trusting rounded `line-rate`.
-- G06: security/supply-chain scanning is implemented; the current final SHA must pass dependency audit, Bandit, and tracked-file secret scanning.
-- G07: fail-closed integration/resilience workflow is defined and is intentionally path-triggered for operational-layer changes. It is NOT a completed integration gate because operational layers and integration/resilience test suites do not yet exist.
-- G08: mutation workflow is defined with an immutable 90% floor. The valid mutation run on SHA `eb803314cf66b46b9924ed0ad9f97a844c02314c` measured 64.07% (214 killed / 334 non-skipped mutants), so G08 is RED and Phase 1 audit remains open. The survivor identities are exposed in workflow logs for test-driven remediation. Earlier configuration-only failures do not count as mutation evidence.
+- Candidate evidence baseline: on SHA `0aa7bb8def2918a8d2ec293d2671bfe93651b7c0`, G01, G02, G03, G04, G05, G06, G08, Phase 1, and Architecture Invariants all completed successfully on the same exact SHA. G05 remains at or above the immutable 98% floor; G08 measured 94.91% (317 killed / 334 non-skipped mutants), above the immutable 90% floor. This is candidate-branch evidence, not main-branch evidence.
+- G01: Ruff lint/format and dependency-architecture checks are enforced and passed on the candidate evidence SHA.
+- G02: strict Pyright passed on the candidate evidence SHA for production `contracts/` and `validation/`. Runtime guards remain required; only the `reportUnnecessaryIsInstance` style diagnostic is disabled because static annotations do not replace runtime input validation. All type-safety diagnostics remain errors.
+- G03/G04/G05/Phase 1/Architecture Invariants: passed on the candidate evidence SHA. G05 independently calculates exact line coverage from XML counts and fails below 98%; it does not trust rounded `line-rate`.
+- G06: dependency audit, Bandit, and tracked-file secret scan passed on the candidate evidence SHA. The workflow runs on every repository change.
+- G07: the fail-closed integration/resilience workflow is defined and path-triggered for operational-layer changes. It is NOT a completed integration gate because `application/`, `risk/`, `execution/`, `infrastructure/`, `adapters/`, `configuration/`, `tests/integration/`, and `tests/resilience/` do not yet exist. It must not be represented as green.
+- G08: a valid run on SHA `eb803314cf66b46b9924ed0ad9f97a844c02314c` scored 64.07% and failed. Stronger boundary tests raised the score to 94.91% (317/334) on SHA `0aa7bb8def2918a8d2ec293d2671bfe93651b7c0`; this meets the 90% floor. The closure snapshot commit must rerun G08 and remain >=90%.
 - Present repository scope: canonical Futures contracts, validation, tests, architecture documents, and CI workflows. The following required production paths are absent: `domain/`, `application/`, `shared/`, `risk/`, `execution/`, `infrastructure/`, `adapters/`, and `configuration/`. Fifteen exchange adapters, operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
-- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation boundaries exist, but the final completeness/evidence audit is NOT CLOSED.
-- Active work: close G06/G08, verify all applicable gates on one exact candidate SHA, reconcile the eight Source-of-Truth documents, and record truthful same-SHA evidence.
-- Blocked work: Phase 2+ production implementation until the current Phase 1 completeness/evidence audit is explicitly closed; G07 remains blocked until operational layers and tests are implemented.
-- Next authorized action: fix any remaining G06/G08 findings without suppressions; then run all applicable CI gates on the final candidate SHA and reconcile project state. Only after that may Phase 2 entry be evaluated.
+- Active work: verify all applicable gates on the closure snapshot SHA, then review/merge PR #35 and verify the resulting main SHA. The closure snapshot is not accepted until its own applicable checks are green.
+- Blocked work: Phase 2+ production implementation until the closure snapshot passes all applicable gates on one exact SHA and PR #35 is reviewed/merged. G07 becomes applicable when operational layers or integration/resilience tests change.
+- Next authorized action: wait for and verify all applicable gates on the closure snapshot commit; if green, complete PR #35 review/merge. Only after main is verified may Phase 2 entry be evaluated.
 - Forbidden actions: no architecture redesign without an actual violation and approved ADR; no Spot operational path; no hardcoded secrets/configuration; no float financial inputs; no implicit rounding; no skipped/xfail tests; no threshold reduction; no exclusions or suppressions solely to obtain green; no gate bypass; no claim of production readiness before required layers and same-SHA evidence exist.
 
 ## Required state fields for every update
