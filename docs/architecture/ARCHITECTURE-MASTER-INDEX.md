@@ -722,7 +722,7 @@ Historical phase-unit entries in this document preserve chronology. Their earlie
 
 ## Current gate applicability reconciliation — 2026-10-09
 
-PR #35 candidate HEAD `458079b915cc6395f266675b13b4893b323cf55b` has green Architecture Invariants, Phase 1, G01–G06, and G08 evidence; G07 is red because later-phase operational layers and integration/resilience suites are absent. Since Phase 2+ is blocked pending the PR #35 governance/merge step, the all-PR G07 workflow currently creates a phase-applicability conflict. Proposed ADR-0001 records the question for owner review; it is not approved and does not authorize skipping G07, placeholder code, merge, or Phase 2. Current authorization remains controlled by project-state.md.
+Historical finding only: at candidate SHA `458079b915cc6395f266675b13b4893b323cf55b`, operational G07 failed closed because later-phase layers and integration/resilience suites were absent, and ADR-0001 was still proposed. This state is superseded by approved ADR-0001 and the phase-scoped applicability classifier. Current rule: Phase 1-only/no operational scope means G07 NOT APPLICABLE (not passed), never operational success; operational scope activates fail-closed G07. Current authorization remains controlled by `project-state.md`.
 
 ## Approved ADR-0001 — phase-scoped G07 applicability
 

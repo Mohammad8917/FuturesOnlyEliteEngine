@@ -153,7 +153,14 @@ def test_g07_phase_applicability_is_explicit_and_fail_closed() -> None:
     assert "- **Status:** APPROVED" in adr
     assert "NOT APPLICABLE (not passed)" in adr
     assert "G07 NOT APPLICABLE" in workflow
+    assert "Phase 1-only/no operational scope means G07 NOT APPLICABLE (not passed)" in master_index
+    assert "Proposed ADR-0001 records the question for owner review; it is not approved" not in master_index
+    assert "Until it is approved, gate applicability and merge authorization must not be guessed" not in roadmap
+    assert "owner reviews/reconfirms the proposal" not in change_guard
+    assert "Technical lock status: UNVERIFIED" in state
+    assert "independent required review/approval is outstanding" in state
     assert "G07 has NOT passed" in workflow
     assert "if: needs.applicability.outputs.operational_scope == 'true'" in workflow
     assert "Phase 1 Domain Contracts only" in state
     assert "Phase 2+ production implementation remains blocked" in state
+    assert "Last verified candidate evidence before this synchronization is SHA" in state

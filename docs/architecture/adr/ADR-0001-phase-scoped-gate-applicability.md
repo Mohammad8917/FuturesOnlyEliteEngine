@@ -30,7 +30,7 @@ This ADR authorizes only the narrow applicability implementation below. It does 
 1. Add empty directories or dummy tests — rejected as fake evidence and prohibited.
 2. Skip or soften G07 on the Phase 1 PR without an approved rule — rejected as a gate bypass.
 3. Implement all Phase 2+ production layers before Phase 1 merge authorization — rejected because it violates phase ordering and authorization.
-4. Keep the current red G07 and obtain an owner decision on explicit phase applicability — safe interim state and recommended governance path.
+4. Keep G07 fail-closed while recording an explicit phase-applicability decision — this was the safe interim path; the decision is now approved and implemented in the workflow.
 
 ## 5. Affected invariants and contracts
 
@@ -55,7 +55,7 @@ G07 and the Phase 1/G01/Architecture Invariants workflows; all applicable G01–
 
 ## 8. Risk analysis
 
-Without an explicit decision, either the PR is permanently blocked by a later-phase requirement or a contributor may be tempted to bypass G07. Either outcome conflicts with phase governance. The proposed path keeps G07 red and truthful until applicability is decided.
+The approved decision resolves the phase cycle without bypassing G07: Phase 1-only/no operational scope is explicitly NOT APPLICABLE (not passed), while operational scope makes G07 mandatory and fail-closed. A skipped operational job must never be represented as passed.
 
 ## 9. Migration plan
 
@@ -67,4 +67,4 @@ If the approved implementation fails any invariant or gate, revert the workflow/
 
 ## 11. Explicit approval/reconfirmation
 
-**APPROVED BY OWNER-DIRECTED DECISION (2026-10-09).** The repository owner instructed: “If the document's rules permit approval, continue and make the best decision under the eight source-of-truth documents.” This authorizes the narrow phase-applicability decision in Section 3, not skipping G07, weakening any gate, declaring G07 passed in Phase 1, merging PR #35, or starting Phase 2+. Implementation and same-SHA CI verification remain required.
+**APPROVED BY OWNER-DIRECTED DECISION (2026-10-09).** The repository owner instructed: “If the document's rules permit approval, continue and make the best decision under the eight source-of-truth documents.” This authorizes the narrow phase-applicability decision in Section 3, not skipping G07, weakening any gate, declaring G07 passed in Phase 1, merging PR #35, or starting Phase 2+. Workflow and regression tests are implemented; final same-SHA verification, independent PR review/authorized merge, and exact-resulting-SHA verification on `main` remain required.

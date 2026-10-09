@@ -96,7 +96,7 @@ Historical phase-unit entries in this document preserve chronology. Their earlie
 
 ## Phase-scoped gate applicability hold — 2026-10-09
 
-On candidate SHA `458079b915cc6395f266675b13b4893b323cf55b`, G07 fails closed because later-phase production layers and integration/resilience suites are absent. This conflicts operationally with the rule that Phase 2+ is blocked until PR #35 merges, while the workflow runs G07 on every PR. Proposed ADR-0001 documents the unresolved applicability decision. No gate may be skipped or weakened, no placeholder implementation may be added, and no Phase 2+ work or merge authorization may be inferred until the owner reviews/reconfirms the proposal and the resulting same-SHA checks are verified.
+Historical finding only: on candidate SHA `458079b915cc6395f266675b13b4893b323cf55b`, operational G07 failed closed because later-phase production layers and integration/resilience suites were absent. This finding is superseded by approved ADR-0001. Current rule: Phase 1-only/no operational scope means G07 NOT APPLICABLE (not passed), not passed; any operational scope activates G07 and fails closed until required real integration/resilience tests pass. No gate may be skipped or weakened, and no Phase 2+ authorization may be inferred.
 
 ## Approved ADR-0001 — phase-scoped G07 applicability
 
