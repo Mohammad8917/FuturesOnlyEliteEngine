@@ -31,7 +31,7 @@ def _coverage_xml(
     packages_xml = (
         f'<packages><package name="contracts.futures" line-rate="0.98" '
         f'branch-rate="0" complexity="0"><classes>{class_xml}</classes>'
-        f'</package></packages>'
+        f"</package></packages>"
         if include_packages
         else ""
     )
@@ -94,8 +94,7 @@ def test_g05_guard_fails_closed_on_invalid_line_counts(tmp_path: Path) -> None:
 
     assert result.returncode != 0
     assert (
-        "G05 FAIL: coverage report has invalid metadata or line counts"
-        in result.stdout
+        "G05 FAIL: coverage report has invalid metadata or line counts" in result.stdout
     )
 
 
@@ -135,8 +134,7 @@ def test_g05_guard_fails_closed_on_truncated_root_only_xml(tmp_path: Path) -> No
     assert result.returncode != 0
     assert (
         "G05 FAIL: coverage report is incomplete; "
-        "<sources> and <packages> are required"
-        in result.stdout
+        "<sources> and <packages> are required" in result.stdout
     )
 
 
@@ -153,8 +151,7 @@ def test_g05_guard_fails_closed_when_package_has_no_class_evidence(
     assert result.returncode != 0
     assert (
         "G05 FAIL: coverage report is incomplete; "
-        "at least one class with a filename is required"
-        in result.stdout
+        "at least one class with a filename is required" in result.stdout
     )
 
 
@@ -169,6 +166,5 @@ def test_g05_guard_fails_closed_when_root_totals_disagree_with_class_evidence(
     assert result.returncode != 0
     assert (
         "G05 FAIL: coverage report root totals do not match "
-        "class-level line evidence"
-        in result.stdout
+        "class-level line evidence" in result.stdout
     )
