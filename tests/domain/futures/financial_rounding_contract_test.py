@@ -489,7 +489,6 @@ def test_audit_record_rejects_noncanonical_decimal_text() -> None:
         )
 
 
-
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
