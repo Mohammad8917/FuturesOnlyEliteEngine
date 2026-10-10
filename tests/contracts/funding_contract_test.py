@@ -196,3 +196,11 @@ def test_nonfinite_funding_product_is_rejected():
             notional=Decimal("1E999999"),
             position_side=PositionSide.LONG,
         )
+
+
+def test_underflowed_funding_amount_is_rejected():
+    with pytest.raises(FundingValidationError, match="funding payment is invalid"):
+        funding(rate=Decimal("0.1")).calculate_payment(
+            notional=Decimal("1E-999999"),
+            position_side=PositionSide.LONG,
+        )
