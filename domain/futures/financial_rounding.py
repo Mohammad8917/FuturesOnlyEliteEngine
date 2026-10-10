@@ -205,6 +205,10 @@ def _quantize(
             # The only authorized suppression: explicit final boundary rounding.
             context.traps[Inexact] = False
             context.traps[Rounded] = False
+            if context.traps[Inexact] is not False or context.traps[Rounded] is not False:
+                raise FinancialRoundingError(
+                    "final rounding must explicitly control Inexact and Rounded traps"
+                )
             output = value.quantize(quantum, rounding=rounding, context=context)
     except DecimalException as exc:
         raise FinancialRoundingError(
