@@ -1,9 +1,11 @@
 from decimal import Decimal, Inexact, ROUND_UP, localcontext
+from operator import setitem
 import pytest
 
 from contracts.futures.instrument import Market
 from contracts.futures.position_side import PositionSide
 from domain.futures.financial_rounding import (
+    DEFAULT_PNL_SCALES,
     FinancialRiskBoundaryError,
     FinancialRoundingError,
     FundingRoundingPolicy,
@@ -220,3 +222,9 @@ def test_liquidation_fails_closed_when_tick_result_exceeds_working_precision():
     )
     with pytest.raises(FinancialRoundingError):
         round_liquidation_price(tick, policy)
+
+
+def test_default_pnl_scales_are_immutable():
+    with pytest.raises(TypeError):
+        setitem(DEFAULT_PNL_SCALES, Market.CRYPTO, 2)
+    assert DEFAULT_PNL_SCALES[Market.CRYPTO] == 8
