@@ -1,9 +1,9 @@
 # ADR-0006 — Signal-Only Product Scope; Remove Automated Trading
 
 ## 1. Status
-**PROPOSED — NOT APPROVED OR IMPLEMENTED**
+**APPROVED BY OWNER — IMPLEMENTATION IN PROGRESS; NOT YET VERIFIED**
 
-This ADR is an architecture-change proposal. Creating this file or opening its PR does not change production behavior, authorize deletion, or supersede the protected Source of Truth.
+This ADR is an architecture-change proposal. The owner explicitly approved this exact scope and impact analysis on 2026-10-10 (recorded in PR #51). This authorizes the governed documentation migration and signal-only enforcement work; it does not bypass review, phase gates, tests, or same-SHA evidence.
 
 ## 2. Date
 2026-10-10
@@ -47,7 +47,7 @@ The product must **never**:
 - turn a signal, Telegram command, retry, restart, or configuration change into a live execution intent;
 - expose an automation ON switch or suggest that live order execution is available.
 
-Remove automated-trading capability from the product scope and roadmap—not merely hide it behind a feature flag. Remove production order-execution implementations, live order submission paths, execution-specific Telegram controls, and product requirements that promise automated trading, after the ADR is approved and migration is authorized.
+Remove automated-trading capability from the product scope and roadmap—not merely hide it behind a feature flag. Remove production order-execution implementations, live order submission paths, execution-specific Telegram controls, and product requirements that promise automated trading, under this approved ADR and the mandatory staged migration / phase-gate process.
 
 Do **not** delete useful market-data adapters, Futures instrument/financial contracts, risk calculations used to describe signal risk, or simulation-only components merely because their names overlap with execution concepts. Audit each component and remove it only if it exclusively supports live execution or contradicts signal-only behavior. No exchange-specific market-data work may guess which exchanges the owner has selected.
 
@@ -120,7 +120,7 @@ Risks/costs:
 - the repository may have no live execution implementation to delete today, so actual deletion scope must be established from a complete source/reference audit.
 
 ## 14. Migration Plan
-1. Review and approve this ADR through the required owner/governance process.
+1. Owner approval is recorded; complete required review and merge workflow without bypassing branch protections.
 2. Inventory all protected documents, product docs, code, dependencies, credentials, workflows, commands, tests, and branches that describe or implement live execution.
 3. Update protected Source-of-Truth documents only through the approved ADR migration.
 4. In the currently authorized project phase, complete the allowed contract/governance changes and do not bypass the Phase 1 exit gates. Production implementation remains blocked until the roadmap authorizes it.
@@ -135,4 +135,4 @@ Do not restore live execution by reverting code or toggling a setting. If the si
 ## 16. Explicit Approval / Reconfirmation
 **Owner intent recorded:** The owner explicitly requested: “معامله خودکار کامل تضمینی حذف کن فقط سیگنال تولید کنه برای سه بازار” — completely remove automated trading and generate signals only for the three markets.
 
-**Specific ADR approval:** Pending review of this exact impact analysis and formal approval under the repository's ADR workflow. Until then, this ADR remains PROPOSED, protected Source-of-Truth documents remain unchanged, and no code deletion is claimed or authorized by this proposal alone.
+**Specific ADR approval:** The owner explicitly approved this exact impact analysis and product scope on 2026-10-10; approval is recorded in PR #51. Implementation remains subject to required repository review, Phase 1 exit gates, test/CI evidence, and same-SHA verification. A bounded inventory of `main` found no application/execution/infrastructure runtime directories or live order-write implementation to delete at that revision; this does not establish external deployment state.

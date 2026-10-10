@@ -1,6 +1,6 @@
 # FuturesOnlyEliteEngine
 
-Elite Futures-Only Professional Trading Engine — production-grade architecture for **100% Futures** across CRYPTO, FOREX, and GOLD, with Linear and Inverse contracts, automated trading, Telegram/email signal delivery, strict risk, execution, validation, and quality gates.
+Elite Futures-Only Signal Engine — signal generation only for **CRYPTO Futures, FOREX Futures, and GOLD Futures**, with explicit Linear/Inverse semantics, read-only market data, Telegram/email signal delivery, strict validation, and quality gates.
 
 **Runtime:** Python 3.13.  **Deployment targets:** Windows Server, Linux Server, and Windows Home/Desktop.
 
@@ -30,13 +30,13 @@ The project is being built from architecture-first principles. Production implem
 
 - **100% Futures-only; no operational Spot path.**
 - **CRYPTO Futures, FOREX Futures, and GOLD Futures — all three are Futures.**
-- Automated Futures trading through the governed risk → execution pipeline.
+- Permanent signal-only product; live order execution and account mutation are prohibited.
 - Telegram and email signal/operational notifications.
 - Python 3.13.
 - Windows Server, Linux Server, and Windows Home/Desktop support.
 - Linear and Inverse Futures with explicit semantic separation.
-- 15 independent exchange adapters.
-- Fail-closed risk and execution boundaries.
+- Read-only market-data adapters only; supported providers are configured explicitly and never assumed.
+- Fail-closed signal validation and advisory risk-estimation boundaries.
 - Single Responsibility at module level.
 - No placeholder, simulation, random logic, fake success, or test weakening.
 
@@ -52,3 +52,7 @@ The project is being built from architecture-first principles. Production implem
 - G08 Release/Mutation: **>= 90% mutation minimum**
 
 Quality is established by evidence, not by gate manipulation.
+
+## Permanent signal-only boundary
+
+The product never submits/amends/cancels/retries live orders, mutates real positions/accounts, changes leverage, transfers funds, allocates live capital, or exposes execution controls. Market-data access is read-only. Risk/position-size figures in a signal are advisory estimates, not guarantees. See [ADR-0006](docs/architecture/adr/ADR-0006-signal-only-product-scope.md).
