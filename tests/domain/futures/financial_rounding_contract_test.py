@@ -301,4 +301,3 @@ def test_margin_ratio_compares_after_rounding_at_equality_boundaries():
     assert round_margin_ratio("0.599999995", policy) == Decimal("0.60000000")
     with pytest.raises(FinancialRiskBoundaryError):
         round_margin_ratio("0.400000005", policy)
-
