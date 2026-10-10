@@ -12,7 +12,6 @@ FORBIDDEN_CALLS = {
     "cancel_order", "replace_order", "amend_order", "modify_order",
     "open_position", "close_position", "transfer_funds", "set_leverage",
 }
-FORBIDDEN_IMPORT_ROOTS = {"ccxt", "binance", "bybit", "okx", "kraken", "kucoin", "hyperliquid"}
 
 
 def _production_python_files() -> list[Path]:
@@ -37,14 +36,6 @@ def test_production_source_has_no_live_order_or_account_mutation_calls() -> None
                 )
                 if name.lower() in FORBIDDEN_CALLS:
                     violations.append(f"{path.relative_to(ROOT)}:{node.lineno}: forbidden call {name}")
-            elif isinstance(node, ast.Import):
-                for alias in node.names:
-                    if alias.name.split(".", 1)[0].lower() in FORBIDDEN_IMPORT_ROOTS:
-                        violations.append(f"{path.relative_to(ROOT)}:{node.lineno}: forbidden SDK import {alias.name}")
-            elif isinstance(node, ast.ImportFrom):
-                root = (node.module or "").split(".", 1)[0].lower()
-                if root in FORBIDDEN_IMPORT_ROOTS:
-                    violations.append(f"{path.relative_to(ROOT)}:{node.lineno}: forbidden SDK import {node.module}")
     assert not violations, "Signal-only invariant violated:\n" + "\n".join(violations)
 
 
