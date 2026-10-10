@@ -292,9 +292,11 @@ def test_funding_interval_provenance_and_side_branches():
         )
     with pytest.raises(FundingValidationError):
         funding_spec().calculate_payment(notional=1, position_side="LONG")
+    # Positive rate convention is market-wide: Long pays Short regardless
+    # of which position's notional the caller is valuing.
     payment = funding_spec().calculate_payment(notional=Decimal("10"), position_side=PositionSide.SHORT)
-    assert payment.payer is PositionSide.SHORT
-    assert payment.receiver is PositionSide.LONG
+    assert payment.payer is PositionSide.LONG
+    assert payment.receiver is PositionSide.SHORT
 
 
 def margin_instrument():
