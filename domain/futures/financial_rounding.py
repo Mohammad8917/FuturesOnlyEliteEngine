@@ -23,7 +23,6 @@ from decimal import (
     Overflow,
     ROUND_DOWN,
     ROUND_HALF_EVEN,
-    ROUND_HALF_UP,
     ROUND_UP,
     Rounded,
     Subnormal,
@@ -308,7 +307,7 @@ def _tick_rounded_value(value: Decimal, tick_size: Decimal, side: PositionSide) 
     """Round a positive price to an exact tick multiple without quotient rounding."""
     rounding = ROUND_DOWN if side is PositionSide.LONG else ROUND_UP
     try:
-        with controlled_decimal_context() as context:
+        with controlled_decimal_context():
             # Integral quotient and remainder are exact; a repeating price/tick
             # quotient is never materialized as a rounded Decimal.
             quotient = value // tick_size
