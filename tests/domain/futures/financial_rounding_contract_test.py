@@ -445,7 +445,7 @@ def test_funding_scale_zero_and_rate_at_limit_are_explicitly_supported() -> None
     )
     assert result.value == Decimal("2")
     assert result.audit_record.rounding_mode == "ROUND_HALF_UP"
-    assert result.audit_record.output_value == "2" 
+    assert result.audit_record.output_value == "2"
 
 
 @pytest.mark.parametrize(
@@ -659,7 +659,6 @@ def test_zero_tick_is_rejected_before_price_arithmetic() -> None:
     assert str(captured.value) == "tick_size must be greater than zero"
 
 
-
 def test_decimal_text_rejects_non_finite_values_directly() -> None:
     from domain.futures.financial_rounding import _decimal_text
 
@@ -678,7 +677,6 @@ def test_audit_record_rejects_unparseable_decimal_text() -> None:
             scale_or_tick="scale=0",
         )
     assert "input_value" in str(captured.value)
-
 
 
 def test_quantum_uses_positive_unit_coefficient() -> None:
