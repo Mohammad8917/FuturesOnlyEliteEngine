@@ -19,6 +19,7 @@ from decimal import (
     DivisionByZero,
     Inexact,
     InvalidOperation,
+    localcontext,
     Overflow,
     ROUND_DOWN,
     ROUND_HALF_EVEN,
@@ -111,7 +112,7 @@ def controlled_decimal_context() -> Iterator[Context]:
     context.traps[Overflow] = True
     context.traps[InvalidOperation] = True
     context.traps[DivisionByZero] = True
-    with __import__("decimal").localcontext(context) as active:
+    with localcontext(context) as active:
         yield active
 
 
