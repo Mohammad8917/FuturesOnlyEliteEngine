@@ -238,7 +238,10 @@ def test_default_pnl_scales_are_immutable():
 def test_error_contracts_are_stable_for_invalid_boundary_policies():
     cases = [
         (lambda: round_pnl("1", object()), "policy must be PnLRoundingPolicy"),
-        (lambda: round_funding("1", "0.01", object()), "policy must be FundingRoundingPolicy"),
+        (
+            lambda: round_funding("1", "0.01", object()),
+            "policy must be FundingRoundingPolicy",
+        ),
         (
             lambda: round_margin_ratio("0.5", object()),
             "policy must be MarginRatioRoundingPolicy",
@@ -298,11 +301,7 @@ def test_working_context_explicitly_pins_adr_precision_rounding_and_traps():
     assert keywords["prec"].id == "WORKING_PRECISION"
     assert isinstance(keywords["rounding"], ast.Name)
     assert keywords["rounding"].id == "ROUND_HALF_EVEN"
-    trapped = {
-        item.id
-        for item in keywords["traps"].elts
-        if isinstance(item, ast.Name)
-    }
+    trapped = {item.id for item in keywords["traps"].elts if isinstance(item, ast.Name)}
     assert {"Inexact", "Rounded", "InvalidOperation", "DivisionByZero"} <= trapped
 
 
