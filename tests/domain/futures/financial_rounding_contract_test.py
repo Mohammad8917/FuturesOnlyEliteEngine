@@ -97,6 +97,17 @@ def test_pnl_scale_can_be_explicitly_overridden_by_policy() -> None:
     assert result.value == Decimal("1.2345")
 
 
+def test_pnl_rejects_unsupported_market_with_contextual_error() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        round_pnl(
+            Decimal("1"),
+            market="CRYPTO",
+            scale=8,
+            max_reasonable_pnl=Decimal("10"),
+        )
+    assert "market" in str(captured.value).lower()
+
+
 @pytest.mark.parametrize(
     ("value", "scale", "maximum", "market"),
     [
@@ -154,13 +165,14 @@ def test_funding_rejects_rate_over_policy_limit_and_negative_amount() -> None:
             max_funding_rate=Decimal("0.01"),
             scale=8,
         )
-    with pytest.raises(FinancialRoundingError):
+    with pytest.raises(FinancialRoundingError) as captured:
         round_funding(
             Decimal("-1"),
             funding_rate=Decimal("0.001"),
             max_funding_rate=Decimal("0.01"),
             scale=8,
         )
+    assert "funding amount" in str(captured.value).lower()
 
 
 @pytest.mark.parametrize(
@@ -197,6 +209,7 @@ def test_margin_ratio_is_rounded_for_comparison_only_and_rejects_unsafe_interval
         )
     assert captured.value.audit_record is not None
     assert captured.value.audit_record.boundary == "MARGIN_RATIO"
+    assert "strictly between" in str(captured.value)
 
 
 @pytest.mark.parametrize("ratio", [Decimal("0.05"), Decimal("0.10")])
@@ -260,7 +273,15 @@ def test_liquidation_rounding_handles_exact_tick_without_moving_it() -> None:
         last_price=Decimal("101"),
         position_is_liquidated=False,
     )
+    short_result = round_liquidation_price(
+        Decimal("100.25"),
+        tick_size=Decimal("0.25"),
+        position_side=PositionSide.SHORT,
+        last_price=Decimal("99"),
+        position_is_liquidated=False,
+    )
     assert result.value == Decimal("100.25")
+    assert short_result.value == Decimal("100.25")
 
 
 @pytest.mark.parametrize(
@@ -281,6 +302,7 @@ def test_liquidation_fails_closed_when_trigger_is_crossed(side, last_price) -> N
         )
     assert captured.value.audit_record is not None
     assert captured.value.audit_record.boundary == "LIQUIDATION_PRICE"
+    assert "trigger is crossed" in str(captured.value)
 
 
 def test_liquidation_crossing_is_not_reclassified_if_already_liquidated() -> None:
@@ -303,12 +325,13 @@ def test_liquidation_crossing_is_not_reclassified_if_already_liquidated() -> Non
         (Decimal("1"), Decimal("0.1"), PositionSide.LONG, Decimal("2"), 0),
         (Decimal("1"), Decimal("0.1"), PositionSide.LONG, Decimal("0"), False),
         (Decimal("1"), Decimal("0.1"), PositionSide.LONG, Decimal("0.5"), False),
+        (True, Decimal("0.1"), PositionSide.LONG, Decimal("2"), False),
     ],
 )
 def test_liquidation_rejects_invalid_inputs(
     price, tick, side, last, liquidated
 ) -> None:
-    with pytest.raises(FinancialRoundingError):
+    with pytest.raises(FinancialRoundingError) as captured:
         round_liquidation_price(
             price,
             tick_size=tick,
@@ -316,6 +339,8 @@ def test_liquidation_rejects_invalid_inputs(
             last_price=last,
             position_is_liquidated=liquidated,
         )
+    if price is True:
+        assert "liquidation_price" in str(captured.value)
 
 
 def test_liquidation_fails_closed_when_tick_result_exceeds_working_precision() -> None:
@@ -343,13 +368,14 @@ def test_audit_result_cannot_claim_a_different_output() -> None:
 
 @pytest.mark.parametrize("value", [True, False, 0.1, float("inf"), "not-a-decimal"])
 def test_pnl_rejects_non_decimal_or_malformed_values(value) -> None:
-    with pytest.raises(FinancialRoundingError):
+    with pytest.raises(FinancialRoundingError) as captured:
         round_pnl(
             value,
             market=Market.CRYPTO,
             scale=8,
             max_reasonable_pnl=Decimal("10"),
         )
+    assert "pnl" in str(captured.value).lower()
 
 
 def test_pnl_accepts_exact_integer_and_decimal_text_inputs() -> None:
@@ -461,3 +487,79 @@ def test_audit_record_rejects_noncanonical_decimal_text() -> None:
             rounding_mode="ROUND_DOWN",
             scale_or_tick="scale=0",
         )
+
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (Decimal("0"), "0"),
+        (Decimal("-0.000"), "0"),
+        (Decimal("1"), "1"),
+        (Decimal("-1.2300"), "-1.23"),
+        (Decimal("123.4500"), "1.2345E+2"),
+        (Decimal("0.00100"), "1E-3"),
+        (Decimal("1000"), "1E+3"),
+        (Decimal("1E+20"), "1E+20"),
+    ],
+)
+def test_decimal_text_is_canonical_and_exact(value, expected) -> None:
+    from domain.futures.financial_rounding import _decimal_text
+
+    assert _decimal_text(value) == expected
+
+
+def test_audit_record_rejects_non_finite_decimal_text_with_context() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        FinancialRoundingAuditRecord(
+            boundary="PNL",
+            input_value="NaN",
+            output_value="1",
+            rounding_mode="ROUND_DOWN",
+            scale_or_tick="scale=0",
+        )
+    assert "finite" in str(captured.value).lower()
+
+
+def test_funding_invalid_scale_retains_field_context() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        round_funding(
+            Decimal("1"),
+            funding_rate=Decimal("0.001"),
+            max_funding_rate=Decimal("0.01"),
+            scale=True,
+        )
+    assert "scale" in str(captured.value).lower()
+
+
+def test_margin_ratio_malformed_value_retains_field_context() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        round_margin_ratio(
+            "not-a-decimal",
+            maintenance_margin_ratio=Decimal("0.05"),
+            liquidation_ratio=Decimal("0.10"),
+        )
+    assert "margin_ratio" in str(captured.value).lower()
+
+
+def test_pnl_missing_maximum_retains_field_context() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        round_pnl(
+            Decimal("1"),
+            market=Market.CRYPTO,
+            scale=8,
+            max_reasonable_pnl=None,
+        )
+    assert "max_reasonable_pnl" in str(captured.value)
+
+
+def test_positive_tick_validation_retains_field_context() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        round_liquidation_price(
+            Decimal("1"),
+            tick_size=True,
+            position_side=PositionSide.LONG,
+            last_price=Decimal("2"),
+            position_is_liquidated=False,
+        )
+    assert "tick_size" in str(captured.value)
