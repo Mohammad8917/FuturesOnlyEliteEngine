@@ -238,7 +238,9 @@ def round_pnl(
     no scale or maximum-PnL risk limit is silently inferred here.
     """
     if not isinstance(market, Market):
-        raise FinancialRoundingError("market must be an explicit supported Futures market")
+        raise FinancialRoundingError(
+            "market must be an explicit supported Futures market"
+        )
     places = _scale(scale, "scale")
     amount = _decimal(value, "pnl")
     maximum = _positive(max_reasonable_pnl, "max_reasonable_pnl")
@@ -266,7 +268,9 @@ def round_funding(
     rate = _decimal(funding_rate, "funding_rate")
     maximum = _positive(max_funding_rate, "max_funding_rate")
     if rate.copy_abs() > maximum:
-        raise FinancialRiskBoundaryError("absolute funding rate exceeds configured maximum")
+        raise FinancialRiskBoundaryError(
+            "absolute funding rate exceeds configured maximum"
+        )
     return _quantize(
         payment,
         quantum=_quantum(places),
@@ -303,7 +307,9 @@ def round_margin_ratio(
     return result
 
 
-def _tick_rounded_value(value: Decimal, tick_size: Decimal, side: PositionSide) -> Decimal:
+def _tick_rounded_value(
+    value: Decimal, tick_size: Decimal, side: PositionSide
+) -> Decimal:
     """Round a positive price to an exact tick multiple without quotient rounding."""
     rounding = ROUND_DOWN if side is PositionSide.LONG else ROUND_UP
     try:
@@ -316,7 +322,9 @@ def _tick_rounded_value(value: Decimal, tick_size: Decimal, side: PositionSide) 
                 quotient += Decimal("1")
             output = quotient * tick_size
             if not output.is_finite() or output <= 0:
-                raise FinancialRoundingError("rounded liquidation price must be positive and finite")
+                raise FinancialRoundingError(
+                    "rounded liquidation price must be positive and finite"
+                )
             return output
     except DecimalException as exc:
         raise FinancialRoundingError(
@@ -353,11 +361,7 @@ def round_liquidation_price(
             scale_or_tick=f"tick={_decimal_text(tick)}",
         ),
     )
-    crossed = (
-        last <= output
-        if position_side is PositionSide.LONG
-        else last >= output
-    )
+    crossed = last <= output if position_side is PositionSide.LONG else last >= output
     if crossed and not position_is_liquidated:
         raise FinancialRiskBoundaryError(
             "liquidation trigger is crossed while position is reported as not liquidated",
