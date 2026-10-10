@@ -562,3 +562,24 @@ def test_positive_tick_validation_retains_field_context() -> None:
             position_is_liquidated=False,
         )
     assert "tick_size" in str(captured.value)
+
+
+
+def test_decimal_text_rejects_non_finite_values_directly() -> None:
+    from domain.futures.financial_rounding import _decimal_text
+
+    with pytest.raises(FinancialRoundingError) as captured:
+        _decimal_text(Decimal("NaN"))
+    assert "finite Decimal values" in str(captured.value)
+
+
+def test_audit_record_rejects_unparseable_decimal_text() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        FinancialRoundingAuditRecord(
+            boundary="PNL",
+            input_value="not-a-decimal",
+            output_value="1",
+            rounding_mode="ROUND_DOWN",
+            scale_or_tick="scale=0",
+        )
+    assert "input_value" in str(captured.value)
