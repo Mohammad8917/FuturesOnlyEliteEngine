@@ -123,6 +123,10 @@ class FuturesFundingSpecification:
             raise FundingValidationError(
                 "funding provenance and denomination must be explicit"
             )
+        if denomination != self.symbol.settlement_asset:
+            raise FundingValidationError(
+                "funding denomination must match instrument settlement asset"
+            )
 
         object.__setattr__(self, "funding_rate", rate)
         object.__setattr__(self, "interval_start", start)
