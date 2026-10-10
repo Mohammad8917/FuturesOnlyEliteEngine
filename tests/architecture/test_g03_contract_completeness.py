@@ -18,6 +18,7 @@ TEST_OWNERS = {
 }
 
 DOMAIN_TEST_OWNERS = {
+    "financial_rounding": {"domain/futures/financial_rounding_contract_test.py"},
     "contract_specification": {"domain/futures/test_contract_specification.py"},
     "settlement": {"domain/futures/test_settlement.py"},
     "margin": {"domain/futures/test_margin.py"},
