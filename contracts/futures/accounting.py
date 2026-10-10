@@ -68,15 +68,15 @@ class FuturesLedgerEntry:
     amount: Decimal
 
     def __post_init__(self) -> None:
-        _text(self.entry_id, "entry_id")
-        _text(self.causation_id, "causation_id")
-        _sequence(self.state_version, "state_version")
-        _sequence(self.sequence, "sequence")
-        _text(self.account_id, "account_id")
+        object.__setattr__(self, "entry_id", _text(self.entry_id, "entry_id"))
+        object.__setattr__(self, "causation_id", _text(self.causation_id, "causation_id"))
+        object.__setattr__(self, "state_version", _sequence(self.state_version, "state_version"))
+        object.__setattr__(self, "sequence", _sequence(self.sequence, "sequence"))
+        object.__setattr__(self, "account_id", _text(self.account_id, "account_id"))
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
             raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
-        _text(self.ledger_account, "ledger_account")
-        _asset(self.asset, "asset")
+        object.__setattr__(self, "ledger_account", _text(self.ledger_account, "ledger_account"))
+        object.__setattr__(self, "asset", _asset(self.asset, "asset"))
         if not isinstance(self.direction, AccountingDirection):
             raise AccountingValidationError("direction must be DEBIT or CREDIT")
         _decimal(self.amount, "amount", positive=True)
@@ -90,17 +90,23 @@ class FuturesAccountingJournal:
     entries: tuple[FuturesLedgerEntry, ...]
 
     def __post_init__(self) -> None:
-        _text(self.journal_id, "journal_id")
-        if not self.entries:
+        object.__setattr__(self, "journal_id", _text(self.journal_id, "journal_id"))
+        # Copy mutable containers before checking balance so later caller
+        # mutations cannot invalidate this frozen journal.
+        if not isinstance(self.entries, (tuple, list)):
+            raise AccountingValidationError("entries must be a tuple or list")
+        entries = tuple(self.entries)
+        object.__setattr__(self, "entries", entries)
+        if not entries:
             raise AccountingValidationError("journal must contain entries")
-        if any(not isinstance(entry, FuturesLedgerEntry) for entry in self.entries):
+        if any(not isinstance(entry, FuturesLedgerEntry) for entry in entries):
             raise AccountingValidationError("all entries must be FuturesLedgerEntry")
 
         seen: set[str] = set()
         prior_sequence = -1
         debit_totals: dict[str, Decimal] = {}
         credit_totals: dict[str, Decimal] = {}
-        for entry in self.entries:
+        for entry in entries:
             if entry.entry_id in seen:
                 raise AccountingValidationError("duplicate entry_id in journal")
             seen.add(entry.entry_id)
