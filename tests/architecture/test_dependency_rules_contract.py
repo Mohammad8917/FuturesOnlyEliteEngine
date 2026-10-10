@@ -14,7 +14,7 @@ REQUIRED_MARKERS = (
     "Domain owns pure Futures financial semantics.",
     "Risk owns policy decisions and risk acceptance/rejection.",
     "No execution layer exists in the product; signal lifecycle/audit owns signal state only and cannot submit orders.",
-    "Infrastructure owns external transport and exchange mapping.",
+    "Infrastructure owns read-only market-data transport and mapping only.",
     "Strategy/analysis owns analytical decisions only and cannot submit orders.",
     "Configuration/security owns validation and secret boundaries; only read-only market-data credentials are permitted",
     "Observability/notification owns reporting/delivery only; it cannot authorize trading.",
