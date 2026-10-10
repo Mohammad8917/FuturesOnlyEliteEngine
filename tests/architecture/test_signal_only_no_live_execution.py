@@ -61,8 +61,14 @@ def test_production_source_has_no_live_order_or_account_mutation_calls() -> None
             continue
 
         aliases: dict[str, str] = {}
+        forbidden_sdks = {_normalized(sdk) for sdk in FORBIDDEN_EXCHANGE_SDKS}
         for node in ast.walk(tree):
             if isinstance(node, ast.ImportFrom):
+                module = _normalized((node.module or "").split(".")[0])
+                if module in forbidden_sdks:
+                    violations.append(
+                        f"{path.relative_to(ROOT)}:{node.lineno}: forbidden exchange SDK import {node.module}"
+                    )
                 for item in node.names:
                     imported = _normalized(item.name)
                     if imported in FORBIDDEN_NAMES:
@@ -72,6 +78,11 @@ def test_production_source_has_no_live_order_or_account_mutation_calls() -> None
                     aliases[item.asname or item.name] = imported
             elif isinstance(node, ast.Import):
                 for item in node.names:
+                    module = _normalized(item.name.split(".")[0])
+                    if module in forbidden_sdks:
+                        violations.append(
+                            f"{path.relative_to(ROOT)}:{node.lineno}: forbidden exchange SDK import {item.name}"
+                        )
                     aliases[item.asname or item.name.split(".")[0]] = _normalized(item.name)
 
         for node in ast.walk(tree):
@@ -108,10 +119,18 @@ def test_production_source_has_no_live_order_or_account_mutation_calls() -> None
 
 def test_no_exchange_trading_sdk_is_declared_as_a_dependency() -> None:
     violations: list[str] = []
+    def is_manifest(path: Path) -> bool:
+        name = path.name.lower()
+        return (
+            name in DEPENDENCY_MANIFEST_NAMES
+            or (name.startswith("requirements") and name.endswith(".txt"))
+            or name.startswith("dockerfile")
+        )
+
     manifests = sorted(
         path for path in ROOT.rglob("*")
         if path.is_file()
-        and path.name.lower() in DEPENDENCY_MANIFEST_NAMES
+        and is_manifest(path)
         and not any(part in EXCLUDED_PARTS for part in path.relative_to(ROOT).parts)
     )
     for path in manifests:
@@ -120,8 +139,9 @@ def test_no_exchange_trading_sdk_is_declared_as_a_dependency() -> None:
         except (OSError, UnicodeError) as exc:
             violations.append(f"{path.relative_to(ROOT)}: dependency manifest unreadable: {exc}")
             continue
+        normalized_source = _normalized(source)
         for sdk in FORBIDDEN_EXCHANGE_SDKS:
-            if re.search(rf"(?<![a-z0-9_-]){re.escape(sdk)}(?![a-z0-9_-])", source):
+            if _normalized(sdk) in normalized_source:
                 violations.append(
                     f"{path.relative_to(ROOT)}: trading-capable exchange SDK dependency {sdk}"
                 )
