@@ -271,7 +271,6 @@ def test_settlement_boundary_rejects_non_decimal_source_amount():
         )
 
 
-
 def test_journal_copies_mutable_entries_before_validation():
     debit = FuturesLedgerEntry(
         entry_id="debit",
