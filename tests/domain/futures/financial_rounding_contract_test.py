@@ -527,6 +527,7 @@ def test_audit_record_rejects_noncanonical_decimal_text() -> None:
         (Decimal("0"), "0"),
         (Decimal("-0.000"), "0"),
         (Decimal("1"), "1"),
+        (Decimal("12"), "1.2E+1"),
         (Decimal("-1.2300"), "-1.23"),
         (Decimal("123.4500"), "1.2345E+2"),
         (Decimal("0.00100"), "1E-3"),
@@ -664,7 +665,7 @@ def test_decimal_text_rejects_non_finite_values_directly() -> None:
 
     with pytest.raises(FinancialRoundingError) as captured:
         _decimal_text(Decimal("NaN"))
-    assert "finite Decimal values" in str(captured.value)
+    assert str(captured.value) == "audit values must be finite Decimal values"
 
 
 def test_audit_record_rejects_unparseable_decimal_text() -> None:
