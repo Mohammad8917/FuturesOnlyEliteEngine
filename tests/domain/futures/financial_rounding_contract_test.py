@@ -110,7 +110,9 @@ def test_pnl_scale_can_be_explicitly_overridden_by_policy() -> None:
         (Decimal("Infinity"), 2, Decimal("10"), Market.CRYPTO),
     ],
 )
-def test_pnl_rejects_invalid_or_out_of_policy_inputs(value, scale, maximum, market) -> None:
+def test_pnl_rejects_invalid_or_out_of_policy_inputs(
+    value, scale, maximum, market
+) -> None:
     with pytest.raises(FinancialRoundingError):
         round_pnl(
             value,
@@ -172,7 +174,9 @@ def test_funding_rejects_rate_over_policy_limit_and_negative_amount() -> None:
         (Decimal("1"), Decimal("0.1"), Decimal("1"), 100),
     ],
 )
-def test_funding_fails_closed_on_invalid_policy_or_values(amount, rate, maximum, scale) -> None:
+def test_funding_fails_closed_on_invalid_policy_or_values(
+    amount, rate, maximum, scale
+) -> None:
     with pytest.raises(FinancialRoundingError):
         round_funding(
             amount,
@@ -182,7 +186,9 @@ def test_funding_fails_closed_on_invalid_policy_or_values(amount, rate, maximum,
         )
 
 
-def test_margin_ratio_is_rounded_for_comparison_only_and_rejects_unsafe_interval() -> None:
+def test_margin_ratio_is_rounded_for_comparison_only_and_rejects_unsafe_interval() -> (
+    None
+):
     with pytest.raises(FinancialRiskBoundaryError) as captured:
         round_margin_ratio(
             Decimal("0.075000004"),
@@ -213,7 +219,9 @@ def test_margin_ratio_accepts_strict_interval_boundaries(ratio) -> None:
         (Decimal("NaN"), Decimal("0.05"), Decimal("0.10")),
     ],
 )
-def test_margin_ratio_rejects_invalid_values_and_threshold_order(ratio, maintenance, liquidation) -> None:
+def test_margin_ratio_rejects_invalid_values_and_threshold_order(
+    ratio, maintenance, liquidation
+) -> None:
     with pytest.raises(FinancialRoundingError):
         round_margin_ratio(
             ratio,
@@ -297,7 +305,9 @@ def test_liquidation_crossing_is_not_reclassified_if_already_liquidated() -> Non
         (Decimal("1"), Decimal("0.1"), PositionSide.LONG, Decimal("0.5"), False),
     ],
 )
-def test_liquidation_rejects_invalid_inputs(price, tick, side, last, liquidated) -> None:
+def test_liquidation_rejects_invalid_inputs(
+    price, tick, side, last, liquidated
+) -> None:
     with pytest.raises(FinancialRoundingError):
         round_liquidation_price(
             price,
@@ -381,13 +391,16 @@ def test_funding_accepts_zero_amount_without_inventing_a_transfer() -> None:
     assert result.value == Decimal("0E-8")
 
 
-@pytest.mark.parametrize("field,value", [
-    ("boundary", ""),
-    ("input_value", " "),
-    ("output_value", None),
-    ("rounding_mode", ""),
-    ("scale_or_tick", ""),
-])
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("boundary", ""),
+        ("input_value", " "),
+        ("output_value", None),
+        ("rounding_mode", ""),
+        ("scale_or_tick", ""),
+    ],
+)
 def test_audit_record_rejects_missing_required_fields(field, value) -> None:
     fields = {
         "boundary": "PNL",
