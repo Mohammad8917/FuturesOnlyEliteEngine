@@ -41,6 +41,26 @@ PNL_ROUNDING_MODE = "ROUND_DOWN"
 MARGIN_RATIO_ROUNDING_MODE = "ROUND_HALF_UP"
 
 
+def _decimal_text(value: Decimal) -> str:
+    """Serialize a finite Decimal as a canonical, exact scientific decimal string."""
+    if not value.is_finite():
+        raise FinancialRoundingError("audit values must be finite Decimal values")
+    if value.is_zero():
+        return "0"
+    sign, digits, exponent = value.as_tuple()
+    significant = list(digits)
+    while significant[-1] == 0:
+        significant.pop()
+        exponent += 1
+    coefficient = str(significant[0])
+    if len(significant) > 1:
+        coefficient += "." + "".join(str(digit) for digit in significant[1:])
+    adjusted_exponent = exponent + len(significant) - 1
+    if adjusted_exponent:
+        coefficient += f"E{adjusted_exponent:+d}"
+    return ("-" if sign else "") + coefficient
+
+
 class FinancialRoundingError(ValueError):
     """Raised when a financial rounding boundary is invalid or unrepresentable."""
 
@@ -71,6 +91,18 @@ class FinancialRoundingAuditRecord:
             if not isinstance(value, str) or not value.strip():
                 raise FinancialRoundingError(f"{field_name} must be non-empty")
             object.__setattr__(self, field_name, value.strip())
+        for field_name in ("input_value", "output_value"):
+            text_value = getattr(self, field_name)
+            try:
+                parsed = Decimal(text_value)
+            except InvalidOperation as exc:
+                raise FinancialRoundingError(
+                    f"{field_name} must be a canonical finite decimal string"
+                ) from exc
+            if not parsed.is_finite() or _decimal_text(parsed) != text_value:
+                raise FinancialRoundingError(
+                    f"{field_name} must be a canonical finite decimal string"
+                )
 
 
 @dataclass(frozen=True, slots=True)
@@ -85,7 +117,7 @@ class FinancialRoundingResult:
             raise FinancialRoundingError("rounded value must be a finite Decimal")
         if not isinstance(self.audit_record, FinancialRoundingAuditRecord):
             raise FinancialRoundingError("audit_record must be explicit")
-        if self.audit_record.output_value != str(self.value):
+        if self.audit_record.output_value != _decimal_text(self.value):
             raise FinancialRoundingError("audit output must match the rounded value")
 
 
@@ -176,8 +208,8 @@ def _quantize(
         value=output,
         audit_record=FinancialRoundingAuditRecord(
             boundary=boundary,
-            input_value=str(value),
-            output_value=str(output),
+            input_value=_decimal_text(value),
+            output_value=_decimal_text(output),
             rounding_mode=rounding,
             scale_or_tick=scale_or_tick,
         ),
@@ -207,7 +239,7 @@ def round_pnl(
     return _quantize(
         amount,
         quantum=_quantum(places),
-        rounding=ROUND_DOWN,
+        rounding=PNL_ROUNDING_MODE,
         boundary="PNL",
         scale_or_tick=f"scale={places}",
     )
@@ -230,7 +262,7 @@ def round_funding(
     return _quantize(
         payment,
         quantum=_quantum(places),
-        rounding=ROUND_HALF_UP,
+        rounding=FUNDING_ROUNDING_MODE,
         boundary="FUNDING",
         scale_or_tick=f"scale={places}",
     )
@@ -251,7 +283,7 @@ def round_margin_ratio(
     result = _quantize(
         ratio,
         quantum=_quantum(MARGIN_RATIO_SCALE),
-        rounding=ROUND_HALF_UP,
+        rounding=MARGIN_RATIO_ROUNDING_MODE,
         boundary="MARGIN_RATIO",
         scale_or_tick=f"scale={MARGIN_RATIO_SCALE}",
     )
@@ -316,9 +348,9 @@ def round_liquidation_price(
         value=output,
         audit_record=FinancialRoundingAuditRecord(
             boundary="LIQUIDATION_PRICE",
-            input_value=str(price),
-            output_value=str(output),
+            input_value=_decimal_text(price),
+            output_value=_decimal_text(output),
             rounding_mode=mode,
-            scale_or_tick=f"tick={str(tick)}",
+            scale_or_tick=f"tick={_decimal_text(tick)}",
         ),
     )
