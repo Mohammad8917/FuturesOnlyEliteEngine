@@ -74,7 +74,52 @@ jobs:
             domain.futures.financial_rounding.x_round_margin_ratio__mutmut_4 \
             domain.futures.financial_rounding.x_round_liquidation_price__mutmut_2 \
             domain.futures.financial_rounding.x_round_liquidation_price__mutmut_3 \
-            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_4; do
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_4 \
+            domain.futures.financial_rounding.x_financial_working_context__mutmut_6 \
+            domain.futures.financial_rounding.x__decimal__mutmut_9 \
+            domain.futures.financial_rounding.x__positive__mutmut_3 \
+            domain.futures.financial_rounding.x__positive__mutmut_8 \
+            domain.futures.financial_rounding.x__scale__mutmut_1 \
+            domain.futures.financial_rounding.x__scale__mutmut_2 \
+            domain.futures.financial_rounding.x__quantize__mutmut_11 \
+            domain.futures.financial_rounding.x__quantize__mutmut_14 \
+            domain.futures.financial_rounding.x__quantize__mutmut_15 \
+            domain.futures.financial_rounding.x__quantize__mutmut_16 \
+            domain.futures.financial_rounding.x__quantize__mutmut_17 \
+            domain.futures.financial_rounding.x_round_pnl__mutmut_14 \
+            domain.futures.financial_rounding.x_round_pnl__mutmut_15 \
+            domain.futures.financial_rounding.x_round_pnl__mutmut_16 \
+            domain.futures.financial_rounding.x_round_pnl__mutmut_17 \
+            domain.futures.financial_rounding.x_round_funding__mutmut_8 \
+            domain.futures.financial_rounding.x_round_funding__mutmut_11 \
+            domain.futures.financial_rounding.x_round_funding__mutmut_12 \
+            domain.futures.financial_rounding.x_round_funding__mutmut_15 \
+            domain.futures.financial_rounding.x_round_funding__mutmut_18 \
+            domain.futures.financial_rounding.x_round_funding__mutmut_19 \
+            domain.futures.financial_rounding.x_round_funding__mutmut_21 \
+            domain.futures.financial_rounding.x_round_funding__mutmut_22 \
+            domain.futures.financial_rounding.x_round_funding__mutmut_23 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_8 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_11 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_12 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_13 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_15 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_16 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_17 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_28 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_29 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_30 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_8 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_11 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_12 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_18 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_32 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_33 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_34 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_38 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_39 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_40 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_41; do
             echo "=== MUTANT DIAGNOSTIC: ${mutant} ==="
             mutmut show "${mutant}" || true
           done
