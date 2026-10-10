@@ -69,13 +69,21 @@ class FuturesLedgerEntry:
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "entry_id", _text(self.entry_id, "entry_id"))
-        object.__setattr__(self, "causation_id", _text(self.causation_id, "causation_id"))
-        object.__setattr__(self, "state_version", _sequence(self.state_version, "state_version"))
+        object.__setattr__(
+            self, "causation_id", _text(self.causation_id, "causation_id")
+        )
+        object.__setattr__(
+            self, "state_version", _sequence(self.state_version, "state_version")
+        )
         object.__setattr__(self, "sequence", _sequence(self.sequence, "sequence"))
-        object.__setattr__(self, "account_id", _text(self.account_id, "account_id"))
+        object.__setattr__(
+            self, "account_id", _text(self.account_id, "account_id")
+        )
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
             raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
-        object.__setattr__(self, "ledger_account", _text(self.ledger_account, "ledger_account"))
+        object.__setattr__(
+            self, "ledger_account", _text(self.ledger_account, "ledger_account")
+        )
         object.__setattr__(self, "asset", _asset(self.asset, "asset"))
         if not isinstance(self.direction, AccountingDirection):
             raise AccountingValidationError("direction must be DEBIT or CREDIT")
@@ -123,7 +131,9 @@ class FuturesAccountingJournal:
             totals[entry.asset] = totals.get(entry.asset, Decimal("0")) + entry.amount
 
         for asset in set(debit_totals) | set(credit_totals):
-            if debit_totals.get(asset, Decimal("0")) != credit_totals.get(asset, Decimal("0")):
+            if debit_totals.get(asset, Decimal("0")) != credit_totals.get(
+                asset, Decimal("0")
+            ):
                 raise AccountingValidationError(f"journal is unbalanced for asset {asset}")
 
     @property
