@@ -341,7 +341,6 @@ def test_audit_result_cannot_claim_a_different_output() -> None:
         FinancialRoundingResult(value=Decimal("1"), audit_record=record)
 
 
-
 @pytest.mark.parametrize("value", [True, False, 0.1, float("inf"), "not-a-decimal"])
 def test_pnl_rejects_non_decimal_or_malformed_values(value) -> None:
     with pytest.raises(FinancialRoundingError):
@@ -451,7 +450,6 @@ def test_controlled_context_does_not_mutate_ambient_context() -> None:
     with controlled_decimal_context() as context:
         context.prec = 12
     assert getcontext().prec == original
-
 
 
 def test_audit_record_rejects_noncanonical_decimal_text() -> None:
