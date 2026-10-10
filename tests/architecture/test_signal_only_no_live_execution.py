@@ -11,7 +11,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-EXCLUDED_PARTS = {".git", ".venv", "venv", "__pycache__", "tests"}
+# Validation contains the architecture-audit tool itself, not product runtime.
+EXCLUDED_PARTS = {".git", ".venv", "venv", "__pycache__", "tests", "validation"}
 FORBIDDEN_NAMES = {
     "createorder", "submitorder", "placeorder", "sendorder",
     "cancelorder", "replaceorder", "amendorder", "modifyorder",
@@ -79,7 +80,7 @@ def test_production_source_has_no_live_order_or_account_mutation_calls() -> None
                     violations.append(
                         f"{path.relative_to(ROOT)}:{node.lineno}: forbidden call {name}"
                     )
-                # Catch common reflective API lookups such as getattr(client, "create_order").
+                # Catch common reflective lookups such as getattr(client, "create_order").
                 for arg in node.args:
                     if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
                         if _normalized(arg.value) in FORBIDDEN_NAMES:
