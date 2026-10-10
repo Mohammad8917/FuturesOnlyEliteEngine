@@ -100,6 +100,49 @@ def test_journal_rejects_empty_batch():
         FuturesAccountingJournal("empty", ())
 
 
+def test_journal_snapshots_mutable_input_and_normalizes_asset_identity():
+    debit = FuturesLedgerEntry(
+        entry_id=" debit ",
+        causation_id=" cause ",
+        state_version=1,
+        sequence=1,
+        account_id=" account ",
+        instrument=instrument(),
+        ledger_account=" debit-ledger ",
+        asset=" usd ",
+        direction=AccountingDirection.DEBIT,
+        amount=Decimal("1"),
+    )
+    credit = FuturesLedgerEntry(
+        entry_id="credit",
+        causation_id="cause",
+        state_version=1,
+        sequence=2,
+        account_id="account",
+        instrument=instrument(),
+        ledger_account="credit-ledger",
+        asset="USD",
+        direction=AccountingDirection.CREDIT,
+        amount=Decimal("1"),
+    )
+    supplied_entries = [debit, credit]
+    journal = FuturesAccountingJournal(" journal ", supplied_entries)
+
+    supplied_entries.clear()
+
+    assert journal.journal_id == "journal"
+    assert isinstance(journal.entries, tuple)
+    assert journal.entries == (debit, credit)
+    assert journal.entries[0].entry_id == "debit"
+    assert journal.entries[0].asset == "USD"
+    assert journal.asset_balances == {"USD": Decimal("0")}
+
+
+def test_journal_rejects_non_iterable_entries():
+    with pytest.raises(AccountingValidationError):
+        FuturesAccountingJournal("invalid", None)
+
+
 def test_journal_rejects_duplicate_ids_and_unbalanced_assets():
     entry = FuturesLedgerEntry(
         entry_id="same",
