@@ -68,17 +68,15 @@ class FuturesLedgerEntry:
     amount: Decimal
 
     def __post_init__(self) -> None:
-        _text(self.entry_id, "entry_id")
-        _text(self.causation_id, "causation_id")
+        for field in ("entry_id", "causation_id", "account_id", "ledger_account"):
+            object.__setattr__(self, field, _text(getattr(self, field), field))
         _sequence(self.state_version, "state_version")
         _sequence(self.sequence, "sequence")
-        _text(self.account_id, "account_id")
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
             raise AccountingValidationError(
                 "instrument must be FuturesInstrumentIdentity"
             )
-        _text(self.ledger_account, "ledger_account")
-        _asset(self.asset, "asset")
+        object.__setattr__(self, "asset", _asset(self.asset, "asset"))
         if not isinstance(self.direction, AccountingDirection):
             raise AccountingValidationError("direction must be DEBIT or CREDIT")
         _decimal(self.amount, "amount", positive=True)
@@ -92,7 +90,16 @@ class FuturesAccountingJournal:
     entries: tuple[FuturesLedgerEntry, ...]
 
     def __post_init__(self) -> None:
-        _text(self.journal_id, "journal_id")
+        object.__setattr__(self, "journal_id", _text(self.journal_id, "journal_id"))
+        # Snapshot caller-owned collections before validating them. A frozen dataclass
+        # is not immutable if it retains a mutable list supplied by the caller.
+        if not isinstance(self.entries, tuple):
+            try:
+                object.__setattr__(self, "entries", tuple(self.entries))
+            except TypeError as exc:
+                raise AccountingValidationError(
+                    "entries must be an iterable of FuturesLedgerEntry"
+                ) from exc
         if not self.entries:
             raise AccountingValidationError("journal must contain entries")
         if any(not isinstance(entry, FuturesLedgerEntry) for entry in self.entries):
