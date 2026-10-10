@@ -21,7 +21,7 @@ This is project state, not the architectural contract. Architectural rules remai
 
 - Repository: Mohammad8917/FuturesOnlyEliteEngine
 - Default branch: main
-- Product: Elite Futures-Only Professional Trading Engine
+- Product: Elite Futures-Only Signal Engine — permanent signal-only scope (ADR-0006 owner-approved; PR #51 pending formal merge)
 - Python runtime: 3.13
 - Supported deployment: Windows Server, Linux Server, Windows Home/Desktop
 - Supported markets: CRYPTO Futures, FOREX Futures, GOLD Futures — 100% Futures
@@ -32,12 +32,13 @@ This is project state, not the architectural contract. Architectural rules remai
 - Current gate: G05 — Coverage
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: `d1529db92f9b4750b9e8f821f3599fb0d6317b25` — G01 (`37839785059`), G03 (`37839785127`), G04 (`37839785087`), Phase 1 (`37839785060`), and Architecture Invariants (`37839785331`) are green on this exact main merge SHA.
+- Last verified main SHA (historical baseline only): `d1529db92f9b4750b9e8f821f3599fb0d6317b25`. Do not use it as evidence for ADR-0006 changes.
+- ADR-0006 PR head SHA: `636aeef9f18468ec29495cea2f9dcd6a3d556df7`; the available PR workflows G01, G03, G04, G05, Phase 1 Domain Contracts, and Architecture Invariants passed on the PR merge ref associated with this head. G02/G06/G07/G08 are not represented by workflows in the current tree, so full G01–G08 green status is NOT established.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 — Domain Contracts.
-- Active work: Phase 1 Domain Contracts — Phase 1 final completeness/evidence audit are CLOSED. G05 — achieve and evidence the immutable `>= 98%` coverage requirement without excluding meaningful production code, weakening tests, or changing thresholds.
+- Active work: ADR-0006 signal-only architecture migration in PR #51; separately, complete/evidence G05 coverage `>= 98%` without exclusions, weakened tests, or changed thresholds.
 - Blocked work: Phase 2+ production implementation remains blocked until the current gate sequence is resolved according to the roadmap. Any gate skip/weakening remains forbidden.
-- Next authorized action: G05 coverage implementation/audit.
-- Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, add exclusions/ignores solely to obtain green, or skip the first incomplete gate.
+- Next authorized action: obtain required formal review and complete the missing mandatory gate coverage; merge ADR-0006 only when repository governance and applicable same-SHA evidence requirements are satisfied. Continue G05 coverage audit without weakening thresholds.
+- Forbidden action: Do not reintroduce live execution/order writes, operational Spot, or account mutation; do not bypass Linear/Inverse semantics, lower G05/G08, weaken tests, add exclusions/ignores solely to obtain green, claim missing gates are green, or skip the first incomplete gate.
 
 ## Required state fields for every update
 
