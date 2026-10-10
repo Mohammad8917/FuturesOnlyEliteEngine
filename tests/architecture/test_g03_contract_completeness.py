@@ -237,6 +237,7 @@ def test_financial_calculation_ownership_matches_architecture():
         f"{misplaced_contract_owners}"
     )
 
+
 def test_adr_0003_working_context_policy_is_explicit():
     """Keep precision, rounding, and exactness traps explicit in source."""
     source = Path("domain/futures/financial_rounding.py").read_text(encoding="utf-8")
