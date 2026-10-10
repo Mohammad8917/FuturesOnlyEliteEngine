@@ -259,4 +259,3 @@ def test_adr_0003_working_context_policy_is_explicit():
     assert keywords["rounding"].id == "ROUND_HALF_EVEN"
     trapped = {item.id for item in keywords["traps"].elts if isinstance(item, ast.Name)}
     assert {"Inexact", "Rounded", "InvalidOperation", "DivisionByZero"} <= trapped
-
