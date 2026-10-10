@@ -245,12 +245,14 @@ def test_margin_ratio_accepts_strict_interval_boundaries(ratio, expected_text) -
 def test_margin_ratio_rejects_invalid_values_and_threshold_order(
     ratio, maintenance, liquidation
 ) -> None:
-    with pytest.raises(FinancialRoundingError):
+    with pytest.raises(FinancialRoundingError) as captured:
         round_margin_ratio(
             ratio,
             maintenance_margin_ratio=maintenance,
             liquidation_ratio=liquidation,
         )
+    if maintenance >= liquidation:
+        assert str(captured.value) == "risk thresholds must be strictly ordered"
 
 
 def test_liquidation_rounding_uses_exact_tick_multiples_and_direction() -> None:
@@ -364,11 +366,13 @@ def test_liquidation_rejects_invalid_inputs(
             position_is_liquidated=liquidated,
         )
     if price is True:
-        assert "liquidation_price" in str(captured.value)
+        assert str(captured.value) == (
+            "liquidation_price must be Decimal, int, or decimal text"
+        )
 
 
 def test_liquidation_fails_closed_when_tick_result_exceeds_working_precision() -> None:
-    with pytest.raises(FinancialRoundingError):
+    with pytest.raises(FinancialRoundingError) as captured:
         round_liquidation_price(
             Decimal("12345678901234567890123456789"),
             tick_size=Decimal("1"),
@@ -376,6 +380,9 @@ def test_liquidation_fails_closed_when_tick_result_exceeds_working_precision() -
             last_price=Decimal("1"),
             position_is_liquidated=False,
         )
+    assert str(captured.value) == (
+        "liquidation price cannot be represented under the approved Decimal context"
+    )
 
 
 def test_audit_result_cannot_claim_a_different_output() -> None:
@@ -613,6 +620,28 @@ def test_pnl_scale_zero_is_a_valid_explicit_scale() -> None:
     )
     assert result.value == Decimal("12")
     assert result.value.as_tuple().exponent == 0
+
+
+@pytest.mark.parametrize("value", [Decimal("10"), Decimal("-10")])
+def test_pnl_exactly_at_configured_absolute_limit_is_accepted(value) -> None:
+    result = round_pnl(
+        value,
+        market=Market.CRYPTO,
+        scale=2,
+        max_reasonable_pnl=Decimal("10"),
+    )
+    assert result.value == value.quantize(Decimal("0.01"))
+
+
+def test_pnl_over_configured_absolute_limit_has_explicit_risk_error() -> None:
+    with pytest.raises(FinancialRiskBoundaryError) as captured:
+        round_pnl(
+            Decimal("10.01"),
+            market=Market.CRYPTO,
+            scale=2,
+            max_reasonable_pnl=Decimal("10"),
+        )
+    assert str(captured.value) == "absolute PnL exceeds configured maximum"
 
 
 def test_pnl_rounding_ignores_ambient_decimal_context() -> None:
