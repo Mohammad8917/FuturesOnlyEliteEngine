@@ -135,5 +135,5 @@ def test_product_documents_define_signal_only_without_order_writes() -> None:
         "ADR-0006-signal-only-product-scope.md"
     ).read_text(encoding="utf-8").lower()
     assert "permanent signal-only" in readme
-    assert "must never" in adr
+    assert "must **never**" in adr
     assert "submit, amend, cancel, or retry a live exchange order" in adr
