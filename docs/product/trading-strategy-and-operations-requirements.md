@@ -1,4 +1,4 @@
-# Product Requirements Register — Trading Strategy, Automation, Credentials, and Telegram Operations
+# Product Requirements Register — Signal-Only Futures Analysis and Operations
 
 **Status:** Consolidated requirements register / proposal. Not a production implementation, not a release-readiness claim, and not permission to bypass phase gates.  
 **Created:** 2026-10-10  
@@ -15,19 +15,17 @@ The inspected `main` branch has a product/architecture description and a unified
 This document consolidates the known requirements and links the separate records; it does not silently approve or implement their proposals.
 
 
-## 1.1 Owner decision: signal-only mode; live execution disabled
+## 1.1 Owner decision: permanently signal-only product scope (ADR-0006 proposed)
 
-**Current approved operating policy:** `SIGNAL_ONLY`. **Live automated execution: `DISABLED`.** The long-term execution architecture is retained; this is a temporary safety/validation gate, not a decision to delete automated trading from the roadmap.
+The owner explicitly requested complete removal of automated trading. The target product is a professional signal-generation and risk-analysis system for CRYPTO Futures, FOREX Futures, and GOLD Futures only. The formal architecture change is proposed in [ADR-0006 PR #51](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/51); protected Source-of-Truth documents and implementation remain governed by that ADR.
 
-- **Stable reason code:** `LIVE_EXECUTION_DISABLED_UNVALIDATED_READINESS`.
-- **Status explanation (user-facing):** Live execution is disabled because financial arithmetic and durable audit integration, risk/position sizing, execution idempotency, exchange reconciliation, security validation, and reproducible backtest/out-of-sample/Paper Trading evidence have not yet all been verified.
-- Missing, stale, unknown, or indeterminate readiness means disabled. Startup, restart, lost state, and uncertain recovery default to OFF; no automatic resume.
-- Signal analysis, signal delivery, backtesting, and Paper Trading may proceed where implemented and separately validated. They must not submit live orders.
-- While disabled, live order submission, replacement, cancellation-as-automation, and automatic position mutations must be rejected at the execution boundary. Emergency pause must not silently liquidate positions.
-- Health/status/UI output must distinguish this intentional disabled policy from an unexpected system fault and show both the stable reason code and readable explanation.
-- Re-enabling is a separate gated decision: all required financial/audit, risk, idempotency, reconciliation, security, backtest/out-of-sample, Paper Trading, and same-SHA CI evidence must pass, followed by explicit owner authorization. No profitability guarantee is implied.
-
-**Implementation status caveat:** This is the recorded owner decision and required behavior, not proof that a runtime kill switch has already been implemented. The bounded audit of `main` found the repository still at Phase 1 Domain Contracts and did not identify an operational live-order runtime to turn off. Track enforcement and verification under [Issue #50](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/issues/50). Do not claim deployed trading is disabled until the actual deployed/runtime path is inspected and verified.
+- **Target:** generate, validate, score, publish, expire, invalidate, and evaluate signals; provide risk estimates, suggested position sizing, backtesting, walk-forward/out-of-sample analysis, isolated Paper Trading, and Telegram/email notifications where implemented.
+- **Forbidden product capability:** live order submit/amend/cancel/retry; automatic position or account mutation; automated leverage/capital changes; execution ON switches; Telegram/email commands that cause exchange side effects.
+- Preserve useful market-data adapters, explicit Futures/Linear/Inverse financial contracts, pure risk calculations, and simulation-only components. Remove order-writing code and requirements that promise automated trading after ADR approval and authorized migration.
+- Market-data adapters must be read-only; no order-write credentials or permissions are required or accepted by the signal-only runtime.
+- Signal and risk calculations fail closed when required data, instrument semantics, or assumptions are missing, stale, contradictory, or unsupported. Suggested size/risk is advisory and not a guaranteed maximum loss.
+- Backtesting and Paper Trading must be technically isolated from live order side effects.
+- This requirements register is not proof that the ADR is approved or that legacy execution paths have already been removed. Do not claim complete removal until source, dependency, interface, and deployment audits plus tests verify it.
 
 ## 2. Product invariants
 
@@ -91,76 +89,59 @@ Recorded requirements:
 - Stable signal identity, duplicate suppression, idempotent lifecycle transitions, and no duplicate execution intent are mandatory.
 - An analytical signal, or one with no concrete selected entry, must never become executable by inference.
 
-## 5. Automated trading and risk gates
+## 5. Signal-only safety and risk analysis
 
-- Automation is gated by a global ON/OFF switch, independent market switches for CRYPTO/FOREX/GOLD Futures, user authorization, current valid signal, fresh market data, exchange/account readiness, healthy audit/reconciliation, and the existing Risk and Execution gates.
-- ON requires explicit confirmation and a readiness checklist; OFF/pause must take effect immediately after authorization.
-- Process liveness alone is not trading readiness. Any required UNKNOWN/NOT READY component blocks enabling.
-- Risk rejection, stale balance/data, unsupported instrument, invalid exchange metadata, unresolved critical reconciliation mismatch, uncertain order state, or audit failure must fail closed for new entries.
-- Maximum signal count is never a reason to enter a trade. No valid setup means no trade.
-- Order sizing must respect explicit allocation, verified available Futures margin, instrument contract semantics, tick/lot/minimum rules, fees and buffers. Never automatically increase leverage, allocation, or order size to force acceptance.
-- Duplicate-order prevention, client/execution idempotency, handling rejected/partial/unknown orders, state reconciliation, and durable audit events are required.
-- A daily-loss pause and other risk ceilings must not be bypassed by Telegram, strategy scores, retries, or notification status.
+- The runtime has no live execution mode, order-write command, automatic position mutation, or account-mutating control.
+- Signal eligibility depends on fresh/valid market data, supported Futures instrument semantics, deterministic strategy rules, and valid risk-estimate inputs. Unknown or contradictory critical data means no signal or an explicitly non-executable analytical result.
+- Risk calculations may report reference entry, stop-loss, targets, costs, risk/reward, and suggested size only when assumptions and instrument metadata are explicit. These are advisory and must never authorize an order.
+- Signal count is a ceiling, never a quota. No valid setup means no signal.
+- Duplicate suppression and idempotent signal lifecycle transitions remain mandatory; these protect signal publication and status, not order execution.
+- Backtest, walk-forward, out-of-sample, and Paper Trading workflows must not call live order-write APIs or mutate a real account.
+- Health/status must report market-data freshness, analysis readiness, signal pipeline health, audit persistence, and notification state. It must not imply that live execution is available.
+- Emergency controls may pause signal generation or notifications as explicitly defined, but must never close or mutate a real position.
 
-## 6. Exchange API credentials and account isolation
+## 6. Market-data access and credential boundary
 
-See PR #44 for the detailed Telegram operations proposal.
-
-Requirements recorded there:
-- Each user's credentials, account context, balances, positions, orders, allocation, and audit records are isolated. Never use one user's credentials for another user or silently trade through a shared owner account.
-- API secrets must never be collected in ordinary Telegram messages/callback data, committed to source, printed in logs, or displayed in plaintext. Telegram may initiate a secure registration workflow, but secret entry belongs in a separately approved, access-controlled secret-entry interface/vault.
-- Encrypt secrets at rest, restrict access, redact logs/traces, support rotation and revocation, and verify the credential/account binding.
-- Use least-privilege API keys. Withdrawal/transfer permissions must be absent; use IP restrictions where supported.
-- Telegram displays masked credential status only, never the secret itself.
-- Exchange-specific permission checks, account modes, supported Futures contract families, IP controls, and metadata validation cannot be completed until the owner provides the target exchange list. Do not guess exchanges, endpoints, permissions, symbols, tick sizes, lot steps, leverage limits, or minimum order rules.
+- The signal-only runtime must not request, store, or accept exchange API credentials with order-write, transfer, or withdrawal permissions.
+- Prefer public market-data endpoints. If a provider requires credentials for market data, use read-only least-privilege credentials, store secrets securely, redact them from logs, and support rotation/revocation.
+- No user trading account, private balance, position, or order access is required for the signal-only product unless a separately approved read-only requirement explicitly adds it.
+- No exchange-specific implementation may guess target providers, endpoints, permission models, symbols, contract filters, tick sizes, lot steps, or leverage limits.
 
 ## 7. Telegram operations menu
 
-The menu is an operational control plane, not a trading engine. PR #44 records the detailed proposal. The consolidated menu groups are:
+The Telegram interface is for signal delivery and signal-system operations only; it is not a trading control plane.
 
-1. **Trading:** global automation ON/OFF; independent CRYPTO/FOREX/GOLD Futures switches; per-user enable/pause; readiness checklist.
-2. **Signals:** candidate list, signal type, chosen entry, validity/expiry, renewal count, status, invalidation reason. Viewing a signal never authorizes an order.
-3. **Users & access:** authorized-user list, add/remove/revoke, role/approval workflow, current active count/capacity. The proposal records a configurable active-user capacity with a hard maximum of 1,000; capacity reduction below active count must be rejected until users are explicitly removed.
-4. **Accounts & credentials:** secure registration/verification/rotation/revocation workflow; masked status only; per-user account isolation.
-5. **Capital & allocation:** verified Futures-margin balance, balance freshness, allocation percentage, used/reserved allocation, available margin and exposure. Never silently allocate 100% of account funds.
-6. **Risk & limits:** current per-trade and aggregate risk use, daily-loss pause, margin headroom, and stable blocked reason codes.
-7. **Positions & orders:** read-only view and reconciliation status by default. Any future cancel/close action requires explicit scope, authorization, confirmation, idempotency, and audit.
-8. **Health & operations:** component readiness, incidents, maintenance/read-only mode, persisted control-state timestamp, recovery state, and reconciliation mismatch.
-9. **Audit & reports:** privacy-safe control history; daily/weekly PnL, fees/funding, drawdown, allocation utilization, rejected-order reasons.
-10. **Notifications & help:** user preferences and clear instructions; delivery failure never changes signal, risk, or execution state.
+Allowed menu groups:
+1. **Signals:** candidates, entry references, stop-loss/targets, risk/reward, validity, renewal count, status, invalidation reason, and unique signal ID.
+2. **Markets:** independent CRYPTO/FOREX/GOLD Futures analysis and signal-notification preferences.
+3. **Strategy & validation:** active strategy version, analysis timeframe, backtest/Paper Trading reports, and clearly labeled validation status.
+4. **Health & operations:** market-data freshness, analysis readiness, signal pipeline, audit/notification health, incidents, and read-only maintenance status.
+5. **Reports & help:** signal outcomes, estimated/realized evaluation metrics where evidenced, fees/funding assumptions, and user guidance.
 
-Menu security/usability requirements:
-- Compact localized main menu with grouped submenus; Persian is the recorded initial language.
-- Read-only by default for balances, positions, orders, PnL, health, signals, audit, and reconciliation.
-- Two-step confirmation for global ON, market/user ON, credential binding/replacement, allocation/capacity changes, and any approved cancel/close action. Reject stale confirmations.
-- No one-tap destructive close-all/cancel-all action.
-- Bind sensitive callbacks to actor, target, state version, and expiry; rate-limit and reject replayed/duplicate/out-of-order callbacks.
-- No shell, Python, SQL, arbitrary URL fetch, or arbitrary API command from Telegram; actions map to typed allow-listed application commands.
-- Persist control changes atomically and audit actor, action, old/new state, UTC time, outcome, and correlation/idempotency key.
-- On restart or uncertain control-state recovery, default global automation to OFF; never auto-resume trading without explicit owner confirmation.
-- Ordinary users see only their own account data; owner cross-user views remain privacy-safe and mask secrets.
+Forbidden:
+- Global or per-market **trading execution ON** controls.
+- User trading-account management, API order-write key registration, capital allocation, leverage changes, order cancel/close, and position mutation.
+- One-tap destructive actions or arbitrary shell/Python/SQL/URL/API commands.
+- Any callback, retry, notification, restart, or signal status that can cause live order side effects.
 
-## 8. Recorded capital/risk proposal values — not universal exchange rules
+Menu actions must be typed allow-listed signal/analysis operations. Bind sensitive callbacks to actor, target, state version, and expiry; rate-limit and reject replayed/duplicate/out-of-order callbacks. Persist and audit control changes. Persian remains the initial language requirement.
 
-PR #44 records the following proposed owner requirements. They must be confirmed against the current policy/ADR record before production enforcement; this register does not make them live:
-- Eligibility floor: at least **USD 20 equivalent** of verified available Futures-margin balance. Below threshold, stale/unknown/unconvertible balance means ineligible.
-- Allocation default: **10%** of the selected verified Futures-margin balance; per-user configurable; hard application ceiling **50%**. Allocation budget is not notional exposure or per-trade risk.
-- Proposed planned loss per trade: at most **0.5%** of allocated capital.
-- Proposed aggregate planned open risk, including pending orders: at most **2%** of allocated capital.
-- Proposed daily loss pause: **3%** from the configured daily baseline pauses new entries for that user until authorized reset at the next risk period.
-- USD 20 is a user eligibility floor, not a guarantee that any exchange/instrument permits an order at that value. Authoritative exchange filters must be fetched and validated; examples such as USD 5 or USD 10 are not universal constants.
-- Risk calculations must account for fees/funding/slippage where estimable and fail closed if a meaningful loss bound cannot be computed. These limits cannot guarantee a maximum realized loss under gaps, outages, or liquidation.
+## 8. Signal risk estimates — no account allocation or trading controls
 
-## 9. Other operational requirements discussed
+- Do not manage or allocate real exchange capital. Do not read private balances or automatically change leverage.
+- Suggested position size, when requested, must be calculated only from an explicitly supplied reference capital/risk budget and explicit instrument semantics; label all assumptions and outputs as advisory.
+- Do not carry forward proposed minimum account balance, allocation percentages, aggregate open-order risk, or daily trading-loss pause as live product controls. Those are execution/account-management policies and are out of scope for the signal-only target.
+- Fees, funding, and slippage may be included as clearly labeled estimates when defensible inputs exist; unknown critical assumptions must be surfaced rather than fabricated.
+- No risk metric or strategy performance result guarantees a maximum realized loss or profitability.
+
+## 9. Other signal-only operational requirements
 
 - Signal and operational notifications through Telegram and email; notifications are downstream outputs only.
-- Explicit invalidation notices and delivery retry records.
-- Auditable control changes, signal lifecycle, execution intent, and reconciliation outcomes.
-- Health status must reflect critical component readiness, data freshness, exchange/account connection, Risk/Execution state, reconciliation, and audit persistence—not merely whether the process is running.
-- Emergency pause must block new automated intents; it must not silently liquidate positions.
-- Daily/weekly reports should distinguish realized/unrealized PnL, fees, funding, drawdown, allocation use, and rejected-order reasons.
-- Cross-platform support (Windows and Linux) must not weaken security or trading safety.
-- Backtest → walk-forward validation → out-of-sample evaluation → paper trading are required validation stages before any live-trading claim. Metrics must be based on reproducible evidence; no fabricated win-rate/profitability claim.
+- Explicit signal invalidation notices, delivery retry records, and stable signal identity.
+- Health status reflects market-data freshness, strategy/analysis readiness, signal lifecycle integrity, audit persistence, and notification delivery—not process liveness alone and not live-execution readiness.
+- Backtest → walk-forward validation → out-of-sample evaluation → Paper Trading are required validation stages before any performance claim. Metrics must be reproducible; no fabricated win-rate/profitability claims.
+- Backtesting and Paper Trading must be isolated from live order submission and real-account mutation.
+- Windows and Linux support must not weaken security, data integrity, or signal safety.
 - API keys, tokens, passwords, account identifiers, and secret-bearing configuration must never be hard-coded or exposed.
 
 ## 10. Explicitly unresolved — do not invent answers
