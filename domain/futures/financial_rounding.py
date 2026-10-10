@@ -111,7 +111,7 @@ def _scale(value: int, field: str = "scale") -> int:
 
 
 def _quantize(value: Decimal, scale: int, rounding: str) -> Decimal:
-    exponent = Decimal((0, (1,), -scale))
+    exponent = Decimal(f"1E{-scale}")
     try:
         with financial_working_context() as ctx:
             # Inexact/Rounded are permitted only for this named final boundary.
