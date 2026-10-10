@@ -167,7 +167,6 @@ def test_rate_vocabulary_is_frozen():
     assert FundingSignConvention.POSITIVE_LONG_PAYS.value == "POSITIVE_LONG_PAYS"
 
 
-
 @pytest.mark.parametrize(
     ("rate", "position_side", "expected_payer", "expected_receiver"),
     [
