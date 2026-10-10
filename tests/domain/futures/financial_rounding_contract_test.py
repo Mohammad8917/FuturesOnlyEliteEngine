@@ -105,7 +105,7 @@ def test_pnl_rejects_unsupported_market_with_contextual_error() -> None:
             scale=8,
             max_reasonable_pnl=Decimal("10"),
         )
-    assert "market" in str(captured.value).lower()
+    assert str(captured.value) == "market must be an explicit supported Futures market"
 
 
 @pytest.mark.parametrize(
@@ -220,6 +220,10 @@ def test_margin_ratio_accepts_strict_interval_boundaries(ratio) -> None:
         liquidation_ratio=Decimal("0.10"),
     )
     assert result.value == ratio.quantize(Decimal("0.00000001"))
+    assert result.audit_record.boundary == "MARGIN_RATIO"
+    assert result.audit_record.rounding_mode == "ROUND_HALF_UP"
+    assert result.audit_record.input_value == "5E-2"
+    assert result.audit_record.output_value == "5E-2"
     assert result.audit_record.scale_or_tick == "scale=8"
 
 
@@ -282,6 +286,20 @@ def test_liquidation_rounding_handles_exact_tick_without_moving_it() -> None:
     )
     assert result.value == Decimal("100.25")
     assert short_result.value == Decimal("100.25")
+    assert result.audit_record.input_value == "1.0025E+2"
+    assert result.audit_record.output_value == "1.0025E+2"
+    assert short_result.audit_record.rounding_mode == "ROUND_UP"
+
+
+def test_liquidation_price_exactly_one_is_valid_when_tick_is_one() -> None:
+    result = round_liquidation_price(
+        Decimal("1"),
+        tick_size=Decimal("1"),
+        position_side=PositionSide.LONG,
+        last_price=Decimal("2"),
+        position_is_liquidated=False,
+    )
+    assert result.value == Decimal("1")
 
 
 @pytest.mark.parametrize(
@@ -414,6 +432,20 @@ def test_funding_accepts_zero_amount_without_inventing_a_transfer() -> None:
         scale=8,
     )
     assert result.value == Decimal("0E-8")
+    assert result.audit_record.boundary == "FUNDING"
+    assert result.audit_record.scale_or_tick == "scale=8"
+
+
+def test_funding_scale_zero_and_rate_at_limit_are_explicitly_supported() -> None:
+    result = round_funding(
+        Decimal("1.5"),
+        funding_rate=Decimal("-0.01"),
+        max_funding_rate=Decimal("0.01"),
+        scale=0,
+    )
+    assert result.value == Decimal("2")
+    assert result.audit_record.rounding_mode == "ROUND_HALF_UP"
+    assert result.audit_record.output_value == "2" 
 
 
 @pytest.mark.parametrize(
@@ -528,7 +560,7 @@ def test_funding_invalid_scale_retains_field_context() -> None:
             max_funding_rate=Decimal("0.01"),
             scale=True,
         )
-    assert "scale" in str(captured.value).lower()
+    assert str(captured.value) == "scale must be a non-negative integer"
 
 
 def test_margin_ratio_malformed_value_retains_field_context() -> None:
@@ -538,7 +570,7 @@ def test_margin_ratio_malformed_value_retains_field_context() -> None:
             maintenance_margin_ratio=Decimal("0.05"),
             liquidation_ratio=Decimal("0.10"),
         )
-    assert "margin_ratio" in str(captured.value).lower()
+    assert str(captured.value) == "margin_ratio must be an exact decimal value"
 
 
 def test_pnl_missing_maximum_retains_field_context() -> None:
@@ -549,7 +581,57 @@ def test_pnl_missing_maximum_retains_field_context() -> None:
             scale=8,
             max_reasonable_pnl=None,
         )
-    assert "max_reasonable_pnl" in str(captured.value)
+    assert str(captured.value) == (
+        "max_reasonable_pnl must be Decimal, int, or decimal text"
+    )
+
+
+def test_pnl_zero_maximum_is_rejected_as_invalid_policy() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        round_pnl(
+            Decimal("0"),
+            market=Market.CRYPTO,
+            scale=8,
+            max_reasonable_pnl=Decimal("0"),
+        )
+    assert str(captured.value) == "max_reasonable_pnl must be greater than zero"
+
+
+def test_pnl_scale_zero_is_a_valid_explicit_scale() -> None:
+    result = round_pnl(
+        Decimal("12.99"),
+        market=Market.CRYPTO,
+        scale=0,
+        max_reasonable_pnl=Decimal("100"),
+    )
+    assert result.value == Decimal("12")
+    assert result.value.as_tuple().exponent == 0
+
+
+def test_pnl_rounding_ignores_ambient_decimal_context() -> None:
+    with localcontext() as ambient:
+        ambient.prec = 2
+        ambient.rounding = ROUND_UP
+        result = round_pnl(
+            Decimal("12.3456"),
+            market=Market.CRYPTO,
+            scale=2,
+            max_reasonable_pnl=Decimal("100"),
+        )
+    assert result.value == Decimal("12.34")
+
+
+def test_pnl_unrepresentable_scale_has_boundary_specific_error() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        round_pnl(
+            Decimal("1"),
+            market=Market.CRYPTO,
+            scale=100,
+            max_reasonable_pnl=Decimal("10"),
+        )
+    assert str(captured.value) == (
+        "PNL cannot represent the value under the approved Decimal context"
+    )
 
 
 def test_positive_tick_validation_retains_field_context() -> None:
@@ -561,7 +643,19 @@ def test_positive_tick_validation_retains_field_context() -> None:
             last_price=Decimal("2"),
             position_is_liquidated=False,
         )
-    assert "tick_size" in str(captured.value)
+    assert str(captured.value) == "tick_size must be Decimal, int, or decimal text"
+
+
+def test_zero_tick_is_rejected_before_price_arithmetic() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        round_liquidation_price(
+            Decimal("1"),
+            tick_size=Decimal("0"),
+            position_side=PositionSide.LONG,
+            last_price=Decimal("2"),
+            position_is_liquidated=False,
+        )
+    assert str(captured.value) == "tick_size must be greater than zero"
 
 
 
@@ -583,3 +677,25 @@ def test_audit_record_rejects_unparseable_decimal_text() -> None:
             scale_or_tick="scale=0",
         )
     assert "input_value" in str(captured.value)
+
+
+
+def test_quantum_uses_positive_unit_coefficient() -> None:
+    from domain.futures.financial_rounding import _quantum
+
+    quantum = _quantum(2)
+    assert quantum == Decimal("0.01")
+    assert quantum.as_tuple().sign == 0
+    assert quantum.as_tuple().digits == (1,)
+    assert quantum.as_tuple().exponent == -2
+
+
+def test_decimal_non_finite_error_keeps_field_context() -> None:
+    with pytest.raises(FinancialRoundingError) as captured:
+        round_pnl(
+            Decimal("NaN"),
+            market=Market.CRYPTO,
+            scale=8,
+            max_reasonable_pnl=Decimal("10"),
+        )
+    assert str(captured.value) == "pnl must be finite"
