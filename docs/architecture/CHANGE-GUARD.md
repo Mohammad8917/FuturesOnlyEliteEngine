@@ -1,5 +1,16 @@
 # Architecture Change Guard
 
+## Binding product boundary — ADR-0006 (OWNER-APPROVED)
+
+This repository delivers a **permanent signal-only product** for exactly CRYPTO Futures, FOREX Futures, and GOLD Futures. This is a product prohibition, not a feature flag or default-off mode.
+
+Allowed production capabilities are read-only market-data ingestion/validation, analytical indicators and SMC/confluence scoring, signal lifecycle and audit, advisory entry/stop/target/risk estimates with explicit assumptions, and Telegram/email signal/operational notifications. Backtesting, walk-forward/out-of-sample analysis, and Paper Trading are simulation-only and must be technically isolated from live side effects.
+
+Forbidden product capabilities include live order submission/amendment/cancellation/retry, automated real-position opening/increasing/reducing/closing, account mutation, transfers, leverage changes, automated capital allocation, execution-authorizing Telegram controls/callbacks, and order-write credentials or APIs. No runtime component may translate a signal, callback, retry, restart, or configuration change into a live order. Do not add an execution layer, execution adapter, live-order client, or order-write dependency.
+
+Keep Futures-only and explicit Linear/Inverse semantics, exact Decimal rules, fail-closed validation, secret hygiene, all G01–G08 thresholds, Phase 1 exit criteria, and same-SHA CI evidence. Signal risk figures are advisory, never guaranteed maximum losses or profitability. Repository code inventory does not establish the state of any external deployment.
+
+
 This is a repository-level guardrail. It does not replace GitHub branch protection or repository rulesets; platform controls are required for technical enforcement.
 
 ## Protected surfaces
@@ -8,7 +19,7 @@ This is a repository-level guardrail. It does not replace GitHub branch protecti
 - Futures-only product boundary and CRYPTO/FOREX/GOLD Futures scope
 - Linear/Inverse semantics
 - dependency direction and ownership
-- risk/execution authority boundary
+- signal-only boundary; live execution and order-write capability are prohibited
 - order lifecycle, idempotency, reconciliation, restart recovery, and execution halt
 - configuration/secrets/security boundary
 - G01–G08 quality thresholds, including G05 >= 98% and G08 >= 90%

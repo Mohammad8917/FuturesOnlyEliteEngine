@@ -1,5 +1,16 @@
 # Futures Responsibility Map
 
+## Binding product boundary — ADR-0006 (OWNER-APPROVED)
+
+This repository delivers a **permanent signal-only product** for exactly CRYPTO Futures, FOREX Futures, and GOLD Futures. This is a product prohibition, not a feature flag or default-off mode.
+
+Allowed production capabilities are read-only market-data ingestion/validation, analytical indicators and SMC/confluence scoring, signal lifecycle and audit, advisory entry/stop/target/risk estimates with explicit assumptions, and Telegram/email signal/operational notifications. Backtesting, walk-forward/out-of-sample analysis, and Paper Trading are simulation-only and must be technically isolated from live side effects.
+
+Forbidden product capabilities include live order submission/amendment/cancellation/retry, automated real-position opening/increasing/reducing/closing, account mutation, transfers, leverage changes, automated capital allocation, execution-authorizing Telegram controls/callbacks, and order-write credentials or APIs. No runtime component may translate a signal, callback, retry, restart, or configuration change into a live order. Do not add an execution layer, execution adapter, live-order client, or order-write dependency.
+
+Keep Futures-only and explicit Linear/Inverse semantics, exact Decimal rules, fail-closed validation, secret hygiene, all G01–G08 thresholds, Phase 1 exit criteria, and same-SHA CI evidence. Signal risk figures are advisory, never guaranteed maximum losses or profitability. Repository code inventory does not establish the state of any external deployment.
+
+
 ## Status
 
 This is the authoritative responsibility map for the Futures domain. It defines ownership boundaries before implementation begins.
@@ -13,7 +24,7 @@ This is the authoritative responsibility map for the Futures domain. It defines 
 5. Application code orchestrates use cases; it does not own exchange-specific semantics.
 6. Infrastructure owns transport and external-system integration only.
 7. Risk decisions are fail-closed.
-8. Execution is downstream of an explicit execution contract and risk gate.
+8. Live execution is prohibited; no execution contract, order lifecycle, or order-write adapter is part of the product.
 9. One production module has one primary responsibility.
 10. No module may silently combine instrument identity, pricing, margin, liquidation, execution, persistence, and transport responsibilities.
 11. Exact financial precision is mandatory where monetary precision matters.
@@ -44,24 +55,23 @@ Owns portfolio/trading risk policy: margin limits, leverage limits, liquidation 
 
 Risk consumes domain facts and policy inputs. It does not place orders.
 
-### execution
-Owns execution intent, risk-gated execution contracts, orders, reconciliation, and audit.
+### Signal lifecycle and audit
 
-Execution must never accept an unvalidated intent as an order.
+Owns analytical signal identity, validation status, issuance, expiry, invalidation, renewal limits, idempotency, and immutable audit evidence. It has no order, account-mutation, or live execution authority.
 
 ### infrastructure/exchanges
 Owns external exchange integration. Each adapter independently owns authentication, endpoints, request/response mapping, order semantics, precision/limits, position mode, settlement details exposed by the exchange, and reconciliation behavior.
 
 No generic adapter may erase meaningful exchange differences.
 
-### Financial state authority and recovery rule
+### Signal-state authority and recovery rule
 
-- execution owns the lifecycle state machine and execution authority, while infrastructure/exchanges/<exchange> supplies externally observed order, fill, position, and account evidence.
-- Exchange-confirmed live account/order/position state is authoritative for external financial state. Local intent and cached state are not authoritative when evidence is missing, stale, contradictory, or unconfirmed.
-- execution owns idempotency identity, duplicate suppression, concurrency/version checks, restart/failover recovery, and the rule that execution remains halted until required reconciliation succeeds.
-- execution also owns the scoped/global trading halt boundary; risk may request a halt, but notification/delivery components can never grant or revoke trading authority.
-- A dedicated time/clock boundary supplies UTC timestamps and monotonic elapsed-time measurement; safety-critical freshness, timeout, and clock-skew policy is configuration-owned and fail-closed.
-- Audit evidence is owned by the execution/audit boundary and must be append-only/tamper-evident with stable event identity and causal correlation.
+- Signal lifecycle owns signal state only; read-only market-data infrastructure supplies market observations and cannot mutate or reconcile live account/order/position state.
+- Stale, missing, contradictory, or unconfirmed market data remains unknown and blocks signal issuance or triggers invalidation.
+- Signal lifecycle owns duplicate suppression, version checks, restart recovery, and stale-signal invalidation.
+- A dedicated time/clock boundary supplies UTC timestamps and monotonic elapsed-time measurement; signal freshness policy is explicit and fail-closed.
+- Notification/delivery components can publish signal payloads only and can never grant trading authority.
+- Audit evidence is append-only/tamper-evident and records signal analysis, validation, publication, and lifecycle transitions.
 
 ### Configuration/secrets/security hardcoding rule
 
@@ -187,7 +197,7 @@ No Futures implementation is accepted until its owner, inputs, outputs, forbidde
 
 **Failure semantics:** zero, negative, non-finite, contradictory, ambiguous, unsupported, or invalid inputs fail closed.
 
-**Downstream consumers:** later settlement, margin, leverage, exposure, PnL, risk, and execution contracts consume the explicit specification; none may reinterpret its multiplier meaning.
+**Downstream consumers:** later settlement, margin, leverage, exposure, PnL, and advisory signal-risk calculations consume the explicit specification; none may reinterpret its multiplier meaning.
 
 ## Phase 1 cursor — settlement ownership
 

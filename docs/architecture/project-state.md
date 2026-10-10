@@ -1,5 +1,16 @@
 # Project State — FuturesOnlyEliteEngine
 
+## Binding product boundary — ADR-0006 (OWNER-APPROVED)
+
+This repository delivers a **permanent signal-only product** for exactly CRYPTO Futures, FOREX Futures, and GOLD Futures. This is a product prohibition, not a feature flag or default-off mode.
+
+Allowed production capabilities are read-only market-data ingestion/validation, analytical indicators and SMC/confluence scoring, signal lifecycle and audit, advisory entry/stop/target/risk estimates with explicit assumptions, and Telegram/email signal/operational notifications. Backtesting, walk-forward/out-of-sample analysis, and Paper Trading are simulation-only and must be technically isolated from live side effects.
+
+Forbidden product capabilities include live order submission/amendment/cancellation/retry, automated real-position opening/increasing/reducing/closing, account mutation, transfers, leverage changes, automated capital allocation, execution-authorizing Telegram controls/callbacks, and order-write credentials or APIs. No runtime component may translate a signal, callback, retry, restart, or configuration change into a live order. Do not add an execution layer, execution adapter, live-order client, or order-write dependency.
+
+Keep Futures-only and explicit Linear/Inverse semantics, exact Decimal rules, fail-closed validation, secret hygiene, all G01–G08 thresholds, Phase 1 exit criteria, and same-SHA CI evidence. Signal risk figures are advisory, never guaranteed maximum losses or profitability. Repository code inventory does not establish the state of any external deployment.
+
+
 ## Purpose
 
 Start from `docs/architecture/ARCHITECTURE-MASTER-INDEX.md`; this file is the persistent handoff state and controls only the currently authorized work. It prevents a new AI, engineer, or session from guessing where the project is or choosing an unauthorized next step.
@@ -14,7 +25,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Python runtime: 3.13
 - Supported deployment: Windows Server, Linux Server, Windows Home/Desktop
 - Supported markets: CRYPTO Futures, FOREX Futures, GOLD Futures — 100% Futures
-- Operational capabilities: automated Futures trading + Telegram/email signal and operational notifications
+- Operational capabilities: signal generation only + Telegram/email signal and operational notifications; no live execution or account mutation
 - Architecture status: FROZEN BY DEFAULT
 - Operational Spot: FORBIDDEN
 - Current phase: Phase 1 — Domain Contracts

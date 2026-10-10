@@ -1,5 +1,16 @@
 # Master Project Roadmap & Architecture Governance
 
+## Binding product boundary — ADR-0006 (OWNER-APPROVED)
+
+This repository delivers a **permanent signal-only product** for exactly CRYPTO Futures, FOREX Futures, and GOLD Futures. This is a product prohibition, not a feature flag or default-off mode.
+
+Allowed production capabilities are read-only market-data ingestion/validation, analytical indicators and SMC/confluence scoring, signal lifecycle and audit, advisory entry/stop/target/risk estimates with explicit assumptions, and Telegram/email signal/operational notifications. Backtesting, walk-forward/out-of-sample analysis, and Paper Trading are simulation-only and must be technically isolated from live side effects.
+
+Forbidden product capabilities include live order submission/amendment/cancellation/retry, automated real-position opening/increasing/reducing/closing, account mutation, transfers, leverage changes, automated capital allocation, execution-authorizing Telegram controls/callbacks, and order-write credentials or APIs. No runtime component may translate a signal, callback, retry, restart, or configuration change into a live order. Do not add an execution layer, execution adapter, live-order client, or order-write dependency.
+
+Keep Futures-only and explicit Linear/Inverse semantics, exact Decimal rules, fail-closed validation, secret hygiene, all G01–G08 thresholds, Phase 1 exit criteria, and same-SHA CI evidence. Signal risk figures are advisory, never guaranteed maximum losses or profitability. Repository code inventory does not establish the state of any external deployment.
+
+
 ## Status
 
 **Authoritative project-control document.**
@@ -65,7 +76,7 @@ Supported deployment environments are:
 All three are first-class supported targets. Platform-specific code must remain isolated behind infrastructure boundaries and must not alter financial semantics or weaken safety controls.
 
 The finished system must provide both:
-- automated Futures trading through the complete risk-gated execution pipeline;
+- permanent signal generation and notification only; live order execution is prohibited;
 - signal and operational notifications through Telegram and email.
 
 Telegram and email are delivery/observability channels. They cannot authorize execution, bypass risk, or convert notification failure into execution success.
@@ -279,7 +290,7 @@ Exit condition:
 ### Phase 7 — Cross-layer integration
 Connect:
 
-SIGNAL CONTRACT -> EXECUTION RISK GATE -> EXECUTION CONTRACT -> EXCHANGE ADAPTER -> ORDER -> POSITION/ORDER RECONCILIATION -> AUDIT
+SIGNAL CONTRACT -> SIGNAL LIFECYCLE/AUDIT -> NOTIFICATION
 
 Exit condition:
 - end-to-end behavior is deterministic, validated, auditable, and fail-closed.

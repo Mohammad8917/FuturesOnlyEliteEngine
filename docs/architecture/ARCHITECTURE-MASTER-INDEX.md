@@ -1,5 +1,16 @@
 # Architecture Master Index — FuturesOnlyEliteEngine
 
+## Binding product boundary — ADR-0006 (OWNER-APPROVED)
+
+This repository delivers a **permanent signal-only product** for exactly CRYPTO Futures, FOREX Futures, and GOLD Futures. This is a product prohibition, not a feature flag or default-off mode.
+
+Allowed production capabilities are read-only market-data ingestion/validation, analytical indicators and SMC/confluence scoring, signal lifecycle and audit, advisory entry/stop/target/risk estimates with explicit assumptions, and Telegram/email signal/operational notifications. Backtesting, walk-forward/out-of-sample analysis, and Paper Trading are simulation-only and must be technically isolated from live side effects.
+
+Forbidden product capabilities include live order submission/amendment/cancellation/retry, automated real-position opening/increasing/reducing/closing, account mutation, transfers, leverage changes, automated capital allocation, execution-authorizing Telegram controls/callbacks, and order-write credentials or APIs. No runtime component may translate a signal, callback, retry, restart, or configuration change into a live order. Do not add an execution layer, execution adapter, live-order client, or order-write dependency.
+
+Keep Futures-only and explicit Linear/Inverse semantics, exact Decimal rules, fail-closed validation, secret hygiene, all G01–G08 thresholds, Phase 1 exit criteria, and same-SHA CI evidence. Signal risk figures are advisory, never guaranteed maximum losses or profitability. Repository code inventory does not establish the state of any external deployment.
+
+
 ## Purpose
 This is the single navigation and execution path for the architecture. It prevents documents from presenting competing routes, responsibilities, or phase orders.
 This index does not override the constitutional source-of-truth hierarchy. It tells every AI, engineer, reviewer, and session where to start, what controls what, who owns what, and what must happen next.
@@ -24,15 +35,15 @@ project-state.md controls what is authorized now; it does not override architect
 - Futures-only.
 - Markets: CRYPTO Futures, FOREX Futures, GOLD Futures.
 - Contract families: Linear Futures and Inverse Futures.
-- Exactly 15 independent exchange adapters.
-- Automated Futures trading is the operational execution capability.
+- Read-only market-data adapters only; provider count/identity is not assumed.
+- Permanent signal-only product; no live order-writing or account-mutation capability.
 - Telegram/email are delivery and observability channels only.
 - Operational Spot is forbidden.
 - Runtime baseline: Python 3.13.
 - Deployment targets: Windows Server, Linux Server, Windows Home/Desktop.
 
 ## 3. Unified architecture path
-MARKET → FUTURES INSTRUMENT → MARKET ADAPTER → MARKET DATA → DATA VALIDATION → REGIME PROBABILITY → MTF STRUCTURE → SETUP → TREND/MOMENTUM → CONFIRMATION → COST/LIQUIDITY → FUTURES RISK → POSITION SIZING → OPPORTUNITY RANKING → DECISION → SIGNAL CONTRACT → EXECUTION RISK GATE → EXECUTION CONTRACT → EXCHANGE ADAPTER → ORDER → POSITION/ORDER RECONCILIATION → AUDIT → NOTIFICATION/OBSERVABILITY
+MARKET (READ-ONLY) → FUTURES INSTRUMENT → MARKET DATA → VALIDATION → REGIME/MTF STRUCTURE → SETUP → TREND/MOMENTUM → CONFIRMATION → COST/LIQUIDITY → ADVISORY FUTURES RISK → REFERENCE POSITION SIZING → OPPORTUNITY RANKING → SIGNAL DECISION → SIGNAL CONTRACT → SIGNAL LIFECYCLE/AUDIT → NOTIFICATION/OBSERVABILITY
 Notification/observability is downstream reporting. It never authorizes, validates, or represents successful execution.
 
 ## 4. Unified ownership model
@@ -44,7 +55,7 @@ Notification/observability is downstream reporting. It never authorizes, validat
 | Market/data acquisition and normalization | explicit market/data boundary + infrastructure ports | risk decisions, order placement |
 | Strategy/analysis | explicitly assigned analysis/application boundary | execution or order submission |
 | Risk policy and risk decisions | risk | order submission, exchange mutation |
-| Execution intent and execution gate | execution | bypassing risk |
+| Signal lifecycle and audit | signal application | live order submission or account mutation |
 | Order lifecycle | execution | exchange transport details |
 | Reconciliation and audit | execution + infrastructure evidence ports | guessed success |
 | Exchange transport/mapping | infrastructure/exchanges/<exchange> | domain financial semantics |
