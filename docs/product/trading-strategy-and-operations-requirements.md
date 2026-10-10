@@ -31,7 +31,7 @@ The owner explicitly requested complete removal of automated trading. The target
 
 - Futures only: CRYPTO Futures, FOREX Futures, and GOLD Futures.
 - Linear and Inverse Futures remain semantically distinct.
-- The product target includes 15 independent exchange adapters, but no exchange-specific work may guess which exchanges are selected.
+- The CRYPTO Futures shortlist contains 15 exchange venues as recorded in §6.1. The shortlist is a scope decision, not proof that all adapters exist, are reachable, are legally available, or have passed validation.
 - Spot execution, Spot fallback, and using unrelated Spot balances as Futures trading capital are forbidden.
 - Python 3.13; deployment targets include Windows Server, Linux Server, and Windows Home/Desktop.
 - Strategy/analysis proposes signals; it never submits orders or bypasses Risk.
@@ -107,6 +107,40 @@ Recorded requirements:
 - No user trading account, private balance, position, or order access is required for the signal-only product unless a separately approved read-only requirement explicitly adds it.
 - No exchange-specific implementation may guess target providers, endpoints, permission models, symbols, contract filters, tick sizes, lot steps, or leverage limits.
 
+
+### 6.1 CRYPTO Futures exchange shortlist — 15 venues
+
+This shortlist records the owner's request for 15 CRYPTO Futures exchange integrations. It does **not** authorize live trading; the product remains signal-only and every adapter is read-only. The order below preserves the owner's initial priorities where applicable, then adds venues to reach 15 actual exchanges.
+
+1. **KuCoin Futures** — initial priority.
+2. **Gate.io Futures** — initial priority.
+3. **Bitget Futures** — initial priority.
+4. **HTX Futures** — initial priority.
+5. **MEXC Futures** — included with explicit elevated validation priority because the owner flagged instability; do not assume reliability.
+6. **LBank Futures** — initial list.
+7. **KCEX Futures** — initial list.
+8. **CoinEx Futures** — initial list.
+9. **OKX Derivatives** — added to reach the requested count.
+10. **Bybit Derivatives** — added to reach the requested count.
+11. **BingX Futures** — added to reach the requested count.
+12. **Phemex Derivatives** — added to reach the requested count.
+13. **Kraken Derivatives/Futures** — added to reach the requested count; product and regional eligibility must be checked.
+14. **WhiteBIT Futures** — added to reach the requested count.
+15. **Deribit Futures** — added to reach the requested count; product coverage is specialized and must not be assumed equivalent to broad altcoin venues.
+
+**Excluded or separate items**
+- **Binance:** explicitly blocked by the owner's stated operating constraint. Keep disabled in configuration and tests; do not connect or use it as a fallback. This is a user-supplied operational constraint, not an independently verified claim about global reachability.
+- **CoinGecko:** price/market-data provider only, not one of the 15 exchanges. Any price use must be explicitly labeled and must not silently substitute Spot/reference prices for a Futures contract price.
+- No unlisted venue may be added as an automatic fallback.
+
+**Required per-venue acceptance gates before considering an adapter supported**
+- Verify official API documentation and current availability of the exact Futures products; distinguish Linear, Inverse, dated futures, and perpetual swaps rather than treating them as interchangeable.
+- Verify public/read-only access, rate limits, timestamps, symbol mapping, contract multiplier, settlement/quote currency, tick size, quantity step, funding/mark/index semantics, and error/retry behavior from authoritative sources.
+- Normalize units and timestamps; reject stale, malformed, contradictory, unsupported, or ambiguous market data (fail closed).
+- Add deterministic contract tests, malformed-payload tests, stale-data tests, rate-limit/outage tests, symbol/contract mapping tests, and parity tests against documented examples.
+- Keep regional/legal eligibility as a deployment-time constraint; do not infer access merely because an API endpoint exists.
+- Do not claim an adapter is implemented or production-ready until its code, tests, CI, and exact-head evidence pass. No private account, order-write, transfer, or withdrawal permission is allowed in this signal-only product.
+
 ## 7. Telegram operations menu
 
 The Telegram interface is for signal delivery and signal-system operations only; it is not a trading control plane.
@@ -154,7 +188,7 @@ Before executable production behavior is approved, specify and test:
 - scope of the seven-signals/day ceiling (per user, strategy, market, or system);
 - exact partial-exit quantity at TP1 and trailing-stop formula/step;
 - safe/risky/hybrid selection thresholds and the contract for selecting one candidate;
-- exchange list and each exchange's supported Futures products, Linear/Inverse support, API permission model, account/margin modes, authoritative filters, and test environments;
+- each shortlisted exchange's supported Futures products, Linear/Inverse support, API permission model, account/margin modes, authoritative filters, regional availability, and test environments;
 - final admin/role model, user invitation/activation semantics, and secure secret-entry interface;
 - exact definition of eligible balance/valuation conversion and policy versioning;
 - approved durable audit-port implementation and behavior when audit persistence is unavailable;
