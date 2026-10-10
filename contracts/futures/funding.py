@@ -139,6 +139,12 @@ class FuturesFundingSpecification:
     def calculate_payment(
         self, *, notional, position_side: PositionSide
     ) -> FundingPayment | None:
+        """Return funding transfer magnitude under the declared sign convention.
+
+        The payer/receiver are market-wide side labels determined only by the
+        signed rate. position_side validates the caller's position context but
+        must never invert the POSITIVE_LONG_PAYS convention.
+        """
         amount = _decimal(notional, "notional", positive=True)
         if not isinstance(position_side, PositionSide):
             raise FundingValidationError("position_side must be explicit")
