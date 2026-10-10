@@ -242,14 +242,18 @@ def test_adr_0003_working_context_policy_is_explicit():
     """Keep precision, rounding, and exactness traps explicit in source."""
     source = (Path("domain/futures/financial_rounding.py")).read_text(encoding="utf-8")
     tree = ast.parse(source)
-    context_call = next(
+    context_calls = [
         node
         for node in ast.walk(tree)
         if isinstance(node, ast.Call)
         and isinstance(node.func, ast.Name)
         and node.func.id == "Context"
-    )
-    keywords = {keyword.arg: keyword.value for keyword in context_call.keywords}
+    ]
+    assert len(context_calls) == 1
+    keywords = {keyword.arg: keyword.value for keyword in context_calls[0].keywords}
+    assert "prec" in keywords
+    assert "rounding" in keywords
+    assert "traps" in keywords
     assert isinstance(keywords["prec"], ast.Name)
     assert keywords["prec"].id == "WORKING_PRECISION"
     assert isinstance(keywords["rounding"], ast.Name)
