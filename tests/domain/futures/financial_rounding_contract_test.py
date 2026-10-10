@@ -38,9 +38,7 @@ def test_working_context_isolated_and_traps_intermediate_inexactness():
         (Market.CRYPTO, "-0.000000019", "-0.00000001"),
     ],
 )
-def test_pnl_uses_approved_market_scale_and_rounds_toward_zero(
-    market, value, expected
-):
+def test_pnl_uses_approved_market_scale_and_rounds_toward_zero(market, value, expected):
     policy = PnLRoundingPolicy(market=market, max_reasonable_pnl="100")
     assert round_pnl(value, policy) == Decimal(expected)
 
@@ -51,7 +49,9 @@ def test_pnl_scale_override_is_explicit_and_validated():
     )
     assert round_pnl("1.2349", policy) == Decimal("1.234")
     with pytest.raises(FinancialRoundingError):
-        PnLRoundingPolicy(market=Market.CRYPTO, max_reasonable_pnl="100", scale_override=True)
+        PnLRoundingPolicy(
+            market=Market.CRYPTO, max_reasonable_pnl="100", scale_override=True
+        )
 
 
 def test_pnl_fails_closed_when_maximum_is_missing_invalid_or_exceeded():
