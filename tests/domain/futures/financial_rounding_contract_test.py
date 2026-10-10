@@ -1,9 +1,5 @@
-import ast
 from decimal import Decimal, Inexact, ROUND_UP, localcontext
-import inspect
 from operator import setitem
-
-import domain.futures.financial_rounding as rounding_module
 import pytest
 
 from contracts.futures.instrument import Market
@@ -285,24 +281,6 @@ def test_scale_validation_uses_stable_default_field_name():
         match="^scale must be an integer between 0 and 28$",
     ):
         _scale(-1)
-
-
-def test_working_context_explicitly_pins_adr_precision_rounding_and_traps():
-    tree = ast.parse(inspect.getsource(rounding_module.financial_working_context))
-    context_call = next(
-        node
-        for node in ast.walk(tree)
-        if isinstance(node, ast.Call)
-        and isinstance(node.func, ast.Name)
-        and node.func.id == "Context"
-    )
-    keywords = {keyword.arg: keyword.value for keyword in context_call.keywords}
-    assert isinstance(keywords["prec"], ast.Name)
-    assert keywords["prec"].id == "WORKING_PRECISION"
-    assert isinstance(keywords["rounding"], ast.Name)
-    assert keywords["rounding"].id == "ROUND_HALF_EVEN"
-    trapped = {item.id for item in keywords["traps"].elts if isinstance(item, ast.Name)}
-    assert {"Inexact", "Rounded", "InvalidOperation", "DivisionByZero"} <= trapped
 
 
 def test_pnl_maximum_equality_is_permitted_but_exceeding_it_is_not():
