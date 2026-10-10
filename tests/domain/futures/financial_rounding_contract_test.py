@@ -212,8 +212,14 @@ def test_margin_ratio_is_rounded_for_comparison_only_and_rejects_unsafe_interval
     assert "strictly between" in str(captured.value)
 
 
-@pytest.mark.parametrize("ratio", [Decimal("0.05"), Decimal("0.10")])
-def test_margin_ratio_accepts_strict_interval_boundaries(ratio) -> None:
+@pytest.mark.parametrize(
+    ("ratio", "expected_text"),
+    [
+        (Decimal("0.05"), "5E-2"),
+        (Decimal("0.10"), "1E-1"),
+    ],
+)
+def test_margin_ratio_accepts_strict_interval_boundaries(ratio, expected_text) -> None:
     result = round_margin_ratio(
         ratio,
         maintenance_margin_ratio=Decimal("0.05"),
@@ -222,8 +228,8 @@ def test_margin_ratio_accepts_strict_interval_boundaries(ratio) -> None:
     assert result.value == ratio.quantize(Decimal("0.00000001"))
     assert result.audit_record.boundary == "MARGIN_RATIO"
     assert result.audit_record.rounding_mode == "ROUND_HALF_UP"
-    assert result.audit_record.input_value == "5E-2"
-    assert result.audit_record.output_value == "5E-2"
+    assert result.audit_record.input_value == expected_text
+    assert result.audit_record.output_value == expected_text
     assert result.audit_record.scale_or_tick == "scale=8"
 
 
