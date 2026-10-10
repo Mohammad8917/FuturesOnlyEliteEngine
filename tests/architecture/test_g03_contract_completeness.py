@@ -237,3 +237,26 @@ def test_financial_calculation_ownership_matches_architecture():
         "Financial calculation modules must not be owned by contracts/futures: "
         f"{misplaced_contract_owners}"
     )
+
+
+
+def test_domain_financial_code_forbids_float_and_builtin_round_calls():
+    """Enforce ADR-0003's no-binary-float/no-built-in-round invariant."""
+    offenders = []
+    for path in sorted(DOMAIN_PRODUCTION.glob("*.py")):
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        except (OSError, SyntaxError, UnicodeDecodeError) as exc:
+            offenders.append(f"{path}: unable to inspect source: {exc}")
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                function = node.func
+                if isinstance(function, ast.Name) and function.id in {"float", "round"}:
+                    offenders.append(f"{path}:{node.lineno}: call to {function.id}()")
+                elif isinstance(function, ast.Attribute) and function.attr in {"float", "round"}:
+                    offenders.append(f"{path}:{node.lineno}: call to {function.attr}()")
+    assert not offenders, (
+        "ADR-0003 forbids float conversion and built-in round() in domain/futures:\\n"
+        + "\\n".join(offenders)
+    )
