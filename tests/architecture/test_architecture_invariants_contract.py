@@ -35,7 +35,7 @@ def test_constitution_covers_required_runtime_and_product_boundaries() -> None:
         "Linear Futures",
         "Inverse Futures",
         "Operational Spot is forbidden.",
-        "15 independent exchange adapters",
+        "Read-only market-data adapters only",
     )
     for marker in required:
         assert marker in content, marker
@@ -48,7 +48,7 @@ def test_constitution_preserves_layer_and_fail_closed_boundaries() -> None:
         "Domain remains infrastructure-independent.",
         "Strategy/analysis must not submit orders.",
         "Risk must not place orders.",
-        "Execution must not bypass risk validation.",
+        "No execution capability exists; signal publication must validate analytical/risk-estimate inputs.",
         "Unknown, invalid, stale, contradictory, incomplete, or untrusted critical Futures state",
         "Required behavior is fail-closed.",
         "A generic implementation that erases meaningful exchange differences is forbidden.",
@@ -62,10 +62,10 @@ def test_constitution_covers_safety_critical_configuration_and_financial_state()
     required = (
         "Credentials, API keys, signing material, passwords, tokens, private keys",
         "Configuration must fail closed",
-        "Every executable intent must carry an immutable, unique idempotency identity",
-        "Unknown order, fill, position, balance, or account state must block new execution",
-        "execution authority must remain disabled until required account/order/position reconciliation completes successfully",
-        "A scoped/global trading halt (kill switch/circuit breaker)",
+        "Every published signal must carry a stable unique identity and explicit replay/duplicate semantics",
+        "This product has no live order, position-mutation, account-mutation, reconciliation-for-execution, or execution-halt capability.",
+        "Signal lifecycle transitions must be idempotent; duplicate delivery, retries, restart, or callbacks must never cause live order side effects.",
+        "Live automated trading is permanently out of scope and forbidden.",
         "Audit evidence must be append-only/tamper-evident",
     )
     for marker in required:

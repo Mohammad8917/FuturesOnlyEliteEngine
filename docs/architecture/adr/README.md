@@ -445,3 +445,8 @@ Liquidation-price constraints are COMPLETE on implementation SHA `b8b65b721fcae5
 ## Phase 1 next-unit ADR gate — liquidation event and trigger semantics
 
 No architecture change is proposed. The next contract must preserve the distinction between a deterministic trigger condition and liquidation execution. It must explicitly define provenance/freshness, side/mode semantics, state lifecycle, idempotency/ordering/concurrency, dependencies, tests, CI, and same-SHA evidence. Any architecture change must use the ADR process before implementation. Exchange-specific mark-price/trigger/tier/fee/funding behavior must remain outside the canonical domain contract.
+
+
+## ADR-0006 — Binding product decision
+
+The owner-approved ADR-0006 permanently narrows this product to signal-only. Any older requirement for live automated trading, order-writing, execution controls, or account mutation is superseded by ADR-0006; restoring it requires a new ADR, critical warning, impact analysis, explicit owner reconfirmation, and required CI evidence.
