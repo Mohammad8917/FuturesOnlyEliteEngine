@@ -162,3 +162,61 @@ def test_all_helpers_reject_binary_float_inputs():
         round_liquidation_price(
             100.0, LiquidationPriceRoundingPolicy("0.1", PositionSide.LONG)
         )
+
+
+def test_decimal_input_validation_rejects_wrong_type_malformed_and_nonfinite_values():
+    policy = PnLRoundingPolicy(market=Market.CRYPTO, max_reasonable_pnl="100")
+    with pytest.raises(FinancialRoundingError):
+        round_pnl(None, policy)
+    with pytest.raises(FinancialRoundingError):
+        round_pnl("not-a-number", policy)
+    with pytest.raises(FinancialRoundingError):
+        round_pnl(Decimal("NaN"), policy)
+
+
+def test_pnl_policy_rejects_unsupported_market_and_wrong_policy_object():
+    with pytest.raises(FinancialRoundingError):
+        PnLRoundingPolicy(market="CRYPTO", max_reasonable_pnl="100")
+    with pytest.raises(FinancialRoundingError):
+        round_pnl("1", object())
+
+
+def test_pnl_fails_closed_when_quantized_result_exceeds_working_precision():
+    huge = Decimal("1" + "0" * 40)
+    policy = PnLRoundingPolicy(market=Market.CRYPTO, max_reasonable_pnl=huge)
+    with pytest.raises(FinancialRoundingError):
+        round_pnl(huge, policy)
+
+
+def test_funding_rejects_wrong_policy_object():
+    with pytest.raises(FinancialRoundingError):
+        round_funding("1", "0.01", object())
+
+
+def test_margin_ratio_rejects_wrong_policy_and_negative_ratio():
+    policy = MarginRatioRoundingPolicy(
+        maintenance_margin_ratio="0.4", liquidation_ratio="0.6"
+    )
+    with pytest.raises(FinancialRoundingError):
+        round_margin_ratio("0.5", object())
+    with pytest.raises(FinancialRoundingError):
+        round_margin_ratio("-0.1", policy)
+
+
+def test_liquidation_rejects_wrong_policy_and_zero_tick_result():
+    with pytest.raises(FinancialRoundingError):
+        round_liquidation_price("100", object())
+    policy = LiquidationPriceRoundingPolicy(
+        tick_size="1", position_side=PositionSide.LONG
+    )
+    with pytest.raises(FinancialRoundingError):
+        round_liquidation_price("0.01", policy)
+
+
+def test_liquidation_fails_closed_when_tick_result_exceeds_working_precision():
+    tick = Decimal("12345678901234567890123456789")
+    policy = LiquidationPriceRoundingPolicy(
+        tick_size=tick, position_side=PositionSide.LONG
+    )
+    with pytest.raises(FinancialRoundingError):
+        round_liquidation_price(tick, policy)
