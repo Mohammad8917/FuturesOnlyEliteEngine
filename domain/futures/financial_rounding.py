@@ -57,7 +57,7 @@ class RoundingMode(StrEnum):
     AWAY_FROM_ZERO = ROUND_UP
 
 
-def financial_working_context() -> AbstractContextManager:
+def financial_working_context() -> AbstractContextManager[Context]:
     """Return an isolated precision-28 context that traps intermediate loss.
 
     The returned context does not inherit caller precision, rounding, or trap
@@ -119,8 +119,6 @@ def _quantize(value: Decimal, scale: int, rounding: str) -> Decimal:
         raise FinancialRoundingError(
             "value cannot be represented at the approved boundary scale"
         ) from exc
-    if not result.is_finite():
-        raise FinancialRoundingError("rounded result must be finite")
     return result
 
 
@@ -180,7 +178,9 @@ def round_funding(
     amount = _decimal(payment, "funding_payment")
     rate = _decimal(funding_rate, "funding_rate")
     if rate.copy_abs() > policy.max_funding_rate:
-        raise FinancialRiskBoundaryError("absolute funding rate exceeds configured maximum")
+        raise FinancialRiskBoundaryError(
+            "absolute funding rate exceeds configured maximum"
+        )
     return _quantize(amount, 8, ROUND_HALF_UP)
 
 
@@ -213,9 +213,7 @@ def round_margin_ratio(
     if value < 0:
         raise FinancialRoundingError("margin_ratio must not be negative")
     rounded = _quantize(value, 8, ROUND_HALF_UP)
-    if (
-        policy.maintenance_margin_ratio < rounded < policy.liquidation_ratio
-    ):
+    if policy.maintenance_margin_ratio < rounded < policy.liquidation_ratio:
         raise FinancialRiskBoundaryError(
             "margin ratio lies strictly inside the configured critical range"
         )
@@ -262,5 +260,7 @@ def round_liquidation_price(
             "tick-rounded liquidation price exceeds exact working precision"
         ) from exc
     if not result.is_finite() or result <= 0:
-        raise FinancialRoundingError("rounded liquidation price must be positive and finite")
+        raise FinancialRoundingError(
+            "rounded liquidation price must be positive and finite"
+        )
     return result
