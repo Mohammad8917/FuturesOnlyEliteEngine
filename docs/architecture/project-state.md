@@ -8,25 +8,41 @@ This is project state, not the architectural contract. Architectural rules remai
 
 ## Current authoritative state
 
-- Repository: Mohammad8917/FuturesOnlyEliteEngine
-- Default branch: main
-- Product: Elite Futures-Only Professional Trading Engine
-- Python runtime: 3.13
-- Supported deployment: Windows Server, Linux Server, Windows Home/Desktop
-- Supported markets: CRYPTO Futures, FOREX Futures, GOLD Futures — 100% Futures
-- Operational capabilities: automated Futures trading + Telegram/email signal and operational notifications
-- Architecture status: FROZEN BY DEFAULT
-- Operational Spot: FORBIDDEN
-- Current phase: Phase 1 — Domain Contracts
-- Current gate: G05 — Coverage
-- Implementation phase authorized: YES — Phase 1 Domain Contracts
-- Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: `d1529db92f9b4750b9e8f821f3599fb0d6317b25` — G01 (`37839785059`), G03 (`37839785127`), G04 (`37839785087`), Phase 1 (`37839785060`), and Architecture Invariants (`37839785331`) are green on this exact main merge SHA.
-- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 — Domain Contracts.
-- Active work: Phase 1 Domain Contracts — Phase 1 final completeness/evidence audit are CLOSED. G05 — achieve and evidence the immutable `>= 98%` coverage requirement without excluding meaningful production code, weakening tests, or changing thresholds.
-- Blocked work: Phase 2+ production implementation remains blocked until the current gate sequence is resolved according to the roadmap. Any gate skip/weakening remains forbidden.
-- Next authorized action: G05 coverage implementation/audit.
-- Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, add exclusions/ignores solely to obtain green, or skip the first incomplete gate.
+- Repository: `Mohammad8917/FuturesOnlyEliteEngine`
+- Default branch: `main`
+- Product target: Elite Futures-Only Professional Trading Engine; Python 3.13; Windows Server, Linux Server, and Windows Home/Desktop.
+- Markets and contract families: CRYPTO Futures, FOREX Futures, GOLD Futures; Linear and Inverse Futures.
+- Operational Spot: FORBIDDEN. No Spot operational path or fallback.
+- Current phase: Phase 1 — Domain Contracts; candidate contract implementation is in place, but Phase 1 financial-completeness closure remains OPEN because Decimal-context arithmetic has not been resolved through an owner-approved ADR (issue #37); independent review and verified main-branch protection are also outstanding.
+- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 Domain Contracts implementation and candidate-branch completeness/evidence audit.
+- Current gate: resolve P0 issue #37 under an owner-approved ADR, reconcile the financial-calculation ownership mismatch in issue #38, obtain required independent review and authorized merge of PR #35, then verify all applicable checks on the exact resulting `main` SHA and have an administrator enable/verify branch protection/rulesets
+- P0 financial-arithmetic blocker: [issue #37 — exact Decimal arithmetic and non-terminating division](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/issues/37). The code currently uses context-governed Decimal division/multiplication in financial calculations despite the EXACT/NONE no-implicit-rounding contract. Do not claim Phase 1 financial-contract completeness or merge PR #35 as complete until an owner-approved ADR selects a coherent policy and implementation/tests/same-SHA CI verify it.
+- Implementation phase authorized: YES — Phase 1 Domain Contracts only
+- Phase 2+ production implementation remains blocked until issue #37 is resolved under an owner-approved ADR, PR #35 is reviewed/merged, and `main` is verified on the exact resulting SHA, including resolution of the historical G05 false-green.
+- PR: [#35 — Harden Futures-only contracts and enforce G01–G08 quality gates](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/35), branch `hardening/eight-rules-conformance`.
+- Current PR candidate HEAD: `afe45ed08187a0d7626d92d5bc7a71b1953b917f` (PR #35 head; base/main remains `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`). The latest exact-HEAD check-runs are complete: Architecture Invariants, Phase 1 Domain Contracts, G01–G06, G08, and G07 applicability classification succeeded; operational G07 is skipped/not passed under approved Phase 1-only scope. G05 = 1236/1260 = 98.095238% (532 contract tests + 9 guard regression tests); G08 = 317/334 = 94.91% (zero timeouts). The SHA is a candidate only; it does not establish main-branch protection or resolve the open financial/ownership blockers.
+- Base/main SHA last observed: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`.
+- P0 issue #37 remains open and requires an owner-approved ADR selecting an exact, context-independent financial-arithmetic policy before implementation.
+- P1 issue #38 tracks financial-calculation placement versus the declared domain/futures ownership; P1 issue #39 tracks the module-level import-cycle enforcement coverage gap.
+- Nine regression tests for the guard passed in the G05 workflow on the prior verified candidate; G05 must be rerun on the current HEAD.
+- Platform protection for `main` is confirmed disabled; see issue #36. Independent required review/approval is outstanding, and the current HEAD plus its GitHub Actions check-runs are authoritative for candidate evidence.
+- Exact-SHA evidence for the last checked candidate `afe45ed08187a0d7626d92d5bc7a71b1953b917f` (PR head): [Architecture Invariants](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37956374079), [Phase 1 Domain Contracts](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37956374055), [G01](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37956374087), [G02](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37956374076), [G03](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37956374073), [G04](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37956374060), [G05](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37956374152), [G06/security](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37956374062), [G07 applicability classification](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37956374117), and [G08/mutation](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37956374063) all have successful applicable results on that HEAD. Operational G07 is skipped, not passed.
+- Every subsequent commit, including this state synchronization, requires a fresh exact-HEAD verification. A previous green SHA is not evidence for a later SHA.
+- G08 measured 94.91% (317 killed / 334 non-skipped mutants) on the last fully verified candidate; the 90% floor remains unchanged.
+- G05 independently calculates exact line coverage from XML root counts and class-level line evidence, rejects incomplete/inconsistent XML, and must fail closed below 98%.
+- G07 applicability: approved ADR-0001 permits Phase 1-only scope to classify operational G07 as NOT APPLICABLE (not passed) only when no operational layer exists and project-state explicitly authorizes Phase 1 only. A separate applicability check must report that G07 has NOT passed. If any operational layer/test scope appears, G07 becomes applicable and must fail closed until all required layers and meaningful integration/resilience tests pass. No operational readiness is claimed.
+- Main baseline: `87af92e1bcf2adad555e4c9187d3b2b5c613e7f2`. Historical G05 run [37850090486](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/actions/runs/37850090486) printed coverage failure at 97.83% while reporting job success. Treat this as a confirmed false-green defect; it remains unresolved on `main` until corrected and verified on the resulting main SHA.
+- Current repository scope is canonical Futures contracts, validation, tests, architecture documentation, and CI. Fifteen exchange adapters, live/automated operational trading, reconciliation integration, and Telegram/email delivery are NOT claimed implemented.
+- Technical lock status: **CONFIRMED UNPROTECTED** (live repository branch metadata, 2026-10-09): `main.protected=false`, `protection.enabled=false`, required status-check enforcement `off`; repository Rulesets API returned an empty list. This supersedes the earlier inconclusive 403 observation. P0 tracking issue: [#36 — Enable and verify mandatory protection for main](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/issues/36). An administrator must configure and re-read the actual controls in `CHANGE-GUARD.md`; until then the repository is not technically locked.
+- Review state at last check: no submitted PR #35 reviews. PR metadata reports mergeable=true; independent required review/approval is outstanding. Do not fabricate approval or merge without required review.
+- Active work: the historical G05 false-green correction and strengthened independent XML guard are implemented in PR #35; this candidate measured 1236/1260 = 98.095238% with 532 contract tests and 9 guard regression tests passed. These results are candidate-only and are not yet verified on `main`. Active blockers remain P0 issue #37 (owner-approved exact-arithmetic ADR and implementation), P1 issue #38 (declared `domain/futures` financial ownership versus implementation in `contracts/futures`), P0 issue #36 (main branch protection disabled), absent independent review for PR #35, and post-merge exact-main-SHA verification.
+- Immediate active subtask: continue Phase 1-only audit without bypassing the ADR firewall; obtain owner-approved resolution of #37, reconcile #38 under existing ownership rules, request independent review, have an administrator enable/verify main protection, and then rerun applicable checks on the exact resulting `main` SHA. Phase 2+ remains blocked.
+- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged and `main` is verified on one exact SHA; claiming G07 complete or production readiness; treating candidate CI as proof that `main` is fixed.
+- Forbidden: direct-main changes, architecture redesign without an actual violation and approved ADR, Spot fallback, hard-coded secrets/configuration, binary-float financial inputs, implicit or Decimal-context rounding without an approved policy, skipped/xfail tests, threshold reductions, coverage exclusions/suppressions solely to pass, and gate/review bypasses.
+- Required quality floors remain immutable: G05 >= 98%; G08 >= 90%. On pre-synchronization candidate `ab2f0f6d2daf2e3da753a5fefd3ea6c714bd3eba`, G05 is 98.095238% and G08 is 94.91%; this does not transfer to the new SHA created by this state-file update without rerunning CI.
+- Next authorized action: complete same-SHA verification for the new candidate created by this update, resolve issue #37 through an owner-approved ADR, reconcile issue #38's domain/contract ownership mismatch without changing frozen architecture, then obtain independent review/authorized merge and exact-resulting-SHA verification on `main`. Administrator must enable and verify branch protection per issue #36. Phase 2+ remains blocked until arithmetic semantics, governance, platform-lock status, and G05 false-green correction are evidenced.
+- Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative. Historical/snapshot evidence alone never proves current HEAD is green.
+- Snapshot rule: all SHAs other than the live candidate HEAD are historical snapshots. The verified SHA above is the pre-synchronization baseline only; this documentation/test update creates a new HEAD and requires fresh GitHub Actions checks. Do not advance a phase based on historical or candidate-only evidence.
 
 ## Required state fields for every update
 
@@ -41,8 +57,8 @@ Whenever this file is updated, record:
 - next authorized action
 - forbidden actions
 - open architecture questions
-- open architecture questions: None identified in the bounded Phase 0 deep audit.
-- evidence references: current same-SHA main verification `d1529db92f9b4750b9e8f821f3599fb0d6317b25` with G01=`37839785059`, G03=`37839785127`, G04=`37839785087`, Phase 1=`37839785060`, Architecture Invariants=`37839785331`; historical Phase 0/Phase 1 evidence remains below; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
+- Open architecture questions: G07 applicability is resolved by approved ADR-0001; exact arithmetic and non-terminating division semantics remain unresolved under P0 issue #37 and require an owner-approved ADR. Implementation, CI verification, PR review/merge, and exact-main-SHA verification remain outstanding.
+- evidence references: historical main G05 false-green run `37850090486`; last fully checked candidate before this state update `9295b7f1c873a7189d81db2273890f524ad98b1`; exact run IDs are listed in `Current authoritative state`. This state-file update creates a new HEAD, so refresh live HEAD and checks before treating this snapshot as current.
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
 ## Phase 0 exit criteria
@@ -272,7 +288,7 @@ The frozen contract remains:
 - fail-closed invalid, ambiguous, stale, contradictory, unsupported, or missing critical terms;
 - no threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening.
 
-The next authorized Phase 1 unit is **position side and position mode semantics**. No Phase 2+ production implementation is authorized before the preceding Phase 1 exit criteria are evidenced.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **position side and position mode semantics**. No Phase 2+ production implementation is authorized before the preceding Phase 1 exit criteria are evidenced.
 
 
 ## Phase 1 position side / position mode semantic lock
@@ -312,7 +328,7 @@ Evidence on the exact merge SHA:
 
 The frozen contract remains explicit LONG/SHORT side vocabulary and ONE_WAY/HEDGE mode semantics, with no exchange/account inference, no Spot semantics, no hidden defaults, and fail-closed invalid or ambiguous values.
 
-The next authorized Phase 1 unit is **price, quantity, monetary units, denomination, precision, and rounding semantics**. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **price, quantity, monetary units, denomination, precision, and rounding semantics**. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
 
 
 ## Phase 1 next-unit semantic gate — price / quantity / monetary units
@@ -371,7 +387,7 @@ Evidence on the exact merge SHA:
 
 The frozen contract is exact QUOTE_PER_BASE pricing, CONTRACTS quantity, explicit quote denomination, exact Decimal precision, and no implicit rounding/quantization. Exchange-specific tick/lot/precision/rounding rules remain outside the canonical contract.
 
-The next authorized Phase 1 unit is **funding-rate value, interval, and funding calculation semantics**. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **funding-rate value, interval, and funding calculation semantics**. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
 
 
 ## Phase 1 next-unit semantic gate — funding rate
@@ -436,7 +452,7 @@ The frozen contract is explicit `INTERVAL_RATE` funding, canonical `POSITIVE_LON
 
 No threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening was used.
 
-The next authorized Phase 1 unit is **realized PnL and unrealized PnL semantics**.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **realized PnL and unrealized PnL semantics**.
 
 ## Phase 1 next-unit semantic gate — realized and unrealized PnL
 
@@ -503,7 +519,7 @@ The frozen contract explicitly separates realized closing/offset PnL from unreal
 
 No threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening was used.
 
-The next authorized Phase 1 unit is **exposure and position valuation semantics**.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **exposure and position valuation semantics**.
 
 ## Phase 1 next-unit semantic gate — exposure and position valuation
 
@@ -549,7 +565,7 @@ Frozen semantics: explicit gross exposure versus valuation; Linear base = quanti
 
 ## Phase 1 next authorized unit — liquidation price and liquidation constraints
 
-The next authorized Phase 1 unit is **liquidation price and liquidation constraints**. Before production implementation, all eight architecture documents must freeze owner, lifecycle meaning, required inputs/outputs, Linear/Inverse formulas, market applicability, interaction with closed contracts, exact numeric/rounding semantics, provenance/freshness, failure semantics, dependencies, meaningful tests, CI enforcement, and same-SHA evidence.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **liquidation price and liquidation constraints**. Before production implementation, all eight architecture documents must freeze owner, lifecycle meaning, required inputs/outputs, Linear/Inverse formulas, market applicability, interaction with closed contracts, exact numeric/rounding semantics, provenance/freshness, failure semantics, dependencies, meaningful tests, CI enforcement, and same-SHA evidence.
 
 No Phase 2+ production work is authorized. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
 
@@ -560,7 +576,7 @@ Liquidation-price and liquidation-constraint semantics are COMPLETE. Implementat
 
 ## Phase 1 current cursor — liquidation event and trigger semantics
 
-The next authorized Phase 1 unit is **liquidation event and trigger semantics**. Before implementation, all eight architecture documents must freeze trigger ownership, reference-price provenance/freshness, LONG/SHORT and ONE_WAY/HEDGE behavior, state inputs/outputs, Linear/Inverse and three-market scope, exact numeric/rounding rules, invalid/stale/ambiguous handling, dependency boundaries, idempotency/ordering/concurrency, tests, CI, and same-SHA evidence.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **liquidation event and trigger semantics**. Before implementation, all eight architecture documents must freeze trigger ownership, reference-price provenance/freshness, LONG/SHORT and ONE_WAY/HEDGE behavior, state inputs/outputs, Linear/Inverse and three-market scope, exact numeric/rounding rules, invalid/stale/ambiguous handling, dependency boundaries, idempotency/ordering/concurrency, tests, CI, and same-SHA evidence.
 
 No Phase 2+ production work is authorized. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
 
@@ -574,7 +590,7 @@ Production: `contracts/futures/liquidation_event.py`. Tests: `tests/contracts/li
 
 ## Phase 1 accounting / settlement-accounting semantic lock
 
-The next authorized Phase 1 unit is **Futures accounting and settlement accounting semantics**.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **Futures accounting and settlement accounting semantics**. Current authorization is controlled exclusively by `docs/architecture/project-state.md` → `Current authoritative state`.
 
 Frozen baseline:
 - owner: Futures domain/contract boundary for deterministic accounting facts and settlement-accounting facts; application/infrastructure own persistence, external settlement transport, exchange mapping, and account mutation;
@@ -624,6 +640,20 @@ The shared CI dependency lock `requirements-ci.txt` is an authoritative G01/Phas
 
 All Phase 1 sections below **Current authoritative state** are immutable historical transition/evidence records. Any historical wording such as “current cursor”, “next authorized unit”, or “active work” in those records describes the state at that recorded transition and is not a live authorization. Only **Current authoritative state** controls the present session. A phase/gate transition is valid only after the current repository evidence and same-SHA CI requirements are re-established.
 
-## Final Phase 1 evidence reconciliation — VERIFIED
+## Historical Phase 1 evidence reconciliation — VERIFIED on pre-snapshot SHA
 
 Phase 1 final completeness and same-SHA evidence are VERIFIED on pre-snapshot SHA `b18a6ef85dfa1c8c1dfd20c55300412d81151140`. G01=`37814347213`, Architecture Invariants=`37814347249`, and Phase 1 Domain Contracts=`37814347420` are completed successfully on that exact SHA. The state snapshot commit is evidence-bearing and must trigger a fresh same-SHA verification before this state is treated as current. No Phase 2+ production implementation is authorized until the G02 entry control is explicitly satisfied.
+
+
+## Historical candidate evidence reconciliation — 2026-10-09 (superseded by Current authoritative state)
+
+The latest candidate HEAD before this reconciliation was `458079b915cc6395f266675b13b4893b323cf55b`. On that exact SHA, Architecture Invariants, Phase 1 Domain Contracts, G01, G02, G03, G04, G05, G06, and G08 passed; G05 independently measured `1227/1252 = 98.003195%`; G08 measured `317/334 = 94.91%` with zero timeouts. G07 failed closed because the production layers and integration/resilience suites listed above do not exist. Push evidence: G01 `37921911974`, G02 `37921911938`, G03 `37921912068`, G04 `37921911935`, G05 `37921911869`, G06 `37921911951`, G07 `37921912053`, G08 `37921912025`, Phase 1 `37921911857`, Architecture Invariants `37921911944`. These results are candidate-only and do not establish main-branch status. This state reconciliation creates a new HEAD; fresh same-SHA CI is mandatory.
+
+## Approved ADR-0001 — phase-scoped G07 applicability
+
+Approved ADR-0001 resolves G07 applicability without weakening its quality requirement:
+
+- While Phase 1 Domain Contracts only is explicitly authorized and no operational layer exists, operational G07 is **NOT APPLICABLE (not passed)**. A separate required applicability check validates this classification; the operational G07 job is skipped and must not be represented as green/passed or operational readiness.
+- If any operational layer or operational test scope appears, G07 becomes applicable and must fail closed until all required layers and meaningful `tests/integration/` and `tests/resilience/` suites exist and pass.
+- The applicability classifier is a required governance check, not a substitute for G07 evidence. No gate is deleted, threshold lowered, test weakened, or result relabeled.
+- G05 remains >= 98%; G08 remains >= 90%. Phase 2+ remains blocked until PR #35 review/authorized merge and exact-resulting-SHA verification on `main`, including correction of the historical G05 false-green.

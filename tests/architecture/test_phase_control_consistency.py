@@ -19,10 +19,7 @@ def test_phase_control_documents_are_consistent() -> None:
     dependencies = _read("dependency-rules.md")
     change_guard = _read("CHANGE-GUARD.md")
 
-    assert (
-        "The current project state is Phase 1 — Domain Contracts."
-        in master_index
-    )
+    assert "The current project state is Phase 1 — Domain Contracts." in master_index
     assert (
         "Phase 0 — Architecture Baseline / Governance Final Audit is CLOSED"
         in master_index
@@ -30,22 +27,64 @@ def test_phase_control_documents_are_consistent() -> None:
     assert "Phase 1 is authorized." in master_index
     assert "Phase 2+ remains blocked" in master_index
 
-    assert "**Phase 0 status:** CLOSED — Phase 1 Domain Contracts authorized." in roadmap
+    assert (
+        "**Phase 0 status:** CLOSED — Phase 1 Domain Contracts authorized." in roadmap
+    )
     assert "Phase 1 Domain Contracts is authorized." in roadmap
     assert "Phase 2+ remains blocked" in roadmap
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
-    assert "- Current gate: G05 — Coverage" in state
     assert (
-        "- Implementation phase authorized: YES — Phase 1 Domain Contracts"
+        "- Current gate: resolve P0 issue #37 under an owner-approved ADR, reconcile the "
+        "financial-calculation ownership mismatch in issue #38, obtain required independent "
+        "review and authorized merge of PR #35, then verify all applicable checks on the exact "
+        "resulting `main` SHA and have an administrator enable/verify branch protection/rulesets"
         in state
     )
-    assert "- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit" in state
-    assert "- Active work: Phase 1 Domain Contracts" in state
+    assert (
+        "- Implementation phase authorized: YES — Phase 1 Domain Contracts only"
+        in state
+    )
+    assert (
+        "- Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit"
+        in state
+    )
+    assert (
+        "- Active work: the historical G05 false-green correction and strengthened independent XML guard are implemented in PR #35"
+        in state
+    )
+    assert "P0 issue #37 remains open" in state
+    assert "requires an owner-approved ADR" in state
+    assert (
+        "P1 issue #38 tracks financial-calculation placement versus the declared domain/futures ownership"
+        in state
+    )
+    assert "Nine regression tests for the guard passed in the G05 workflow" in state
+    assert (
+        "Platform protection for `main` is confirmed disabled; see issue #36." in state
+    )
+    assert (
+        "- Blocked work: Phase 2+ production implementation until PR #35 is reviewed/merged"
+        in state
+    )
+    assert (
+        "Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative"
+        in state
+    )
 
-    assert "Production implementation remains blocked until the Phase 0 exit criteria" not in master_index
+    assert (
+        "Production implementation remains blocked until the Phase 0 exit criteria"
+        not in master_index
+    )
 
-    authoritative_markers = ("Futures-only", "CRYPTO", "FOREX", "GOLD", "Linear", "Inverse")
+    authoritative_markers = (
+        "Futures-only",
+        "CRYPTO",
+        "FOREX",
+        "GOLD",
+        "Linear",
+        "Inverse",
+    )
     for marker in authoritative_markers:
         assert marker in invariants
         assert marker in contract
@@ -85,8 +124,14 @@ def test_phase_control_documents_are_consistent() -> None:
         assert requirement in responsibility
         assert requirement in contract
 
-    assert "No Phase 2+ implementation may be used to conceal an incomplete Phase 1 contract." in master_index
-    assert "No production implementation should precede a clearly owned contract." in contract
+    assert (
+        "No Phase 2+ implementation may be used to conceal an incomplete Phase 1 contract."
+        in master_index
+    )
+    assert (
+        "No production implementation should precede a clearly owned contract."
+        in contract
+    )
     assert "Phase 1 Domain Contracts" in roadmap
     assert "Phase 1 — Domain Contracts" in state
 
@@ -105,3 +150,63 @@ def test_phase_control_documents_are_consistent() -> None:
 
     assert "not technically locked" in change_guard
     assert "not the architectural contract" in state
+
+
+def test_g07_phase_applicability_is_explicit_and_fail_closed() -> None:
+    workflow = (
+        ROOT / ".github" / "workflows" / "g07-integration-resilience.yml"
+    ).read_text(encoding="utf-8")
+    adr = (ARCH / "adr" / "ADR-0001-phase-scoped-gate-applicability.md").read_text(
+        encoding="utf-8"
+    )
+    state = _read("project-state.md")
+    assert "- **Status:** APPROVED" in adr
+    assert "NOT APPLICABLE (not passed)" in adr
+    assert "G07 NOT APPLICABLE" in workflow
+    assert "G07 has NOT passed" in workflow
+    master_index = _read("ARCHITECTURE-MASTER-INDEX.md")
+    roadmap = _read("master-roadmap-and-governance.md")
+    change_guard = _read("CHANGE-GUARD.md")
+    assert (
+        "Phase 1-only/no operational scope means G07 NOT APPLICABLE (not passed)"
+        in master_index
+    )
+    assert (
+        "Proposed ADR-0001 records the question for owner review; it is not approved"
+        not in master_index
+    )
+    assert (
+        "Until it is approved, gate applicability and merge authorization must not be guessed"
+        not in roadmap
+    )
+    assert "owner reviews/reconfirms the proposal" not in change_guard
+    assert "Technical lock status: **CONFIRMED UNPROTECTED**" in state
+    assert "main.protected=false" in state
+    assert "issues/36" in state
+    assert "main.protected=false" in change_guard
+    assert "issue #36" in master_index
+    assert "issue #36" in roadmap
+    assert "independent required review/approval is outstanding" in state
+    assert "if: needs.applicability.outputs.operational_scope == 'true'" in workflow
+    assert "Phase 1 Domain Contracts only" in state
+    assert "Phase 2+ production implementation remains blocked" in state
+    assert "Exact-SHA evidence for the last checked candidate" in state
+
+
+def test_g05_coverage_floor_has_independent_fail_closed_guard() -> None:
+    workflow = (ROOT / ".github" / "workflows" / "g05-coverage.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "--cov=contracts/futures" in workflow
+    assert workflow.count("--cov=") == 1
+    assert "--cov-fail-under=98" in workflow
+
+    guard_start = workflow.index(
+        "- name: Independently enforce the 98 percent coverage floor"
+    )
+    upload_start = workflow.index("- name: Upload coverage report", guard_start)
+    guard = workflow[guard_start:upload_start]
+
+    assert "if: always()" in guard
+    assert "python scripts/verify_g05_coverage.py" in guard
+    assert "continue-on-error" not in guard

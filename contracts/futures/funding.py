@@ -1,4 +1,5 @@
 """Canonical Futures funding-rate semantics."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -22,8 +23,13 @@ class FundingSignConvention(StrEnum):
     POSITIVE_LONG_PAYS = "POSITIVE_LONG_PAYS"
 
 
-def _decimal(value, field, *, positive=False):
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+def _decimal(
+    value: Decimal | int | str,
+    field: str,
+    *,
+    positive: bool = False,
+) -> Decimal:
+    if type(value) not in (Decimal, int, str):
         raise FundingValidationError(f"{field} must be an exact Decimal value")
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
@@ -34,7 +40,7 @@ def _decimal(value, field, *, positive=False):
     return result
 
 
-def _utc(value, field):
+def _utc(value: datetime, field: str) -> datetime:
     if (
         not isinstance(value, datetime)
         or value.tzinfo is None
@@ -51,13 +57,15 @@ class FundingPayment:
     amount: Decimal
     denomination: str
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if (
             not isinstance(self.payer, PositionSide)
             or not isinstance(self.receiver, PositionSide)
             or self.payer is self.receiver
         ):
-            raise FundingValidationError("payer and receiver must be distinct explicit sides")
+            raise FundingValidationError(
+                "payer and receiver must be distinct explicit sides"
+            )
         if (
             not isinstance(self.amount, Decimal)
             or not self.amount.is_finite()
@@ -115,6 +123,10 @@ class FuturesFundingSpecification:
             raise FundingValidationError(
                 "funding provenance and denomination must be explicit"
             )
+        if denomination != self.symbol.settlement_asset:
+            raise FundingValidationError(
+                "funding denomination must match instrument settlement asset"
+            )
 
         object.__setattr__(self, "funding_rate", rate)
         object.__setattr__(self, "interval_start", start)
@@ -137,30 +149,37 @@ class FuturesFundingSpecification:
             )
 
     def calculate_payment(
-        self, *, notional, position_side: PositionSide
+        self,
+        *,
+        notional: Decimal | int | str,
+        position_side: PositionSide,
     ) -> FundingPayment | None:
         amount = _decimal(notional, "notional", positive=True)
         if not isinstance(position_side, PositionSide):
             raise FundingValidationError("position_side must be explicit")
 
+        rate = _decimal(self.funding_rate, "funding_rate")
+
         # Zero is a valid, meaningful funding rate: it produces no transfer.
-        if self.funding_rate == 0:
+        if rate == 0:
             return None
 
-        payment = amount * abs(self.funding_rate)
+        payment = amount * abs(rate)
         if not payment.is_finite() or payment <= 0:
             raise FundingValidationError("funding payment is invalid")
 
         payer = (
             position_side
-            if self.funding_rate > 0
+            if rate > 0
             else (
                 PositionSide.SHORT
                 if position_side is PositionSide.LONG
                 else PositionSide.LONG
             )
         )
-        receiver = PositionSide.SHORT if payer is PositionSide.LONG else PositionSide.LONG
+        receiver = (
+            PositionSide.SHORT if payer is PositionSide.LONG else PositionSide.LONG
+        )
         return FundingPayment(
             payer,
             receiver,

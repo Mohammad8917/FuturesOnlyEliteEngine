@@ -15,7 +15,9 @@ from contracts.futures import (
 )
 
 
-def _instrument(market: Market = Market.CRYPTO, family: ContractFamily = ContractFamily.LINEAR):
+def _instrument(
+    market: Market = Market.CRYPTO, family: ContractFamily = ContractFamily.LINEAR
+):
     if market is Market.CRYPTO:
         base, quote, settlement, margin = "btc", "usdt", "usdt", "usdt"
     elif market is Market.FOREX:
@@ -92,7 +94,9 @@ def test_invalid_leverage_fails_closed(leverage: Decimal) -> None:
         (Decimal("1"), Decimal("Infinity")),
     ],
 )
-def test_invalid_contract_bounds_fail_closed(minimum: Decimal, maximum: Decimal) -> None:
+def test_invalid_contract_bounds_fail_closed(
+    minimum: Decimal, maximum: Decimal
+) -> None:
     with pytest.raises(LeverageValidationError):
         FuturesLeverageSpecification(
             market=Market.CRYPTO,

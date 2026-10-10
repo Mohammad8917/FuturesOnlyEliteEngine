@@ -1,4 +1,5 @@
 """Canonical Futures liquidation-price constraint semantics."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -20,7 +21,7 @@ class LiquidationDenomination(StrEnum):
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+    if type(value) not in (Decimal, int, str):
         raise LiquidationValidationError(f"{field} must be an exact Decimal value")
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
@@ -29,7 +30,9 @@ def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
             f"{field} must be an exact Decimal value"
         ) from exc
     if not result.is_finite() or result <= 0:
-        raise LiquidationValidationError(f"{field} must be finite and greater than zero")
+        raise LiquidationValidationError(
+            f"{field} must be finite and greater than zero"
+        )
     return result
 
 
@@ -48,7 +51,9 @@ class FuturesLiquidationSpecification:
 
     def __post_init__(self) -> None:
         if not isinstance(self.market, Market):
-            raise LiquidationValidationError("market must be a supported Futures market")
+            raise LiquidationValidationError(
+                "market must be a supported Futures market"
+            )
         if not isinstance(self.symbol, CanonicalFuturesSymbol):
             raise LiquidationValidationError("symbol must be CanonicalFuturesSymbol")
         if self.symbol.contract_family not in (
@@ -65,7 +70,9 @@ class FuturesLiquidationSpecification:
                 "contract must be FuturesContractSpecification"
             )
         if contract.market is not self.market or contract.symbol != self.symbol:
-            raise LiquidationValidationError("contract identity does not match specification")
+            raise LiquidationValidationError(
+                "contract identity does not match specification"
+            )
         return contract
 
     def liquidation_price(

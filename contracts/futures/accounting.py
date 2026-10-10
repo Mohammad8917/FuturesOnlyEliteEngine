@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
 
-from .instrument import FuturesInstrumentIdentity, Market
+from .instrument import ContractFamily, FuturesInstrumentIdentity, Market
 
 
 class AccountingValidationError(ValueError):
@@ -24,7 +24,7 @@ class AccountingDirection(StrEnum):
 
 
 def _decimal(value: Decimal, field: str, *, positive: bool = False) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, Decimal):
+    if type(value) is not Decimal:
         raise AccountingValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite():
         raise AccountingValidationError(f"{field} must be finite")
@@ -47,7 +47,7 @@ def _asset(value: str, field: str) -> str:
 
 
 def _sequence(value: int, field: str) -> int:
-    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+    if type(value) is not int or value < 0:
         raise AccountingValidationError(f"{field} must be a non-negative integer")
     return value
 
@@ -68,15 +68,15 @@ class FuturesLedgerEntry:
     amount: Decimal
 
     def __post_init__(self) -> None:
-        _text(self.entry_id, "entry_id")
-        _text(self.causation_id, "causation_id")
+        for field in ("entry_id", "causation_id", "account_id", "ledger_account"):
+            object.__setattr__(self, field, _text(getattr(self, field), field))
         _sequence(self.state_version, "state_version")
         _sequence(self.sequence, "sequence")
-        _text(self.account_id, "account_id")
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
-        _text(self.ledger_account, "ledger_account")
-        _asset(self.asset, "asset")
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
+        object.__setattr__(self, "asset", _asset(self.asset, "asset"))
         if not isinstance(self.direction, AccountingDirection):
             raise AccountingValidationError("direction must be DEBIT or CREDIT")
         _decimal(self.amount, "amount", positive=True)
@@ -90,7 +90,16 @@ class FuturesAccountingJournal:
     entries: tuple[FuturesLedgerEntry, ...]
 
     def __post_init__(self) -> None:
-        _text(self.journal_id, "journal_id")
+        object.__setattr__(self, "journal_id", _text(self.journal_id, "journal_id"))
+        # Snapshot caller-owned collections before validating them. A frozen dataclass
+        # is not immutable if it retains a mutable list supplied by the caller.
+        if not isinstance(self.entries, tuple):
+            try:
+                object.__setattr__(self, "entries", tuple(self.entries))
+            except TypeError as exc:
+                raise AccountingValidationError(
+                    "entries must be an iterable of FuturesLedgerEntry"
+                ) from exc
         if not self.entries:
             raise AccountingValidationError("journal must contain entries")
         if any(not isinstance(entry, FuturesLedgerEntry) for entry in self.entries):
@@ -117,33 +126,37 @@ class FuturesAccountingJournal:
             totals[entry.asset] = totals.get(entry.asset, Decimal("0")) + entry.amount
 
         for asset in set(debit_totals) | set(credit_totals):
-            if debit_totals.get(asset, Decimal("0")) != credit_totals.get(asset, Decimal("0")):
-                raise AccountingValidationError(f"journal is unbalanced for asset {asset}")
+            if debit_totals.get(asset, Decimal("0")) != credit_totals.get(
+                asset, Decimal("0")
+            ):
+                raise AccountingValidationError(
+                    f"journal is unbalanced for asset {asset}"
+                )
 
     @property
     def asset_balances(self) -> dict[str, Decimal]:
-        return {
-            asset: debit - credit
-            for asset in set(
-                entry.asset for entry in self.entries
-            )
-            for debit, credit in [
+        balances: dict[str, Decimal] = {}
+        for asset in {entry.asset for entry in self.entries}:
+            debit = sum(
                 (
-                    sum(
-                        entry.amount
-                        for entry in self.entries
-                        if entry.asset == asset
-                        and entry.direction is AccountingDirection.DEBIT
-                    ),
-                    sum(
-                        entry.amount
-                        for entry in self.entries
-                        if entry.asset == asset
-                        and entry.direction is AccountingDirection.CREDIT
-                    ),
-                )
-            ]
-        }
+                    entry.amount
+                    for entry in self.entries
+                    if entry.asset == asset
+                    and entry.direction is AccountingDirection.DEBIT
+                ),
+                start=Decimal("0"),
+            )
+            credit = sum(
+                (
+                    entry.amount
+                    for entry in self.entries
+                    if entry.asset == asset
+                    and entry.direction is AccountingDirection.CREDIT
+                ),
+                start=Decimal("0"),
+            )
+            balances[asset] = debit - credit
+        return balances
 
 
 @dataclass(frozen=True, slots=True)
@@ -157,7 +170,9 @@ class FuturesAccountingSpecification:
         if not isinstance(self.market, Market):
             raise AccountingValidationError("market must be a supported Futures market")
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
         if self.instrument.market is not self.market:
             raise AccountingValidationError("market must match instrument")
 
@@ -220,6 +235,18 @@ class FuturesAccountingSpecification:
     ) -> FuturesAccountingJournal:
         """Account an explicit signed realized-PnL fact without recomputing it."""
         asset = _asset(denomination, "denomination")
+        family = self.instrument.symbol.contract_family
+        if family is ContractFamily.LINEAR:
+            expected_denomination = self.instrument.symbol.quote_asset
+        elif family is ContractFamily.INVERSE:
+            expected_denomination = self.instrument.symbol.base_asset
+        else:
+            raise AccountingValidationError("unsupported contract family")
+        if asset != expected_denomination:
+            raise AccountingValidationError(
+                "realized PnL denomination must match the contract-family PnL asset"
+            )
+
         value = _decimal(pnl_amount, "pnl_amount")
         if value == 0:
             raise AccountingValidationError(

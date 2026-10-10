@@ -23,7 +23,12 @@ def test_current_tree_passes_g04_validator() -> None:
 
 
 def test_rejects_forbidden_layer_edge(tmp_path: Path) -> None:
-    _source(tmp_path, "application", "service.py", "from infrastructure.client import Client\n")
+    _source(
+        tmp_path,
+        "application",
+        "service.py",
+        "from infrastructure.client import Client\n",
+    )
     _source(tmp_path, "infrastructure", "client.py", "")
     errors = validate(tmp_path)
     assert any("application -> infrastructure" in error for error in errors)
@@ -99,7 +104,11 @@ def test_rejects_http_call_in_domain_and_risk(tmp_path: Path) -> None:
 
 
 def test_rejects_layer_cycle(tmp_path: Path) -> None:
-    _source(tmp_path, "application", "service.py", "from analysis.signal import Signal\n")
-    _source(tmp_path, "analysis", "signal.py", "from application.service import Service\n")
+    _source(
+        tmp_path, "application", "service.py", "from analysis.signal import Signal\n"
+    )
+    _source(
+        tmp_path, "analysis", "signal.py", "from application.service import Service\n"
+    )
     errors = validate(tmp_path)
     assert any("architectural dependency cycle" in error for error in errors)

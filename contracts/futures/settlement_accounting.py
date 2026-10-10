@@ -27,7 +27,7 @@ def _text(value: str, field: str) -> str:
 
 
 def _decimal(value: Decimal, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, Decimal):
+    if type(value) is not Decimal:
         raise AccountingValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite() or value <= 0:
         raise AccountingValidationError(f"{field} must be finite and greater than zero")
@@ -35,7 +35,7 @@ def _decimal(value: Decimal, field: str) -> Decimal:
 
 
 def _sequence(value: int, field: str) -> int:
-    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+    if type(value) is not int or value < 0:
         raise AccountingValidationError(f"{field} must be a non-negative integer")
     return value
 
@@ -52,7 +52,9 @@ class FuturesSettlementAccountingSpecification:
         if not isinstance(self.market, Market):
             raise AccountingValidationError("market must be a supported Futures market")
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise AccountingValidationError("instrument must be FuturesInstrumentIdentity")
+            raise AccountingValidationError(
+                "instrument must be FuturesInstrumentIdentity"
+            )
         if self.instrument.market is not self.market:
             raise AccountingValidationError("market must match instrument")
         if not isinstance(self.settlement, FuturesSettlementSpecification):
@@ -83,9 +85,7 @@ class FuturesSettlementAccountingSpecification:
             "settlement_counterparty_account_id",
         )
         if account == counterparty:
-            raise AccountingValidationError(
-                "settlement counterparty must be distinct"
-            )
+            raise AccountingValidationError("settlement counterparty must be distinct")
         _sequence(state_version, "state_version")
         start = _sequence(sequence, "sequence")
         source_value = _decimal(source_amount, "source_amount")

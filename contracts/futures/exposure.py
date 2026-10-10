@@ -1,4 +1,5 @@
 """Canonical Futures exposure and position-valuation semantics."""
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta
@@ -21,19 +22,25 @@ class ExposureDenomination(StrEnum):
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+    if type(value) not in (Decimal, int, str):
         raise ExposureValidationError(f"{field} must be an exact Decimal value")
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
-        raise ExposureValidationError(f"{field} must be an exact Decimal value") from exc
+        raise ExposureValidationError(
+            f"{field} must be an exact Decimal value"
+        ) from exc
     if not result.is_finite() or result <= 0:
         raise ExposureValidationError(f"{field} must be finite and greater than zero")
     return result
 
 
 def _utc(value: datetime, field: str) -> datetime:
-    if not isinstance(value, datetime) or value.tzinfo is None or value.utcoffset() != timedelta(0):
+    if (
+        not isinstance(value, datetime)
+        or value.tzinfo is None
+        or value.utcoffset() != timedelta(0)
+    ):
         raise ExposureValidationError(f"{field} must be an aware UTC datetime")
     return value
 
@@ -50,7 +57,10 @@ class FuturesExposureSpecification:
             raise ExposureValidationError("market must be a supported Futures market")
         if not isinstance(self.symbol, CanonicalFuturesSymbol):
             raise ExposureValidationError("symbol must be CanonicalFuturesSymbol")
-        if self.symbol.contract_family not in (ContractFamily.LINEAR, ContractFamily.INVERSE):
+        if self.symbol.contract_family not in (
+            ContractFamily.LINEAR,
+            ContractFamily.INVERSE,
+        ):
             raise ExposureValidationError("unsupported contract family")
         object.__setattr__(self, "market", self.market)
         object.__setattr__(self, "symbol", self.symbol)
@@ -59,9 +69,13 @@ class FuturesExposureSpecification:
         self, contract: FuturesContractSpecification
     ) -> FuturesContractSpecification:
         if not isinstance(contract, FuturesContractSpecification):
-            raise ExposureValidationError("contract must be FuturesContractSpecification")
+            raise ExposureValidationError(
+                "contract must be FuturesContractSpecification"
+            )
         if contract.market is not self.market or contract.symbol != self.symbol:
-            raise ExposureValidationError("contract identity does not match exposure specification")
+            raise ExposureValidationError(
+                "contract identity does not match exposure specification"
+            )
         return contract
 
     def base_exposure(
@@ -76,7 +90,9 @@ class FuturesExposureSpecification:
         px = _positive_decimal(price, "price")
         result = spec.base_exposure(quantity=qty, price=px)
         if not result.is_finite() or result <= 0:
-            raise ExposureValidationError("base exposure must be finite and greater than zero")
+            raise ExposureValidationError(
+                "base exposure must be finite and greater than zero"
+            )
         return result
 
     def quote_value(
@@ -91,7 +107,9 @@ class FuturesExposureSpecification:
         px = _positive_decimal(reference_price, "reference_price")
         result = spec.notional(quantity=qty, price=px)
         if not result.is_finite() or result <= 0:
-            raise ExposureValidationError("quote value must be finite and greater than zero")
+            raise ExposureValidationError(
+                "quote value must be finite and greater than zero"
+            )
         return result
 
     def signed_base_exposure(
@@ -135,7 +153,9 @@ class FuturesExposureSpecification:
         observed_at: datetime,
     ) -> Decimal:
         if not isinstance(denomination, ExposureDenomination):
-            raise ExposureValidationError("denomination must be explicitly BASE or QUOTE")
+            raise ExposureValidationError(
+                "denomination must be explicitly BASE or QUOTE"
+            )
         source = valuation_source.strip() if isinstance(valuation_source, str) else ""
         if not source:
             raise ExposureValidationError("valuation_source must be explicit")

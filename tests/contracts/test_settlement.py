@@ -51,9 +51,15 @@ def test_cross_asset_settlement_requires_explicit_rate() -> None:
 
 
 @pytest.mark.parametrize("market", [Market.CRYPTO, Market.FOREX, Market.GOLD])
-def test_settlement_contract_applies_to_all_supported_futures_markets(market: Market) -> None:
+def test_settlement_contract_applies_to_all_supported_futures_markets(
+    market: Market,
+) -> None:
     symbol = CanonicalFuturesSymbol(
-        base_asset="btc" if market is Market.CRYPTO else "eur" if market is Market.FOREX else "xau",
+        base_asset="btc"
+        if market is Market.CRYPTO
+        else "eur"
+        if market is Market.FOREX
+        else "xau",
         quote_asset="usdt" if market is Market.CRYPTO else "usd",
         contract_family=ContractFamily.LINEAR,
         settlement_asset="usdt" if market is Market.CRYPTO else "usd",
@@ -103,7 +109,9 @@ def test_unexpected_same_asset_rate_fails_closed() -> None:
         )
 
 
-@pytest.mark.parametrize("rate", [Decimal("0"), Decimal("-1"), Decimal("NaN"), Decimal("Infinity")])
+@pytest.mark.parametrize(
+    "rate", [Decimal("0"), Decimal("-1"), Decimal("NaN"), Decimal("Infinity")]
+)
 def test_invalid_conversion_rate_fails_closed(rate: Decimal) -> None:
     with pytest.raises(SettlementValidationError):
         FuturesSettlementSpecification(

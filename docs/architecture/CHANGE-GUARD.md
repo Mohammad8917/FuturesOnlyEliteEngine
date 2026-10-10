@@ -44,11 +44,11 @@ The repository administrator must configure GitHub branch protection/rulesets fo
 8. Administrator bypass disabled where GitHub plan/settings permit it.
 9. Ruleset administration restricted to repository administrators.
 
-The repository is **not technically locked** until these platform controls are enabled and verified.
+The repository is **not technically locked** until these platform controls are enabled and verified. Live metadata on 2026-10-09 confirmed `main.protected=false`, `protection.enabled=false`, and required status-check enforcement `off`; the Rulesets API returned no rulesets. Treat this as a confirmed P0 defect, not an unknown state. Track and resolve it via [issue #36](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/issues/36), then re-read the live platform configuration before declaring lock.
 
 ## Phase 1 accounting / settlement-accounting semantic lock
 
-The next authorized Phase 1 unit is **Futures accounting and settlement accounting semantics**.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **Futures accounting and settlement accounting semantics**. Current authorization is controlled exclusively by `docs/architecture/project-state.md` → `Current authoritative state`.
 
 Frozen baseline:
 - owner: Futures domain/contract boundary for deterministic accounting facts and settlement-accounting facts; application/infrastructure own persistence, external settlement transport, exchange mapping, and account mutation;
@@ -87,3 +87,22 @@ The Phase 1 completeness audit recognizes `position_side.py` and `position_mode.
 ## CI action pin closure
 
 The Phase 1/G01/Architecture Invariants workflows pin `actions/setup-python` to the verified `v5.6.0` commit `a26af69be951a213d495a4c3e4e4022e16d87065`. Any future action-pin change requires the same strict CI verification; no floating action reference is permitted.
+
+
+## Current-state authority and historical-transition control
+
+Historical phase-unit entries in this document preserve chronology. Their earlier “active unit”, “next authorized unit”, or “next step” wording is not live authorization and must not override `docs/architecture/project-state.md` → `Current authoritative state`. The Phase 1 candidate completeness/evidence audit is recorded as closed on the candidate branch only; PR #35 owner review/authorized merge and exact-resulting-SHA verification on `main` remain pending. Phase 2+ production implementation stays blocked until those governance and `main` verification steps are complete and the historical G05 false-green is corrected. No gate skip, threshold reduction, test weakening, or Spot operational path is permitted.
+
+
+## Phase-scoped gate applicability hold — 2026-10-09
+
+Historical finding only: on candidate SHA `458079b915cc6395f266675b13b4893b323cf55b`, operational G07 failed closed because later-phase production layers and integration/resilience suites were absent. This finding is superseded by approved ADR-0001. Current rule: Phase 1-only/no operational scope means G07 NOT APPLICABLE (not passed), not passed; any operational scope activates G07 and fails closed until required real integration/resilience tests pass. No gate may be skipped or weakened, and no Phase 2+ authorization may be inferred.
+
+## Approved ADR-0001 — phase-scoped G07 applicability
+
+Approved ADR-0001 resolves G07 applicability without weakening its quality requirement:
+
+- While Phase 1 Domain Contracts only is explicitly authorized and no operational layer exists, operational G07 is **NOT APPLICABLE (not passed)**. A separate required applicability check validates this classification; the operational G07 job is skipped and must not be represented as green/passed or operational readiness.
+- If any operational layer or operational test scope appears, G07 becomes applicable and must fail closed until all required layers and meaningful `tests/integration/` and `tests/resilience/` suites exist and pass.
+- The applicability classifier is a required governance check, not a substitute for G07 evidence. No gate is deleted, threshold lowered, test weakened, or result relabeled.
+- G05 remains >= 98%; G08 remains >= 90%. Phase 2+ remains blocked until PR #35 review/authorized merge and exact-resulting-SHA verification on `main`, including correction of the historical G05 false-green.

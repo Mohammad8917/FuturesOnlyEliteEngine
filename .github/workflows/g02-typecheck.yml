@@ -1,5 +1,5 @@
-name: G04 Architecture Boundary Enforcement
-run-name: G04 Architecture Boundary Enforcement • ${{ github.event_name }} • ${{ github.sha }}
+name: G02 Typecheck
+run-name: G02 Typecheck • ${{ github.event_name }} • ${{ github.sha }}
 
 on:
   push:
@@ -7,14 +7,14 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: g04-architecture-boundaries-${{ github.workflow }}-${{ github.ref }}
+  group: g02-typecheck-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  g04-architecture-boundaries:
+  g02-typecheck:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -30,11 +30,8 @@ jobs:
           cache: "pip"
           cache-dependency-path: requirements-ci.txt
 
-      - name: Install test dependency
+      - name: Install CI dependencies
         run: python -m pip install --disable-pip-version-check --no-input -r requirements-ci.txt
 
-      - name: Run architecture boundary regression tests
-        run: python -m pytest -q tests/architecture/test_g04_architecture_boundaries.py
-
-      - name: Run strict dependency validator
-        run: python validation/architecture_dependency_validator.py
+      - name: Run strict G02 typecheck
+        run: python -m pyright --project pyrightconfig.json

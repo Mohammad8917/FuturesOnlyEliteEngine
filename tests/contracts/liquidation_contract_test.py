@@ -20,7 +20,9 @@ def make_symbol(market: Market, family: ContractFamily) -> CanonicalFuturesSymbo
     return CanonicalFuturesSymbol(base, "USD", family, "USD")
 
 
-def make_contract(market: Market, family: ContractFamily) -> FuturesContractSpecification:
+def make_contract(
+    market: Market, family: ContractFamily
+) -> FuturesContractSpecification:
     return FuturesContractSpecification(
         market=market,
         symbol=make_symbol(market, family),

@@ -69,5 +69,41 @@ def test_phase1_is_futures_only_and_gates_remain_strict() -> None:
 def test_phase2_plus_remains_blocked_until_phase1_exit() -> None:
     state = (ARCH / "project-state.md").read_text(encoding="utf-8")
     assert "Phase 2+ production implementation remains blocked" in state
-    assert "final completeness/evidence audit are CLOSED" in state
-    assert "Next authorized action: G05 coverage implementation/audit." in state
+    assert "Phase 1 financial-completeness closure remains OPEN" in state
+    assert "owner-approved ADR (issue #37)" in state
+    assert "G08 measured 94.91% (317 killed / 334 non-skipped mutants)" in state
+    assert (
+        "G05 independently calculates exact line coverage from XML root counts "
+        "and class-level line evidence" in state
+    )
+    assert (
+        "Next authorized action: complete same-SHA verification for the new candidate created by this update"
+        in state
+    )
+    assert "G07 applicability: approved ADR-0001" in state
+    assert "NOT APPLICABLE (not passed)" in state
+    assert "No operational readiness is claimed." in state
+    adr = (ARCH / "adr" / "ADR-0001-phase-scoped-gate-applicability.md").read_text(
+        encoding="utf-8"
+    )
+    assert (
+        "- **Status:** APPROVED — implemented in PR #35; candidate checks must be reverified on every new SHA; independent review/authorized merge and final `main` verification pending"
+        in adr
+    )
+    assert "Implementation is authorized under this approved decision" in adr
+    assert "No gate is silently skipped, relabeled green, weakened, or bypassed." in adr
+    for relative in (
+        "ARCHITECTURE-MASTER-INDEX.md",
+        "master-roadmap-and-governance.md",
+        "architecture-contract.md",
+        "CHANGE-GUARD.md",
+        "adr/README.md",
+    ):
+        linked_doc = (ARCH / relative).read_text(encoding="utf-8")
+        assert "ADR-0001" in linked_doc, (
+            f"{relative} is not aligned to the active governance finding"
+        )
+    assert (
+        "Live gate authority: the current branch HEAD and its GitHub Actions check-runs are authoritative"
+        in state
+    )

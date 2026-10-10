@@ -450,7 +450,7 @@ Gate exit requires production implementation, meaningful contract tests, CI enfo
 
 Multiplier and contract specification has exited its gate with production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence on main SHA `8c0e2da70cb49fa6c8863d5d1ba1e4a348bcaacf`.
 
-The next authorized Phase 1 unit is **initial margin semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **initial margin semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
 \n## Phase 1 settlement gate
 
 The settlement unit must close with:
@@ -516,7 +516,7 @@ No Phase 1 cursor advance is permitted until all sixteen conditions are evidence
 
 Initial margin semantics have exited their gate with production implementation, meaningful contract tests, CI enforcement, and same-SHA evidence on main SHA `4bf8eb7f54f08b372d0dd30efe1068e258aa1f8f`.
 
-The next authorized Phase 1 unit is **maintenance margin semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **maintenance margin semantics**. The implementation-unit protocol and no-weakening gate discipline remain unchanged.
 
 ## Phase 1 maintenance margin gate
 
@@ -586,7 +586,7 @@ The frozen contract remains:
 - fail-closed invalid, ambiguous, stale, contradictory, unsupported, or missing critical terms;
 - no threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening.
 
-The next authorized Phase 1 unit is **position side and position mode semantics**. No Phase 2+ production implementation is authorized before the preceding Phase 1 exit criteria are evidenced.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **position side and position mode semantics**. No Phase 2+ production implementation is authorized before the preceding Phase 1 exit criteria are evidenced.
 
 
 ## Phase 1 position side / position mode semantic lock
@@ -626,7 +626,7 @@ Evidence on the exact merge SHA:
 
 The frozen contract remains explicit LONG/SHORT side vocabulary and ONE_WAY/HEDGE mode semantics, with no exchange/account inference, no Spot semantics, no hidden defaults, and fail-closed invalid or ambiguous values.
 
-The next authorized Phase 1 unit is **price, quantity, monetary units, denomination, precision, and rounding semantics**. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **price, quantity, monetary units, denomination, precision, and rounding semantics**. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
 
 
 ## Phase 1 next-unit semantic gate — price / quantity / monetary units
@@ -685,7 +685,7 @@ Evidence on the exact merge SHA:
 
 The frozen contract is exact QUOTE_PER_BASE pricing, CONTRACTS quantity, explicit quote denomination, exact Decimal precision, and no implicit rounding/quantization. Exchange-specific tick/lot/precision/rounding rules remain outside the canonical contract.
 
-The next authorized Phase 1 unit is **funding-rate value, interval, and funding calculation semantics**. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **funding-rate value, interval, and funding calculation semantics**. No threshold reduction, test weakening, skip/xfail, or dependency-boundary weakening is permitted.
 
 
 ## Phase 1 next-unit semantic gate — funding rate
@@ -750,7 +750,7 @@ The frozen contract is explicit `INTERVAL_RATE` funding, canonical `POSITIVE_LON
 
 No threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening was used.
 
-The next authorized Phase 1 unit is **realized PnL and unrealized PnL semantics**.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **realized PnL and unrealized PnL semantics**.
 
 ## Phase 1 next-unit semantic gate — realized and unrealized PnL
 
@@ -817,7 +817,7 @@ The frozen contract explicitly separates realized closing/offset PnL from unreal
 
 No threshold reduction, test weakening, skip/xfail, guessed exchange behavior, or dependency-boundary weakening was used.
 
-The next authorized Phase 1 unit is **exposure and position valuation semantics**.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **exposure and position valuation semantics**.
 
 ## Phase 1 next-unit semantic gate — exposure and position valuation
 
@@ -847,7 +847,7 @@ Exposure and position valuation is COMPLETE on implementation SHA `dc9461a562426
 
 ## Phase 1 next-unit governance gate — liquidation price and liquidation constraints
 
-The next authorized Phase 1 unit is liquidation price and liquidation constraints. Entry requires an explicit semantic lock across ownership, lifecycle, inputs/outputs, denomination, Linear/Inverse formulas, market applicability, interactions with all closed contracts, exact Decimal/no rounding, provenance/freshness, fail-closed behavior, dependency boundaries, meaningful tests, CI, and same-SHA evidence. No exchange-specific liquidation/mark-price/tier/fee/funding/settlement default may be introduced. No threshold, test, skip/xfail, or dependency weakening is allowed.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was liquidation price and liquidation constraints. Entry requires an explicit semantic lock across ownership, lifecycle, inputs/outputs, denomination, Linear/Inverse formulas, market applicability, interactions with all closed contracts, exact Decimal/no rounding, provenance/freshness, fail-closed behavior, dependency boundaries, meaningful tests, CI, and same-SHA evidence. No exchange-specific liquidation/mark-price/tier/fee/funding/settlement default may be introduced. No threshold, test, skip/xfail, or dependency weakening is allowed.
 
 
 ## Phase 1 liquidation-price constraint closure evidence
@@ -856,11 +856,11 @@ Liquidation-price constraints are COMPLETE on implementation SHA `b8b65b721fcae5
 
 ## Phase 1 next-unit governance gate — liquidation event and trigger semantics
 
-The next authorized unit is liquidation event and trigger semantics. Entry requires explicit ownership, trigger/reference provenance and freshness, side/mode semantics, required state, Linear/Inverse and three-market scope, exact Decimal/no implicit rounding, fail-closed stale/ambiguous behavior, idempotency/ordering/concurrency, dependency boundaries, meaningful tests, CI, and same-SHA evidence. The canonical contract must not implement forced execution, order placement, account mutation, exchange transport, or exchange-specific mark-price/tier/fee/funding defaults. No threshold reduction, skip/xfail, assertion weakening, or dependency weakening is permitted.
+Historical transition record (not live authorization): at that recorded stage, the next authorized unit was liquidation event and trigger semantics. Entry requires explicit ownership, trigger/reference provenance and freshness, side/mode semantics, required state, Linear/Inverse and three-market scope, exact Decimal/no implicit rounding, fail-closed stale/ambiguous behavior, idempotency/ordering/concurrency, dependency boundaries, meaningful tests, CI, and same-SHA evidence. The canonical contract must not implement forced execution, order placement, account mutation, exchange transport, or exchange-specific mark-price/tier/fee/funding defaults. No threshold reduction, skip/xfail, assertion weakening, or dependency weakening is permitted.
 
 ## Phase 1 accounting / settlement-accounting semantic lock
 
-The next authorized Phase 1 unit is **Futures accounting and settlement accounting semantics**.
+Historical transition record (not live authorization): at that recorded stage, the next Phase 1 unit was **Futures accounting and settlement accounting semantics**. Current authorization is controlled exclusively by `docs/architecture/project-state.md` → `Current authoritative state`.
 
 Frozen baseline:
 - owner: Futures domain/contract boundary for deterministic accounting facts and settlement-accounting facts; application/infrastructure own persistence, external settlement transport, exchange mapping, and account mutation;
@@ -880,7 +880,7 @@ Frozen baseline:
 
 ## Phase 1 final completeness/evidence audit
 
-The accounting and settlement-accounting contract is the final minimum financial contract unit in the Phase 1 set. After same-SHA green evidence, the authorized next action is a bounded completeness audit across the eight authoritative architecture documents, production contract boundaries, contract tests, dependency rules, and CI. Phase 2+ production implementation remains blocked until the audit closes. No threshold reduction, test weakening, skip/xfail, assertion weakening, or dependency-boundary weakening is permitted.
+Historical transition record: the accounting and settlement-accounting contract was recorded as the final minimum financial contract unit in the Phase 1 set. At that recorded stage, the next action was a bounded completeness audit across the eight authoritative architecture documents, production contract boundaries, contract tests, dependency rules, and CI. The candidate-branch audit is now recorded as closed in `docs/architecture/project-state.md`; PR #35 review/merge and exact-SHA verification on `main` remain outstanding. Phase 2+ production implementation remains blocked. No threshold reduction, test weakening, skip/xfail, assertion weakening, or dependency-boundary weakening is permitted.
 
 
 ## Phase 1 accounting / settlement-accounting closure evidence
@@ -894,3 +894,22 @@ Evidence boundary:
 - no threshold reduction, test weakening, skip/xfail, assertion removal, or dependency-boundary weakening.
 
 Cross-journal idempotency and durable sequence enforcement remain downstream persistence/reconciliation responsibilities; the canonical domain journal enforces immutable entry identity, explicit causation/version data, and monotonic sequence within each declared journal batch. Contradictory external outcomes remain divergence rather than success.
+
+
+## Current-state authority and historical-transition control
+
+Historical phase-unit entries in this document preserve chronology. Their earlier “active unit”, “next authorized unit”, or “next step” wording is not live authorization and must not override `docs/architecture/project-state.md` → `Current authoritative state`. The Phase 1 candidate completeness/evidence audit is recorded as closed on the candidate branch only; PR #35 independent review/authorized merge and exact-resulting-SHA verification on `main` remain pending. Live branch metadata on 2026-10-09 confirms `main.protected=false`, `protection.enabled=false`, and required status-check enforcement off; issue #36 tracks the P0 administrator action to enable and verify protection. Phase 2+ production implementation stays blocked until these governance/platform controls, `main` verification, and historical G05 false-green correction are complete. No gate skip, threshold reduction, test weakening, or Spot operational path is permitted.
+
+
+## Superseded historical G07 applicability finding — 2026-10-09
+
+At the time of this finding ADR-0001 was proposed and the applicability cycle was unresolved. This paragraph is historical, not current authorization. It is superseded by the approved ADR-0001 decision below. Current rule: Phase 1-only scope with no operational layers classifies operational G07 as NOT APPLICABLE (not passed); the required applicability classifier validates this explicitly. If any operational scope appears, G07 is applicable and must fail closed until required operational layers and real integration/resilience tests pass. No gate weakening, fake success, or production-readiness claim is allowed.
+
+## Approved ADR-0001 — phase-scoped G07 applicability
+
+Approved ADR-0001 resolves G07 applicability without weakening its quality requirement:
+
+- While Phase 1 Domain Contracts only is explicitly authorized and no operational layer exists, operational G07 is **NOT APPLICABLE (not passed)**. A separate required applicability check validates this classification; the operational G07 job is skipped and must not be represented as green/passed or operational readiness.
+- If any operational layer or operational test scope appears, G07 becomes applicable and must fail closed until all required layers and meaningful `tests/integration/` and `tests/resilience/` suites exist and pass.
+- The applicability classifier is a required governance check, not a substitute for G07 evidence. No gate is deleted, threshold lowered, test weakened, or result relabeled.
+- G05 remains >= 98%; G08 remains >= 90%. Phase 2+ remains blocked until PR #35 review/authorized merge and exact-resulting-SHA verification on `main`, including correction of the historical G05 false-green.

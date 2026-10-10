@@ -39,6 +39,7 @@ def accounting(family=ContractFamily.LINEAR):
 
 @pytest.mark.parametrize("family", list(ContractFamily))
 def test_realized_pnl_accounts_signed_fact_without_recomputing(family):
+    denomination = "USD" if family is ContractFamily.LINEAR else "BTC"
     positive = accounting(family).realized_pnl(
         journal_id="j-profit",
         causation_id="pnl-1",
@@ -46,9 +47,9 @@ def test_realized_pnl_accounts_signed_fact_without_recomputing(family):
         sequence=10,
         account_id="acct",
         pnl_amount=Decimal("12.50"),
-        denomination="USD",
+        denomination=denomination,
     )
-    assert positive.asset_balances == {"USD": Decimal("0")}
+    assert positive.asset_balances == {denomination: Decimal("0")}
     assert positive.entries[0].direction is AccountingDirection.DEBIT
     assert positive.entries[1].direction is AccountingDirection.CREDIT
 
@@ -59,9 +60,9 @@ def test_realized_pnl_accounts_signed_fact_without_recomputing(family):
         sequence=20,
         account_id="acct",
         pnl_amount=Decimal("-7.25"),
-        denomination="USD",
+        denomination=denomination,
     )
-    assert negative.asset_balances == {"USD": Decimal("0")}
+    assert negative.asset_balances == {denomination: Decimal("0")}
     assert negative.entries[0].ledger_account == "FUTURES_REALIZED_PNL"
 
 
@@ -92,6 +93,54 @@ def test_funding_transfer_is_balanced_across_distinct_accounts():
     assert journal.asset_balances == {"USD": Decimal("0")}
     assert journal.entries[0].account_id == "payer"
     assert journal.entries[1].account_id == "receiver"
+
+
+def test_journal_rejects_empty_batch():
+    with pytest.raises(AccountingValidationError):
+        FuturesAccountingJournal("empty", ())
+
+
+def test_journal_snapshots_mutable_input_and_normalizes_asset_identity():
+    debit = FuturesLedgerEntry(
+        entry_id=" debit ",
+        causation_id=" cause ",
+        state_version=1,
+        sequence=1,
+        account_id=" account ",
+        instrument=instrument(),
+        ledger_account=" debit-ledger ",
+        asset=" usd ",
+        direction=AccountingDirection.DEBIT,
+        amount=Decimal("1"),
+    )
+    credit = FuturesLedgerEntry(
+        entry_id="credit",
+        causation_id="cause",
+        state_version=1,
+        sequence=2,
+        account_id="account",
+        instrument=instrument(),
+        ledger_account="credit-ledger",
+        asset="USD",
+        direction=AccountingDirection.CREDIT,
+        amount=Decimal("1"),
+    )
+    supplied_entries = [debit, credit]
+    journal = FuturesAccountingJournal(" journal ", supplied_entries)
+
+    supplied_entries.clear()
+
+    assert journal.journal_id == "journal"
+    assert isinstance(journal.entries, tuple)
+    assert journal.entries == (debit, credit)
+    assert journal.entries[0].entry_id == "debit"
+    assert journal.entries[0].asset == "USD"
+    assert journal.asset_balances == {"USD": Decimal("0")}
+
+
+def test_journal_rejects_non_iterable_entries():
+    with pytest.raises(AccountingValidationError):
+        FuturesAccountingJournal("invalid", None)  # type: ignore[arg-type]
 
 
 def test_journal_rejects_duplicate_ids_and_unbalanced_assets():
@@ -167,10 +216,12 @@ def test_linear_and_inverse_remain_explicit_in_journal_identity():
         sequence=1,
         account_id="acct",
         pnl_amount=Decimal("1"),
-        denomination="USD",
+        denomination="BTC",
     )
     assert linear.entries[0].instrument.symbol.contract_family is ContractFamily.LINEAR
-    assert inverse.entries[0].instrument.symbol.contract_family is ContractFamily.INVERSE
+    assert (
+        inverse.entries[0].instrument.symbol.contract_family is ContractFamily.INVERSE
+    )
 
 
 def settlement_spec(source_asset):

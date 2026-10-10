@@ -36,7 +36,7 @@ def _asset(value: str, field: str) -> str:
 
 
 def _positive_decimal(value: Decimal, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, Decimal):
+    if type(value) is not Decimal:
         raise SettlementValidationError(f"{field} must be an exact Decimal value")
     if not value.is_finite() or value <= 0:
         raise SettlementValidationError(f"{field} must be finite and greater than zero")
@@ -107,5 +107,8 @@ class FuturesSettlementSpecification:
         value = _positive_decimal(amount, "amount")
         if not self.conversion_required:
             return value
-        assert self.conversion_rate is not None
+        if self.conversion_rate is None:
+            raise SettlementValidationError(
+                "conversion_rate invariant is missing for cross-asset settlement"
+            )
         return value * self.conversion_rate

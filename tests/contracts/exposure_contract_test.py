@@ -23,7 +23,9 @@ def make_symbol(market: Market, family: ContractFamily) -> CanonicalFuturesSymbo
     return CanonicalFuturesSymbol(base, "USD", family, "USD")
 
 
-def make_contract(market: Market, family: ContractFamily) -> FuturesContractSpecification:
+def make_contract(
+    market: Market, family: ContractFamily
+) -> FuturesContractSpecification:
     return FuturesContractSpecification(
         market=market,
         symbol=make_symbol(market, family),
@@ -101,7 +103,9 @@ def test_explicit_denomination_and_reference_provenance():
     ) == Decimal("200")
 
 
-@pytest.mark.parametrize("value", [True, False, 0, -1, 0.1, float("nan"), Decimal("NaN")])
+@pytest.mark.parametrize(
+    "value", [True, False, 0, -1, 0.1, float("nan"), Decimal("NaN")]
+)
 def test_financial_inputs_fail_closed(value):
     contract = make_contract(Market.CRYPTO, ContractFamily.LINEAR)
     specification = FuturesExposureSpecification(Market.CRYPTO, contract.symbol)

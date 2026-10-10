@@ -26,7 +26,7 @@ class InitialMarginUnit(StrEnum):
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool) or not isinstance(value, (Decimal, int, str)):
+    if type(value) not in (Decimal, int, str):
         raise InitialMarginValidationError(f"{field} must be an exact Decimal value")
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
@@ -85,13 +85,9 @@ class FuturesInitialMarginSpecification:
                 "market must match the instrument identity"
             )
         if not isinstance(self.initial_margin_unit, InitialMarginUnit):
-            raise InitialMarginValidationError(
-                "initial_margin_unit must be RATIO"
-            )
+            raise InitialMarginValidationError("initial_margin_unit must be RATIO")
 
-        ratio = _positive_decimal(
-            self.initial_margin_ratio, "initial_margin_ratio"
-        )
+        ratio = _positive_decimal(self.initial_margin_ratio, "initial_margin_ratio")
         notional_asset = _asset(self.notional_asset, "notional_asset")
 
         object.__setattr__(self, "initial_margin_ratio", ratio)

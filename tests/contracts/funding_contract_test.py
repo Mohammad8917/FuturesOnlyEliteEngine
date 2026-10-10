@@ -87,10 +87,13 @@ def test_negative_rate_reverses_payer():
 
 
 def test_zero_rate_is_valid_but_creates_no_transfer():
-    assert funding(rate=Decimal("0")).calculate_payment(
-        notional=Decimal("1000"),
-        position_side=PositionSide.LONG,
-    ) is None
+    assert (
+        funding(rate=Decimal("0")).calculate_payment(
+            notional=Decimal("1000"),
+            position_side=PositionSide.LONG,
+        )
+        is None
+    )
 
 
 @pytest.mark.parametrize(
@@ -137,6 +140,28 @@ def test_freshness_is_explicit_and_fail_closed():
         spec.validate_freshness(
             as_of=datetime(2026, 1, 1, 9, tzinfo=UTC),
             max_age=timedelta(hours=1),
+        )
+
+
+@pytest.mark.parametrize("family", [ContractFamily.LINEAR, ContractFamily.INVERSE])
+def test_funding_denomination_must_match_instrument_settlement_asset(family):
+    with pytest.raises(FundingValidationError, match="settlement asset"):
+        FuturesFundingSpecification(
+            market=Market.CRYPTO,
+            symbol=CanonicalFuturesSymbol(
+                base_asset="BTC",
+                quote_asset="USDT",
+                settlement_asset="USDT",
+                contract_family=family,
+            ),
+            funding_rate_unit=FundingRateUnit.INTERVAL_RATE,
+            funding_sign_convention=FundingSignConvention.POSITIVE_LONG_PAYS,
+            funding_rate=Decimal("0.0001"),
+            interval_start=datetime(2026, 1, 1, tzinfo=UTC),
+            interval_end=datetime(2026, 1, 1, 8, tzinfo=UTC),
+            rate_source="synthetic-test-source",
+            observed_at=datetime(2026, 1, 1, 7, tzinfo=UTC),
+            notional_denomination="BTC",
         )
 
 

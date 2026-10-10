@@ -2,19 +2,7 @@ name: G05 Coverage
 
 on:
   push:
-    paths:
-      - "contracts/**"
-      - "tests/**"
-      - "requirements-ci.txt"
-      - ".github/workflows/g05-coverage.yml"
-      - "docs/architecture/**"
   pull_request:
-    paths:
-      - "contracts/**"
-      - "tests/**"
-      - "requirements-ci.txt"
-      - ".github/workflows/g05-coverage.yml"
-      - "docs/architecture/**"
   workflow_dispatch:
 
 permissions:
@@ -44,6 +32,9 @@ jobs:
       - name: Install test dependencies
         run: python -m pip install --disable-pip-version-check --no-input -r requirements-ci.txt
 
+      - name: Test fail-closed coverage XML guard
+        run: python -m pytest -q tests/architecture/test_g05_coverage_guard.py
+
       - name: Measure Futures contract coverage
         env:
           PYTHONPATH: .
@@ -54,6 +45,10 @@ jobs:
             --cov-report=xml:coverage.xml \
             --cov-fail-under=98 \
             tests/contracts
+
+      - name: Independently enforce the 98 percent coverage floor
+        if: always()
+        run: python scripts/verify_g05_coverage.py
 
       - name: Upload coverage report
         if: always()

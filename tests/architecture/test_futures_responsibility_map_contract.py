@@ -26,9 +26,11 @@ REQUIRED_MARKERS = (
     "Every primary owner must define inputs, outputs, units, precision, timestamps, validation state, failure behavior",
 )
 
+
 def test_authoritative_responsibility_map_is_present_and_nonempty() -> None:
     assert MAP.is_file()
     assert MAP.read_text(encoding="utf-8").strip()
+
 
 def test_responsibility_map_contains_non_negotiable_ownership() -> None:
     text = MAP.read_text(encoding="utf-8")

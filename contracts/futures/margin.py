@@ -39,7 +39,7 @@ def _asset(value: str, field: str) -> str:
 
 
 def _positive_decimal(value: Decimal | int | str, field: str) -> Decimal:
-    if isinstance(value, bool):
+    if type(value) not in (Decimal, int, str):
         raise MarginValidationError(f"{field} must be an exact Decimal value")
     try:
         result = value if isinstance(value, Decimal) else Decimal(str(value))
@@ -75,9 +75,7 @@ class FuturesMarginSpecification:
         if not isinstance(self.market, Market):
             raise MarginValidationError("market must be a supported Futures market")
         if not isinstance(self.instrument, FuturesInstrumentIdentity):
-            raise MarginValidationError(
-                "instrument must be FuturesInstrumentIdentity"
-            )
+            raise MarginValidationError("instrument must be FuturesInstrumentIdentity")
         if self.instrument.market is not self.market:
             raise MarginValidationError("market must match the instrument identity")
         if not isinstance(self.margin_unit, MarginUnit):
@@ -120,5 +118,8 @@ class FuturesMarginSpecification:
         value = _positive_decimal(amount, "amount")
         if not self.conversion_required:
             return value
-        assert self.conversion_rate is not None
+        if self.conversion_rate is None:
+            raise MarginValidationError(
+                "conversion_rate invariant is missing for cross-asset margin"
+            )
         return value * self.conversion_rate
