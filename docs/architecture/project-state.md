@@ -33,7 +33,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
 - Last verified main SHA (historical baseline only): `d1529db92f9b4750b9e8f821f3599fb0d6317b25`. Do not use it as evidence for ADR-0006 changes.
-- ADR-0006 PR head SHA: `636aeef9f18468ec29495cea2f9dcd6a3d556df7`; the available PR workflows G01, G03, G04, G05, Phase 1 Domain Contracts, and Architecture Invariants passed on the PR merge ref associated with this head. G02/G06/G07/G08 are not represented by workflows in the current tree, so full G01–G08 green status is NOT established.
+- ADR-0006 PR head SHA verified before this state snapshot: `1377616f2aa7db92162b9bee04d9f900ea000207`; the available workflows G01, G03, G04, G05, Phase 1 Domain Contracts, and Architecture Invariants passed on PR merge ref `9f65e1df61f6e097738832d7ddff58547b6bcbfb`. G02/G06/G07/G08 are not represented by workflows in the current tree, so full G01–G08 green status is NOT established.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 — Domain Contracts.
 - Active work: Phase 1 final completeness/evidence audit are CLOSED. ADR-0006 signal-only architecture migration is in PR #51; separately, complete/evidence G05 coverage `>= 98%` without exclusions, weakened tests, or changed thresholds.
 - Blocked work: Phase 2+ production implementation remains blocked until the current gate sequence is resolved according to the roadmap. Any gate skip/weakening remains forbidden.
