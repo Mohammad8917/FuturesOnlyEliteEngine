@@ -51,8 +51,8 @@ def test_pnl_rounding_uses_explicit_scale_and_records_audit_fact() -> None:
     assert result.value.as_tuple().exponent == -8
     assert result.audit_record == FinancialRoundingAuditRecord(
         boundary="PNL",
-        input_value="123.456789129",
-        output_value="123.45678912",
+        input_value="1.23456789129E+2",
+        output_value="1.2345678912E+2",
         rounding_mode="ROUND_DOWN",
         scale_or_tick="scale=8",
     )
@@ -141,7 +141,7 @@ def test_funding_round_half_up_and_audit_value_are_exact() -> None:
     assert result.value.as_tuple().exponent == -8
     assert result.audit_record.rounding_mode == "ROUND_HALF_UP"
     assert result.audit_record.input_value == "1.234567895"
-    assert result.audit_record.output_value == "1.23456790"
+    assert result.audit_record.output_value == "1.2345679"
 
 
 def test_funding_rejects_rate_over_policy_limit_and_negative_amount() -> None:
@@ -239,7 +239,7 @@ def test_liquidation_rounding_uses_exact_tick_multiples_and_direction() -> None:
     assert short_result.value == Decimal("100.15")
     assert long_result.audit_record.rounding_mode == "ROUND_DOWN"
     assert short_result.audit_record.rounding_mode == "ROUND_UP"
-    assert long_result.audit_record.scale_or_tick == "tick=0.05"
+    assert long_result.audit_record.scale_or_tick == "tick=5E-2"
 
 
 def test_liquidation_rounding_handles_exact_tick_without_moving_it() -> None:
@@ -307,7 +307,7 @@ def test_liquidation_rejects_invalid_inputs(price, tick, side, last, liquidated)
 def test_liquidation_fails_closed_when_tick_result_exceeds_working_precision() -> None:
     with pytest.raises(FinancialRoundingError):
         round_liquidation_price(
-            Decimal("1e30"),
+            Decimal("12345678901234567890123456789"),
             tick_size=Decimal("1"),
             position_side=PositionSide.LONG,
             last_price=Decimal("1"),
@@ -388,7 +388,7 @@ def test_audit_record_rejects_missing_required_fields(field, value) -> None:
     fields = {
         "boundary": "PNL",
         "input_value": "1",
-        "output_value": "1.00",
+        "output_value": "1",
         "rounding_mode": "ROUND_DOWN",
         "scale_or_tick": "scale=2",
     }
