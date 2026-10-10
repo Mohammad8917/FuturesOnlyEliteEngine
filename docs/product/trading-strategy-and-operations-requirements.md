@@ -1,6 +1,6 @@
 # Product Requirements Register — Signal-Only Futures Analysis and Operations
 
-**Status:** Consolidated requirements register / proposal. Not a production implementation, not a release-readiness claim, and not permission to bypass phase gates.  
+**Status:** Owner-approved signal-only requirements register. Not a production implementation or release-readiness claim; all phase gates remain mandatory.  
 **Created:** 2026-10-10  
 **Purpose:** Preserve previously discussed owner requirements in one discoverable place and distinguish recorded decisions from unresolved design details.  
 **Architecture authority:** `docs/architecture/ARCHITECTURE-MASTER-INDEX.md`, the protected Source-of-Truth documents, and approved ADRs remain authoritative. This register does not override them.
@@ -15,27 +15,27 @@ The inspected `main` branch has a product/architecture description and a unified
 This document consolidates the known requirements and links the separate records; it does not silently approve or implement their proposals.
 
 
-## 1.1 Owner decision: permanently signal-only product scope (ADR-0006 proposed)
+## 1.1 Owner decision: permanently signal-only product scope (ADR-0006 owner-approved; PR #51 pending required review/merge)
 
-The owner explicitly requested complete removal of automated trading. The target product is a professional signal-generation and risk-analysis system for CRYPTO Futures, FOREX Futures, and GOLD Futures only. The formal architecture change is proposed in [ADR-0006 PR #51](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/51); protected Source-of-Truth documents and implementation remain governed by that ADR.
+The owner explicitly approved complete removal of automated trading. The product is signal generation and advisory risk analysis for CRYPTO Futures, FOREX Futures, and GOLD Futures only. The owner-approved architecture migration is tracked in [ADR-0006 PR #51](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/pull/51); protected Source-of-Truth changes and implementation remain governed by that PR and the repository's review/CI rules.
 
 - **Target:** generate, validate, score, publish, expire, invalidate, and evaluate signals; provide risk estimates, suggested position sizing, backtesting, walk-forward/out-of-sample analysis, isolated Paper Trading, and Telegram/email notifications where implemented.
 - **Forbidden product capability:** live order submit/amend/cancel/retry; automatic position or account mutation; automated leverage/capital changes; execution ON switches; Telegram/email commands that cause exchange side effects.
-- Preserve useful market-data adapters, explicit Futures/Linear/Inverse financial contracts, pure risk calculations, and simulation-only components. Remove order-writing code and requirements that promise automated trading after ADR approval and authorized migration.
+- Preserve useful market-data adapters, explicit Futures/Linear/Inverse financial contracts, pure risk calculations, and simulation-only components. Remove any live order-writing code if discovered by the full audit; the current audited main tree contains no application/execution/infrastructure runtime directories. Remove requirements that promise automated trading.
 - Market-data adapters must be read-only; no order-write credentials or permissions are required or accepted by the signal-only runtime.
 - Signal and risk calculations fail closed when required data, instrument semantics, or assumptions are missing, stale, contradictory, or unsupported. Suggested size/risk is advisory and not a guaranteed maximum loss.
 - Backtesting and Paper Trading must be technically isolated from live order side effects.
-- This requirements register is not proof that the ADR is approved or that legacy execution paths have already been removed. Do not claim complete removal until source, dependency, interface, and deployment audits plus tests verify it.
+- This requirements register records the owner's approval but is not proof of implementation completion or external deployment state. Do not claim complete removal until repository source/dependency/interface audits, static and regression tests, same-SHA CI, and any applicable deployment audit provide evidence.
 
 ## 2. Product invariants
 
 - Futures only: CRYPTO Futures, FOREX Futures, and GOLD Futures.
 - Linear and Inverse Futures remain semantically distinct.
-- The CRYPTO Futures shortlist contains 15 exchange venues as recorded in §6.1. The shortlist is a scope decision, not proof that all adapters exist, are reachable, are legally available, or have passed validation.
+- The CRYPTO Futures read-only market-data provider shortlist contains 15 venues as recorded in §6.1. The shortlist is not an execution-adapter target and is not proof that providers are reachable, legally available, or validated.
 - Spot execution, Spot fallback, and using unrelated Spot balances as Futures trading capital are forbidden.
 - Python 3.13; deployment targets include Windows Server, Linux Server, and Windows Home/Desktop.
 - Strategy/analysis proposes signals; it never submits orders or bypasses Risk.
-- Execution must follow explicit Risk approval, execution contracts, idempotency, reconciliation, and audit controls.
+- Live execution, order-writing, real-position mutation, and account mutation are prohibited; risk calculations are advisory only.
 - Telegram/email are notification and operations interfaces, not evidence of order success and not a bypass around Risk/Execution.
 - Exact financial semantics, fail-closed behavior, secret protection, tests, CI thresholds, and same-SHA evidence remain mandatory.
 
@@ -50,14 +50,14 @@ The following is the recorded baseline for the proposed strategy. It must be imp
 - Trend context: EMA(50) and EMA(200).
 - Momentum/context: RSI(14), MACD, ADX(14), ATR(14), Volume, and VWAP.
 - MACD and VWAP are contextual/conditional confirmations, not automatic mandatory conditions in every market.
-- The scoring baseline discussed is **at least 5 out of 6**. The six scoring buckets, each bucket's exact definition, weights, conflict handling, missing-data handling, and whether a given indicator contributes to one or more buckets must be explicitly specified before executable signals are allowed. Do not invent a scoring map.
-- All mandatory hard gates must pass. A high score must never override stale/contradictory data, invalid structure, unsupported instrument, invalid price/quantity semantics, failed Risk Gate, or execution restrictions.
+- The scoring baseline discussed is **at least 5 out of 6**. The six scoring buckets, each bucket's exact definition, weights, conflict handling, missing-data handling, and indicator-to-bucket mapping must be explicitly specified before production signal issuance. Do not invent a scoring map.
+- All mandatory hard gates must pass. A high score must never override stale/contradictory data, invalid structure, unsupported instrument, invalid price/quantity semantics, or missing/invalid assumptions required for an advisory risk estimate.
 
 ### 3.2 Timeframes, session, and signal limit
 
 - H4: higher-timeframe structure/context.
 - H1: confirmation.
-- M15: primary execution/setup timeframe.
+- M15: primary setup/signal timeframe.
 - M5 may be used only if it contributes an independently defined, tested signal-quality benefit; it must not be added as redundant confirmation by default.
 - Discussed operating window: **04:00–24:00 Asia/Tehran time**. The timezone and daylight-saving behavior must be implemented explicitly and tested; store canonical timestamps in UTC and render the local timezone clearly.
 - Maximum **7 signals per day** is a ceiling, not a quota or target. Fewer or zero signals are correct when criteria are not met. Define whether the daily counter is per user, strategy, market, or system before implementation; do not assume.
@@ -68,9 +68,9 @@ The following is the recorded baseline for the proposed strategy. It must be imp
 - Initial stop-loss proposal: **1.5 × ATR(14)**, with the correct structural side and instrument price semantics.
 - TP1 proposal: **1.5R**.
 - TP2 proposal: **3R**.
-- Begin trailing-stop management only after TP1 is reached.
+- Any trailing reference level shown in a later analytical signal update may be calculated only after TP1 is reached; no position management occurs.
 - These are strategy-level candidate parameters, not a substitute for valid SMC structure, exchange tick/quantity constraints, fees/funding/slippage treatment, or Risk approval.
-- Exact ATR sampling, candle closure rules, swing/structure invalidation, partial-exit fraction at TP1, trailing formula/step, order type, and behavior under gaps/partial fills are not yet fully defined here. Do not guess them in production.
+- Exact ATR sampling, candle closure rules, swing/structure invalidation, trailing-reference formula/step, and gap handling are not fully defined here. Do not guess them in production; no partial exits, orders, or live-position management are implemented.
 - No strategy metric or profitability claim is approved by this document. Backtests must avoid look-ahead, data leakage, survivorship bias, and unrealistic fees/slippage/funding assumptions.
 
 ## 4. Signal types, entry selection, and lifecycle
@@ -79,15 +79,15 @@ See PR #43 and `docs/architecture/adr/ADR-0005-dual-entry-policy.md` on its prop
 
 Recorded requirements:
 - Show both Safe Entry and Risky Entry candidates when available.
-- Automated execution selects exactly **one** candidate per decision; never submit both from the same signal.
-- Hybrid selection criteria must be deterministic and tested. Until they are, ambiguous conditions fail closed and no executable entry is selected.
-- Safe-only mode selects Safe Entry; Risky-only mode selects Risky Entry; Hybrid selects one only when validated conditions unambiguously permit it.
-- Human-facing signal fields use Persian labels and include symbol, market, direction, UTC issuance time with timezone, Safe Entry, Risky Entry, selected entry type, stop-loss, take-profit, leverage, validity, unique signal ID, analytical/executable type, status, and reason.
+- Safe Entry and Risky Entry are alternative analytical candidates only. The product does not automatically select an executable entry and never submits either candidate as an order.
+- If any ranking or preference between Safe/Risky candidates is displayed, its criteria must be deterministic and tested. Until then, show them as alternatives without automated selection; ambiguous conditions fail closed.
+- No Safe-only/Risky-only/Hybrid execution mode exists. Any future display preference is analytical presentation only and cannot authorize execution.
+- Human-facing signal fields use Persian labels and include symbol, market, direction, UTC issuance time with timezone, Safe Entry, Risky Entry as alternatives, stop-loss, take-profit, optional explicitly assumed leverage reference (never applied), validity, unique signal ID, analytical-only type, status, and reason.
 - Initial validity: 20 minutes. Maximum three renewals of 20 minutes each; maximum lifetime 80 minutes from original issuance.
-- Renewal requires fresh reassessment, valid setup, and passing Risk Gate. Resending is not renewal. No fourth renewal, entry-zone drift, chasing, or execution outside the selected zone.
+- Renewal requires fresh reassessment, valid setup, and passing the defined advisory signal/risk-estimate validations; no execution Risk Gate exists. Resending is not renewal. No fourth renewal, entry-zone drift, chasing, or execution outside the selected zone.
 - Invalid, expired, cancelled, stale, contradictory, or risk-rejected signals must be invalidated with a durable reason and an explicit Persian invalidation notification. Delivery retries must not restore validity.
-- Stable signal identity, duplicate suppression, idempotent lifecycle transitions, and no duplicate execution intent are mandatory.
-- An analytical signal, or one with no concrete selected entry, must never become executable by inference.
+- Stable signal identity, duplicate suppression, and idempotent signal lifecycle transitions are mandatory. The product creates no execution intent.
+- Every signal is analytical-only and must never become executable by inference.
 
 ## 5. Signal-only safety and risk analysis
 
@@ -110,7 +110,7 @@ Recorded requirements:
 
 ### 6.1 CRYPTO Futures exchange shortlist — 15 venues
 
-This shortlist records the owner's request for 15 CRYPTO Futures exchange integrations. It does **not** authorize live trading; the product remains signal-only and every adapter is read-only. The order below preserves the owner's initial priorities where applicable, then adds venues to reach 15 actual exchanges.
+This shortlist records a proposed set of 15 CRYPTO Futures read-only market-data providers. It does **not** authorize live trading; all integrations must be strictly read-only. The list preserves recorded preferences but is not proof of support or availability.
 
 1. **KuCoin Futures** — initial priority.
 2. **Gate.io Futures** — initial priority.
