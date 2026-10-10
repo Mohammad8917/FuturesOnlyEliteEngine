@@ -143,6 +143,28 @@ def test_freshness_is_explicit_and_fail_closed():
         )
 
 
+@pytest.mark.parametrize("family", [ContractFamily.LINEAR, ContractFamily.INVERSE])
+def test_funding_denomination_must_match_instrument_settlement_asset(family):
+    with pytest.raises(FundingValidationError, match="settlement asset"):
+        FuturesFundingSpecification(
+            market=Market.CRYPTO,
+            symbol=CanonicalFuturesSymbol(
+                base_asset="BTC",
+                quote_asset="USDT",
+                settlement_asset="USDT",
+                contract_family=family,
+            ),
+            funding_rate_unit=FundingRateUnit.INTERVAL_RATE,
+            funding_sign_convention=FundingSignConvention.POSITIVE_LONG_PAYS,
+            funding_rate=Decimal("0.0001"),
+            interval_start=datetime(2026, 1, 1, tzinfo=UTC),
+            interval_end=datetime(2026, 1, 1, 8, tzinfo=UTC),
+            rate_source="synthetic-test-source",
+            observed_at=datetime(2026, 1, 1, 7, tzinfo=UTC),
+            notional_denomination="BTC",
+        )
+
+
 def test_missing_provenance_and_denomination_are_rejected():
     with pytest.raises(FundingValidationError):
         FuturesFundingSpecification(
