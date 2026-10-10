@@ -330,3 +330,8 @@ def test_ledger_entry_persists_canonical_text_and_asset_values():
 def test_journal_rejects_unsupported_mutable_or_invalid_entries_container():
     with pytest.raises(AccountingValidationError):
         FuturesAccountingJournal("bad", "not-an-entry-container")
+
+
+def test_journal_rejects_non_ledger_entry_elements():
+    with pytest.raises(AccountingValidationError, match="all entries must be FuturesLedgerEntry"):
+        FuturesAccountingJournal("invalid-entry", [object()])
