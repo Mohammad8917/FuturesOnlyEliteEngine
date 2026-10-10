@@ -236,3 +236,25 @@ def test_financial_calculation_ownership_matches_architecture():
         "Financial calculation modules must not be owned by contracts/futures: "
         f"{misplaced_contract_owners}"
     )
+
+
+def test_adr_0003_working_context_policy_is_explicit():
+    """Keep precision, rounding, and exactness traps explicit in source."""
+    source = (Path("domain/futures/financial_rounding.py")).read_text(
+        encoding="utf-8"
+    )
+    tree = ast.parse(source)
+    context_call = next(
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "Context"
+    )
+    keywords = {keyword.arg: keyword.value for keyword in context_call.keywords}
+    assert isinstance(keywords["prec"], ast.Name)
+    assert keywords["prec"].id == "WORKING_PRECISION"
+    assert isinstance(keywords["rounding"], ast.Name)
+    assert keywords["rounding"].id == "ROUND_HALF_EVEN"
+    trapped = {item.id for item in keywords["traps"].elts if isinstance(item, ast.Name)}
+    assert {"Inexact", "Rounded", "InvalidOperation", "DivisionByZero"} <= trapped
