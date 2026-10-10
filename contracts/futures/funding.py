@@ -151,16 +151,19 @@ class FuturesFundingSpecification:
         if not payment.is_finite() or payment <= 0:
             raise FundingValidationError("funding payment is invalid")
 
+        # Payer/receiver are determined by the signed market rate, never by
+        # which position the caller is valuing. position_side validates context
+        # only; using it to flip the market-wide sign convention is incorrect.
         payer = (
-            position_side
+            PositionSide.LONG
             if self.funding_rate > 0
-            else (
-                PositionSide.SHORT
-                if position_side is PositionSide.LONG
-                else PositionSide.LONG
-            )
+            else PositionSide.SHORT
         )
-        receiver = PositionSide.SHORT if payer is PositionSide.LONG else PositionSide.LONG
+        receiver = (
+            PositionSide.SHORT
+            if payer is PositionSide.LONG
+            else PositionSide.LONG
+        )
         return FundingPayment(
             payer,
             receiver,
