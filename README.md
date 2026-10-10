@@ -56,3 +56,7 @@ Quality is established by evidence, not by gate manipulation.
 ## Permanent signal-only boundary
 
 The product never submits/amends/cancels/retries live orders, mutates real positions/accounts, changes leverage, transfers funds, allocates live capital, or exposes execution controls. Market-data access is read-only. Risk/position-size figures in a signal are advisory estimates, not guarantees. See [ADR-0006](docs/architecture/adr/ADR-0006-signal-only-product-scope.md).
+
+## Permanent signal-only boundary
+
+The product never submits/amends/cancels/retries live orders, mutates real positions/accounts, changes leverage, transfers funds, allocates live capital, or exposes execution controls. Market-data access is read-only. Risk/position-size figures in a signal are advisory estimates, not guarantees. See [ADR-0006](docs/architecture/adr/ADR-0006-signal-only-product-scope.md).
