@@ -60,30 +60,7 @@ jobs:
             domain.futures.financial_rounding.x_round_funding__mutmut_3 \
             domain.futures.financial_rounding.x_round_margin_ratio__mutmut_3 \
             domain.futures.financial_rounding.x__tick_rounded_value__mutmut_5 \
-            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_3 \
-            domain.futures.financial_rounding.x__decimal_text__mutmut_3 \
-            domain.futures.financial_rounding.x__decimal_text__mutmut_21 \
-            domain.futures.financial_rounding.x__decimal__mutmut_9 \
-            domain.futures.financial_rounding.x__positive__mutmut_6 \
-            domain.futures.financial_rounding.x__positive__mutmut_8 \
-            domain.futures.financial_rounding.x__scale__mutmut_4 \
-            domain.futures.financial_rounding.x__scale__mutmut_5 \
-            domain.futures.financial_rounding.x__quantum__mutmut_2 \
-            domain.futures.financial_rounding.x__quantum__mutmut_3 \
-            domain.futures.financial_rounding.x__quantize__mutmut_3 \
-            domain.futures.financial_rounding.x__quantize__mutmut_8 \
-            domain.futures.financial_rounding.x__quantize__mutmut_11 \
-            domain.futures.financial_rounding.x__quantize__mutmut_12 \
-            domain.futures.financial_rounding.x_round_pnl__mutmut_3 \
-            domain.futures.financial_rounding.x_round_pnl__mutmut_4 \
-            domain.futures.financial_rounding.x_round_pnl__mutmut_5 \
-            domain.futures.financial_rounding.x_round_funding__mutmut_6 \
-            domain.futures.financial_rounding.x_round_funding__mutmut_7 \
-            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_6 \
-            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_7 \
-            domain.futures.financial_rounding.x__tick_rounded_value__mutmut_20 \
-            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_6 \
-            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_13; do
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_3; do
             echo "=== MUTANT DIAGNOSTIC: ${mutant} ==="
             mutmut show "${mutant}" || true
           done
