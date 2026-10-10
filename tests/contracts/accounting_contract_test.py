@@ -335,3 +335,8 @@ def test_journal_rejects_unsupported_mutable_or_invalid_entries_container():
 def test_journal_rejects_non_ledger_entry_elements():
     with pytest.raises(AccountingValidationError, match="all entries must be FuturesLedgerEntry"):
         FuturesAccountingJournal("invalid-entry", [object()])
+
+
+def test_journal_rejects_empty_entries():
+    with pytest.raises(AccountingValidationError, match="journal must contain entries"):
+        FuturesAccountingJournal("empty", [])
