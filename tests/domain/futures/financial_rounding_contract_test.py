@@ -183,12 +183,14 @@ def test_funding_fails_closed_on_invalid_policy_or_values(amount, rate, maximum,
 
 
 def test_margin_ratio_is_rounded_for_comparison_only_and_rejects_unsafe_interval() -> None:
-    with pytest.raises(FinancialRiskBoundaryError):
+    with pytest.raises(FinancialRiskBoundaryError) as captured:
         round_margin_ratio(
             Decimal("0.075000004"),
             maintenance_margin_ratio=Decimal("0.05"),
             liquidation_ratio=Decimal("0.10"),
         )
+    assert captured.value.audit_record is not None
+    assert captured.value.audit_record.boundary == "MARGIN_RATIO"
 
 
 @pytest.mark.parametrize("ratio", [Decimal("0.05"), Decimal("0.10")])
@@ -261,7 +263,7 @@ def test_liquidation_rounding_handles_exact_tick_without_moving_it() -> None:
     ],
 )
 def test_liquidation_fails_closed_when_trigger_is_crossed(side, last_price) -> None:
-    with pytest.raises(FinancialRiskBoundaryError):
+    with pytest.raises(FinancialRiskBoundaryError) as captured:
         round_liquidation_price(
             Decimal("100.14"),
             tick_size=Decimal("0.05"),
@@ -269,6 +271,8 @@ def test_liquidation_fails_closed_when_trigger_is_crossed(side, last_price) -> N
             last_price=last_price,
             position_is_liquidated=False,
         )
+    assert captured.value.audit_record is not None
+    assert captured.value.audit_record.boundary == "LIQUIDATION_PRICE"
 
 
 def test_liquidation_crossing_is_not_reclassified_if_already_liquidated() -> None:
@@ -434,3 +438,15 @@ def test_controlled_context_does_not_mutate_ambient_context() -> None:
     with controlled_decimal_context() as context:
         context.prec = 12
     assert getcontext().prec == original
+
+
+
+def test_audit_record_rejects_noncanonical_decimal_text() -> None:
+    with pytest.raises(FinancialRoundingError):
+        FinancialRoundingAuditRecord(
+            boundary="PNL",
+            input_value="1.0",
+            output_value="1",
+            rounding_mode="ROUND_DOWN",
+            scale_or_tick="scale=0",
+        )
