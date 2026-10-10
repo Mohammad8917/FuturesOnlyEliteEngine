@@ -55,6 +55,31 @@ jobs:
             --cov-fail-under=98 \
             tests/contracts
 
+      - name: Enforce immutable XML coverage threshold
+        if: always()
+        run: |
+          python - <<'PY'
+          import sys
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          report = Path("coverage.xml")
+          if not report.is_file():
+              raise SystemExit("G05 BLOCKED: coverage.xml was not produced")
+          root = ET.parse(report).getroot()
+          try:
+              covered = int(root.attrib["lines-covered"])
+              valid = int(root.attrib["lines-valid"])
+          except (KeyError, TypeError, ValueError) as exc:
+              raise SystemExit("G05 BLOCKED: coverage.xml has no valid line totals") from exc
+          if valid <= 0:
+              raise SystemExit("G05 BLOCKED: coverage.xml reports zero valid lines")
+          ratio = covered / valid
+          print(f"G05 authoritative line coverage: {covered}/{valid} = {ratio:.6%}")
+          if ratio < 0.98:
+              raise SystemExit("G05 BLOCKED: authoritative XML coverage is below 98.00%")
+          PY
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
