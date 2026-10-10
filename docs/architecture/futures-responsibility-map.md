@@ -108,13 +108,13 @@ The Futures responsibility map is not limited to domain/futures files. The follo
 | Market/data acquisition | market/data boundary + infrastructure ports | External data is untrusted until validated; no order authority |
 | Strategy/analysis | analysis/application boundary | Produces analytical facts/decisions; cannot submit orders |
 | Futures risk policy | risk | Owns acceptance/rejection and sizing policy; cannot place orders |
-| Execution intent/gate | execution | Only validated intent may proceed |
-| Order lifecycle | execution | Submission, acknowledgement, state transitions and errors are explicit |
-| Exchange transport | infrastructure/exchanges/<exchange> | Transport/mapping only; no domain financial formulas |
-| Position/order reconciliation | execution + exchange evidence ports | Unknown/divergent state is surfaced, never guessed successful |
-| Audit | execution/audit boundary | Immutable evidence sufficient to reconstruct critical lifecycle |
+| Signal lifecycle | signal application | Signal state only; never creates live orders |
+| Signal lifecycle | signal application | Issuance, expiry, invalidation, renewal and idempotency are explicit |
+| Market-data transport | read-only infrastructure/provider boundary | Read-only transport/mapping only; no order writes or domain financial formulas |
+| Market-data validation | read-only data boundary | Stale/unknown/contradictory data fails closed |
+| Audit | signal application/audit boundary | Immutable evidence reconstructs analysis and signal lifecycle |
 | Configuration/secrets/security | configuration/security boundary | Fail closed; no credential leakage or authority drift |
-| Observability/failure classification | observability boundary | Health/risk/execution/exchange/reconciliation failures remain distinguishable |
+| Observability/failure classification | observability boundary | Data/analysis/signal/audit/notification failures remain distinguishable |
 | Telegram/email delivery | notification boundary | Delivery only; never trading authority or execution truth |
 | Architecture enforcement | architecture tests + CI | Enforces ownership/dependency rules |
 | Release verification | release/CI governance | Same-SHA evidence for all required gates |

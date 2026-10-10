@@ -95,9 +95,9 @@ Phase 0 is not considered complete merely because the initial documents exist. T
 - product identity, exact market scope, Futures-only boundary, and prohibited operational Spot behavior;
 - Linear/Inverse semantic ownership and required financial/accounting vocabulary;
 - layer ownership and dependency direction;
-- exchange-adapter isolation and the exact adapter-count requirement;
+- read-only market-data provider isolation; provider count and availability must not be assumed;
 - canonical terminology, contract naming, units, precision, UTC/time semantics, and validation expectations;
-- risk, execution, order lifecycle, reconciliation, and audit ownership;
+- advisory risk-estimate, signal lifecycle, and audit ownership;
 - data-quality, stale/contradictory-state, idempotency, and fail-closed behavior;
 - configuration, secrets, credentials, security, and supply-chain ownership;
 - observability, notifications, operational errors, and the rule that delivery failure never equals execution success;
@@ -232,50 +232,41 @@ Implement and validate:
 - position sizing;
 - account limits;
 - fail-closed decisions.
-- execution-halt requests/circuit-breaker conditions and explicit handoff to the execution authority boundary;
+- signal-generation pause, stale-data invalidation, and explicit handoff to the signal lifecycle boundary;
 - validated time/freshness/skew inputs and safety-critical configuration provenance.
 
 Exit condition:
 - invalid/unknown/stale/contradictory critical state cannot produce an executable decision.
 
-### Phase 4 — Execution architecture
+### Phase 4 — Signal lifecycle and audit
+
 Define and implement:
-- execution intent;
-- execution risk gate;
-- execution contract;
-- order model;
-- reconciliation;
-- audit.
-- idempotency identity and duplicate-submission protection;
-- concurrency/versioning for order and position transitions;
-- restart/failover recovery with mandatory reconciliation before execution resumes;
-- scoped/global execution halt semantics;
-- append-only/tamper-evident audit evidence and release provenance requirements.
+- stable signal identity and duplicate suppression;
+- issuance, expiry, invalidation, and bounded renewal;
+- signal-state versioning and restart recovery;
+- append-only/tamper-evident signal audit;
+- notification delivery status that cannot change signal validity.
 
 Exit condition:
-- no unvalidated intent can become an order.
+- stale/invalid signals cannot be published as valid;
+- duplicate callbacks/retries cannot create duplicate signal state;
+- no order intent, order, or live account mutation exists.
 
-### Phase 5 — Exchange infrastructure
-Build the 15 exchange adapters independently.
+### Phase 5 — Read-only market-data providers
 
-Each adapter must preserve meaningful exchange-specific behavior for:
-- authentication;
-- endpoints;
-- request/response mapping;
-- contract specification;
-- multiplier/settlement;
-- margin/leverage;
-- funding;
-- PnL/liquidation information;
-- order semantics;
-- precision/limits;
-- position mode;
-- reconciliation.
+Build only explicitly selected read-only market-data provider integrations. Do not assume a provider count, provider availability, or product eligibility.
+
+Each provider mapping must preserve:
+- authoritative market-data endpoints and permission model;
+- Futures symbol/contract identity and explicit Linear/Inverse metadata;
+- timestamp, freshness, rate-limit, and error semantics;
+- canonical units, price denomination, and instrument metadata;
+- deterministic stale/malformed/contradictory-payload rejection.
 
 Exit condition:
-- no adapter is a disguised copy of another;
-- exchange-specific behavior stops at the infrastructure boundary;
-- all mappings are independently testable.
+- no order-write, transfer, or withdrawal permission is requested;
+- no live-order client, order endpoint, or execution adapter exists;
+- provider failure cannot trigger Spot or unapproved-provider fallback.
 
 ### Phase 6 — Market/data pipeline
 Implement the market and data path:

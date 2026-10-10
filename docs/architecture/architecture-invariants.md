@@ -84,7 +84,6 @@ Applicable Futures semantics must remain explicit for:
 - position mode
 - precision
 - exchange limits
-- reconciliation
 
 No implicit financial default may be introduced when it can alter financial meaning.
 
@@ -101,7 +100,7 @@ Source-code dependency direction is governed by dependency-rules.md:
 DOMAIN → DOMAIN-SAFE CONTRACTS
 APPLICATION → DOMAIN + CONTRACTS
 RISK → DOMAIN + CONTRACTS
-EXECUTION → CONTRACTS + DOMAIN FACTS + RISK DECISIONS
+SIGNAL APPLICATION → DOMAIN + CONTRACTS + ANALYSIS
 INFRASTRUCTURE → APPLICATION/CONTRACTS/DOMAIN PORTS
 
 Mandatory boundaries:
@@ -115,7 +114,7 @@ Mandatory boundaries:
 
 ## 6. Exchange isolation invariants
 
-The 15 exchange adapters remain independently owned infrastructure boundaries.
+Read-only market-data adapters are independently owned infrastructure boundaries. No order-writing adapter or execution transport is part of the product.
 
 Shared contracts/interfaces are allowed. A generic implementation that erases meaningful exchange differences is forbidden.
 
@@ -128,16 +127,14 @@ Exchange-specific behavior must remain independently representable and testable,
 - margin/leverage
 - funding
 - PnL/liquidation information
-- order semantics
 - precision/limits
 - position mode
-- reconciliation
 
 ## 7. Fail-closed invariants
 
 Unknown, invalid, stale, contradictory, incomplete, or untrusted critical Futures state must not produce:
-- an executable order
-- an accepted executable signal
+- a live order or account mutation
+- a signal represented as executable
 - a guessed contract specification
 - false reconciliation success
 - a Spot fallback
@@ -153,7 +150,7 @@ Convenient defaults are forbidden when they can change financial meaning.
 The following are architectural safety requirements and must have an explicit owner, contract, implementation, test, and CI enforcement path before the affected capability is considered complete.
 
 ### Data, time, and numeric integrity
-- Critical market and account data must have explicit validation status and provenance.
+- Critical market data must have explicit validation status and provenance; the product does not require private account data.
 - Stale, missing, malformed, contradictory, or out-of-order critical data must fail closed.
 - Monetary and contract calculations must use an explicitly governed exact numeric representation; binary floating-point must not silently determine financial outcomes where exact precision is required.
 - Boundary timestamps must be UTC-aware and their ordering semantics explicit.
@@ -164,13 +161,13 @@ The following are architectural safety requirements and must have an explicit ow
 
 - Credentials, API keys, signing material, passwords, tokens, private keys, connection strings containing secrets, and other sensitive information must never be hard-coded in source code, tests, fixtures, documentation, logs, examples, or committed configuration.
 - Operational configuration must not be hard-coded when it is environment-, deployment-, account-, exchange-, credential-, or runtime-specific; it must enter through an explicitly owned configuration/security boundary and be validated before use.
-- Risk limits, leverage limits, execution authority, exchange credentials, endpoints, account identifiers, and other safety-critical operational values must not be silently embedded as source-code constants when they are intended to be configurable.
+- Market-data credentials, provider endpoints, freshness policy, and other safety-critical operational values must not be silently embedded as source-code constants when they are intended to be configurable.
 - Hard-coded values are permitted only when they are genuine immutable domain vocabulary or compile-time invariants whose meaning cannot vary by environment/account/deployment; such values must remain owned by the appropriate domain/contract boundary.
 - Tests and fixtures must use non-sensitive synthetic values and must never embed real credentials or production secrets.
 - Credentials, API keys, signing material, and secrets must not be hard-coded, committed, logged, or exposed through normal diagnostics.
 - Configuration must fail closed when a required safety-critical value is missing, malformed, or contradictory.
-- Every safety-critical configuration value must have explicit provenance/source, schema/version semantics, validation status, and effective lifecycle; untracked or ambiguously sourced configuration must not silently authorize execution.
-- Configuration must not silently change Futures/Spot scope, risk policy, exchange identity, or execution authority.
+- Every safety-critical configuration value must have explicit provenance/source, schema/version semantics, validation status, and effective lifecycle; untracked or ambiguously sourced configuration must not silently authorize signal publication or external side effects.
+- Configuration must not silently change Futures/Spot scope, risk policy, provider identity, or introduce live execution/order-write authority.
 
 ### Signal lifecycle, idempotency, and audit
 

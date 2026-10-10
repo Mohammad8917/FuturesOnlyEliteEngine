@@ -56,8 +56,8 @@ Notification/observability is downstream reporting. It never authorizes, validat
 | Strategy/analysis | explicitly assigned analysis/application boundary | execution or order submission |
 | Risk policy and risk decisions | risk | order submission, exchange mutation |
 | Signal lifecycle and audit | signal application | live order submission or account mutation |
-| Order lifecycle | execution | exchange transport details |
-| Reconciliation and audit | execution + infrastructure evidence ports | guessed success |
+| Signal lifecycle | signal application | live order submission or account mutation |
+| Signal audit | signal application/audit boundary | mutable or untraceable signal state |
 | Exchange transport/mapping | infrastructure/exchanges/<exchange> | domain financial semantics |
 | Configuration/secrets | explicit configuration/security boundary | silently changing execution authority |
 | Notifications/observability | explicit observability/delivery boundary | trading authorization |
@@ -70,13 +70,13 @@ If ownership is not explicit, implementation is blocked.
 Domain → Contracts (only where domain-safe)
 Application → Domain + Contracts
 Risk → Domain + Contracts
-Execution → Contracts + Domain facts + Risk decisions
+Signal application → Domain + Contracts + Analysis
 Infrastructure → Application/Contracts/Domain ports
 Observability/Notifications → explicit output ports; never upstream authority
 Infrastructure never becomes a dependency of domain. Strategy never calls execution. Risk never places orders. Exchange-specific transport never enters domain.
 
 ## 6. Upgrade path
-Phase 0 Governance → Phase 1 Domain Contracts → Phase 2 Application Contracts/Ports → Phase 3 Risk → Phase 4 Execution → Phase 5 15 Exchanges → Phase 6 Market/Data → Phase 7 Cross-Layer Integration → Phase 8 G01–G08 → Phase 9 Release Verification
+Phase 0 Governance → Phase 1 Domain Contracts → Phase 2 Signal/Application Contracts and Ports → Phase 3 Advisory Risk and Scoring → Phase 4 Signal Lifecycle/Audit → Phase 5 Read-only Market/Data Providers → Phase 6 Signal Pipeline Integration → Phase 7 Validation/Resilience → Phase 8 G01–G08 → Phase 9 Release Verification
 No phase may be skipped, reordered, or partially declared complete without evidence.
 
 ## 7. Implementation unit path
@@ -103,7 +103,7 @@ For Phase 0 governance-only work, implementation/test/CI stages may be future-ph
 Before implementation of any new capability, explicitly check for ownership and contracts for:
 - data provenance, freshness, ordering, contradiction handling;
 - authoritative exchange-state semantics versus local intent/cache state;
-- idempotency identity, duplicate suppression, concurrency/versioning, restart/failover recovery, and scoped/global execution halt;
+- signal identity, duplicate suppression, lifecycle versioning, restart recovery, freshness and invalidation rules;
 - trusted clock source, monotonic timing, freshness, timeout, and clock-skew policy;
 - units, denominations, precision, UTC and numeric representation;
 - Linear/Inverse formulas and applicability;

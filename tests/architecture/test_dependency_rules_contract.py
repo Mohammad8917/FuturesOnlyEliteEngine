@@ -23,12 +23,12 @@ REQUIRED_MARKERS = (
     "Risk logic must not place orders or mutate exchange state.",
     "Analysis/strategy logic must not submit orders, call execution adapters, or silently mutate positions.",
     "Notification code must not authorize, retry into, or represent execution success.",
-    "Configuration code must not silently change Futures/Spot scope, risk policy, exchange identity, or execution authority.",
+    "Configuration code must not silently change Futures/Spot scope, risk policy, provider identity, or introduce live execution/order-write authority.",
     "hard-coded credentials, API keys, tokens, passwords, private/signing keys",
     "No dependency may introduce Spot instrument types, Spot provider routes, Spot order endpoints, Spot market scopes, permissive futures-false switches, or Futures-to-Spot fallback.",
     "A provider failure must fail closed, never downgrade market type.",
     "Stale, malformed, contradictory, incomplete, or out-of-order critical data must not flow into executable decisions.",
-    "Order and position reconciliation must detect divergence and unknown state; no dependency may convert uncertainty into success.",
+    "Signal lifecycle must detect duplicate/out-of-order transitions and invalidate signals on stale or contradictory critical data; no dependency may convert uncertainty into a valid signal.",
 )
 
 
