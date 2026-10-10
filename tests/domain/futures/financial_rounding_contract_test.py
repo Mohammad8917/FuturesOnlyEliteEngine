@@ -1,5 +1,9 @@
+import ast
 from decimal import Decimal, Inexact, ROUND_UP, localcontext
+import inspect
 from operator import setitem
+
+import domain.futures.financial_rounding as rounding_module
 import pytest
 
 from contracts.futures.instrument import Market
@@ -17,6 +21,7 @@ from domain.futures.financial_rounding import (
     round_liquidation_price,
     round_margin_ratio,
     round_pnl,
+    _scale,
 )
 
 
@@ -228,3 +233,94 @@ def test_default_pnl_scales_are_immutable():
     with pytest.raises(TypeError):
         setitem(DEFAULT_PNL_SCALES, Market.CRYPTO, 2)
     assert DEFAULT_PNL_SCALES[Market.CRYPTO] == 8
+
+
+def test_error_contracts_are_stable_for_invalid_boundary_policies():
+    cases = [
+        (lambda: round_pnl("1", object()), "policy must be PnLRoundingPolicy"),
+        (lambda: round_funding("1", "0.01", object()), "policy must be FundingRoundingPolicy"),
+        (
+            lambda: round_margin_ratio("0.5", object()),
+            "policy must be MarginRatioRoundingPolicy",
+        ),
+        (
+            lambda: round_liquidation_price("100", object()),
+            "policy must be LiquidationPriceRoundingPolicy",
+        ),
+    ]
+    for invoke, message in cases:
+        with pytest.raises(FinancialRoundingError, match=f"^{message}$"):
+            invoke()
+
+
+def test_decimal_input_validation_error_message_is_stable():
+    policy = PnLRoundingPolicy(market=Market.CRYPTO, max_reasonable_pnl="100")
+    with pytest.raises(
+        FinancialRoundingError, match="^pnl must be an exact Decimal value$"
+    ):
+        round_pnl(None, policy)
+    with pytest.raises(
+        FinancialRoundingError, match="^pnl must be an exact Decimal value$"
+    ):
+        round_pnl("not-a-number", policy)
+
+
+@pytest.mark.parametrize("scale", [-1, 29, True, 1.0])
+def test_scale_validation_rejects_invalid_scale_types_and_bounds(scale):
+    with pytest.raises(FinancialRoundingError):
+        _scale(scale)
+
+
+@pytest.mark.parametrize("scale", [0, 8, 28])
+def test_scale_validation_accepts_supported_scale_boundaries(scale):
+    assert _scale(scale) == scale
+
+
+def test_scale_validation_uses_stable_default_field_name():
+    with pytest.raises(
+        FinancialRoundingError,
+        match="^scale must be an integer between 0 and 28$",
+    ):
+        _scale(-1)
+
+
+def test_working_context_explicitly_pins_adr_precision_rounding_and_traps():
+    tree = ast.parse(inspect.getsource(rounding_module.financial_working_context))
+    context_call = next(
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "Context"
+    )
+    keywords = {keyword.arg: keyword.value for keyword in context_call.keywords}
+    assert isinstance(keywords["prec"], ast.Name)
+    assert keywords["prec"].id == "WORKING_PRECISION"
+    assert isinstance(keywords["rounding"], ast.Name)
+    assert keywords["rounding"].id == "ROUND_HALF_EVEN"
+    trapped = {
+        item.id
+        for item in keywords["traps"].elts
+        if isinstance(item, ast.Name)
+    }
+    assert {"Inexact", "Rounded", "InvalidOperation", "DivisionByZero"} <= trapped
+
+
+def test_pnl_maximum_equality_is_permitted_but_exceeding_it_is_not():
+    policy = PnLRoundingPolicy(market=Market.CRYPTO, max_reasonable_pnl="10")
+    assert round_pnl("10", policy) == Decimal("10.00000000")
+
+
+def test_funding_rate_equal_to_configured_maximum_is_permitted():
+    policy = FundingRoundingPolicy(max_funding_rate="0.01")
+    assert round_funding("-1.000000005", "-0.01", policy) == Decimal("-1.00000001")
+
+
+def test_margin_ratio_compares_after_rounding_at_equality_boundaries():
+    policy = MarginRatioRoundingPolicy(
+        maintenance_margin_ratio="0.4", liquidation_ratio="0.6"
+    )
+    assert round_margin_ratio("0.399999999", policy) == Decimal("0.40000000")
+    assert round_margin_ratio("0.599999995", policy) == Decimal("0.60000000")
+    with pytest.raises(FinancialRiskBoundaryError):
+        round_margin_ratio("0.400000005", policy)
