@@ -14,6 +14,21 @@ The inspected `main` branch has a product/architecture description and a unified
 
 This document consolidates the known requirements and links the separate records; it does not silently approve or implement their proposals.
 
+
+## 1.1 Owner decision: signal-only mode; live execution disabled
+
+**Current approved operating policy:** `SIGNAL_ONLY`. **Live automated execution: `DISABLED`.** The long-term execution architecture is retained; this is a temporary safety/validation gate, not a decision to delete automated trading from the roadmap.
+
+- **Stable reason code:** `LIVE_EXECUTION_DISABLED_UNVALIDATED_READINESS`.
+- **Status explanation (user-facing):** Live execution is disabled because financial arithmetic and durable audit integration, risk/position sizing, execution idempotency, exchange reconciliation, security validation, and reproducible backtest/out-of-sample/Paper Trading evidence have not yet all been verified.
+- Missing, stale, unknown, or indeterminate readiness means disabled. Startup, restart, lost state, and uncertain recovery default to OFF; no automatic resume.
+- Signal analysis, signal delivery, backtesting, and Paper Trading may proceed where implemented and separately validated. They must not submit live orders.
+- While disabled, live order submission, replacement, cancellation-as-automation, and automatic position mutations must be rejected at the execution boundary. Emergency pause must not silently liquidate positions.
+- Health/status/UI output must distinguish this intentional disabled policy from an unexpected system fault and show both the stable reason code and readable explanation.
+- Re-enabling is a separate gated decision: all required financial/audit, risk, idempotency, reconciliation, security, backtest/out-of-sample, Paper Trading, and same-SHA CI evidence must pass, followed by explicit owner authorization. No profitability guarantee is implied.
+
+**Implementation status caveat:** This is the recorded owner decision and required behavior, not proof that a runtime kill switch has already been implemented. The bounded audit of `main` found the repository still at Phase 1 Domain Contracts and did not identify an operational live-order runtime to turn off. Track enforcement and verification under [Issue #50](https://github.com/Mohammad8917/FuturesOnlyEliteEngine/issues/50). Do not claim deployed trading is disabled until the actual deployed/runtime path is inspected and verified.
+
 ## 2. Product invariants
 
 - Futures only: CRYPTO Futures, FOREX Futures, and GOLD Futures.
