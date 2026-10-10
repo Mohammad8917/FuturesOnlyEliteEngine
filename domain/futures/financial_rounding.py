@@ -66,7 +66,16 @@ class FinancialRoundingError(ValueError):
 
 
 class FinancialRiskBoundaryError(FinancialRoundingError):
-    """Raised when a rounded financial value violates an explicit risk invariant."""
+    """Raised for explicit risk violations while retaining any rounding audit fact."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        audit_record: FinancialRoundingAuditRecord | None = None,
+    ) -> None:
+        self.audit_record = audit_record
+        super().__init__(message)
 
 
 @dataclass(frozen=True, slots=True)
@@ -289,7 +298,8 @@ def round_margin_ratio(
     )
     if maintenance < result.value < liquidation:
         raise FinancialRiskBoundaryError(
-            "rounded margin ratio lies strictly between maintenance and liquidation thresholds"
+            "rounded margin ratio lies strictly between maintenance and liquidation thresholds",
+            audit_record=result.audit_record,
         )
     return result
 
@@ -333,18 +343,8 @@ def round_liquidation_price(
         raise FinancialRoundingError("position_is_liquidated must be an explicit bool")
 
     output = _tick_rounded_value(price, tick, position_side)
-    crossed = (
-        last <= output
-        if position_side is PositionSide.LONG
-        else last >= output
-    )
-    if crossed and not position_is_liquidated:
-        raise FinancialRiskBoundaryError(
-            "liquidation trigger is crossed while position is reported as not liquidated"
-        )
-
     mode = ROUND_DOWN if position_side is PositionSide.LONG else ROUND_UP
-    return FinancialRoundingResult(
+    result = FinancialRoundingResult(
         value=output,
         audit_record=FinancialRoundingAuditRecord(
             boundary="LIQUIDATION_PRICE",
@@ -354,3 +354,14 @@ def round_liquidation_price(
             scale_or_tick=f"tick={_decimal_text(tick)}",
         ),
     )
+    crossed = (
+        last <= output
+        if position_side is PositionSide.LONG
+        else last >= output
+    )
+    if crossed and not position_is_liquidated:
+        raise FinancialRiskBoundaryError(
+            "liquidation trigger is crossed while position is reported as not liquidated",
+            audit_record=result.audit_record,
+        )
+    return result
