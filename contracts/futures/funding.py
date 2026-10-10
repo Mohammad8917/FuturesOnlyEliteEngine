@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal, DecimalException, InvalidOperation
 from enum import StrEnum
 
 from .instrument import CanonicalFuturesSymbol, ContractFamily, Market
@@ -147,7 +147,10 @@ class FuturesFundingSpecification:
         if self.funding_rate == 0:
             return None
 
-        payment = amount * abs(self.funding_rate)
+        try:
+            payment = amount * abs(self.funding_rate)
+        except DecimalException as exc:
+            raise FundingValidationError("funding payment is invalid") from exc
         if not payment.is_finite() or payment <= 0:
             raise FundingValidationError("funding payment is invalid")
 
