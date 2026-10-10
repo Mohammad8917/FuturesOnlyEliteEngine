@@ -236,4 +236,3 @@ def test_financial_calculation_ownership_matches_architecture():
         "Financial calculation modules must not be owned by contracts/futures: "
         f"{misplaced_contract_owners}"
     )
-
