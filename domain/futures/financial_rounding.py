@@ -28,17 +28,18 @@ from decimal import (
     localcontext,
 )
 from enum import StrEnum
+from types import MappingProxyType
 
 from contracts.futures.instrument import Market
 from contracts.futures.position_side import PositionSide
 
 
 WORKING_PRECISION = 28
-DEFAULT_PNL_SCALES = {
+DEFAULT_PNL_SCALES = MappingProxyType({
     Market.CRYPTO: 8,
     Market.GOLD: 2,
     Market.FOREX: 2,
-}
+})
 
 
 class FinancialRoundingError(ValueError):
