@@ -188,3 +188,11 @@ def test_funding_payer_is_determined_by_rate_not_callers_position(
     assert payment.payer is expected_payer
     assert payment.receiver is expected_receiver
     assert payment.amount == Decimal("10")
+
+
+def test_nonfinite_funding_product_is_rejected():
+    with pytest.raises(FundingValidationError, match="funding payment is invalid"):
+        funding(rate=Decimal("10")).calculate_payment(
+            notional=Decimal("1E999999"),
+            position_side=PositionSide.LONG,
+        )
