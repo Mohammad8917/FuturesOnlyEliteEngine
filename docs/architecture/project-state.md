@@ -37,7 +37,8 @@ This is project state, not the architectural contract. Architectural rules remai
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 — Domain Contracts.
 - Active work: Phase 1 final completeness/evidence audit are CLOSED. ADR-0006 signal-only architecture migration is in PR #51; separately, complete/evidence G05 coverage `>= 98%` without exclusions, weakened tests, or changed thresholds.
 - Blocked work: Phase 2+ production implementation remains blocked until the current gate sequence is resolved according to the roadmap. Any gate skip/weakening remains forbidden.
-- Next authorized action: obtain required formal review and complete the missing mandatory gate coverage; merge ADR-0006 only when repository governance and applicable same-SHA evidence requirements are satisfied. Continue G05 coverage audit without weakening thresholds.
+- Next authorized action: G05 coverage implementation/audit.
+- ADR-0006 migration action: obtain required formal review and complete the missing mandatory gate coverage; merge only when repository governance and applicable same-SHA evidence requirements are satisfied.
 - Forbidden action: Do not reintroduce live execution/order writes, operational Spot, or account mutation; do not bypass Linear/Inverse semantics, lower G05/G08, weaken tests, add exclusions/ignores solely to obtain green, claim missing gates are green, or skip the first incomplete gate.
 
 ## Required state fields for every update
