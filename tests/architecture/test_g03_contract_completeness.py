@@ -257,6 +257,6 @@ def test_domain_financial_code_forbids_float_and_builtin_round_calls():
                 elif isinstance(function, ast.Attribute) and function.attr in {"float", "round"}:
                     offenders.append(f"{path}:{node.lineno}: call to {function.attr}()")
     assert not offenders, (
-        "ADR-0003 forbids float conversion and built-in round() in domain/futures:\\n"
-        + "\\n".join(offenders)
+        "ADR-0003 forbids float conversion and built-in round() in domain/futures:\n"
+        + "\n".join(offenders)
     )
