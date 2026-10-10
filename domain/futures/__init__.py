@@ -36,6 +36,17 @@ from .exposure import (
     ExposureValidationError,
     FuturesExposureSpecification,
 )
+from .financial_rounding import (
+    FinancialRiskBoundaryError,
+    FinancialRoundingAuditRecord,
+    FinancialRoundingError,
+    FinancialRoundingResult,
+    controlled_decimal_context,
+    round_funding,
+    round_liquidation_price,
+    round_margin_ratio,
+    round_pnl,
+)
 from .funding import (
     FundingPayment,
     FundingRateUnit,
@@ -100,6 +111,10 @@ __all__ = [
     "FuturesAccountingSpecification",
     "FuturesContractSpecification",
     "FuturesExposureSpecification",
+    "FinancialRiskBoundaryError",
+    "FinancialRoundingAuditRecord",
+    "FinancialRoundingError",
+    "FinancialRoundingResult",
     "FuturesFundingSpecification",
     "FuturesInitialMarginSpecification",
     "FuturesInstrumentIdentity",
@@ -145,5 +160,10 @@ __all__ = [
     "RoundingPolicy",
     "SettlementUnit",
     "SettlementValidationError",
+    "controlled_decimal_context",
+    "round_funding",
+    "round_liquidation_price",
+    "round_margin_ratio",
+    "round_pnl",
     "validate_position_side",
 ]

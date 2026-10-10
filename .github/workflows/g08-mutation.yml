@@ -51,7 +51,16 @@ jobs:
             domain.futures.liquidation_event.x__identifier__mutmut_4 \
             domain.futures.liquidation_event.x__non_negative_integer__mutmut_2 \
             domain.futures.settlement_accounting.x__sequence__mutmut_1 \
-            domain.futures.accounting.x__text__mutmut_4; do
+            domain.futures.accounting.x__text__mutmut_4 \
+            domain.futures.financial_rounding.x__decimal_text__mutmut_2 \
+            domain.futures.financial_rounding.x__decimal__mutmut_3 \
+            domain.futures.financial_rounding.x__positive__mutmut_3 \
+            domain.futures.financial_rounding.x__quantize__mutmut_1 \
+            domain.futures.financial_rounding.x_round_pnl__mutmut_2 \
+            domain.futures.financial_rounding.x_round_funding__mutmut_3 \
+            domain.futures.financial_rounding.x_round_margin_ratio__mutmut_3 \
+            domain.futures.financial_rounding.x__tick_rounded_value__mutmut_5 \
+            domain.futures.financial_rounding.x_round_liquidation_price__mutmut_3; do
             echo "=== MUTANT DIAGNOSTIC: ${mutant} ==="
             mutmut show "${mutant}" || true
           done
