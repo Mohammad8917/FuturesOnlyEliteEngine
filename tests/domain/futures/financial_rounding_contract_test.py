@@ -1,4 +1,6 @@
+import ast
 from decimal import Decimal, Inexact, ROUND_UP, localcontext
+from pathlib import Path
 from operator import setitem
 import pytest
 
@@ -301,3 +303,26 @@ def test_margin_ratio_compares_after_rounding_at_equality_boundaries():
     assert round_margin_ratio("0.599999995", policy) == Decimal("0.60000000")
     with pytest.raises(FinancialRiskBoundaryError):
         round_margin_ratio("0.400000005", policy)
+
+
+def test_working_context_source_pins_precision_rounding_and_exactness_traps():
+    source = Path("domain/futures/financial_rounding.py").read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    context_calls = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "Context"
+    ]
+    assert len(context_calls) == 1
+    keywords = {keyword.arg: keyword.value for keyword in context_calls[0].keywords}
+    assert "prec" in keywords
+    assert "rounding" in keywords
+    assert "traps" in keywords
+    assert isinstance(keywords["prec"], ast.Name)
+    assert keywords["prec"].id == "WORKING_PRECISION"
+    assert isinstance(keywords["rounding"], ast.Name)
+    assert keywords["rounding"].id == "ROUND_HALF_EVEN"
+    trapped = {item.id for item in keywords["traps"].elts if isinstance(item, ast.Name)}
+    assert {"Inexact", "Rounded", "InvalidOperation", "DivisionByZero"} <= trapped
