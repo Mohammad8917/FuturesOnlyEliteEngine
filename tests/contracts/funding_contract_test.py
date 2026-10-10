@@ -165,3 +165,41 @@ def test_specification_is_immutable():
 def test_rate_vocabulary_is_frozen():
     assert FundingRateUnit.INTERVAL_RATE.value == "INTERVAL_RATE"
     assert FundingSignConvention.POSITIVE_LONG_PAYS.value == "POSITIVE_LONG_PAYS"
+
+
+@pytest.mark.parametrize(
+    ("rate", "position_side", "expected_payer", "expected_receiver"),
+    [
+        (Decimal("0.01"), PositionSide.LONG, PositionSide.LONG, PositionSide.SHORT),
+        (Decimal("0.01"), PositionSide.SHORT, PositionSide.LONG, PositionSide.SHORT),
+        (Decimal("-0.01"), PositionSide.LONG, PositionSide.SHORT, PositionSide.LONG),
+        (Decimal("-0.01"), PositionSide.SHORT, PositionSide.SHORT, PositionSide.LONG),
+    ],
+)
+def test_funding_payer_is_determined_by_rate_not_callers_position(
+    rate, position_side, expected_payer, expected_receiver
+):
+    payment = funding(rate=rate).calculate_payment(
+        notional=Decimal("1000"),
+        position_side=position_side,
+    )
+    assert payment is not None
+    assert payment.payer is expected_payer
+    assert payment.receiver is expected_receiver
+    assert payment.amount == Decimal("10")
+
+
+def test_nonfinite_funding_product_is_rejected():
+    with pytest.raises(FundingValidationError, match="funding payment is invalid"):
+        funding(rate=Decimal("10")).calculate_payment(
+            notional=Decimal("1E999999"),
+            position_side=PositionSide.LONG,
+        )
+
+
+def test_underflowed_funding_amount_is_rejected():
+    with pytest.raises(FundingValidationError, match="funding payment is invalid"):
+        funding(rate=Decimal("0.1")).calculate_payment(
+            notional=Decimal("1E-1000026"),
+            position_side=PositionSide.LONG,
+        )

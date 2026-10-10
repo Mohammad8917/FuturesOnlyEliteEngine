@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal, DecimalException, InvalidOperation
 from enum import StrEnum
 
 from .instrument import CanonicalFuturesSymbol, ContractFamily, Market
@@ -139,6 +139,12 @@ class FuturesFundingSpecification:
     def calculate_payment(
         self, *, notional, position_side: PositionSide
     ) -> FundingPayment | None:
+        """Return funding transfer magnitude under the declared sign convention.
+
+        The payer/receiver are market-wide side labels determined only by the
+        signed rate. position_side validates the caller's position context but
+        must never invert the POSITIVE_LONG_PAYS convention.
+        """
         amount = _decimal(notional, "notional", positive=True)
         if not isinstance(position_side, PositionSide):
             raise FundingValidationError("position_side must be explicit")
@@ -147,20 +153,26 @@ class FuturesFundingSpecification:
         if self.funding_rate == 0:
             return None
 
-        payment = amount * abs(self.funding_rate)
+        try:
+            payment = amount * abs(self.funding_rate)
+        except DecimalException as exc:
+            raise FundingValidationError("funding payment is invalid") from exc
         if not payment.is_finite() or payment <= 0:
             raise FundingValidationError("funding payment is invalid")
 
+        # Payer/receiver are determined by the signed market rate, never by
+        # which position the caller is valuing. position_side validates context
+        # only; using it to flip the market-wide sign convention is incorrect.
         payer = (
-            position_side
+            PositionSide.LONG
             if self.funding_rate > 0
-            else (
-                PositionSide.SHORT
-                if position_side is PositionSide.LONG
-                else PositionSide.LONG
-            )
+            else PositionSide.SHORT
         )
-        receiver = PositionSide.SHORT if payer is PositionSide.LONG else PositionSide.LONG
+        receiver = (
+            PositionSide.SHORT
+            if payer is PositionSide.LONG
+            else PositionSide.LONG
+        )
         return FundingPayment(
             payer,
             receiver,
