@@ -269,3 +269,64 @@ def test_settlement_boundary_rejects_non_decimal_source_amount():
             source_amount=1.0,
             source_asset="USD",
         )
+
+
+
+def test_journal_copies_mutable_entries_before_validation():
+    debit = FuturesLedgerEntry(
+        entry_id="debit",
+        causation_id="cause",
+        state_version=1,
+        sequence=1,
+        account_id="acct",
+        instrument=instrument(),
+        ledger_account="A",
+        asset="USD",
+        direction=AccountingDirection.DEBIT,
+        amount=Decimal("1"),
+    )
+    credit = FuturesLedgerEntry(
+        entry_id="credit",
+        causation_id="cause",
+        state_version=1,
+        sequence=2,
+        account_id="acct",
+        instrument=instrument(),
+        ledger_account="B",
+        asset="USD",
+        direction=AccountingDirection.CREDIT,
+        amount=Decimal("1"),
+    )
+    supplied_entries = [debit, credit]
+    journal = FuturesAccountingJournal(" j1 ", supplied_entries)
+    supplied_entries.clear()
+
+    assert len(journal.entries) == 2
+    assert isinstance(journal.entries, tuple)
+    assert journal.journal_id == "j1"
+    assert journal.asset_balances == {"USD": Decimal("0")}
+
+
+def test_ledger_entry_persists_canonical_text_and_asset_values():
+    entry = FuturesLedgerEntry(
+        entry_id=" entry-1 ",
+        causation_id=" cause-1 ",
+        state_version=1,
+        sequence=1,
+        account_id=" acct-1 ",
+        instrument=instrument(),
+        ledger_account=" futures-cash ",
+        asset=" usd ",
+        direction=AccountingDirection.DEBIT,
+        amount=Decimal("1"),
+    )
+    assert entry.entry_id == "entry-1"
+    assert entry.causation_id == "cause-1"
+    assert entry.account_id == "acct-1"
+    assert entry.ledger_account == "futures-cash"
+    assert entry.asset == "USD"
+
+
+def test_journal_rejects_unsupported_mutable_or_invalid_entries_container():
+    with pytest.raises(AccountingValidationError):
+        FuturesAccountingJournal("bad", "not-an-entry-container")
