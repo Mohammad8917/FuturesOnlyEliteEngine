@@ -140,7 +140,7 @@ def test_journal_snapshots_mutable_input_and_normalizes_asset_identity():
 
 def test_journal_rejects_non_iterable_entries():
     with pytest.raises(AccountingValidationError):
-        FuturesAccountingJournal("invalid", None)
+        FuturesAccountingJournal("invalid", None)  # type: ignore[arg-type]
 
 
 def test_journal_rejects_duplicate_ids_and_unbalanced_assets():
