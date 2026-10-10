@@ -290,7 +290,7 @@ def test_liquidation_crossing_is_not_reclassified_if_already_liquidated() -> Non
         (Decimal("1"), Decimal("0.1"), "LONG", Decimal("2"), False),
         (Decimal("1"), Decimal("0.1"), PositionSide.LONG, Decimal("2"), 0),
         (Decimal("1"), Decimal("0.1"), PositionSide.LONG, Decimal("0"), False),
-        (Decimal("1"), Decimal("0.1"), PositionSide.LONG, Decimal("2"), False),
+        (Decimal("1"), Decimal("0.1"), PositionSide.LONG, Decimal("0.5"), False),
     ],
 )
 def test_liquidation_rejects_invalid_inputs(price, tick, side, last, liquidated) -> None:
@@ -325,3 +325,112 @@ def test_audit_result_cannot_claim_a_different_output() -> None:
     )
     with pytest.raises(FinancialRoundingError):
         FinancialRoundingResult(value=Decimal("1"), audit_record=record)
+
+
+
+@pytest.mark.parametrize("value", [True, False, 0.1, float("inf"), "not-a-decimal"])
+def test_pnl_rejects_non_decimal_or_malformed_values(value) -> None:
+    with pytest.raises(FinancialRoundingError):
+        round_pnl(
+            value,
+            market=Market.CRYPTO,
+            scale=8,
+            max_reasonable_pnl=Decimal("10"),
+        )
+
+
+def test_pnl_accepts_exact_integer_and_decimal_text_inputs() -> None:
+    integer_result = round_pnl(
+        2,
+        market=Market.CRYPTO,
+        scale=2,
+        max_reasonable_pnl=Decimal("10"),
+    )
+    text_result = round_pnl(
+        "1.239",
+        market=Market.CRYPTO,
+        scale=2,
+        max_reasonable_pnl=Decimal("10"),
+    )
+    assert integer_result.value == Decimal("2.00")
+    assert text_result.value == Decimal("1.23")
+
+
+@pytest.mark.parametrize("value", [True, 0.1, float("inf"), "malformed"])
+def test_funding_rejects_non_decimal_or_malformed_amount(value) -> None:
+    with pytest.raises(FinancialRoundingError):
+        round_funding(
+            value,
+            funding_rate=Decimal("0.001"),
+            max_funding_rate=Decimal("0.01"),
+            scale=8,
+        )
+
+
+def test_funding_accepts_zero_amount_without_inventing_a_transfer() -> None:
+    result = round_funding(
+        Decimal("0"),
+        funding_rate=Decimal("0"),
+        max_funding_rate=Decimal("0.01"),
+        scale=8,
+    )
+    assert result.value == Decimal("0E-8")
+
+
+@pytest.mark.parametrize("field,value", [
+    ("boundary", ""),
+    ("input_value", " "),
+    ("output_value", None),
+    ("rounding_mode", ""),
+    ("scale_or_tick", ""),
+])
+def test_audit_record_rejects_missing_required_fields(field, value) -> None:
+    fields = {
+        "boundary": "PNL",
+        "input_value": "1",
+        "output_value": "1.00",
+        "rounding_mode": "ROUND_DOWN",
+        "scale_or_tick": "scale=2",
+    }
+    fields[field] = value
+    with pytest.raises(FinancialRoundingError):
+        FinancialRoundingAuditRecord(**fields)
+
+
+@pytest.mark.parametrize("value", [1, Decimal("NaN"), Decimal("Infinity")])
+def test_rounding_result_rejects_non_finite_or_non_decimal_values(value) -> None:
+    record = FinancialRoundingAuditRecord(
+        boundary="PNL",
+        input_value="1",
+        output_value="1",
+        rounding_mode="ROUND_DOWN",
+        scale_or_tick="scale=0",
+    )
+    with pytest.raises(FinancialRoundingError):
+        FinancialRoundingResult(value=value, audit_record=record)
+
+
+def test_rounding_result_rejects_missing_audit_record() -> None:
+    with pytest.raises(FinancialRoundingError):
+        FinancialRoundingResult(
+            value=Decimal("1"),
+            audit_record=None,
+        )
+
+
+def test_liquidation_fails_closed_when_long_tick_rounds_to_zero() -> None:
+    with pytest.raises(FinancialRoundingError):
+        round_liquidation_price(
+            Decimal("0.01"),
+            tick_size=Decimal("0.1"),
+            position_side=PositionSide.LONG,
+            last_price=Decimal("1"),
+            position_is_liquidated=False,
+        )
+
+
+def test_controlled_context_does_not_mutate_ambient_context() -> None:
+    original = getcontext().prec
+    with controlled_decimal_context() as context:
+        context.prec = 12
+    assert getcontext().prec == original
