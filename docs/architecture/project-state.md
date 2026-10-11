@@ -29,7 +29,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Architecture status: FROZEN BY DEFAULT
 - Operational Spot: FORBIDDEN
 - Current phase: Phase 1 — Domain Contracts
-- Current gate: G05 — Coverage
+- Current gate: Signal-only migration and mandatory gate reconciliation (PR #51); G05 >= 98% remains an immutable quality floor
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
 - Last verified main SHA (historical baseline only): `d1529db92f9b4750b9e8f821f3599fb0d6317b25`. Do not use it as evidence for ADR-0006 changes.
@@ -37,7 +37,7 @@ This is project state, not the architectural contract. Architectural rules remai
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 — Domain Contracts.
 - Active work: Phase 1 final completeness/evidence audit are CLOSED. ADR-0006 signal-only architecture migration is in PR #51; separately, complete/evidence G05 coverage `>= 98%` without exclusions, weakened tests, or changed thresholds.
 - Blocked work: Phase 2+ production implementation remains blocked until the current gate sequence is resolved according to the roadmap. Any gate skip/weakening remains forbidden.
-- Next authorized action: G05 coverage implementation/audit.
+- Next authorized action: reconcile PR #51 with the gate-bearing dependency PR #35, obtain independent review, and verify all applicable gates on the exact candidate SHA. Do not merge before administrator-verified main protection and governance clearance.
 - ADR-0006 migration action: obtain required formal review and complete the missing mandatory gate coverage; merge only when repository governance and applicable same-SHA evidence requirements are satisfied.
 - Forbidden action: Do not reintroduce live execution/order writes, operational Spot, or account mutation; do not bypass Linear/Inverse semantics, lower G05/G08, weaken tests, add exclusions/ignores solely to obtain green, claim missing gates are green, or skip the first incomplete gate.
 
@@ -54,7 +54,7 @@ Whenever this file is updated, record:
 - next authorized action
 - forbidden actions
 - open architecture questions
-- open architecture questions: None identified in the bounded Phase 0 deep audit.
+- open architecture questions: ADR-0006 migration verification; P0 financial arithmetic/audit integration (#37); financial calculation ownership conflict (#38); module-level import-cycle enforcement (#39); and main branch protection (#36) remain unresolved. The bounded Phase 0 audit does not waive these later findings.
 - evidence references: current same-SHA main verification `d1529db92f9b4750b9e8f821f3599fb0d6317b25` with G01=`37839785059`, G03=`37839785127`, G04=`37839785087`, Phase 1=`37839785060`, Architecture Invariants=`37839785331`; historical Phase 0/Phase 1 evidence remains below; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 
