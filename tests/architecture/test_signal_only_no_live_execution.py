@@ -226,7 +226,7 @@ def _text_runtime_files() -> list[Path]:
             except OSError:
                 files.append(path)  # unreadable candidates fail closed below
                 continue
-            if header.startswith(b"#!") or (b"\\x00" not in header and header.strip()):
+            if header.startswith(b"#!") or (0 not in header and header.strip()):
                 try:
                     header.decode("utf-8")
                 except UnicodeDecodeError:
