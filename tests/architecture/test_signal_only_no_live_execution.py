@@ -182,7 +182,7 @@ TEXT_RUNTIME_FILENAMES = {
 }
 TEXT_RUNTIME_EXCLUDED_PARTS = {
     ".git", ".venv", "venv", "__pycache__", ".pytest_cache",
-    "tests", "docs", "dist", "build", "node_modules",
+    "tests", "docs", "validation", "dist", "build", "node_modules",
 }
 FORBIDDEN_RUNTIME_PATTERNS = (
     re.compile(r"\b(?:create|submit|place|send|cancel|replace|amend|modify)_orders?\b", re.I),
