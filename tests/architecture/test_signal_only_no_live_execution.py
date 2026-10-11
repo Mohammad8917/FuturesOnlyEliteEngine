@@ -170,7 +170,7 @@ def test_no_exchange_trading_sdk_is_declared_as_a_dependency() -> None:
 # APIs and must be able to assert that those APIs are forbidden.
 TEXT_RUNTIME_SUFFIXES = {
     ".sh", ".bash", ".ps1", ".bat", ".cmd", ".yml", ".yaml", ".json",
-    ".toml", ".ini", ".cfg", ".conf", ".service", ".properties", ".xml",
+    ".toml", ".ini", ".cfg", ".conf", ".service", ".properties", ".xml", ".py",
     ".tf", ".hcl", ".psm1", ".env", ".js", ".mjs", ".cjs", ".ts",
     ".tsx", ".jsx", ".go", ".rs", ".java", ".kt", ".cs", ".php", ".rb",
     ".lua", ".sql", ".ipynb",
@@ -216,6 +216,24 @@ def _text_runtime_files() -> list[Path]:
         is_env_file = lower_name == ".env" or lower_name.startswith(".env.") or lower_name.startswith(".env-")
         if path.suffix.lower() in TEXT_RUNTIME_SUFFIXES or lower_name in TEXT_RUNTIME_FILENAMES or is_env_file:
             files.append(path)
+            continue
+        # Also inspect extensionless text files and executable/shebang scripts;
+        # these can otherwise evade suffix-based discovery.
+        if path.suffix == "" or path.stat().st_mode & 0o111:
+            try:
+                with path.open("rb") as stream:
+                    header = stream.read(512)
+            except OSError:
+                files.append(path)  # unreadable candidates fail closed below
+                continue
+            if header.startswith(b"#!") or (b"\\x00" not in header and header.strip()):
+                try:
+                    header.decode("utf-8")
+                except UnicodeDecodeError:
+                    if path.stat().st_mode & 0o111:
+                        files.append(path)  # executable but non-text: fail closed
+                    continue
+                files.append(path)
     return sorted(files)
 
 
