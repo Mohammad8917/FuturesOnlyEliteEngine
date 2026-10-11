@@ -190,10 +190,13 @@ FORBIDDEN_RUNTIME_PATTERNS = (
     re.compile(r"\b(?:open|close|liquidate)_positions?\b", re.I),
     re.compile(r"\b(?:open|close|liquidate)(?:Real)?Positions?\b", re.I),
     re.compile(r"\b(?:transfer|withdraw|deposit)_funds?\b", re.I),
+    re.compile(r"\b(?:transfer|withdraw|deposit)Funds?\b", re.I),
     re.compile(r"\bset_leverage\b|\bchange_leverage\b", re.I),
     re.compile(r"\b(?:set|change)Leverage\b", re.I),
     re.compile(r"/(?:fapi|dapi)/v\d+/order(?:s)?(?:\b|/)", re.I),
     re.compile(r"/api/v\d+/(?:orders?|positions?)(?:\b|/)", re.I),
+    re.compile(r"/v\d+/(?:orders?|positions?)(?:/|\b|\?)", re.I),
+    re.compile(r"/(?:private/)?orders?/(?:create|submit|place|cancel|replace|amend|modify)(?:/|\b|\?)", re.I),
 )
 FORBIDDEN_RUNTIME_SDK_TOKENS = tuple(
     re.compile(r"(?<![a-z0-9])" + re.escape(sdk) + r"(?![a-z0-9])", re.I)
