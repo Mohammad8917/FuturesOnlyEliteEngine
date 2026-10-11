@@ -100,13 +100,29 @@ def test_production_source_has_no_live_order_or_account_mutation_calls() -> None
                 name = ""
             if _normalized(name) in FORBIDDEN_NAMES:
                 violations.append(f"{path.relative_to(ROOT)}:{node.lineno}: forbidden call {name}")
-            # Catch common reflective lookups such as getattr(client, "create_order").
-            for arg in node.args:
+            # Catch reflective lookups in positional/keyword arguments and
+            # string-key dispatch such as client["create_order"](...).
+            for arg in [*node.args, *(kw.value for kw in node.keywords)]:
                 if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
                     if _normalized(arg.value) in FORBIDDEN_NAMES:
                         violations.append(
                             f"{path.relative_to(ROOT)}:{node.lineno}: forbidden API name string {arg.value}"
                         )
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Constant):
+                value = node.slice.value
+                if isinstance(value, str) and _normalized(value) in FORBIDDEN_NAMES:
+                    violations.append(
+                        f"{path.relative_to(ROOT)}:{node.lineno}: forbidden string-key API dispatch {value}"
+                    )
+        # Catch common REST order-write routes even when code uses a generic
+        # HTTP client instead of a named exchange SDK method.
+        for pattern in FORBIDDEN_RUNTIME_PATTERNS:
+            for match in pattern.finditer(source):
+                line = source.count("\\n", 0, match.start()) + 1
+                violations.append(
+                    f"{path.relative_to(ROOT)}:{line}: forbidden live-write/API pattern {match.group(0)}"
+                )
 
         for forbidden in FORBIDDEN_TEXT:
             if forbidden in source.lower():
