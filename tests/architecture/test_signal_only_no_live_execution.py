@@ -148,6 +148,71 @@ def test_no_exchange_trading_sdk_is_declared_as_a_dependency() -> None:
     assert not violations, "Signal-only dependency invariant violated:\n" + "\n".join(violations)
 
 
+
+# Text-based runtime/deployment surfaces are checked separately from Python AST.
+# Keep documentation and tests out of this scan: they describe the forbidden
+# APIs and must be able to assert that those APIs are forbidden.
+TEXT_RUNTIME_SUFFIXES = {
+    ".sh", ".bash", ".ps1", ".bat", ".cmd", ".yml", ".yaml", ".json",
+    ".toml", ".ini", ".cfg", ".conf", ".service",
+}
+TEXT_RUNTIME_FILENAMES = {
+    "dockerfile", "docker-compose.yml", "docker-compose.yaml",
+    "compose.yml", "compose.yaml", ".dockerignore",
+}
+TEXT_RUNTIME_EXCLUDED_PARTS = {
+    ".git", ".venv", "venv", "__pycache__", ".pytest_cache",
+    "tests", "docs", "dist", "build", "node_modules",
+}
+FORBIDDEN_RUNTIME_PATTERNS = (
+    re.compile(r"\b(?:create|submit|place|send|cancel|replace|amend|modify)_orders?\b", re.I),
+    re.compile(r"\b(?:open|close|liquidate)_positions?\b", re.I),
+    re.compile(r"\b(?:transfer|withdraw|deposit)_funds?\b", re.I),
+    re.compile(r"\bset_leverage\b|\bchange_leverage\b", re.I),
+    re.compile(r"/(?:fapi|dapi)/v\\d+/order(?:s)?(?:\\b|/)", re.I),
+    re.compile(r"/api/v\\d+/(?:orders?|positions?)(?:\\b|/)", re.I),
+)
+FORBIDDEN_RUNTIME_SDK_TOKENS = tuple(
+    re.compile(r"(?<![a-z0-9])" + re.escape(sdk) + r"(?![a-z0-9])", re.I)
+    for sdk in FORBIDDEN_EXCHANGE_SDKS
+)
+
+
+def _text_runtime_files() -> list[Path]:
+    files: list[Path] = []
+    for path in ROOT.rglob("*"):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(ROOT)
+        if any(part.lower() in TEXT_RUNTIME_EXCLUDED_PARTS for part in relative.parts):
+            continue
+        lower_name = path.name.lower()
+        if path.suffix.lower() in TEXT_RUNTIME_SUFFIXES or lower_name in TEXT_RUNTIME_FILENAMES:
+            files.append(path)
+    return sorted(files)
+
+
+def test_runtime_scripts_and_deployment_configuration_have_no_live_write_paths() -> None:
+    violations: list[str] = []
+    for path in _text_runtime_files():
+        try:
+            source = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            violations.append(f"{path.relative_to(ROOT)}: runtime/config file cannot be audited: {exc}")
+            continue
+        for pattern in FORBIDDEN_RUNTIME_PATTERNS:
+            for match in pattern.finditer(source):
+                line = source.count("\\n", 0, match.start()) + 1
+                violations.append(
+                    f"{path.relative_to(ROOT)}:{line}: forbidden live-write/API pattern {match.group(0)}"
+                )
+        for pattern in FORBIDDEN_RUNTIME_SDK_TOKENS:
+            if pattern.search(source):
+                violations.append(
+                    f"{path.relative_to(ROOT)}: forbidden trading-capable exchange SDK token"
+                )
+    assert not violations, "Signal-only runtime/config invariant violated:\\n" + "\\n".join(sorted(set(violations)))
+
 def test_product_documents_define_signal_only_without_order_writes() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8").lower()
     adr = (
