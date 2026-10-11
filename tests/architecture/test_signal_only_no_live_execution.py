@@ -267,3 +267,19 @@ def test_product_documents_define_signal_only_without_order_writes() -> None:
     assert "permanent signal-only" in readme
     assert "must **never**" in adr
     assert "submit, amend, cancel, or retry a live exchange order" in adr
+
+
+def test_guard_patterns_cover_common_live_write_bypass_spellings() -> None:
+    samples = {
+        "snake_case method": "client.create_order(symbol, quantity)",
+        "camel_case method": "client.createOrder(symbol, quantity)",
+        "generic exchange REST endpoint": 'client.request("POST", "/fapi/v1/order")',
+        "versioned order route": 'client.request("POST", "/v5/order/create")',
+        "generic orders route": 'requests.post("/api/v1/orders", json=payload)',
+        "camel_case fund transfer": "client.transferFunds(destination, amount)",
+        "camel_case leverage mutation": "client.setLeverage(symbol, leverage)",
+    }
+    for label, sample in samples.items():
+        assert any(pattern.search(sample) for pattern in FORBIDDEN_RUNTIME_PATTERNS), (
+            f"Signal-only guard missed {label}: {sample}"
+        )
