@@ -171,7 +171,9 @@ def test_no_exchange_trading_sdk_is_declared_as_a_dependency() -> None:
 TEXT_RUNTIME_SUFFIXES = {
     ".sh", ".bash", ".ps1", ".bat", ".cmd", ".yml", ".yaml", ".json",
     ".toml", ".ini", ".cfg", ".conf", ".service", ".properties", ".xml",
-    ".tf", ".hcl", ".psm1", ".env",
+    ".tf", ".hcl", ".psm1", ".env", ".js", ".mjs", ".cjs", ".ts",
+    ".tsx", ".jsx", ".go", ".rs", ".java", ".kt", ".cs", ".php", ".rb",
+    ".lua", ".sql", ".ipynb",
 }
 TEXT_RUNTIME_FILENAMES = {
     "dockerfile", "docker-compose.yml", "docker-compose.yaml",
