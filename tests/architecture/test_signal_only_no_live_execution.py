@@ -11,7 +11,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-EXCLUDED_PARTS = {".git", ".venv", "venv", "__pycache__", "tests", "validation"}
+EXCLUDED_PARTS = {".git", ".venv", "venv", "__pycache__", "tests"}
 FORBIDDEN_NAMES = {
     "createorder", "submitorder", "placeorder", "sendorder",
     "cancelorder", "replaceorder", "amendorder", "modifyorder",
@@ -47,6 +47,7 @@ def _production_python_files() -> list[Path]:
     return sorted(
         path for path in ROOT.rglob("*.py")
         if not any(part in EXCLUDED_PARTS for part in path.relative_to(ROOT).parts)
+        and path.relative_to(ROOT).as_posix() != "validation/architecture_dependency_validator.py"
     )
 
 
@@ -182,7 +183,7 @@ TEXT_RUNTIME_FILENAMES = {
 }
 TEXT_RUNTIME_EXCLUDED_PARTS = {
     ".git", ".venv", "venv", "__pycache__", ".pytest_cache",
-    "tests", "docs", "validation", "dist", "build", "node_modules",
+    "tests", "docs", "dist", "build", "node_modules",
 }
 FORBIDDEN_RUNTIME_PATTERNS = (
     re.compile(r"\b(?:create|submit|place|send|cancel|replace|amend|modify)_orders?\b", re.I),
@@ -211,6 +212,10 @@ def _text_runtime_files() -> list[Path]:
             continue
         relative = path.relative_to(ROOT)
         if any(part.lower() in TEXT_RUNTIME_EXCLUDED_PARTS for part in relative.parts):
+            continue
+        # This single file is an architecture policy validator whose purpose is
+        # to contain forbidden API names as deny-list data, not runtime code.
+        if relative.as_posix() == "validation/architecture_dependency_validator.py":
             continue
         lower_name = path.name.lower()
         is_env_file = lower_name == ".env" or lower_name.startswith(".env.") or lower_name.startswith(".env-")
