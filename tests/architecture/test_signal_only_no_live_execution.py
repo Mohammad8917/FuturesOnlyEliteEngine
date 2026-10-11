@@ -170,11 +170,13 @@ def test_no_exchange_trading_sdk_is_declared_as_a_dependency() -> None:
 # APIs and must be able to assert that those APIs are forbidden.
 TEXT_RUNTIME_SUFFIXES = {
     ".sh", ".bash", ".ps1", ".bat", ".cmd", ".yml", ".yaml", ".json",
-    ".toml", ".ini", ".cfg", ".conf", ".service",
+    ".toml", ".ini", ".cfg", ".conf", ".service", ".properties", ".xml",
+    ".tf", ".hcl", ".psm1", ".env",
 }
 TEXT_RUNTIME_FILENAMES = {
     "dockerfile", "docker-compose.yml", "docker-compose.yaml",
-    "compose.yml", "compose.yaml", ".dockerignore",
+    "compose.yml", "compose.yaml", ".dockerignore", "makefile", "procfile",
+    "taskfile",
 }
 TEXT_RUNTIME_EXCLUDED_PARTS = {
     ".git", ".venv", "venv", "__pycache__", ".pytest_cache",
@@ -203,7 +205,8 @@ def _text_runtime_files() -> list[Path]:
         if any(part.lower() in TEXT_RUNTIME_EXCLUDED_PARTS for part in relative.parts):
             continue
         lower_name = path.name.lower()
-        if path.suffix.lower() in TEXT_RUNTIME_SUFFIXES or lower_name in TEXT_RUNTIME_FILENAMES:
+        is_env_file = lower_name == ".env" or lower_name.startswith(".env.") or lower_name.startswith(".env-")
+        if path.suffix.lower() in TEXT_RUNTIME_SUFFIXES or lower_name in TEXT_RUNTIME_FILENAMES or is_env_file:
             files.append(path)
     return sorted(files)
 
