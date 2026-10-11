@@ -169,8 +169,8 @@ FORBIDDEN_RUNTIME_PATTERNS = (
     re.compile(r"\b(?:open|close|liquidate)_positions?\b", re.I),
     re.compile(r"\b(?:transfer|withdraw|deposit)_funds?\b", re.I),
     re.compile(r"\bset_leverage\b|\bchange_leverage\b", re.I),
-    re.compile(r"/(?:fapi|dapi)/v\\d+/order(?:s)?(?:\\b|/)", re.I),
-    re.compile(r"/api/v\\d+/(?:orders?|positions?)(?:\\b|/)", re.I),
+    re.compile(r"/(?:fapi|dapi)/v\d+/order(?:s)?(?:\b|/)", re.I),
+    re.compile(r"/api/v\d+/(?:orders?|positions?)(?:\b|/)", re.I),
 )
 FORBIDDEN_RUNTIME_SDK_TOKENS = tuple(
     re.compile(r"(?<![a-z0-9])" + re.escape(sdk) + r"(?![a-z0-9])", re.I)
@@ -202,7 +202,7 @@ def test_runtime_scripts_and_deployment_configuration_have_no_live_write_paths()
             continue
         for pattern in FORBIDDEN_RUNTIME_PATTERNS:
             for match in pattern.finditer(source):
-                line = source.count("\\n", 0, match.start()) + 1
+                line = source.count("\n", 0, match.start()) + 1
                 violations.append(
                     f"{path.relative_to(ROOT)}:{line}: forbidden live-write/API pattern {match.group(0)}"
                 )
@@ -211,7 +211,7 @@ def test_runtime_scripts_and_deployment_configuration_have_no_live_write_paths()
                 violations.append(
                     f"{path.relative_to(ROOT)}: forbidden trading-capable exchange SDK token"
                 )
-    assert not violations, "Signal-only runtime/config invariant violated:\\n" + "\\n".join(sorted(set(violations)))
+    assert not violations, "Signal-only runtime/config invariant violated:\n" + "\n".join(sorted(set(violations)))
 
 def test_product_documents_define_signal_only_without_order_writes() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8").lower()
