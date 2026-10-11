@@ -119,7 +119,7 @@ def test_production_source_has_no_live_order_or_account_mutation_calls() -> None
         # HTTP client instead of a named exchange SDK method.
         for pattern in FORBIDDEN_RUNTIME_PATTERNS:
             for match in pattern.finditer(source):
-                line = source.count("\\n", 0, match.start()) + 1
+                line = source.count("\n", 0, match.start()) + 1
                 violations.append(
                     f"{path.relative_to(ROOT)}:{line}: forbidden live-write/API pattern {match.group(0)}"
                 )
@@ -186,9 +186,12 @@ TEXT_RUNTIME_EXCLUDED_PARTS = {
 }
 FORBIDDEN_RUNTIME_PATTERNS = (
     re.compile(r"\b(?:create|submit|place|send|cancel|replace|amend|modify)_orders?\b", re.I),
+    re.compile(r"\b(?:create|submit|place|send|cancel|replace|amend|modify)(?:Live)?Orders?\b", re.I),
     re.compile(r"\b(?:open|close|liquidate)_positions?\b", re.I),
+    re.compile(r"\b(?:open|close|liquidate)(?:Real)?Positions?\b", re.I),
     re.compile(r"\b(?:transfer|withdraw|deposit)_funds?\b", re.I),
     re.compile(r"\bset_leverage\b|\bchange_leverage\b", re.I),
+    re.compile(r"\b(?:set|change)Leverage\b", re.I),
     re.compile(r"/(?:fapi|dapi)/v\d+/order(?:s)?(?:\b|/)", re.I),
     re.compile(r"/api/v\d+/(?:orders?|positions?)(?:\b|/)", re.I),
 )
