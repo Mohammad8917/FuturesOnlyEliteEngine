@@ -16,14 +16,14 @@ REQUIRED_MARKERS = (
     "GOLD Futures",
     "Linear Futures",
     "Inverse Futures",
-    "15 independent exchange adapters",
+    "read-only market-data access",
     "Python version: 3.13",
     "Windows Server",
     "Linux Server",
     "Windows Home/Desktop",
-    "Automated Futures trading",
+    "permanent signal-only product",
     "Telegram and email",
-    "Notifications are observability/delivery outputs, not execution authority",
+    "Notifications are delivery-only and cannot authorize or execute trades",
     "Secrets and sensitive values must never be embedded",
     "typed validation, provenance, and fail-closed behavior",
     "idempotency and unknown-state handling",
@@ -35,6 +35,7 @@ REQUIRED_MARKERS = (
     ">= 90%",
     "Unknown, invalid, stale, contradictory, or incomplete critical Futures state",
     "ARCHITECTURE RULE → CONTRACT → PRODUCTION IMPLEMENTATION → TEST → CI ENFORCEMENT → SAME-SHA EVIDENCE",
+    "Live automated trading, live order writes, and account mutation are permanently prohibited.",
 )
 
 

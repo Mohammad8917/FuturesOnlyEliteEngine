@@ -1,5 +1,16 @@
 # Master Project Roadmap & Architecture Governance
 
+## Binding product boundary — ADR-0006 (OWNER-APPROVED)
+
+This repository delivers a **permanent signal-only product** for exactly CRYPTO Futures, FOREX Futures, and GOLD Futures. This is a product prohibition, not a feature flag or default-off mode.
+
+Allowed production capabilities are read-only market-data ingestion/validation, analytical indicators and SMC/confluence scoring, signal lifecycle and audit, advisory entry/stop/target/risk estimates with explicit assumptions, and Telegram/email signal/operational notifications. Backtesting, walk-forward/out-of-sample analysis, and Paper Trading are simulation-only and must be technically isolated from live side effects.
+
+Forbidden product capabilities include live order submission/amendment/cancellation/retry, automated real-position opening/increasing/reducing/closing, account mutation, transfers, leverage changes, automated capital allocation, execution-authorizing Telegram controls/callbacks, and order-write credentials or APIs. No runtime component may translate a signal, callback, retry, restart, or configuration change into a live order. Do not add an execution layer, execution adapter, live-order client, or order-write dependency.
+
+Keep Futures-only and explicit Linear/Inverse semantics, exact Decimal rules, fail-closed validation, secret hygiene, all G01–G08 thresholds, Phase 1 exit criteria, and same-SHA CI evidence. Signal risk figures are advisory, never guaranteed maximum losses or profitability. Repository code inventory does not establish the state of any external deployment.
+
+
 ## Status
 
 **Authoritative project-control document.**
@@ -65,7 +76,7 @@ Supported deployment environments are:
 All three are first-class supported targets. Platform-specific code must remain isolated behind infrastructure boundaries and must not alter financial semantics or weaken safety controls.
 
 The finished system must provide both:
-- automated Futures trading through the complete risk-gated execution pipeline;
+- permanent signal generation and notification only; live order execution is prohibited;
 - signal and operational notifications through Telegram and email.
 
 Telegram and email are delivery/observability channels. They cannot authorize execution, bypass risk, or convert notification failure into execution success.
@@ -84,9 +95,9 @@ Phase 0 is not considered complete merely because the initial documents exist. T
 - product identity, exact market scope, Futures-only boundary, and prohibited operational Spot behavior;
 - Linear/Inverse semantic ownership and required financial/accounting vocabulary;
 - layer ownership and dependency direction;
-- exchange-adapter isolation and the exact adapter-count requirement;
+- read-only market-data provider isolation; provider count and availability must not be assumed;
 - canonical terminology, contract naming, units, precision, UTC/time semantics, and validation expectations;
-- risk, execution, order lifecycle, reconciliation, and audit ownership;
+- advisory risk-estimate, signal lifecycle, and audit ownership;
 - data-quality, stale/contradictory-state, idempotency, and fail-closed behavior;
 - configuration, secrets, credentials, security, and supply-chain ownership;
 - observability, notifications, operational errors, and the rule that delivery failure never equals execution success;
@@ -221,50 +232,41 @@ Implement and validate:
 - position sizing;
 - account limits;
 - fail-closed decisions.
-- execution-halt requests/circuit-breaker conditions and explicit handoff to the execution authority boundary;
+- signal-generation pause, stale-data invalidation, and explicit handoff to the signal lifecycle boundary;
 - validated time/freshness/skew inputs and safety-critical configuration provenance.
 
 Exit condition:
 - invalid/unknown/stale/contradictory critical state cannot produce an executable decision.
 
-### Phase 4 — Execution architecture
+### Phase 4 — Signal lifecycle and audit
+
 Define and implement:
-- execution intent;
-- execution risk gate;
-- execution contract;
-- order model;
-- reconciliation;
-- audit.
-- idempotency identity and duplicate-submission protection;
-- concurrency/versioning for order and position transitions;
-- restart/failover recovery with mandatory reconciliation before execution resumes;
-- scoped/global execution halt semantics;
-- append-only/tamper-evident audit evidence and release provenance requirements.
+- stable signal identity and duplicate suppression;
+- issuance, expiry, invalidation, and bounded renewal;
+- signal-state versioning and restart recovery;
+- append-only/tamper-evident signal audit;
+- notification delivery status that cannot change signal validity.
 
 Exit condition:
-- no unvalidated intent can become an order.
+- stale/invalid signals cannot be published as valid;
+- duplicate callbacks/retries cannot create duplicate signal state;
+- no order intent, order, or live account mutation exists.
 
-### Phase 5 — Exchange infrastructure
-Build the 15 exchange adapters independently.
+### Phase 5 — Read-only market-data providers
 
-Each adapter must preserve meaningful exchange-specific behavior for:
-- authentication;
-- endpoints;
-- request/response mapping;
-- contract specification;
-- multiplier/settlement;
-- margin/leverage;
-- funding;
-- PnL/liquidation information;
-- order semantics;
-- precision/limits;
-- position mode;
-- reconciliation.
+Build only explicitly selected read-only market-data provider integrations. Do not assume a provider count, provider availability, or product eligibility.
+
+Each provider mapping must preserve:
+- authoritative market-data endpoints and permission model;
+- Futures symbol/contract identity and explicit Linear/Inverse metadata;
+- timestamp, freshness, rate-limit, and error semantics;
+- canonical units, price denomination, and instrument metadata;
+- deterministic stale/malformed/contradictory-payload rejection.
 
 Exit condition:
-- no adapter is a disguised copy of another;
-- exchange-specific behavior stops at the infrastructure boundary;
-- all mappings are independently testable.
+- no order-write, transfer, or withdrawal permission is requested;
+- no live-order client, order endpoint, or execution adapter exists;
+- provider failure cannot trigger Spot or unapproved-provider fallback.
 
 ### Phase 6 — Market/data pipeline
 Implement the market and data path:
@@ -279,7 +281,7 @@ Exit condition:
 ### Phase 7 — Cross-layer integration
 Connect:
 
-SIGNAL CONTRACT -> EXECUTION RISK GATE -> EXECUTION CONTRACT -> EXCHANGE ADAPTER -> ORDER -> POSITION/ORDER RECONCILIATION -> AUDIT
+SIGNAL CONTRACT -> SIGNAL LIFECYCLE/AUDIT -> NOTIFICATION
 
 Exit condition:
 - end-to-end behavior is deterministic, validated, auditable, and fail-closed.

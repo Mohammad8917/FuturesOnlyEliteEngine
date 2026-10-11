@@ -1,15 +1,25 @@
 # Dependency Rules
 
+## Binding product boundary — ADR-0006 (OWNER-APPROVED)
+
+This repository delivers a **permanent signal-only product** for exactly CRYPTO Futures, FOREX Futures, and GOLD Futures. This is a product prohibition, not a feature flag or default-off mode.
+
+Allowed production capabilities are read-only market-data ingestion/validation, analytical indicators and SMC/confluence scoring, signal lifecycle and audit, advisory entry/stop/target/risk estimates with explicit assumptions, and Telegram/email signal/operational notifications. Backtesting, walk-forward/out-of-sample analysis, and Paper Trading are simulation-only and must be technically isolated from live side effects.
+
+Forbidden product capabilities include live order submission/amendment/cancellation/retry, automated real-position opening/increasing/reducing/closing, account mutation, transfers, leverage changes, automated capital allocation, execution-authorizing Telegram controls/callbacks, and order-write credentials or APIs. No runtime component may translate a signal, callback, retry, restart, or configuration change into a live order. Do not add an execution layer, execution adapter, live-order client, or order-write dependency.
+
+Keep Futures-only and explicit Linear/Inverse semantics, exact Decimal rules, fail-closed validation, secret hygiene, all G01–G08 thresholds, Phase 1 exit criteria, and same-SHA CI evidence. Signal risk figures are advisory, never guaranteed maximum losses or profitability. Repository code inventory does not establish the state of any external deployment.
+
+
 ## Authoritative direction
 
 The dependency graph is intentionally one-directional and must be read together with ARCHITECTURE-MASTER-INDEX.md:
 
-DOMAIN → CONTRACTS (only where contracts are domain-safe)
-APPLICATION → DOMAIN + CONTRACTS
-RISK → DOMAIN + CONTRACTS
-EXECUTION → CONTRACTS + DOMAIN FACTS + RISK DECISIONS
-INFRASTRUCTURE → APPLICATION / CONTRACTS / DOMAIN PORTS
-OBSERVABILITY / NOTIFICATION → EXPLICIT OUTPUT PORTS; NEVER UPSTREAM AUTHORITY
+DOMAIN → DOMAIN-SAFE CONTRACTS
+ANALYSIS → DOMAIN + CONTRACTS + READ-ONLY MARKET-DATA PORTS
+SIGNAL APPLICATION → DOMAIN + CONTRACTS + ANALYSIS
+READ-ONLY INFRASTRUCTURE → EXPLICIT MARKET-DATA PORTS
+OBSERVABILITY / NOTIFICATION → SIGNAL OUTPUT PORTS; NEVER UPSTREAM AUTHORITY
 
 Infrastructure must never become a dependency of domain.
 
@@ -19,11 +29,11 @@ Infrastructure must never become a dependency of domain.
 - Contracts own stable boundary vocabulary and validation semantics.
 - Application owns use-case orchestration.
 - Risk owns policy decisions and risk acceptance/rejection.
-- Execution owns execution intent, gated order lifecycle, reconciliation, and audit.
-- Infrastructure owns external transport and exchange mapping.
+- No execution layer exists in the product; signal lifecycle/audit owns signal state only and cannot submit orders.
+- Infrastructure owns read-only market-data transport and mapping only.
 - Market/data acquisition owns external data retrieval and normalization through explicit ports; it does not own risk or execution decisions.
 - Strategy/analysis owns analytical decisions only and cannot submit orders.
-- Configuration/security owns configuration validation, credential handling, secret boundaries, and execution-authority configuration.
+- Configuration/security owns validation and secret boundaries; only read-only market-data credentials are permitted, and configuration cannot grant live execution authority.
 - Observability/notification owns reporting/delivery only; it cannot authorize trading.
 - Architecture tests and CI enforce boundaries; they do not become financial-domain owners.
 
@@ -35,11 +45,11 @@ Domain may depend only on domain-safe contracts and standard deterministic langu
 
 Application may depend on domain and contracts and may depend on explicit ports for external capabilities. It must not encode exchange-specific transport.
 
-Risk may consume validated domain/account/data facts and policy/configuration inputs through explicit contracts. Risk may return decisions, but it may not create or submit orders, call exchange transport, or mutate exchange state.
+Risk estimates may consume validated Futures-domain and market-data facts plus explicit policy/assumption inputs through contracts. Risk may return decisions, but it may not create or submit orders, call exchange transport, or mutate exchange state.
 
-Execution may consume validated signal/intent contracts, domain facts, and risk decisions. Execution may invoke explicit exchange ports only after the execution risk gate. Unknown external state must remain unknown.
+No execution capability is permitted. Signal application consumes validated analysis/domain contracts and may publish signals only. External market-data access is read-only.
 
-Infrastructure may implement ports and adapt external systems. Infrastructure may not redefine domain financial semantics or bypass risk/execution boundaries.
+Infrastructure may implement read-only market-data ports and adapt external systems. It must not contain order-write clients, mutate external accounts, or redefine domain financial semantics.
 
 Observability/notification is downstream. It must never be a dependency that determines whether an order is authorized, accepted, or considered successful.
 
@@ -53,7 +63,7 @@ Analysis/strategy logic must not submit orders, call execution adapters, or sile
 
 Notification code must not authorize, retry into, or represent execution success.
 
-Configuration code must not silently change Futures/Spot scope, risk policy, exchange identity, or execution authority.
+Configuration code must not silently change Futures/Spot scope, risk policy, provider identity, or introduce live execution/order-write authority.
 
 ## Configuration, hardcoding, and secret boundary
 
@@ -89,7 +99,7 @@ Critical external data must carry validation/provenance/freshness semantics befo
 
 Stale, malformed, contradictory, incomplete, or out-of-order critical data must not flow into executable decisions.
 
-Order and position reconciliation must detect divergence and unknown state; no dependency may convert uncertainty into success.
+Signal lifecycle must detect duplicate/out-of-order transitions and invalidate signals on stale or contradictory critical data; no dependency may convert uncertainty into a valid signal.
 
 ## Phase 1 domain-contract dependency boundary
 
@@ -111,13 +121,13 @@ Linear/Inverse applicability and market applicability must be explicit. Unknown,
 - domain does not import exchange SDKs;
 - strategy does not import execution adapters;
 - risk does not submit orders;
-- execution cannot bypass risk validation;
+- live execution/order-writing is forbidden by product scope;
 - Spot is not an operational dependency;
 - exchange-specific code remains outside domain;
 - Linear and Inverse are explicit contract semantics;
 - market/data boundaries cannot place orders;
 - notification/observability cannot authorize execution;
-- configuration cannot silently alter execution authority;
+- configuration cannot introduce live execution/order-write authority;
 - critical dependencies respect the single-owner responsibility map.
 
 ## Multiplier / contract-specification dependency boundary

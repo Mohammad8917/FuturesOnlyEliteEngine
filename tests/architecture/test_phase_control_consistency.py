@@ -35,7 +35,7 @@ def test_phase_control_documents_are_consistent() -> None:
     assert "Phase 2+ remains blocked" in roadmap
 
     assert "- Current phase: Phase 1 — Domain Contracts" in state
-    assert "- Current gate: G05 — Coverage" in state
+    assert "- Current gate: Signal-only migration and mandatory gate reconciliation (PR #51); G05 >= 98% remains an immutable quality floor" in state
     assert (
         "- Implementation phase authorized: YES — Phase 1 Domain Contracts"
         in state
@@ -105,3 +105,18 @@ def test_phase_control_documents_are_consistent() -> None:
 
     assert "not technically locked" in change_guard
     assert "not the architectural contract" in state
+
+
+def test_signal_only_scope_is_consistent_across_authoritative_documents() -> None:
+    contract = _read("architecture-contract.md")
+    invariants = _read("architecture-invariants.md")
+    roadmap = _read("master-roadmap-and-governance.md")
+    state = _read("project-state.md")
+    responsibility = _read("futures-responsibility-map.md")
+    dependencies = _read("dependency-rules.md")
+    for content in (contract, invariants, roadmap, state, responsibility, dependencies):
+        assert "permanent signal-only" in content.lower() or "signal-only product" in content.lower()
+        assert "live order" in content.lower()
+    assert "Live automated trading, live order writes, and account mutation are permanently prohibited." in contract
+    assert "This product has no live order" in invariants
+    assert "No execution capability is permitted." in dependencies

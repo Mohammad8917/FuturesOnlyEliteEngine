@@ -1,10 +1,21 @@
 # Elite Architecture Contract
 
+## Binding product boundary — ADR-0006 (OWNER-APPROVED)
+
+This repository delivers a **permanent signal-only product** for exactly CRYPTO Futures, FOREX Futures, and GOLD Futures. This is a product prohibition, not a feature flag or default-off mode.
+
+Allowed production capabilities are read-only market-data ingestion/validation, analytical indicators and SMC/confluence scoring, signal lifecycle and audit, advisory entry/stop/target/risk estimates with explicit assumptions, and Telegram/email signal/operational notifications. Backtesting, walk-forward/out-of-sample analysis, and Paper Trading are simulation-only and must be technically isolated from live side effects.
+
+Forbidden product capabilities include live order submission/amendment/cancellation/retry, automated real-position opening/increasing/reducing/closing, account mutation, transfers, leverage changes, automated capital allocation, execution-authorizing Telegram controls/callbacks, and order-write credentials or APIs. No runtime component may translate a signal, callback, retry, restart, or configuration change into a live order. Do not add an execution layer, execution adapter, live-order client, or order-write dependency.
+
+Keep Futures-only and explicit Linear/Inverse semantics, exact Decimal rules, fail-closed validation, secret hygiene, all G01–G08 thresholds, Phase 1 exit criteria, and same-SHA CI evidence. Signal risk figures are advisory, never guaranteed maximum losses or profitability. Repository code inventory does not establish the state of any external deployment.
+
+
 **Navigation:** Start with `docs/architecture/ARCHITECTURE-MASTER-INDEX.md` for the single project path. This contract remains authoritative for contract and quality requirements within the source-of-truth hierarchy.
 
 ## Product identity
 
-FuturesOnlyEliteEngine is a production-grade, Futures-only professional trading engine for CRYPTO Futures, FOREX Futures, GOLD Futures, Linear Futures, Inverse Futures, and 15 independent exchange adapters.
+FuturesOnlyEliteEngine is a production-grade, Futures-only signal engine for CRYPTO Futures, FOREX Futures, and GOLD Futures, preserving explicit Linear/Inverse semantics and read-only market-data access.
 
 ## Runtime and deployment contract
 
@@ -24,13 +35,9 @@ Platform-specific behavior must remain behind explicit infrastructure boundaries
 
 ### Operational capabilities
 
-The system is required to support both:
+The system supports signal generation and signal/operational notification delivery through Telegram and email. Live automated trading, live order writes, and account mutation are permanently prohibited.
 
-1. **Automated Futures trading** through the governed execution pipeline.
-2. **Signal/operational notification delivery** through Telegram and email.
-
-Notifications are observability/delivery outputs, not execution authority. Telegram or email failures must never be interpreted as successful order execution, and notification channels must not bypass risk/execution gates.
-
+Notifications are delivery-only and cannot authorize or execute trades. Market-data adapters are read-only. Reference entry/SL/TP, risk/reward, costs, and suggested sizing are advisory estimates, not execution instructions or guarantees.
 
 ## Configuration, hardcoding, and sensitive information
 
@@ -47,13 +54,13 @@ Before production implementation of any capability, the architecture must explic
 - exact inputs, outputs, units, precision, timestamps, validation status, and failure semantics at critical boundaries;
 - Linear/Inverse applicability and financial meaning;
 - CRYPTO/FOREX/GOLD applicability;
-- risk, execution, order lifecycle, reconciliation, and audit ownership;
+- advisory risk-estimate, signal lifecycle, and audit ownership;
 - configuration/secrets and security ownership;
 - data freshness/provenance and fail-closed behavior;
 - idempotency and unknown-state handling where external state changes are involved;
 - observability, operational error classification, and notification semantics;
 - resilience rules for timeout, retry, partial failure, duplicate delivery, and contradictory external state;
-- authoritative external-state semantics, idempotency identity, concurrency/versioning, restart/recovery reconciliation, and scoped/global execution-halt behavior;
+- authoritative external-state semantics, idempotency identity, concurrency/versioning, restart/recovery reconciliation, and signal invalidation and fail-closed publication behavior;
 - trusted clock/freshness/skew semantics and safety-critical configuration provenance/versioning;
 - append-only/tamper-evident audit evidence and release artifact/source/dependency provenance;
 - architecture-test and CI-enforcement expectations;
@@ -81,9 +88,9 @@ Acceptance requires evidence. No marketing claim of world-class quality substitu
 
 Coverage may not be raised by deleting tests, excluding production code, lowering thresholds, weakening assertions, or using artificial tests.
 
-## Core pipeline
+## Core signal pipeline
 
-MARKET -> FUTURES INSTRUMENT -> MARKET ADAPTER -> MARKET DATA -> DATA VALIDATION -> REGIME PROBABILITY -> MTF STRUCTURE -> SETUP -> TREND/MOMENTUM -> CONFIRMATION -> COST/LIQUIDITY -> FUTURES RISK -> POSITION SIZING -> OPPORTUNITY RANKING -> DECISION -> SIGNAL CONTRACT -> EXECUTION RISK GATE -> EXECUTION CONTRACT -> EXCHANGE ADAPTER -> ORDER -> POSITION/ORDER RECONCILIATION -> AUDIT
+MARKET (READ-ONLY) -> FUTURES INSTRUMENT -> MARKET DATA VALIDATION -> REGIME/MTF STRUCTURE -> SETUP -> TREND/MOMENTUM -> CONFIRMATION -> COST/LIQUIDITY -> ADVISORY FUTURES RISK -> REFERENCE POSITION SIZING -> OPPORTUNITY RANKING -> SIGNAL DECISION -> SIGNAL CONTRACT -> SIGNAL LIFECYCLE/AUDIT -> NOTIFICATION
 
 ## Phase 1 domain contract baseline
 

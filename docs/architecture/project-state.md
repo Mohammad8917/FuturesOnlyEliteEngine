@@ -1,5 +1,16 @@
 # Project State — FuturesOnlyEliteEngine
 
+## Binding product boundary — ADR-0006 (OWNER-APPROVED)
+
+This repository delivers a **permanent signal-only product** for exactly CRYPTO Futures, FOREX Futures, and GOLD Futures. This is a product prohibition, not a feature flag or default-off mode.
+
+Allowed production capabilities are read-only market-data ingestion/validation, analytical indicators and SMC/confluence scoring, signal lifecycle and audit, advisory entry/stop/target/risk estimates with explicit assumptions, and Telegram/email signal/operational notifications. Backtesting, walk-forward/out-of-sample analysis, and Paper Trading are simulation-only and must be technically isolated from live side effects.
+
+Forbidden product capabilities include live order submission/amendment/cancellation/retry, automated real-position opening/increasing/reducing/closing, account mutation, transfers, leverage changes, automated capital allocation, execution-authorizing Telegram controls/callbacks, and order-write credentials or APIs. No runtime component may translate a signal, callback, retry, restart, or configuration change into a live order. Do not add an execution layer, execution adapter, live-order client, or order-write dependency.
+
+Keep Futures-only and explicit Linear/Inverse semantics, exact Decimal rules, fail-closed validation, secret hygiene, all G01–G08 thresholds, Phase 1 exit criteria, and same-SHA CI evidence. Signal risk figures are advisory, never guaranteed maximum losses or profitability. Repository code inventory does not establish the state of any external deployment.
+
+
 ## Purpose
 
 Start from `docs/architecture/ARCHITECTURE-MASTER-INDEX.md`; this file is the persistent handoff state and controls only the currently authorized work. It prevents a new AI, engineer, or session from guessing where the project is or choosing an unauthorized next step.
@@ -10,23 +21,25 @@ This is project state, not the architectural contract. Architectural rules remai
 
 - Repository: Mohammad8917/FuturesOnlyEliteEngine
 - Default branch: main
-- Product: Elite Futures-Only Professional Trading Engine
+- Product: Elite Futures-Only Signal Engine — permanent signal-only scope (ADR-0006 owner-approved; PR #51 pending formal merge)
 - Python runtime: 3.13
 - Supported deployment: Windows Server, Linux Server, Windows Home/Desktop
 - Supported markets: CRYPTO Futures, FOREX Futures, GOLD Futures — 100% Futures
-- Operational capabilities: automated Futures trading + Telegram/email signal and operational notifications
+- Operational capabilities: signal generation only + Telegram/email signal and operational notifications; no live execution or account mutation
 - Architecture status: FROZEN BY DEFAULT
 - Operational Spot: FORBIDDEN
 - Current phase: Phase 1 — Domain Contracts
-- Current gate: G05 — Coverage
+- Current gate: Signal-only migration and mandatory gate reconciliation (PR #51); G05 >= 98% remains an immutable quality floor
 - Implementation phase authorized: YES — Phase 1 Domain Contracts
 - Current HEAD: repository HEAD on `main`; this state document must not pin a mutable SHA as authoritative state.
-- Last verified SHA: `d1529db92f9b4750b9e8f821f3599fb0d6317b25` — G01 (`37839785059`), G03 (`37839785127`), G04 (`37839785087`), Phase 1 (`37839785060`), and Architecture Invariants (`37839785331`) are green on this exact main merge SHA.
+- Last verified main SHA (historical baseline only): `d1529db92f9b4750b9e8f821f3599fb0d6317b25`. Do not use it as evidence for ADR-0006 changes.
+- Pre-reconciliation evidence immediately before project-state commit `fc2b859dbc49d63d09e51dc29d8ae969fccfa97d`: PR #51 head was `01c2984faab63419fb0415af0324f7723d49cdc6`; its available PR-triggered runs reported merge ref `0aaf5e3f33f0bf24445a9449ca7aa6b98071f555`. Architecture Invariants, G01, G03, G04, G05, and Phase 1 Domain Contracts runs completed successfully on the returned PR-run view, but the available integration does not independently expose enough per-run head metadata to certify those as exact-head checks. G02 and G06–G08 workflow files exist on separate unmerged PR #35, not in the current PR #51 branch; historical results on PR #35 do not transfer to PR #51 or main. Under ADR-0001, operational G07 is NOT APPLICABLE and SKIPPED/not passed for Phase 1; only the applicability classifier may pass. Full current-head G01–G08 verification is NOT established.
 - Completed phases: Phase 0 — Architecture Baseline / Governance Final Audit; Phase 1 — Domain Contracts.
-- Active work: Phase 1 Domain Contracts — Phase 1 final completeness/evidence audit are CLOSED. G05 — achieve and evidence the immutable `>= 98%` coverage requirement without excluding meaningful production code, weakening tests, or changing thresholds.
+- Active work: Phase 1 final completeness/evidence audit are CLOSED. ADR-0006 signal-only architecture migration is in PR #51; separately, complete/evidence G05 coverage `>= 98%` without exclusions, weakened tests, or changed thresholds.
 - Blocked work: Phase 2+ production implementation remains blocked until the current gate sequence is resolved according to the roadmap. Any gate skip/weakening remains forbidden.
-- Next authorized action: G05 coverage implementation/audit.
-- Forbidden action: Do not redesign architecture, reintroduce operational Spot, bypass Linear/Inverse semantics, bypass risk/execution boundaries, lower G05/G08, weaken tests, add exclusions/ignores solely to obtain green, or skip the first incomplete gate.
+- Next authorized action: reconcile PR #51 with the gate-bearing dependency PR #35, obtain independent review, and verify all applicable gates on the exact candidate SHA. Do not merge before administrator-verified main protection and governance clearance.
+- ADR-0006 migration action: obtain required formal review and complete the missing mandatory gate coverage; merge only when repository governance and applicable same-SHA evidence requirements are satisfied.
+- Forbidden action: Do not reintroduce live execution/order writes, operational Spot, or account mutation; do not bypass Linear/Inverse semantics, lower G05/G08, weaken tests, add exclusions/ignores solely to obtain green, claim missing gates are green, or skip the first incomplete gate.
 
 ## Required state fields for every update
 
@@ -41,7 +54,7 @@ Whenever this file is updated, record:
 - next authorized action
 - forbidden actions
 - open architecture questions
-- open architecture questions: None identified in the bounded Phase 0 deep audit.
+- open architecture questions: ADR-0006 migration verification; P0 financial arithmetic/audit integration (#37); financial calculation ownership conflict (#38); module-level import-cycle enforcement (#39); and main branch protection (#36) remain unresolved. The bounded Phase 0 audit does not waive these later findings.
 - evidence references: current same-SHA main verification `d1529db92f9b4750b9e8f821f3599fb0d6317b25` with G01=`37839785059`, G03=`37839785127`, G04=`37839785087`, Phase 1=`37839785060`, Architecture Invariants=`37839785331`; historical Phase 0/Phase 1 evidence remains below; master index at docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 - master-index navigation reference: docs/architecture/ARCHITECTURE-MASTER-INDEX.md
 

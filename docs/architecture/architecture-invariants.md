@@ -1,5 +1,16 @@
 # Architecture Invariants — Constitution of FuturesOnlyEliteEngine
 
+## Binding product boundary — ADR-0006 (OWNER-APPROVED)
+
+This repository delivers a **permanent signal-only product** for exactly CRYPTO Futures, FOREX Futures, and GOLD Futures. This is a product prohibition, not a feature flag or default-off mode.
+
+Allowed production capabilities are read-only market-data ingestion/validation, analytical indicators and SMC/confluence scoring, signal lifecycle and audit, advisory entry/stop/target/risk estimates with explicit assumptions, and Telegram/email signal/operational notifications. Backtesting, walk-forward/out-of-sample analysis, and Paper Trading are simulation-only and must be technically isolated from live side effects.
+
+Forbidden product capabilities include live order submission/amendment/cancellation/retry, automated real-position opening/increasing/reducing/closing, account mutation, transfers, leverage changes, automated capital allocation, execution-authorizing Telegram controls/callbacks, and order-write credentials or APIs. No runtime component may translate a signal, callback, retry, restart, or configuration change into a live order. Do not add an execution layer, execution adapter, live-order client, or order-write dependency.
+
+Keep Futures-only and explicit Linear/Inverse semantics, exact Decimal rules, fail-closed validation, secret hygiene, all G01–G08 thresholds, Phase 1 exit criteria, and same-SHA CI evidence. Signal risk figures are advisory, never guaranteed maximum losses or profitability. Repository code inventory does not establish the state of any external deployment.
+
+
 ## Status
 
 **AUTHORITATIVE / IMMUTABLE BY DEFAULT**
@@ -29,9 +40,7 @@ The production system must support all three deployment environments:
 
 The engine must be deployable and operational on all three environments without weakening Futures-only, risk, execution, security, or observability requirements.
 
-The system has two first-class operational outputs:
-- **Automated Futures trading**, subject to the full risk and execution gates.
-- **Signal and operational notification delivery** through Telegram and email.
+The system has one operational product capability: **signal generation and signal/operational notification delivery** through Telegram and email. Live automated trading is permanently out of scope and forbidden.
 
 Telegram/email delivery must never bypass risk or execution controls, and notification failure must not be treated as successful trade execution.
 
@@ -46,7 +55,7 @@ Operational scope:
 - GOLD
 - Linear Futures
 - Inverse Futures
-- 15 independent exchange adapters
+- Read-only market-data adapters only; provider count and identities are not assumed
 
 Operational Spot is forbidden.
 
@@ -75,7 +84,6 @@ Applicable Futures semantics must remain explicit for:
 - position mode
 - precision
 - exchange limits
-- reconciliation
 
 No implicit financial default may be introduced when it can alter financial meaning.
 
@@ -85,28 +93,28 @@ Responsibility flow and source-code dependency direction are distinct concepts a
 
 Responsibility flow:
 
-MARKET/DATA → ANALYSIS/DECISION → RISK → EXECUTION → EXCHANGE INFRASTRUCTURE → RECONCILIATION → AUDIT/OBSERVABILITY
+MARKET/DATA (READ-ONLY) → VALIDATION → ANALYSIS/DECISION → ADVISORY RISK ESTIMATES → SIGNAL LIFECYCLE → AUDIT/OBSERVABILITY → NOTIFICATION
 
 Source-code dependency direction is governed by dependency-rules.md:
 
 DOMAIN → DOMAIN-SAFE CONTRACTS
 APPLICATION → DOMAIN + CONTRACTS
 RISK → DOMAIN + CONTRACTS
-EXECUTION → CONTRACTS + DOMAIN FACTS + RISK DECISIONS
+SIGNAL APPLICATION → DOMAIN + CONTRACTS + ANALYSIS
 INFRASTRUCTURE → APPLICATION/CONTRACTS/DOMAIN PORTS
 
 Mandatory boundaries:
 - Domain remains infrastructure-independent.
 - Strategy/analysis must not submit orders.
 - Risk must not place orders.
-- Execution must not bypass risk validation.
+- No execution capability exists; signal publication must validate analytical/risk-estimate inputs.
 - Exchange-specific transport/SDK semantics remain outside the domain.
 - Infrastructure must not redefine domain financial semantics.
 - No layer may silently take ownership of another layer's responsibility.
 
 ## 6. Exchange isolation invariants
 
-The 15 exchange adapters remain independently owned infrastructure boundaries.
+Read-only market-data adapters are independently owned infrastructure boundaries. No order-writing adapter or execution transport is part of the product.
 
 Shared contracts/interfaces are allowed. A generic implementation that erases meaningful exchange differences is forbidden.
 
@@ -119,16 +127,14 @@ Exchange-specific behavior must remain independently representable and testable,
 - margin/leverage
 - funding
 - PnL/liquidation information
-- order semantics
 - precision/limits
 - position mode
-- reconciliation
 
 ## 7. Fail-closed invariants
 
 Unknown, invalid, stale, contradictory, incomplete, or untrusted critical Futures state must not produce:
-- an executable order
-- an accepted executable signal
+- a live order or account mutation
+- a signal represented as executable
 - a guessed contract specification
 - false reconciliation success
 - a Spot fallback
@@ -144,7 +150,7 @@ Convenient defaults are forbidden when they can change financial meaning.
 The following are architectural safety requirements and must have an explicit owner, contract, implementation, test, and CI enforcement path before the affected capability is considered complete.
 
 ### Data, time, and numeric integrity
-- Critical market and account data must have explicit validation status and provenance.
+- Critical market data must have explicit validation status and provenance; the product does not require private account data.
 - Stale, missing, malformed, contradictory, or out-of-order critical data must fail closed.
 - Monetary and contract calculations must use an explicitly governed exact numeric representation; binary floating-point must not silently determine financial outcomes where exact precision is required.
 - Boundary timestamps must be UTC-aware and their ordering semantics explicit.
@@ -155,29 +161,21 @@ The following are architectural safety requirements and must have an explicit ow
 
 - Credentials, API keys, signing material, passwords, tokens, private keys, connection strings containing secrets, and other sensitive information must never be hard-coded in source code, tests, fixtures, documentation, logs, examples, or committed configuration.
 - Operational configuration must not be hard-coded when it is environment-, deployment-, account-, exchange-, credential-, or runtime-specific; it must enter through an explicitly owned configuration/security boundary and be validated before use.
-- Risk limits, leverage limits, execution authority, exchange credentials, endpoints, account identifiers, and other safety-critical operational values must not be silently embedded as source-code constants when they are intended to be configurable.
+- Market-data credentials, provider endpoints, freshness policy, and other safety-critical operational values must not be silently embedded as source-code constants when they are intended to be configurable.
 - Hard-coded values are permitted only when they are genuine immutable domain vocabulary or compile-time invariants whose meaning cannot vary by environment/account/deployment; such values must remain owned by the appropriate domain/contract boundary.
 - Tests and fixtures must use non-sensitive synthetic values and must never embed real credentials or production secrets.
 - Credentials, API keys, signing material, and secrets must not be hard-coded, committed, logged, or exposed through normal diagnostics.
 - Configuration must fail closed when a required safety-critical value is missing, malformed, or contradictory.
-- Every safety-critical configuration value must have explicit provenance/source, schema/version semantics, validation status, and effective lifecycle; untracked or ambiguously sourced configuration must not silently authorize execution.
-- Configuration must not silently change Futures/Spot scope, risk policy, exchange identity, or execution authority.
+- Every safety-critical configuration value must have explicit provenance/source, schema/version semantics, validation status, and effective lifecycle; untracked or ambiguously sourced configuration must not silently authorize signal publication or external side effects.
+- Configuration must not silently change Futures/Spot scope, risk policy, provider identity, or introduce live execution/order-write authority.
 
-### Order lifecycle, concurrency, recovery, and reconciliation
-- Every executable intent must carry an immutable, unique idempotency identity with an explicitly defined uniqueness scope and replay/duplicate semantics. Exchange-native client-order identifiers must be used where supported, while internal deduplication remains mandatory regardless of exchange capability.
-- Live exchange-confirmed order and position state is the authoritative source for actual external account state. Local intent/state is evidence and working state until externally confirmed; local state must never be promoted to financial truth merely because an exchange response is missing or ambiguous.
-- Unknown order, fill, position, balance, or account state must block new execution for the affected scope until authoritative reconciliation resolves the uncertainty.
-- Concurrent order/position transitions must be serialized or protected by an explicit version/concurrency invariant so stale local state cannot create duplicate, conflicting, or out-of-order financial mutations.
-- After process restart, failover, reconnect, or loss of local state, execution authority must remain disabled until required account/order/position reconciliation completes successfully.
-- A scoped/global trading halt (kill switch/circuit breaker) must exist at the execution-authority boundary. When active, no new executable order may be submitted; activation and release must be auditable and fail closed when the halt state is unknown.
+### Signal lifecycle, idempotency, and audit
 
-### Order lifecycle and reconciliation
-- Every executable order must have a traceable validated execution intent and risk decision.
-- Order submission must be idempotency-aware where the external exchange supports or requires it.
-- Unknown order/position state must never be converted into a guessed success state.
-- Reconciliation must detect and surface divergence between local and exchange state; it must not silently overwrite contradictory financial facts.
-- Audit records must preserve enough immutable evidence to reconstruct the decision, risk validation, execution intent, order result, and reconciliation outcome.
-- Audit evidence must be append-only/tamper-evident at the architecture boundary, with stable event identity and causal correlation sufficient to reconstruct the lifecycle without relying on mutable operational logs.
+- Every published signal must carry a stable unique identity and explicit replay/duplicate semantics.
+- Signal lifecycle transitions must be idempotent; duplicate delivery, retries, restart, or callbacks must never cause live order side effects.
+- Stale, invalid, contradictory, or incomplete critical data must prevent signal issuance or invalidate an existing signal according to its contract.
+- Audit evidence must be append-only/tamper-evident and preserve analytical inputs, validation, assumptions, signal decision, publication, expiry/invalidation, and notification outcomes.
+- This product has no live order, position-mutation, account-mutation, reconciliation-for-execution, or execution-halt capability.
 
 ### Observability and failure reporting
 - Critical decisions and failures must be observable without leaking secrets or sensitive credentials.
